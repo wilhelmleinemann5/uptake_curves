@@ -133,7 +133,7 @@
 
         <div class="chart-container">
             <h2 class="chart-title">FFE Booking Curve - C1E Trade Lane</h2>
-            <p class="chart-subtitle">Asia to North Europe • Capacity: 45,500 FFE</p>
+            <p class="chart-subtitle">Asia to North Europe • Capacity: 45,500 FFE • Gray area shows 10-90% confidence band</p>
             <div style="position: relative; height: 400px; width: 100%;">
                 <canvas id="bookingChart"></canvas>
             </div>
@@ -194,8 +194,12 @@
                 // Days to departure (reversed)
                 const labels = ['35 days', '30 days', '25 days', '20 days', '15 days', '10 days', '5 days', '0 days'];
                 
-                // Simplified data
+                // Baseline data with confidence bands
                 const baseline = [2500, 4500, 7000, 13500, 24000, 33000, 40500, 45500];
+                const confidenceUpper = [3200, 5600, 8700, 16800, 30000, 41200, 50600, 56900];
+                const confidenceLower = [1800, 3400, 5300, 10200, 18000, 24800, 30400, 34100];
+                
+                // Current sailing curves
                 const sailing1 = [2200, 4800, 7800, 16200, 27000, 33000, 36800, 39000]; // Aug 3
                 const sailing2 = [1800, 3900, 6500, 14000, 25000, 31800, 36500, 39200]; // Aug 10  
                 const sailing3 = [2800, 5600, 8800, 17200, 28000, 34000, 37800, 40000]; // Aug 17
@@ -206,13 +210,34 @@
                         labels: labels,
                         datasets: [
                             {
+                                label: 'Confidence Upper',
+                                data: confidenceUpper,
+                                backgroundColor: 'rgba(156, 163, 175, 0.3)',
+                                borderColor: 'rgba(156, 163, 175, 0.3)',
+                                borderWidth: 0,
+                                pointRadius: 0,
+                                fill: false,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Confidence Lower',
+                                data: confidenceLower,
+                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                                borderColor: 'rgba(156, 163, 175, 0.3)',
+                                borderWidth: 0,
+                                pointRadius: 0,
+                                fill: '-1',
+                                tension: 0.3
+                            },
+                            {
                                 label: 'Baseline',
                                 data: baseline,
                                 borderColor: '#374151',
-                                backgroundColor: 'rgba(55, 65, 81, 0.1)',
+                                backgroundColor: 'transparent',
                                 borderWidth: 3,
                                 pointRadius: 4,
-                                fill: false
+                                fill: false,
+                                tension: 0.3
                             },
                             {
                                 label: '2025-08-03',
@@ -221,7 +246,8 @@
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
                                 pointRadius: 3,
-                                fill: false
+                                fill: false,
+                                tension: 0.3
                             },
                             {
                                 label: '2025-08-10',
@@ -230,7 +256,8 @@
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
                                 pointRadius: 3,
-                                fill: false
+                                fill: false,
+                                tension: 0.3
                             },
                             {
                                 label: '2025-08-17',
@@ -239,7 +266,8 @@
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
                                 pointRadius: 3,
-                                fill: false
+                                fill: false,
+                                tension: 0.3
                             }
                         ]
                     },
@@ -274,7 +302,13 @@
                         plugins: {
                             legend: {
                                 display: true,
-                                position: 'bottom'
+                                position: 'bottom',
+                                labels: {
+                                    filter: function(legendItem) {
+                                        // Hide confidence band labels from legend
+                                        return !['Confidence Upper', 'Confidence Lower'].includes(legendItem.text);
+                                    }
+                                }
                             },
                             tooltip: {
                                 callbacks: {
