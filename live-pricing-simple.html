@@ -196,6 +196,12 @@
             <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
                 <strong>📅 Today:</strong> January 15, 2025 (11 days to departure)
             </div>
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-blue);">
+                <label for="ffeTarget" style="font-weight: 600; margin-right: 8px;">🎯 FFE Target:</label>
+                <input type="number" id="ffeTarget" value="25000" min="15000" max="35000" step="500" 
+                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 80px; font-size: 14px;"
+                       onchange="updateTargetLine()">
+            </div>
             <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500;">
                 📊 View Historical Analysis
             </a>
@@ -258,6 +264,10 @@
                 const feb22_optimistic = [null, null, null, null, null, null, null, null, 7000, 11000, 16500, 22000, 26500];
                 const feb22_most_likely = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200];
                 const feb22_pessimistic = [null, null, null, null, null, null, null, null, 7000, 9200, 12800, 16500, 19000];
+                
+                // FFE Target line (user-adjustable)
+                const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
+                const targetLine = new Array(labels.length).fill(targetValue);
 
                 window.chartInstance = new Chart(ctx, {
                     type: 'line',
@@ -355,6 +365,19 @@
                                 fill: '-2', // Fill to optimistic line
                                 tension: 0.3,
                                 borderDash: [4, 6],
+                                spanGaps: false
+                            },
+                            // FFE TARGET LINE
+                            {
+                                label: 'FFE Target',
+                                data: targetLine,
+                                borderColor: 'rgb(0, 170, 136)', // Maersk success green
+                                backgroundColor: 'transparent',
+                                borderWidth: 3,
+                                pointRadius: 0,
+                                fill: false,
+                                tension: 0,
+                                borderDash: [15, 10],
                                 spanGaps: false
                             }
                         ]
@@ -480,6 +503,9 @@
                 
                 console.log('Chart created successfully');
                 
+                // Initialize target insight
+                updateTargetInsight(targetValue);
+                
             } catch (error) {
                 console.error('Error creating chart:', error);
                 // Show error message on canvas
@@ -487,6 +513,60 @@
                 canvas.fillStyle = 'rgb(229, 62, 62)';
                 canvas.font = '16px sans-serif';
                 canvas.fillText('Error loading chart. Please refresh page.', 20, 200);
+            }
+        }
+
+        // Function to update the target line when user changes input
+        function updateTargetLine() {
+            if (!window.chartInstance) return;
+            
+            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
+            const targetLine = new Array(13).fill(targetValue); // 13 data points
+            
+            // Find the target dataset (should be the last one)
+            const targetDataset = window.chartInstance.data.datasets.find(d => d.label === 'FFE Target');
+            if (targetDataset) {
+                targetDataset.data = targetLine;
+                window.chartInstance.update('none'); // Update without animation for responsiveness
+            }
+            
+            // Update the insight card with new target analysis
+            updateTargetInsight(targetValue);
+        }
+
+        function updateTargetInsight(target) {
+            const currentFFE = 7000;
+            const mostLikelyFinal = 23200;
+            const optimisticFinal = 26500;
+            const pessimisticFinal = 19000;
+            
+            let status, action, cardClass;
+            
+            if (target <= pessimisticFinal) {
+                status = 'ACHIEVABLE';
+                action = 'Target is within reach even in pessimistic scenario. Consider maintaining or slightly increasing rates.';
+                cardClass = 'success';
+            } else if (target <= mostLikelyFinal) {
+                status = 'LIKELY';
+                action = 'Target achievable in most likely scenario. Monitor closely and maintain current pricing strategy.';
+                cardClass = 'neutral';
+            } else if (target <= optimisticFinal) {
+                status = 'CHALLENGING';
+                action = 'Target requires optimistic scenario. Consider rate reduction (-$50-75/FFE) to stimulate demand.';
+                cardClass = 'warning';
+            } else {
+                status = 'HIGH RISK';
+                action = 'Target exceeds optimistic projection. Immediate aggressive rate reduction (-$100+/FFE) required.';
+                cardClass = 'warning';
+            }
+            
+            const insightCard = document.querySelector('.insight-card');
+            if (insightCard) {
+                insightCard.className = `insight-card ${cardClass}`;
+                insightCard.innerHTML = `
+                    <h3>🎯 Target Analysis: ${target.toLocaleString()} FFE - ${status}</h3>
+                    <p><strong>Current Status:</strong> ${currentFFE.toLocaleString()} FFE vs ${target.toLocaleString()} target. <strong>Gap:</strong> ${(target - currentFFE).toLocaleString()} FFE remaining. <strong>Action:</strong> ${action}</p>
+                `;
             }
         }
 
