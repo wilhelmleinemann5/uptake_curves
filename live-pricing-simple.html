@@ -209,6 +209,22 @@
                        onchange="updatePricingSimulation()">
                 <span style="margin-left: 4px; color: var(--mds-text-secondary);">%</span>
             </div>
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-info);">
+                <label for="sensitivity" style="font-weight: 600; margin-right: 8px;">📊 Price Sensitivity:</label>
+                <select id="sensitivity" 
+                        style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; font-size: 14px;"
+                        onchange="updatePricingSimulation()">
+                    <option value="-0.5">📈 Conservative</option>
+                    <option value="-1.0">🎯 Balanced</option>
+                    <option value="-1.5" selected>⚡ Moderate</option>
+                    <option value="-2.0">🔥 Aggressive</option>
+                    <option value="-3.0">💥 Extreme</option>
+                    <option value="custom">🧮 Custom</option>
+                </select>
+                <input type="number" id="customSensitivity" value="-1.5" min="-5" max="-0.1" step="0.1" 
+                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 60px; font-size: 14px; margin-left: 8px; display: none;"
+                       onchange="updatePricingSimulation()">
+            </div>
             <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500;">
                 📊 View Historical Analysis
             </a>
@@ -622,11 +638,23 @@
             if (!window.chartInstance) return;
             
             const priceChange = parseFloat(document.getElementById('priceChange').value) / 100 || 0; // Convert % to decimal
-            const elasticity = -1.5; // Default elasticity
             
-            // Calculate volume multiplier using exponential elasticity formula
-            // New Volume = Original Volume × (1 + Price Change)^(elasticity)
-            const volumeMultiplier = Math.pow(1 + priceChange, elasticity);
+            // Get sensitivity value from dropdown or custom input
+            const sensitivitySelect = document.getElementById('sensitivity');
+            const customSensitivityInput = document.getElementById('customSensitivity');
+            
+            let sensitivity;
+            if (sensitivitySelect.value === 'custom') {
+                sensitivity = parseFloat(customSensitivityInput.value) || -1.5;
+                customSensitivityInput.style.display = 'inline-block';
+            } else {
+                sensitivity = parseFloat(sensitivitySelect.value) || -1.5;
+                customSensitivityInput.style.display = 'none';
+            }
+            
+            // Calculate volume multiplier using exponential price sensitivity formula
+            // New Volume = Original Volume × (1 + Price Change)^(sensitivity)
+            const volumeMultiplier = Math.pow(1 + priceChange, sensitivity);
             
             console.log(`Price change: ${(priceChange * 100).toFixed(1)}%, Volume multiplier: ${volumeMultiplier.toFixed(3)}`);
             
@@ -668,11 +696,11 @@
                 const newOptimistic = simulatedOptimisticDataset.data[12];
                 const newPessimistic = simulatedPessimisticDataset.data[12];
                 
-                updateSimulationInsight(priceChange * 100, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier);
+                updateSimulationInsight(priceChange * 100, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier, sensitivity);
             }
         }
 
-        function updateSimulationInsight(priceChangePercent, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier) {
+        function updateSimulationInsight(priceChangePercent, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier, sensitivity) {
             const originalMostLikely = 23200;
             const volumeChangePercent = ((volumeMultiplier - 1) * 100).toFixed(1);
             const volumeDelta = Math.round(newMostLikely - originalMostLikely);
@@ -680,16 +708,27 @@
             let priceColor = priceChangePercent < 0 ? 'var(--maersk-success)' : 'var(--maersk-warning)';
             let volumeColor = volumeDelta > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)';
             
+            // Get sensitivity description
+            const sensitivityMap = {
+                '-0.5': '📈 Conservative',
+                '-1.0': '🎯 Balanced', 
+                '-1.5': '⚡ Moderate',
+                '-2.0': '🔥 Aggressive',
+                '-3.0': '💥 Extreme'
+            };
+            const sensitivityLabel = sensitivityMap[sensitivity.toString()] || `🧮 Custom (${sensitivity})`;
+            
             const insightCard = document.querySelector('.insight-card');
             if (insightCard) {
                 insightCard.className = 'insight-card neutral';
                 insightCard.innerHTML = `
                     <h3>💰 Pricing Simulation Active</h3>
-                    <p><strong>Price Change:</strong> <span style="color: ${priceColor}">${priceChangePercent.toFixed(1)}%</span> 
+                    <p><strong>Rate Change:</strong> <span style="color: ${priceColor}">${priceChangePercent.toFixed(1)}%</span> 
                     → <strong>Volume Response:</strong> <span style="color: ${volumeColor}">${volumeChangePercent}%</span> 
                     (${volumeDelta > 0 ? '+' : ''}${volumeDelta.toLocaleString()} FFE)</p>
-                    <p><strong>New Forecast Range:</strong> ${Math.round(newPessimistic).toLocaleString()} - ${Math.round(newOptimistic).toLocaleString()} FFE 
-                    (most likely: ${Math.round(newMostLikely).toLocaleString()})</p>
+                    <p><strong>Sensitivity Model:</strong> ${sensitivityLabel} | 
+                    <strong>New Forecast:</strong> ${Math.round(newMostLikely).toLocaleString()} FFE 
+                    (range: ${Math.round(newPessimistic).toLocaleString()} - ${Math.round(newOptimistic).toLocaleString()})</p>
                 `;
             }
         }
