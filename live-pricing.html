@@ -224,8 +224,8 @@
         </div>
 
         <div class="chart-container">
-            <h2 class="chart-title">Live FFE Booking Progress - C1E Trade Lane</h2>
-            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Today: 11 days to departure • Shaded cone shows uncertainty range</p>
+            <h2 class="chart-title">Feb 22 Departure - Live Booking Monitor</h2>
+            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Today: 11 days to departure • Uncertainty cone shows forecast range</p>
             <div style="position: relative; height: 400px; width: 100%;">
                 <canvas id="bookingChart"></canvas>
             </div>
@@ -294,22 +294,13 @@
                 const confidenceUpper = [400, 750, 1150, 1700, 2500, 3600, 5100, 7300, 10500, 15000, 20500, 26500, 30000];
                 const confidenceLower = [150, 300, 500, 750, 1100, 1600, 2400, 3500, 5200, 7500, 10500, 14500, 18000];
                 
-                // LIVE SAILING DATA (only up to today)
-                // Feb 15 departure - at 20 days out (early stage)
-                const sailing1_actual = [280, 520, 780, 1150, 1700, 2500, null, null, null, null, null, null, null]; // stops at 20 days
-                const sailing1_projected = [null, null, null, null, null, 2500, 3700, 5300, 7900, 11400, 16100, 20800, 24200]; // projection from 20 days
-                
-                // Feb 22 departure - at 11 days out (mid-stage) - TODAY'S FOCUS
-                const sailing2_actual = [180, 350, 600, 950, 1400, 2100, 3100, 4600, 7000, null, null, null, null]; // stops at 11 days (today)
+                // FOCUS: Feb 22 departure - at 11 days out (today)
+                const feb22_actual = [180, 350, 600, 950, 1400, 2100, 3100, 4600, 7000, null, null, null, null]; // stops at 11 days (today)
                 
                 // UNCERTAINTY CONE - expanding projections from today
-                const sailing2_projection_optimistic = [null, null, null, null, null, null, null, null, 7000, 11000, 16500, 22000, 26500]; // upper bound
-                const sailing2_projection_baseline = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200]; // most likely
-                const sailing2_projection_pessimistic = [null, null, null, null, null, null, null, null, 7000, 9200, 12800, 16500, 19000]; // lower bound
-                
-                // March 1 departure - at 8 days out (late stage)
-                const sailing3_actual = [320, 580, 900, 1350, 2000, 2900, 4200, 6000, 8800, 12800, null, null, null]; // stops at 8 days
-                const sailing3_projected = [null, null, null, null, null, null, null, null, null, 12800, 17200, 22200, 26500]; // projection from 8 days
+                const feb22_optimistic = [null, null, null, null, null, null, null, null, 7000, 11000, 16500, 22000, 26500]; // upper bound
+                const feb22_most_likely = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200]; // most likely
+                const feb22_pessimistic = [null, null, null, null, null, null, null, null, 7000, 9200, 12800, 16500, 19000]; // lower bound
 
                 const chart = new Chart(ctx, {
                     type: 'line',

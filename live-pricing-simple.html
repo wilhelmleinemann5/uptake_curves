@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ocean Carrier Booking Analytics</title>
+    <title>Live FFE Booking Monitor</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
         /* Maersk Design System Dark Theme */
@@ -84,6 +84,17 @@
             margin: 2rem 0;
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
             border: 1px solid var(--mds-border-default);
+            position: relative;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--maersk-blue) 0%, var(--maersk-light-blue) 100%);
         }
 
         .chart-title {
@@ -100,6 +111,22 @@
             color: var(--chart-text-muted);
             margin-bottom: 2rem;
             font-size: 0.95rem;
+        }
+
+        .demo-note {
+            background: linear-gradient(135deg, var(--maersk-blue) 0%, #005fa3 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin: 2rem 0;
+            box-shadow: 0 8px 24px rgba(0, 143, 211, 0.3);
+        }
+
+        .demo-note h3 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Maersk Headline', system-ui;
         }
 
         .insights {
@@ -145,55 +172,6 @@
             line-height: 1.5;
         }
 
-        .demo-note {
-            background: linear-gradient(135deg, var(--maersk-blue) 0%, #005fa3 100%);
-            color: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            text-align: center;
-            margin: 2rem 0;
-            box-shadow: 0 8px 24px rgba(0, 143, 211, 0.3);
-        }
-
-        .demo-note h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            font-family: 'Maersk Headline', system-ui;
-        }
-
-        /* Maersk-style grid layout like your screenshot */
-        .chart-container {
-            position: relative;
-        }
-
-        .chart-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--maersk-blue) 0%, var(--maersk-light-blue) 100%);
-        }
-
-        /* Dark theme scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--mds-bg-primary);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--mds-bg-strong);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--mds-text-weak);
-        }
-
         @media (max-width: 768px) {
             .header h1 { font-size: 2rem; }
             .header p { font-size: 1rem; }
@@ -204,180 +182,172 @@
 </head>
 <body>
     <header class="header">
-        <h1>🚢 Historical Booking Performance</h1>
-        <p>Completed FFE Booking Curves & Performance Analysis</p>
+        <h1>🚢 Live Pricing Dashboard</h1>
+        <p>Real-Time FFE Booking Progress & Pricing Decisions</p>
     </header>
 
     <div class="container">
         <div class="demo-note">
-            <h3>📊 Historical Analysis Dashboard</h3>
-            <p>Analyze completed booking curves to understand past performance vs. baseline expectations. Use these insights to calibrate future pricing strategies and learn from historical booking patterns.</p>
+            <h3>⚡ Feb 22 Departure - Live Booking Monitor</h3>
+            <p>Monitor current booking progress vs. baseline expectations. The uncertainty cone shows the range of possible outcomes from today forward.</p>
         </div>
         
-        <div style="text-align: center; margin: 1.5rem 0;">
-            <a href="live-pricing-simple.html" style="display: inline-block; background: var(--maersk-blue); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 143, 211, 0.3); transition: all 0.3s ease;">
-                📈 Switch to Live Pricing Dashboard
+        <div style="display: flex; gap: 1rem; margin: 1.5rem 0; align-items: center; justify-content: center; flex-wrap: wrap;">
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
+                <strong>📅 Today:</strong> January 15, 2025 (11 days to departure)
+            </div>
+            <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500;">
+                📊 View Historical Analysis
             </a>
         </div>
 
         <div class="chart-container">
-            <h2 class="chart-title">FFE Booking Curve - C1E Trade Lane</h2>
-            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Gray area shows 10-90% confidence band</p>
+            <h2 class="chart-title">Feb 22 Departure - Uncertainty Cone</h2>
+            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Shaded area shows forecast uncertainty range</p>
             <div style="position: relative; height: 400px; width: 100%;">
                 <canvas id="bookingChart"></canvas>
             </div>
         </div>
 
         <div class="insights">
-            <div class="insight-card success">
-                <h3>📈 2025-08-17 Sailing (Completed)</h3>
-                <p><strong>Final Result:</strong> Finished 6% above baseline (26,000 vs 24,500 FFE). Strong early momentum sustained throughout booking period. This pattern suggests premium pricing was justified.</p>
-            </div>
-            <div class="insight-card neutral">
-                <h3>✅ 2025-08-03 Sailing (Completed)</h3>
-                <p><strong>Final Result:</strong> Tracked baseline closely throughout, finishing at 24,000 FFE (98% of baseline). Demonstrates accurate forecasting and appropriate pricing strategy.</p>
-            </div>
             <div class="insight-card warning">
-                <h3>📉 2025-08-10 Sailing (Completed)</h3>
-                <p><strong>Final Result:</strong> Despite slow start, recovered to 23,800 FFE (97% of baseline). Late booking surge compensated for early weakness. Consider earlier promotional action next time.</p>
-            </div>
-        </div>
-
-        <div class="chart-container">
-            <h3>🎯 How Booking Curves Guide Pricing Decisions</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1rem;">
-                <div style="text-align: center; padding: 1rem;">
-                    <strong style="color: #10b981;">Above Baseline:</strong><br>
-                    Bookings pacing ahead → Consider price increases to maximize revenue
-                </div>
-                <div style="text-align: center; padding: 1rem;">
-                    <strong style="color: #ef4444;">Below Baseline:</strong><br>
-                    Bookings lagging → Consider price decreases to stimulate demand
-                </div>
-                <div style="text-align: center; padding: 1rem;">
-                    <strong style="color: #6b7280;">Confidence Bands:</strong><br>
-                    10-90% range helps identify significant deviations requiring action
-                </div>
+                <h3>🚨 Feb 22 Departure - URGENT ACTION NEEDED</h3>
+                <p><strong>Current Status:</strong> 7,000 FFE vs 8,000 baseline (-12.5%). <strong>Forecast Range:</strong> 19,000-26,500 FFE (most likely: 23,200). <strong>Action:</strong> Immediate rate reduction (-$75/FFE) needed to reach upper range.</p>
             </div>
         </div>
     </div>
 
     <script>
-        // Wait for page to fully load
         window.addEventListener('load', function() {
             try {
-                // Sample data for the booking curve
                 const ctx = document.getElementById('bookingChart');
                 if (!ctx) {
                     console.error('Canvas element not found');
                     return;
                 }
-                
-                // Check if Chart.js loaded
+
                 if (typeof Chart === 'undefined') {
                     console.error('Chart.js not loaded');
                     ctx.getContext('2d').fillText('Chart loading...', 10, 50);
                     return;
                 }
                 
-                // More data points for smoother curves (matches original density)
+                // Data points
                 const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
+                const todayIndex = 8; // Today is at "11 days" (index 8)
                 
-                // Baseline curve with more realistic booking accumulation pattern
+                // Historical baseline for context
                 const baseline = [250, 500, 800, 1200, 1800, 2600, 3800, 5500, 8000, 11500, 16000, 21000, 24500];
                 
-                // Confidence bands (10-90% range around baseline)
+                // Historical confidence bands
                 const confidenceUpper = [400, 750, 1150, 1700, 2500, 3600, 5100, 7300, 10500, 15000, 20500, 26500, 30000];
                 const confidenceLower = [150, 300, 500, 750, 1100, 1600, 2400, 3500, 5200, 7500, 10500, 14500, 18000];
                 
-                // Current sailing curves with more realistic patterns
-                // Aug 3 - tracking close to baseline (blue line)
-                const sailing1 = [280, 520, 780, 1150, 1700, 2500, 3600, 5200, 7800, 11200, 15800, 20500, 24000];
+                // Feb 22 actual bookings (up to today)
+                const feb22_actual = [180, 350, 600, 950, 1400, 2100, 3100, 4600, 7000, null, null, null, null];
                 
-                // Aug 10 - slower start, catching up later (orange line)  
-                const sailing2 = [180, 350, 600, 950, 1400, 2100, 3100, 4600, 7000, 10500, 15200, 20000, 23800];
-                
-                // Aug 17 - strong early booking, ahead of baseline (green line)
-                const sailing3 = [320, 580, 900, 1350, 2000, 2900, 4200, 6000, 8800, 12500, 17000, 22000, 26000];
+                // Uncertainty cone projections from today
+                const feb22_optimistic = [null, null, null, null, null, null, null, null, 7000, 11000, 16500, 22000, 26500];
+                const feb22_most_likely = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200];
+                const feb22_pessimistic = [null, null, null, null, null, null, null, null, 7000, 9200, 12800, 16500, 19000];
 
                 const chart = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
                         datasets: [
+                            // Historical confidence bands (subtle background context)
                             {
-                                label: 'Confidence Upper',
+                                label: 'Historical Upper',
                                 data: confidenceUpper,
-                                backgroundColor: 'rgba(138, 138, 138, 0.6)',
-                                borderColor: 'rgba(138, 138, 138, 0.8)',
+                                backgroundColor: 'rgba(138, 138, 138, 0.1)',
+                                borderColor: 'rgba(138, 138, 138, 0.4)',
                                 borderWidth: 1,
                                 pointRadius: 0,
                                 fill: false,
                                 tension: 0.3,
-                                borderDash: [2, 3]
+                                borderDash: [2, 4]
                             },
                             {
-                                label: 'Confidence Lower',
+                                label: 'Historical Lower',
                                 data: confidenceLower,
-                                backgroundColor: 'rgba(138, 138, 138, 0.25)',
-                                borderColor: 'rgba(138, 138, 138, 0.8)',
+                                backgroundColor: 'rgba(138, 138, 138, 0.05)',
+                                borderColor: 'rgba(138, 138, 138, 0.4)',
                                 borderWidth: 1,
                                 pointRadius: 0,
-                                fill: '-1',
+                                fill: '-1', // Fill to previous dataset
                                 tension: 0.3,
-                                borderDash: [2, 3]
+                                borderDash: [2, 4]
                             },
+                            // Historical baseline
                             {
-                                label: 'Baseline',
+                                label: 'Historical Baseline',
                                 data: baseline,
-                                borderColor: 'rgb(255, 255, 255)',
+                                borderColor: 'rgba(255, 255, 255, 0.6)',
                                 backgroundColor: 'transparent',
-                                borderWidth: 3,
-                                pointRadius: 5,
-                                pointBackgroundColor: 'rgb(255, 255, 255)',
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                pointBackgroundColor: 'rgba(255, 255, 255, 0.6)',
+                                fill: false,
+                                tension: 0.3,
+                                borderDash: [8, 8]
+                            },
+                            // Feb 22 ACTUAL bookings (main focus - solid orange line)
+                            {
+                                label: 'Feb 22 Actual Bookings',
+                                data: feb22_actual,
+                                borderColor: 'rgb(255, 180, 50)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 5,
+                                pointRadius: 6,
+                                pointBackgroundColor: 'rgb(255, 180, 50)',
                                 pointBorderColor: 'rgb(33, 33, 33)',
                                 pointBorderWidth: 2,
                                 fill: false,
-                                tension: 0.3
+                                tension: 0.3,
+                                spanGaps: false
                             },
+                            // UNCERTAINTY CONE - Optimistic
                             {
-                                label: '2025-08-03',
-                                data: sailing1,
-                                borderColor: 'rgb(66, 176, 213)', // Maersk light blue - brighter
-                                backgroundColor: 'transparent',
-                                borderWidth: 3,
-                                pointRadius: 4,
-                                pointBackgroundColor: 'rgb(66, 176, 213)',
-                                pointBorderColor: 'rgb(33, 33, 33)',
-                                pointBorderWidth: 2,
+                                label: 'Optimistic',
+                                data: feb22_optimistic,
+                                borderColor: 'rgba(255, 180, 50, 0.7)',
+                                backgroundColor: 'rgba(255, 180, 50, 0.1)',
+                                borderWidth: 2,
+                                pointRadius: 0,
                                 fill: false,
-                                tension: 0.3
+                                tension: 0.3,
+                                borderDash: [4, 6],
+                                spanGaps: false
                             },
+                            // UNCERTAINTY CONE - Most Likely (main projection)
                             {
-                                label: '2025-08-10',
-                                data: sailing2,
-                                borderColor: 'rgb(255, 180, 50)', // Brighter orange for better visibility
+                                label: 'Most Likely',
+                                data: feb22_most_likely,
+                                borderColor: 'rgb(255, 180, 50)',
                                 backgroundColor: 'transparent',
                                 borderWidth: 3,
                                 pointRadius: 4,
                                 pointBackgroundColor: 'rgb(255, 180, 50)',
                                 pointBorderColor: 'rgb(33, 33, 33)',
-                                pointBorderWidth: 2,
+                                pointBorderWidth: 1,
                                 fill: false,
-                                tension: 0.3
+                                tension: 0.3,
+                                borderDash: [12, 4],
+                                spanGaps: false
                             },
+                            // UNCERTAINTY CONE - Pessimistic
                             {
-                                label: '2025-08-17',
-                                data: sailing3,
-                                borderColor: 'rgb(0, 200, 150)', // Brighter green for better visibility
-                                backgroundColor: 'transparent',
-                                borderWidth: 3,
-                                pointRadius: 4,
-                                pointBackgroundColor: 'rgb(0, 200, 150)',
-                                pointBorderColor: 'rgb(33, 33, 33)',
-                                pointBorderWidth: 2,
-                                fill: false,
-                                tension: 0.3
+                                label: 'Pessimistic',
+                                data: feb22_pessimistic,
+                                borderColor: 'rgba(255, 180, 50, 0.7)',
+                                backgroundColor: 'rgba(255, 180, 50, 0.15)',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                fill: '-2', // Fill to optimistic line
+                                tension: 0.3,
+                                borderDash: [4, 6],
+                                spanGaps: false
                             }
                         ]
                     },
@@ -440,30 +410,14 @@
                                 position: 'bottom',
                                 labels: {
                                     color: 'rgb(212, 212, 212)',
-                                    font: { size: 12, weight: '500' },
-                                    padding: 15,
+                                    font: { size: 11, weight: '500' },
+                                    padding: 12,
                                     usePointStyle: true,
                                     pointStyle: 'line',
                                     filter: function(legendItem) {
-                                        // Hide confidence band labels from legend
-                                        return !['Confidence Upper', 'Confidence Lower'].includes(legendItem.text);
-                                    },
-                                    generateLabels: function(chart) {
-                                        const original = Chart.defaults.plugins.legend.labels.generateLabels;
-                                        const labels = original.call(this, chart);
-                                        
-                                        // Clean up sailing date labels and add status indicators
-                                        labels.forEach(label => {
-                                            if (label.text === '2025-08-03') {
-                                                label.text = '2025-08-03 (Tracking Baseline)';
-                                            } else if (label.text === '2025-08-10') {
-                                                label.text = '2025-08-10 (Below Baseline)';
-                                            } else if (label.text === '2025-08-17') {
-                                                label.text = '2025-08-17 (Above Baseline)';
-                                            }
-                                        });
-                                        
-                                        return labels;
+                                        // Hide historical context from legend - focus on Feb 22
+                                        const hiddenLabels = ['Historical Upper', 'Historical Lower', 'Historical Baseline'];
+                                        return !hiddenLabels.includes(legendItem.text);
                                     }
                                 }
                             },
@@ -491,11 +445,43 @@
                     }
                 });
                 
+                // Add TODAY vertical line
+                const todayPlugin = {
+                    id: 'todayLine',
+                    beforeDraw: (chart) => {
+                        const ctx = chart.ctx;
+                        const xAxis = chart.scales.x;
+                        const yAxis = chart.scales.y;
+                        
+                        const x = xAxis.getPixelForValue(todayIndex);
+                        
+                        ctx.save();
+                        ctx.setLineDash([5, 5]);
+                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(x, yAxis.top);
+                        ctx.lineTo(x, yAxis.bottom);
+                        ctx.stroke();
+                        
+                        // Add TODAY label
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                        ctx.fillRect(x - 20, yAxis.top + 5, 40, 20);
+                        ctx.fillStyle = 'rgb(20, 20, 20)';
+                        ctx.font = 'bold 12px sans-serif';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('TODAY', x, yAxis.top + 18);
+                        
+                        ctx.restore();
+                    }
+                };
+                
+                Chart.register(todayPlugin);
+                
                 console.log('Chart created successfully');
                 
             } catch (error) {
                 console.error('Error creating chart:', error);
-                document.getElementById('bookingChart').getContext('2d').fillText('Error loading chart', 10, 50);
             }
         });
     </script>
