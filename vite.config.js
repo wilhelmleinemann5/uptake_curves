@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: '/uptake-curves-prototype/',
+  base: '/uptake_curves/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
