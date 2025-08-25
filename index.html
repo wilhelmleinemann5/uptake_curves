@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ocean Carrier Booking Analytics</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -134,7 +134,9 @@
         <div class="chart-container">
             <h2 class="chart-title">FFE Booking Curve - C1E Trade Lane</h2>
             <p class="chart-subtitle">Asia to North Europe • Capacity: 45,500 FFE</p>
-            <canvas id="bookingChart" width="800" height="400"></canvas>
+            <div style="position: relative; height: 400px; width: 100%;">
+                <canvas id="bookingChart"></canvas>
+            </div>
         </div>
 
         <div class="insights">
@@ -172,122 +174,124 @@
     </div>
 
     <script>
-        // Sample data for the booking curve
-        const ctx = document.getElementById('bookingChart').getContext('2d');
-        
-        // Days to departure (reversed)
-        const labels = [35, 30, 25, 20, 15, 10, 5, 0];
-        
-        // Baseline data with confidence bands
-        const baseline = [2500, 4500, 7000, 13500, 24000, 33000, 40500, 45500];
-        const confidenceUpper = [3200, 5600, 8700, 16800, 30000, 41200, 50600, 56900];
-        const confidenceLower = [1800, 3400, 5300, 10200, 18000, 24800, 30400, 34100];
-        
-        // Current sailing curves
-        const sailing1 = [2200, 4800, 7800, 16200, 27000, 33000, 36800, 39000]; // Aug 3 - blue
-        const sailing2 = [1800, 3900, 6500, 14000, 25000, 31800, 36500, 39200]; // Aug 10 - orange  
-        const sailing3 = [2800, 5600, 8800, 17200, 28000, 34000, 37800, 40000]; // Aug 17 - green
-
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels.map(d => d + ' days'),
-                datasets: [
-                    {
-                        label: 'Confidence Upper',
-                        data: confidenceUpper,
-                        backgroundColor: 'rgba(156, 163, 175, 0.2)',
-                        borderColor: 'transparent',
-                        fill: false,
-                        pointRadius: 0
-                    },
-                    {
-                        label: 'Confidence Lower', 
-                        data: confidenceLower,
-                        backgroundColor: 'rgba(255, 255, 255, 1)',
-                        borderColor: 'transparent',
-                        fill: '-1',
-                        pointRadius: 0
-                    },
-                    {
-                        label: 'Baseline',
-                        data: baseline,
-                        borderColor: '#374151',
-                        backgroundColor: 'transparent',
-                        borderWidth: 3,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#374151'
-                    },
-                    {
-                        label: '2025-08-03',
-                        data: sailing1,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#3b82f6'
-                    },
-                    {
-                        label: '2025-08-10',
-                        data: sailing2,
-                        borderColor: '#f59e0b',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#f59e0b'
-                    },
-                    {
-                        label: '2025-08-17',
-                        data: sailing3,
-                        borderColor: '#10b981',
-                        backgroundColor: 'transparent',
-                        borderWidth: 2,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#10b981'
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Days to Departure'
-                        },
-                        reverse: true
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Booked FFE'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return (value / 1000).toFixed(0) + 'k';
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                        labels: {
-                            filter: function(legendItem) {
-                                return !['Confidence Upper', 'Confidence Lower'].includes(legendItem.text);
-                            }
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' FFE';
-                            }
-                        }
-                    }
+        // Wait for page to fully load
+        window.addEventListener('load', function() {
+            try {
+                // Sample data for the booking curve
+                const ctx = document.getElementById('bookingChart');
+                if (!ctx) {
+                    console.error('Canvas element not found');
+                    return;
                 }
+                
+                // Check if Chart.js loaded
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js not loaded');
+                    ctx.getContext('2d').fillText('Chart loading...', 10, 50);
+                    return;
+                }
+                
+                // Days to departure (reversed)
+                const labels = ['35 days', '30 days', '25 days', '20 days', '15 days', '10 days', '5 days', '0 days'];
+                
+                // Simplified data
+                const baseline = [2500, 4500, 7000, 13500, 24000, 33000, 40500, 45500];
+                const sailing1 = [2200, 4800, 7800, 16200, 27000, 33000, 36800, 39000]; // Aug 3
+                const sailing2 = [1800, 3900, 6500, 14000, 25000, 31800, 36500, 39200]; // Aug 10  
+                const sailing3 = [2800, 5600, 8800, 17200, 28000, 34000, 37800, 40000]; // Aug 17
+
+                const chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Baseline',
+                                data: baseline,
+                                borderColor: '#374151',
+                                backgroundColor: 'rgba(55, 65, 81, 0.1)',
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                fill: false
+                            },
+                            {
+                                label: '2025-08-03',
+                                data: sailing1,
+                                borderColor: '#3b82f6',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 3,
+                                fill: false
+                            },
+                            {
+                                label: '2025-08-10',
+                                data: sailing2,
+                                borderColor: '#f59e0b',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 3,
+                                fill: false
+                            },
+                            {
+                                label: '2025-08-17',
+                                data: sailing3,
+                                borderColor: '#10b981',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 3,
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Days to Departure',
+                                    font: { size: 14 }
+                                },
+                                reverse: true
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Booked FFE',
+                                    font: { size: 14 }
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return (value / 1000).toFixed(0) + 'k';
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' FFE';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                console.log('Chart created successfully');
+                
+            } catch (error) {
+                console.error('Error creating chart:', error);
+                document.getElementById('bookingChart').getContext('2d').fillText('Error loading chart', 10, 50);
             }
         });
     </script>
