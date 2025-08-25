@@ -225,7 +225,7 @@
 
         <div class="chart-container">
             <h2 class="chart-title">Live FFE Booking Progress - C1E Trade Lane</h2>
-            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Today: 11 days to departure • Dotted lines show projections</p>
+            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Today: 11 days to departure • Shaded cone shows uncertainty range</p>
             <div style="position: relative; height: 400px; width: 100%;">
                 <canvas id="bookingChart"></canvas>
             </div>
@@ -234,7 +234,7 @@
         <div class="insights">
             <div class="insight-card warning">
                 <h3>🚨 Feb 22 Departure (11 days out) - URGENT</h3>
-                <p><strong>Current Status:</strong> 7,000 FFE vs 8,000 baseline (-12.5%). <strong>Action:</strong> Immediate rate reduction (-$75/FFE) or promotional push required. Risk missing capacity target.</p>
+                <p><strong>Current Status:</strong> 7,000 FFE vs 8,000 baseline (-12.5%). <strong>Forecast Range:</strong> 19,000-26,500 FFE (most likely: 23,200). <strong>Action:</strong> Immediate rate reduction (-$75/FFE) needed to reach upper range.</p>
             </div>
             <div class="insight-card success">
                 <h3>📈 Mar 1 Departure (8 days out)</h3>
@@ -301,7 +301,11 @@
                 
                 // Feb 22 departure - at 11 days out (mid-stage) - TODAY'S FOCUS
                 const sailing2_actual = [180, 350, 600, 950, 1400, 2100, 3100, 4600, 7000, null, null, null, null]; // stops at 11 days (today)
-                const sailing2_projected = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200]; // projection from today
+                
+                // UNCERTAINTY CONE - expanding projections from today
+                const sailing2_projection_optimistic = [null, null, null, null, null, null, null, null, 7000, 11000, 16500, 22000, 26500]; // upper bound
+                const sailing2_projection_baseline = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200]; // most likely
+                const sailing2_projection_pessimistic = [null, null, null, null, null, null, null, null, 7000, 9200, 12800, 16500, 19000]; // lower bound
                 
                 // March 1 departure - at 8 days out (late stage)
                 const sailing3_actual = [320, 580, 900, 1350, 2000, 2900, 4200, 6000, 8800, 12800, null, null, null]; // stops at 8 days
@@ -393,20 +397,46 @@
                                 tension: 0.3,
                                 spanGaps: false
                             },
-                            // Feb 22 Departure - PROJECTED
+                            // UNCERTAINTY CONE - Optimistic bound
                             {
-                                label: 'Feb 22 Projection',
-                                data: sailing2_projected,
-                                borderColor: 'rgba(255, 180, 50, 0.6)',
+                                label: 'Feb 22 Optimistic',
+                                data: sailing2_projection_optimistic,
+                                borderColor: 'rgba(255, 180, 50, 0.4)',
+                                backgroundColor: 'rgba(255, 180, 50, 0.1)',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                fill: false,
+                                tension: 0.3,
+                                borderDash: [6, 6],
+                                spanGaps: false
+                            },
+                            // UNCERTAINTY CONE - Baseline projection
+                            {
+                                label: 'Feb 22 Most Likely',
+                                data: sailing2_projection_baseline,
+                                borderColor: 'rgba(255, 180, 50, 0.8)',
                                 backgroundColor: 'transparent',
                                 borderWidth: 3,
                                 pointRadius: 3,
-                                pointBackgroundColor: 'rgba(255, 180, 50, 0.6)',
+                                pointBackgroundColor: 'rgba(255, 180, 50, 0.8)',
                                 pointBorderColor: 'rgb(33, 33, 33)',
                                 pointBorderWidth: 1,
                                 fill: false,
                                 tension: 0.3,
                                 borderDash: [8, 4],
+                                spanGaps: false
+                            },
+                            // UNCERTAINTY CONE - Pessimistic bound
+                            {
+                                label: 'Feb 22 Pessimistic',
+                                data: sailing2_projection_pessimistic,
+                                borderColor: 'rgba(255, 180, 50, 0.4)',
+                                backgroundColor: 'rgba(255, 180, 50, 0.1)',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                fill: '+2', // Fill to optimistic line above to create cone
+                                tension: 0.3,
+                                borderDash: [6, 6],
                                 spanGaps: false
                             },
                             // March 1 Departure (8 days out) - ACTUAL
@@ -506,8 +536,9 @@
                                     usePointStyle: true,
                                     pointStyle: 'line',
                                     filter: function(legendItem) {
-                                        // Hide confidence band labels from legend
-                                        return !['Confidence Upper', 'Confidence Lower', 'Baseline'].includes(legendItem.text);
+                                        // Hide confidence band labels and uncertainty cone details from legend
+                                        const hiddenLabels = ['Confidence Upper', 'Confidence Lower', 'Baseline', 'Feb 22 Optimistic', 'Feb 22 Pessimistic'];
+                                        return !hiddenLabels.includes(legendItem.text);
                                     }
                                 }
                             },
