@@ -519,11 +519,35 @@
                                 borderWidth: 1,
                                 cornerRadius: 8,
                                 padding: 12,
+                                filter: function(tooltipItem) {
+                                    // Only show key datasets in tooltip - hide the ghosted original cone
+                                    const hiddenInTooltip = [
+                                        'Historical Upper', 'Historical Lower', 'Historical Baseline',
+                                        'Original Optimistic', 'Original Most Likely', 'Original Pessimistic'
+                                    ];
+                                    return !hiddenInTooltip.includes(tooltipItem.dataset.label);
+                                },
                                 callbacks: {
+                                    title: function(tooltipItems) {
+                                        return tooltipItems[0].label;
+                                    },
                                     label: function(context) {
-                                        const value = context.parsed.y.toLocaleString();
-                                        const percentage = ((context.parsed.y / 30000) * 100).toFixed(1);
-                                        return context.dataset.label + ': ' + value + ' FFE (' + percentage + '%)';
+                                        const label = context.dataset.label;
+                                        const value = context.parsed.y;
+                                        
+                                        if (value === null) return null;
+                                        
+                                        // Simplify labels for cleaner tooltip
+                                        const labelMap = {
+                                            'Feb 22 Actual Bookings': '📊 Actual',
+                                            'Simulated Optimistic': '📈 Optimistic',
+                                            'Simulated Most Likely': '🎯 Most Likely', 
+                                            'Simulated Pessimistic': '📉 Pessimistic',
+                                            'FFE Target': '🎯 Target'
+                                        };
+                                        
+                                        const displayLabel = labelMap[label] || label;
+                                        return `${displayLabel}: ${Math.round(value).toLocaleString()} FFE`;
                                     }
                                 }
                             }
