@@ -302,32 +302,34 @@
                             {
                                 label: 'Confidence Upper',
                                 data: confidenceUpper,
-                                backgroundColor: 'rgba(76, 76, 76, 0.4)',
-                                borderColor: 'rgba(76, 76, 76, 0.4)',
-                                borderWidth: 0,
+                                backgroundColor: 'rgba(138, 138, 138, 0.6)',
+                                borderColor: 'rgba(138, 138, 138, 0.8)',
+                                borderWidth: 1,
                                 pointRadius: 0,
                                 fill: false,
-                                tension: 0.3
+                                tension: 0.3,
+                                borderDash: [2, 3]
                             },
                             {
                                 label: 'Confidence Lower',
                                 data: confidenceLower,
-                                backgroundColor: 'rgba(20, 20, 20, 0.9)',
-                                borderColor: 'rgba(76, 76, 76, 0.4)',
-                                borderWidth: 0,
+                                backgroundColor: 'rgba(138, 138, 138, 0.25)',
+                                borderColor: 'rgba(138, 138, 138, 0.8)',
+                                borderWidth: 1,
                                 pointRadius: 0,
                                 fill: '-1',
-                                tension: 0.3
+                                tension: 0.3,
+                                borderDash: [2, 3]
                             },
                             {
                                 label: 'Baseline',
                                 data: baseline,
-                                borderColor: 'rgb(240, 240, 240)',
+                                borderColor: 'rgb(255, 255, 255)',
                                 backgroundColor: 'transparent',
                                 borderWidth: 3,
-                                pointRadius: 4,
-                                pointBackgroundColor: 'rgb(240, 240, 240)',
-                                pointBorderColor: 'rgb(20, 20, 20)',
+                                pointRadius: 5,
+                                pointBackgroundColor: 'rgb(255, 255, 255)',
+                                pointBorderColor: 'rgb(33, 33, 33)',
                                 pointBorderWidth: 2,
                                 fill: false,
                                 tension: 0.3
@@ -335,39 +337,39 @@
                             {
                                 label: '2025-08-03',
                                 data: sailing1,
-                                borderColor: 'rgb(66, 176, 213)', // Maersk light blue
+                                borderColor: 'rgb(66, 176, 213)', // Maersk light blue - brighter
                                 backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                pointRadius: 3,
+                                borderWidth: 3,
+                                pointRadius: 4,
                                 pointBackgroundColor: 'rgb(66, 176, 213)',
-                                pointBorderColor: 'rgb(20, 20, 20)',
-                                pointBorderWidth: 1,
+                                pointBorderColor: 'rgb(33, 33, 33)',
+                                pointBorderWidth: 2,
                                 fill: false,
                                 tension: 0.3
                             },
                             {
                                 label: '2025-08-10',
                                 data: sailing2,
-                                borderColor: 'rgb(255, 165, 0)', // Maersk orange/warning
+                                borderColor: 'rgb(255, 180, 50)', // Brighter orange for better visibility
                                 backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                pointRadius: 3,
-                                pointBackgroundColor: 'rgb(255, 165, 0)',
-                                pointBorderColor: 'rgb(20, 20, 20)',
-                                pointBorderWidth: 1,
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: 'rgb(255, 180, 50)',
+                                pointBorderColor: 'rgb(33, 33, 33)',
+                                pointBorderWidth: 2,
                                 fill: false,
                                 tension: 0.3
                             },
                             {
                                 label: '2025-08-17',
                                 data: sailing3,
-                                borderColor: 'rgb(0, 170, 136)', // Maersk success green
+                                borderColor: 'rgb(0, 200, 150)', // Brighter green for better visibility
                                 backgroundColor: 'transparent',
-                                borderWidth: 2,
-                                pointRadius: 3,
-                                pointBackgroundColor: 'rgb(0, 170, 136)',
-                                pointBorderColor: 'rgb(20, 20, 20)',
-                                pointBorderWidth: 1,
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: 'rgb(0, 200, 150)',
+                                pointBorderColor: 'rgb(33, 33, 33)',
+                                pointBorderWidth: 2,
                                 fill: false,
                                 tension: 0.3
                             }
@@ -389,7 +391,7 @@
                                 },
                                 reverse: false,
                                 grid: {
-                                    color: 'rgba(76, 76, 76, 0.5)',
+                                    color: 'rgba(138, 138, 138, 0.3)',
                                     lineWidth: 1
                                 },
                                 ticks: {
@@ -410,7 +412,7 @@
                                 beginAtZero: true,
                                 max: 35000,
                                 grid: {
-                                    color: 'rgba(76, 76, 76, 0.5)',
+                                    color: 'rgba(138, 138, 138, 0.3)',
                                     lineWidth: 1
                                 },
                                 ticks: {
@@ -437,7 +439,25 @@
                                     usePointStyle: true,
                                     pointStyle: 'line',
                                     filter: function(legendItem) {
+                                        // Hide confidence band labels from legend
                                         return !['Confidence Upper', 'Confidence Lower'].includes(legendItem.text);
+                                    },
+                                    generateLabels: function(chart) {
+                                        const original = Chart.defaults.plugins.legend.labels.generateLabels;
+                                        const labels = original.call(this, chart);
+                                        
+                                        // Clean up sailing date labels and add status indicators
+                                        labels.forEach(label => {
+                                            if (label.text === '2025-08-03') {
+                                                label.text = '2025-08-03 (Tracking Baseline)';
+                                            } else if (label.text === '2025-08-10') {
+                                                label.text = '2025-08-10 (Below Baseline)';
+                                            } else if (label.text === '2025-08-17') {
+                                                label.text = '2025-08-17 (Above Baseline)';
+                                            }
+                                        });
+                                        
+                                        return labels;
                                     }
                                 }
                             },
