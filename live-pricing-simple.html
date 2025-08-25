@@ -225,6 +225,28 @@
                        style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 60px; font-size: 14px; margin-left: 8px; display: none;"
                        onchange="updatePricingSimulation()">
             </div>
+        </div>
+        
+        <!-- Guardrails Configuration -->
+        <div style="display: flex; gap: 1rem; margin: 1rem 0; align-items: center; justify-content: center; flex-wrap: wrap; background: var(--mds-bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--mds-border-default);">
+            <h4 style="width: 100%; text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-primary);">⚖️ Booking Guardrails</h4>
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
+                <label for="upperThreshold" style="font-weight: 600; margin-right: 8px;">📈 Upper Threshold:</label>
+                <input type="number" id="upperThreshold" value="24000" min="20000" max="30000" step="500" 
+                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 80px; font-size: 14px;"
+                       onchange="updateGuardrails()">
+                <span style="margin-left: 4px; color: var(--mds-text-secondary); font-size: 12px;">FFE</span>
+            </div>
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-error);">
+                <label for="lowerThreshold" style="font-weight: 600; margin-right: 8px;">📉 Lower Threshold:</label>
+                <input type="number" id="lowerThreshold" value="22000" min="15000" max="25000" step="500" 
+                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 80px; font-size: 14px;"
+                       onchange="updateGuardrails()">
+                <span style="margin-left: 4px; color: var(--mds-text-secondary); font-size: 12px;">FFE</span>
+            </div>
+            <div style="background: var(--mds-bg-tertiary); padding: 6px 12px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
+                <span id="guardrailStatus" style="font-size: 13px; font-weight: 600;">✅ Within Guardrails</span>
+            </div>
             <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500;">
                 📊 View Historical Analysis
             </a>
@@ -291,6 +313,12 @@
                 // FFE Target line (user-adjustable)
                 const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
                 const targetLine = new Array(labels.length).fill(targetValue);
+                
+                // Guardrail threshold lines (user-adjustable)
+                const upperThreshold = parseInt(document.getElementById('upperThreshold').value) || 24000;
+                const lowerThreshold = parseInt(document.getElementById('lowerThreshold').value) || 22000;
+                const upperThresholdLine = new Array(labels.length).fill(upperThreshold);
+                const lowerThresholdLine = new Array(labels.length).fill(lowerThreshold);
                 
                 // ORIGINAL cone (baseline projections)
                 const originalOptimistic = feb22_optimistic.slice();
@@ -451,6 +479,32 @@
                                 tension: 0,
                                 borderDash: [15, 10],
                                 spanGaps: false
+                            },
+                            // UPPER THRESHOLD GUARDRAIL
+                            {
+                                label: 'Upper Threshold',
+                                data: upperThresholdLine,
+                                borderColor: 'rgba(229, 62, 62, 0.8)', // Warning red
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                fill: false,
+                                tension: 0,
+                                borderDash: [8, 4],
+                                spanGaps: false
+                            },
+                            // LOWER THRESHOLD GUARDRAIL
+                            {
+                                label: 'Lower Threshold',
+                                data: lowerThresholdLine,
+                                borderColor: 'rgba(255, 165, 0, 0.8)', // Warning orange
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                fill: false,
+                                tension: 0,
+                                borderDash: [8, 4],
+                                spanGaps: false
                             }
                         ]
                     },
@@ -518,10 +572,11 @@
                                     usePointStyle: true,
                                     pointStyle: 'line',
                                     filter: function(legendItem) {
-                                        // Hide historical context and original cone details from legend
+                                        // Hide historical context, original cone details, and threshold lines from legend
                                         const hiddenLabels = [
                                             'Historical Upper', 'Historical Lower', 'Historical Baseline',
-                                            'Original Optimistic', 'Original Most Likely', 'Original Pessimistic'
+                                            'Original Optimistic', 'Original Most Likely', 'Original Pessimistic',
+                                            'Upper Threshold', 'Lower Threshold'
                                         ];
                                         return !hiddenLabels.includes(legendItem.text);
                                     }
@@ -605,6 +660,9 @@
                 // Initialize target insight
                 updateTargetInsight(targetValue);
                 
+                // Initialize guardrail status
+                checkGuardrailStatus();
+                
             } catch (error) {
                 console.error('Error creating chart:', error);
                 // Show error message on canvas
@@ -631,6 +689,97 @@
             
             // Update the insight card with new target analysis
             updateTargetInsight(targetValue);
+        }
+
+        // Function to update guardrails when user changes thresholds
+        function updateGuardrails() {
+            if (!window.chartInstance) return;
+            
+            const upperThreshold = parseInt(document.getElementById('upperThreshold').value) || 24000;
+            const lowerThreshold = parseInt(document.getElementById('lowerThreshold').value) || 22000;
+            
+            const upperThresholdLine = new Array(13).fill(upperThreshold); // 13 data points
+            const lowerThresholdLine = new Array(13).fill(lowerThreshold);
+            
+            // Update threshold datasets
+            const upperDataset = window.chartInstance.data.datasets.find(d => d.label === 'Upper Threshold');
+            const lowerDataset = window.chartInstance.data.datasets.find(d => d.label === 'Lower Threshold');
+            
+            if (upperDataset && lowerDataset) {
+                upperDataset.data = upperThresholdLine;
+                lowerDataset.data = lowerThresholdLine;
+                window.chartInstance.update('none');
+            }
+            
+            // Check current forecast against guardrails and update status
+            checkGuardrailStatus();
+        }
+
+        function checkGuardrailStatus() {
+            const upperThreshold = parseInt(document.getElementById('upperThreshold').value) || 24000;
+            const lowerThreshold = parseInt(document.getElementById('lowerThreshold').value) || 22000;
+            
+            // Get current most likely forecast final value
+            const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
+            const currentForecast = mostLikelyDataset ? mostLikelyDataset.data[12] : 23200; // Final point (index 12)
+            
+            const statusElement = document.getElementById('guardrailStatus');
+            
+            if (currentForecast > upperThreshold) {
+                const deviation = ((currentForecast - upperThreshold) / upperThreshold * 100).toFixed(1);
+                statusElement.innerHTML = `🔴 Above Upper (+${deviation}%)`;
+                statusElement.style.color = 'var(--maersk-error)';
+                generateGuardrailRecommendation('above', deviation, currentForecast);
+            } else if (currentForecast < lowerThreshold) {
+                const deviation = ((lowerThreshold - currentForecast) / lowerThreshold * 100).toFixed(1);
+                statusElement.innerHTML = `🟠 Below Lower (-${deviation}%)`;
+                statusElement.style.color = 'var(--maersk-warning)';
+                generateGuardrailRecommendation('below', deviation, currentForecast);
+            } else {
+                statusElement.innerHTML = '✅ Within Guardrails';
+                statusElement.style.color = 'var(--maersk-success)';
+            }
+        }
+
+        function generateGuardrailRecommendation(position, deviation, currentForecast) {
+            const daysToDeparture = 11; // Current position (11 days out)
+            const urgencyMultiplier = Math.max(1, (21 - daysToDeparture) / 10); // Scales urgency as departure approaches
+            
+            let baseRecommendation, direction;
+            
+            if (position === 'above') {
+                // Above upper threshold - suggest price increase to slow bookings
+                baseRecommendation = Math.min(15, parseFloat(deviation) * 0.5 * urgencyMultiplier);
+                direction = '+';
+            } else {
+                // Below lower threshold - suggest price decrease to stimulate bookings
+                baseRecommendation = Math.min(20, parseFloat(deviation) * 0.7 * urgencyMultiplier);
+                direction = '-';
+            }
+            
+            // Calculate expected volume impact using current sensitivity
+            const sensitivitySelect = document.getElementById('sensitivity');
+            const customSensitivityInput = document.getElementById('customSensitivity');
+            let sensitivity;
+            if (sensitivitySelect.value === 'custom') {
+                sensitivity = parseFloat(customSensitivityInput.value) || -1.5;
+            } else {
+                sensitivity = parseFloat(sensitivitySelect.value) || -1.5;
+            }
+            
+            const priceChangeDecimal = (direction === '+' ? baseRecommendation : -baseRecommendation) / 100;
+            const volumeImpact = ((Math.pow(1 + priceChangeDecimal, sensitivity) - 1) * 100).toFixed(1);
+            
+            console.log(`🚨 GUARDRAIL ALERT: ${position} threshold by ${deviation}%. Urgency: ${urgencyMultiplier.toFixed(1)}x. Recommend: ${direction}${baseRecommendation.toFixed(1)}% price change → ${volumeImpact}% volume impact`);
+            
+            // Could trigger automatic actions or alerts here
+            return {
+                position,
+                deviation: parseFloat(deviation),
+                recommendedPriceChange: `${direction}${baseRecommendation.toFixed(1)}%`,
+                expectedVolumeImpact: `${volumeImpact}%`,
+                urgency: urgencyMultiplier
+            };
         }
 
         // Function to update pricing simulation when user changes price
@@ -697,6 +846,9 @@
                 const newPessimistic = simulatedPessimisticDataset.data[12];
                 
                 updateSimulationInsight(priceChange * 100, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier, sensitivity);
+                
+                // Check guardrails after simulation update
+                checkGuardrailStatus();
             }
         }
 
