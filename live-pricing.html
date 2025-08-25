@@ -204,42 +204,45 @@
 </head>
 <body>
     <header class="header">
-        <h1>🚢 Historical Booking Performance</h1>
-        <p>Completed FFE Booking Curves & Performance Analysis</p>
+        <h1>🚢 Live Pricing Dashboard</h1>
+        <p>Real-Time FFE Booking Progress & Pricing Decisions</p>
     </header>
 
     <div class="container">
         <div class="demo-note">
-            <h3>📊 Historical Analysis Dashboard</h3>
-            <p>Analyze completed booking curves to understand past performance vs. baseline expectations. Use these insights to calibrate future pricing strategies and learn from historical booking patterns.</p>
+            <h3>⚡ Live Booking Monitor</h3>
+            <p>Monitor current booking progress vs. baseline expectations to make immediate pricing decisions. Track ongoing sailings where pricing actions can still influence final outcomes.</p>
         </div>
         
-        <div style="text-align: center; margin: 1.5rem 0;">
-            <a href="live-pricing.html" style="display: inline-block; background: var(--maersk-blue); color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 143, 211, 0.3); transition: all 0.3s ease;">
-                📈 Switch to Live Pricing Dashboard
+        <div style="display: flex; gap: 1rem; margin: 1.5rem 0; align-items: center; justify-content: center; flex-wrap: wrap;">
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
+                <strong>📅 Today:</strong> January 15, 2025
+            </div>
+            <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500;">
+                📊 View Historical Analysis
             </a>
         </div>
 
         <div class="chart-container">
-            <h2 class="chart-title">FFE Booking Curve - C1E Trade Lane</h2>
-            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Gray area shows 10-90% confidence band</p>
+            <h2 class="chart-title">Live FFE Booking Progress - C1E Trade Lane</h2>
+            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Today: 11 days to departure • Dotted lines show projections</p>
             <div style="position: relative; height: 400px; width: 100%;">
                 <canvas id="bookingChart"></canvas>
             </div>
         </div>
 
         <div class="insights">
+            <div class="insight-card warning">
+                <h3>🚨 Feb 22 Departure (11 days out) - URGENT</h3>
+                <p><strong>Current Status:</strong> 7,000 FFE vs 8,000 baseline (-12.5%). <strong>Action:</strong> Immediate rate reduction (-$75/FFE) or promotional push required. Risk missing capacity target.</p>
+            </div>
             <div class="insight-card success">
-                <h3>📈 2025-08-17 Sailing (Completed)</h3>
-                <p><strong>Final Result:</strong> Finished 6% above baseline (26,000 vs 24,500 FFE). Strong early momentum sustained throughout booking period. This pattern suggests premium pricing was justified.</p>
+                <h3>📈 Mar 1 Departure (8 days out)</h3>
+                <p><strong>Current Status:</strong> 12,800 FFE vs 11,500 baseline (+11.3%). <strong>Action:</strong> Consider rate increase (+$50/FFE) to capitalize on strong demand. On track to exceed capacity.</p>
             </div>
             <div class="insight-card neutral">
-                <h3>✅ 2025-08-03 Sailing (Completed)</h3>
-                <p><strong>Final Result:</strong> Tracked baseline closely throughout, finishing at 24,000 FFE (98% of baseline). Demonstrates accurate forecasting and appropriate pricing strategy.</p>
-            </div>
-            <div class="insight-card warning">
-                <h3>📉 2025-08-10 Sailing (Completed)</h3>
-                <p><strong>Final Result:</strong> Despite slow start, recovered to 23,800 FFE (97% of baseline). Late booking surge compensated for early weakness. Consider earlier promotional action next time.</p>
+                <h3>⏳ Feb 15 Departure (20 days out)</h3>
+                <p><strong>Current Status:</strong> 2,500 FFE vs 2,600 baseline (-3.8%). <strong>Action:</strong> Monitor closely. Within normal variance, no immediate action required.</p>
             </div>
         </div>
 
@@ -280,25 +283,29 @@
                     return;
                 }
                 
-                // More data points for smoother curves (matches original density)
+                // Live booking data (today = 11 days to departure)
                 const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
+                const todayIndex = 8; // Today is at "11 days" (index 8)
                 
-                // Baseline curve with more realistic booking accumulation pattern
+                // Baseline curve (complete for reference)
                 const baseline = [250, 500, 800, 1200, 1800, 2600, 3800, 5500, 8000, 11500, 16000, 21000, 24500];
                 
-                // Confidence bands (10-90% range around baseline)
+                // Confidence bands (complete for reference)
                 const confidenceUpper = [400, 750, 1150, 1700, 2500, 3600, 5100, 7300, 10500, 15000, 20500, 26500, 30000];
                 const confidenceLower = [150, 300, 500, 750, 1100, 1600, 2400, 3500, 5200, 7500, 10500, 14500, 18000];
                 
-                // Current sailing curves with more realistic patterns
-                // Aug 3 - tracking close to baseline (blue line)
-                const sailing1 = [280, 520, 780, 1150, 1700, 2500, 3600, 5200, 7800, 11200, 15800, 20500, 24000];
+                // LIVE SAILING DATA (only up to today)
+                // Feb 15 departure - at 20 days out (early stage)
+                const sailing1_actual = [280, 520, 780, 1150, 1700, 2500, null, null, null, null, null, null, null]; // stops at 20 days
+                const sailing1_projected = [null, null, null, null, null, 2500, 3700, 5300, 7900, 11400, 16100, 20800, 24200]; // projection from 20 days
                 
-                // Aug 10 - slower start, catching up later (orange line)  
-                const sailing2 = [180, 350, 600, 950, 1400, 2100, 3100, 4600, 7000, 10500, 15200, 20000, 23800];
+                // Feb 22 departure - at 11 days out (mid-stage) - TODAY'S FOCUS
+                const sailing2_actual = [180, 350, 600, 950, 1400, 2100, 3100, 4600, 7000, null, null, null, null]; // stops at 11 days (today)
+                const sailing2_projected = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200]; // projection from today
                 
-                // Aug 17 - strong early booking, ahead of baseline (green line)
-                const sailing3 = [320, 580, 900, 1350, 2000, 2900, 4200, 6000, 8800, 12500, 17000, 22000, 26000];
+                // March 1 departure - at 8 days out (late stage)
+                const sailing3_actual = [320, 580, 900, 1350, 2000, 2900, 4200, 6000, 8800, 12800, null, null, null]; // stops at 8 days
+                const sailing3_projected = [null, null, null, null, null, null, null, null, null, 12800, 17200, 22200, 26500]; // projection from 8 days
 
                 const chart = new Chart(ctx, {
                     type: 'line',
@@ -340,44 +347,98 @@
                                 fill: false,
                                 tension: 0.3
                             },
+                            // Feb 15 Departure (20 days out) - ACTUAL
                             {
-                                label: '2025-08-03',
-                                data: sailing1,
-                                borderColor: 'rgb(66, 176, 213)', // Maersk light blue - brighter
+                                label: 'Feb 15 Departure (Actual)',
+                                data: sailing1_actual,
+                                borderColor: 'rgb(66, 176, 213)',
                                 backgroundColor: 'transparent',
-                                borderWidth: 3,
-                                pointRadius: 4,
+                                borderWidth: 4,
+                                pointRadius: 5,
                                 pointBackgroundColor: 'rgb(66, 176, 213)',
                                 pointBorderColor: 'rgb(33, 33, 33)',
                                 pointBorderWidth: 2,
                                 fill: false,
-                                tension: 0.3
+                                tension: 0.3,
+                                spanGaps: false
                             },
+                            // Feb 15 Departure - PROJECTED
                             {
-                                label: '2025-08-10',
-                                data: sailing2,
-                                borderColor: 'rgb(255, 180, 50)', // Brighter orange for better visibility
+                                label: 'Feb 15 Projection',
+                                data: sailing1_projected,
+                                borderColor: 'rgba(66, 176, 213, 0.6)',
                                 backgroundColor: 'transparent',
                                 borderWidth: 3,
-                                pointRadius: 4,
+                                pointRadius: 3,
+                                pointBackgroundColor: 'rgba(66, 176, 213, 0.6)',
+                                pointBorderColor: 'rgb(33, 33, 33)',
+                                pointBorderWidth: 1,
+                                fill: false,
+                                tension: 0.3,
+                                borderDash: [8, 4],
+                                spanGaps: false
+                            },
+                            // Feb 22 Departure (11 days out - TODAY'S FOCUS) - ACTUAL
+                            {
+                                label: 'Feb 22 Departure (Actual)',
+                                data: sailing2_actual,
+                                borderColor: 'rgb(255, 180, 50)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 4,
+                                pointRadius: 5,
                                 pointBackgroundColor: 'rgb(255, 180, 50)',
                                 pointBorderColor: 'rgb(33, 33, 33)',
                                 pointBorderWidth: 2,
                                 fill: false,
-                                tension: 0.3
+                                tension: 0.3,
+                                spanGaps: false
                             },
+                            // Feb 22 Departure - PROJECTED
                             {
-                                label: '2025-08-17',
-                                data: sailing3,
-                                borderColor: 'rgb(0, 200, 150)', // Brighter green for better visibility
+                                label: 'Feb 22 Projection',
+                                data: sailing2_projected,
+                                borderColor: 'rgba(255, 180, 50, 0.6)',
                                 backgroundColor: 'transparent',
                                 borderWidth: 3,
-                                pointRadius: 4,
+                                pointRadius: 3,
+                                pointBackgroundColor: 'rgba(255, 180, 50, 0.6)',
+                                pointBorderColor: 'rgb(33, 33, 33)',
+                                pointBorderWidth: 1,
+                                fill: false,
+                                tension: 0.3,
+                                borderDash: [8, 4],
+                                spanGaps: false
+                            },
+                            // March 1 Departure (8 days out) - ACTUAL
+                            {
+                                label: 'Mar 1 Departure (Actual)',
+                                data: sailing3_actual,
+                                borderColor: 'rgb(0, 200, 150)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 4,
+                                pointRadius: 5,
                                 pointBackgroundColor: 'rgb(0, 200, 150)',
                                 pointBorderColor: 'rgb(33, 33, 33)',
                                 pointBorderWidth: 2,
                                 fill: false,
-                                tension: 0.3
+                                tension: 0.3,
+                                spanGaps: false
+                            },
+                            // March 1 Departure - PROJECTED
+                            {
+                                label: 'Mar 1 Projection',
+                                data: sailing3_projected,
+                                borderColor: 'rgba(0, 200, 150, 0.6)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 3,
+                                pointRadius: 3,
+                                pointBackgroundColor: 'rgba(0, 200, 150, 0.6)',
+                                pointBorderColor: 'rgb(33, 33, 33)',
+                                pointBorderWidth: 1,
+                                fill: false,
+                                tension: 0.3,
+                                borderDash: [8, 4],
+                                spanGaps: false
                             }
                         ]
                     },
@@ -440,30 +501,38 @@
                                 position: 'bottom',
                                 labels: {
                                     color: 'rgb(212, 212, 212)',
-                                    font: { size: 12, weight: '500' },
-                                    padding: 15,
+                                    font: { size: 11, weight: '500' },
+                                    padding: 12,
                                     usePointStyle: true,
                                     pointStyle: 'line',
                                     filter: function(legendItem) {
                                         // Hide confidence band labels from legend
-                                        return !['Confidence Upper', 'Confidence Lower'].includes(legendItem.text);
-                                    },
-                                    generateLabels: function(chart) {
-                                        const original = Chart.defaults.plugins.legend.labels.generateLabels;
-                                        const labels = original.call(this, chart);
-                                        
-                                        // Clean up sailing date labels and add status indicators
-                                        labels.forEach(label => {
-                                            if (label.text === '2025-08-03') {
-                                                label.text = '2025-08-03 (Tracking Baseline)';
-                                            } else if (label.text === '2025-08-10') {
-                                                label.text = '2025-08-10 (Below Baseline)';
-                                            } else if (label.text === '2025-08-17') {
-                                                label.text = '2025-08-17 (Above Baseline)';
-                                            }
-                                        });
-                                        
-                                        return labels;
+                                        return !['Confidence Upper', 'Confidence Lower', 'Baseline'].includes(legendItem.text);
+                                    }
+                                }
+                            },
+                            // Add vertical "TODAY" line
+                            annotation: {
+                                annotations: {
+                                    todayLine: {
+                                        type: 'line',
+                                        xMin: todayIndex,
+                                        xMax: todayIndex,
+                                        borderColor: 'rgb(255, 255, 255)',
+                                        borderWidth: 3,
+                                        borderDash: [5, 5],
+                                        label: {
+                                            display: true,
+                                            content: 'TODAY',
+                                            position: 'start',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                            color: 'rgb(20, 20, 20)',
+                                            font: {
+                                                size: 12,
+                                                weight: 'bold'
+                                            },
+                                            padding: 4
+                                        }
                                     }
                                 }
                             },
