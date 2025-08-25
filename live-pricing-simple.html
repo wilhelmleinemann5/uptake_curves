@@ -202,6 +202,13 @@
                        style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 80px; font-size: 14px;"
                        onchange="updateTargetLine()">
             </div>
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-warning);">
+                <label for="priceChange" style="font-weight: 600; margin-right: 8px;">💰 Price Change:</label>
+                <input type="number" id="priceChange" value="0" min="-50" max="50" step="1" 
+                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 60px; font-size: 14px;"
+                       onchange="updatePricingSimulation()">
+                <span style="margin-left: 4px; color: var(--mds-text-secondary);">%</span>
+            </div>
             <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: 500;">
                 📊 View Historical Analysis
             </a>
@@ -268,6 +275,16 @@
                 // FFE Target line (user-adjustable)
                 const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
                 const targetLine = new Array(labels.length).fill(targetValue);
+                
+                // ORIGINAL cone (baseline projections)
+                const originalOptimistic = feb22_optimistic.slice();
+                const originalMostLikely = feb22_most_likely.slice();
+                const originalPessimistic = feb22_pessimistic.slice();
+                
+                // SIMULATED cone (with pricing changes) - initially same as original
+                const simulatedOptimistic = feb22_optimistic.slice();
+                const simulatedMostLikely = feb22_most_likely.slice();
+                const simulatedPessimistic = feb22_pessimistic.slice();
 
                 window.chartInstance = new Chart(ctx, {
                     type: 'line',
@@ -325,46 +342,85 @@
                                 tension: 0.3,
                                 spanGaps: false
                             },
-                            // UNCERTAINTY CONE - Optimistic
+                            // ORIGINAL CONE - Optimistic (ghosted)
                             {
-                                label: 'Optimistic',
-                                data: feb22_optimistic,
-                                borderColor: 'rgba(255, 180, 50, 0.7)',
-                                backgroundColor: 'rgba(255, 180, 50, 0.1)',
-                                borderWidth: 2,
+                                label: 'Original Optimistic',
+                                data: originalOptimistic,
+                                borderColor: 'rgba(255, 180, 50, 0.3)',
+                                backgroundColor: 'rgba(255, 180, 50, 0.05)',
+                                borderWidth: 1,
                                 pointRadius: 0,
                                 fill: false,
                                 tension: 0.3,
-                                borderDash: [4, 6],
+                                borderDash: [2, 8],
                                 spanGaps: false
                             },
-                            // UNCERTAINTY CONE - Most Likely (main projection)
+                            // ORIGINAL CONE - Most Likely (ghosted)
                             {
-                                label: 'Most Likely',
-                                data: feb22_most_likely,
-                                borderColor: 'rgb(255, 180, 50)',
+                                label: 'Original Most Likely',
+                                data: originalMostLikely,
+                                borderColor: 'rgba(255, 180, 50, 0.4)',
                                 backgroundColor: 'transparent',
-                                borderWidth: 3,
-                                pointRadius: 4,
-                                pointBackgroundColor: 'rgb(255, 180, 50)',
-                                pointBorderColor: 'rgb(33, 33, 33)',
-                                pointBorderWidth: 1,
-                                fill: false,
-                                tension: 0.3,
-                                borderDash: [12, 4],
-                                spanGaps: false
-                            },
-                            // UNCERTAINTY CONE - Pessimistic
-                            {
-                                label: 'Pessimistic',
-                                data: feb22_pessimistic,
-                                borderColor: 'rgba(255, 180, 50, 0.7)',
-                                backgroundColor: 'rgba(255, 180, 50, 0.15)',
                                 borderWidth: 2,
                                 pointRadius: 0,
-                                fill: '-2', // Fill to optimistic line
+                                fill: false,
                                 tension: 0.3,
-                                borderDash: [4, 6],
+                                borderDash: [6, 8],
+                                spanGaps: false
+                            },
+                            // ORIGINAL CONE - Pessimistic (ghosted)
+                            {
+                                label: 'Original Pessimistic',
+                                data: originalPessimistic,
+                                borderColor: 'rgba(255, 180, 50, 0.3)',
+                                backgroundColor: 'rgba(255, 180, 50, 0.05)',
+                                borderWidth: 1,
+                                pointRadius: 0,
+                                fill: '-2', // Fill to original optimistic
+                                tension: 0.3,
+                                borderDash: [2, 8],
+                                spanGaps: false
+                            },
+                            // SIMULATED CONE - Optimistic
+                            {
+                                label: 'Simulated Optimistic',
+                                data: simulatedOptimistic,
+                                borderColor: 'rgba(66, 176, 213, 0.8)',
+                                backgroundColor: 'rgba(66, 176, 213, 0.1)',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                fill: false,
+                                tension: 0.3,
+                                borderDash: [4, 4],
+                                spanGaps: false
+                            },
+                            // SIMULATED CONE - Most Likely (main projection)
+                            {
+                                label: 'Simulated Most Likely',
+                                data: simulatedMostLikely,
+                                borderColor: 'rgb(66, 176, 213)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 4,
+                                pointRadius: 4,
+                                pointBackgroundColor: 'rgb(66, 176, 213)',
+                                pointBorderColor: 'rgb(33, 33, 33)',
+                                pointBorderWidth: 2,
+                                fill: false,
+                                tension: 0.3,
+                                borderDash: [8, 4],
+                                spanGaps: false
+                            },
+                            // SIMULATED CONE - Pessimistic
+                            {
+                                label: 'Simulated Pessimistic',
+                                data: simulatedPessimistic,
+                                borderColor: 'rgba(66, 176, 213, 0.8)',
+                                backgroundColor: 'rgba(66, 176, 213, 0.15)',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                fill: '-2', // Fill to simulated optimistic
+                                tension: 0.3,
+                                borderDash: [4, 4],
                                 spanGaps: false
                             },
                             // FFE TARGET LINE
@@ -446,8 +502,11 @@
                                     usePointStyle: true,
                                     pointStyle: 'line',
                                     filter: function(legendItem) {
-                                        // Hide historical context from legend - focus on Feb 22
-                                        const hiddenLabels = ['Historical Upper', 'Historical Lower', 'Historical Baseline'];
+                                        // Hide historical context and original cone details from legend
+                                        const hiddenLabels = [
+                                            'Historical Upper', 'Historical Lower', 'Historical Baseline',
+                                            'Original Optimistic', 'Original Most Likely', 'Original Pessimistic'
+                                        ];
                                         return !hiddenLabels.includes(legendItem.text);
                                     }
                                 }
@@ -532,6 +591,83 @@
             
             // Update the insight card with new target analysis
             updateTargetInsight(targetValue);
+        }
+
+        // Function to update pricing simulation when user changes price
+        function updatePricingSimulation() {
+            if (!window.chartInstance) return;
+            
+            const priceChange = parseFloat(document.getElementById('priceChange').value) / 100 || 0; // Convert % to decimal
+            const elasticity = -1.5; // Default elasticity
+            
+            // Calculate volume multiplier using exponential elasticity formula
+            // New Volume = Original Volume × (1 + Price Change)^(elasticity)
+            const volumeMultiplier = Math.pow(1 + priceChange, elasticity);
+            
+            console.log(`Price change: ${(priceChange * 100).toFixed(1)}%, Volume multiplier: ${volumeMultiplier.toFixed(3)}`);
+            
+            // Get original projection values (from today forward)
+            const originalOptimistic = [null, null, null, null, null, null, null, null, 7000, 11000, 16500, 22000, 26500];
+            const originalMostLikely = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200];
+            const originalPessimistic = [null, null, null, null, null, null, null, null, 7000, 9200, 12800, 16500, 19000];
+            
+            // Apply elasticity only to future points (from today index 8 onwards)
+            const todayIndex = 8;
+            
+            function applyElasticity(originalData) {
+                return originalData.map((value, index) => {
+                    if (value === null || index <= todayIndex) {
+                        return value; // Keep original value for historical data and today
+                    }
+                    // Apply elasticity to future projections
+                    const todayValue = originalData[todayIndex]; // Current FFE at today
+                    const incrementFromToday = value - todayValue;
+                    const newIncrement = incrementFromToday * volumeMultiplier;
+                    return todayValue + newIncrement;
+                });
+            }
+            
+            // Update simulated datasets
+            const simulatedOptimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Optimistic');
+            const simulatedMostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
+            const simulatedPessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
+            
+            if (simulatedOptimisticDataset && simulatedMostLikelyDataset && simulatedPessimisticDataset) {
+                simulatedOptimisticDataset.data = applyElasticity(originalOptimistic);
+                simulatedMostLikelyDataset.data = applyElasticity(originalMostLikely);
+                simulatedPessimisticDataset.data = applyElasticity(originalPessimistic);
+                
+                window.chartInstance.update('none');
+                
+                // Update insights with new simulated values
+                const newMostLikely = simulatedMostLikelyDataset.data[12]; // Final value
+                const newOptimistic = simulatedOptimisticDataset.data[12];
+                const newPessimistic = simulatedPessimisticDataset.data[12];
+                
+                updateSimulationInsight(priceChange * 100, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier);
+            }
+        }
+
+        function updateSimulationInsight(priceChangePercent, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier) {
+            const originalMostLikely = 23200;
+            const volumeChangePercent = ((volumeMultiplier - 1) * 100).toFixed(1);
+            const volumeDelta = Math.round(newMostLikely - originalMostLikely);
+            
+            let priceColor = priceChangePercent < 0 ? 'var(--maersk-success)' : 'var(--maersk-warning)';
+            let volumeColor = volumeDelta > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)';
+            
+            const insightCard = document.querySelector('.insight-card');
+            if (insightCard) {
+                insightCard.className = 'insight-card neutral';
+                insightCard.innerHTML = `
+                    <h3>💰 Pricing Simulation Active</h3>
+                    <p><strong>Price Change:</strong> <span style="color: ${priceColor}">${priceChangePercent.toFixed(1)}%</span> 
+                    → <strong>Volume Response:</strong> <span style="color: ${volumeColor}">${volumeChangePercent}%</span> 
+                    (${volumeDelta > 0 ? '+' : ''}${volumeDelta.toLocaleString()} FFE)</p>
+                    <p><strong>New Forecast Range:</strong> ${Math.round(newPessimistic).toLocaleString()} - ${Math.round(newOptimistic).toLocaleString()} FFE 
+                    (most likely: ${Math.round(newMostLikely).toLocaleString()})</p>
+                `;
+            }
         }
 
         function updateTargetInsight(target) {
