@@ -1,0 +1,67 @@
+{
+  "name": "mds-dev-utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mds-dev-utils/lib",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "copy:assets",
+        "copy:types"
+      ]
+    },
+    "copy:assets": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "recursive-copy -w packages/mds-dev-utils/lib dist/packages/mds-dev-utils/lib  -f '**/*.json'"
+        ]
+      },
+      "dependsOn": [
+        "build:compile-js"
+      ]
+    },
+    "copy:types": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "recursive-copy -w packages/mds-dev-utils/lib dist/packages/mds-dev-utils/lib  -f '**/*.d.ts'"
+        ]
+      },
+      "dependsOn": [
+        "build:compile-js"
+      ]
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": true,
+        "bundle": false,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-dev-utils",
+        "outdir": "dist/packages/mds-dev-utils",
+        "main": "packages/mds-dev-utils/lib/index.ts",
+        "tsConfig": "packages/mds-dev-utils/tsconfig.lib.json",
+        "assets": [
+          "packages/mds-dev-utils/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/no-bundle.config.cjs"
+      }
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mds-dev-utils",
+      "options": {
+        "outputPath": "dist/packages/mds-dev-utils"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  },
+  "tags": []
+}

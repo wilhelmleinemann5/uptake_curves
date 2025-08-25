@@ -1,0 +1,124 @@
+import { Story, Canvas, Meta } from '@storybook/addon-docs';
+import {
+  defaultPreview,
+  backgroundPreview,
+  centerAlignPreview,
+  rightAlignPreview,
+} from './code-examples';
+
+# mc-page-hero
+
+<Meta title="Legacy/Page Hero" />
+
+<Canvas withSource="none">
+  <Story name="Default" parameters={{ preview: defaultPreview, slots: {disabled: true}, cssParts: {disabled: true}, cssVariables: { theme: 'Maersk' }, slots: {disabled: true}, cssParts: {disabled: true} }}>
+    {() => `
+      <div id="headerDefault" class="p-page__hero">
+        <div class="p-page__hero__wrapper">
+          <div class="p-page__hero__content">
+            <div class="p-page__hero__table">
+              <div class="p-page__hero__cell">
+                <div class="p-page__hero__col--1">
+                  <div class="p-page__hero__copy">
+                    <div class="heading ">
+                      <h1 class="mds-font--display-4" id="heading">
+                        Lorem ipsum
+                      </h1>
+                    </div>
+                    <div class="mds-rich-text">
+                      <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Ducimus tempora, velit molestias suscipit.
+                      </p>
+                    </div>
+                    <div class="p-page__hero__buttons">
+                      <div class="button-group">
+                        <mc-button trailingicon="arrow-down-right">Go</mc-button>
+                        <mc-button variant="secondary">No thanks</mc-button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`}
+  </Story>
+  <Story name="Center Aligned" parameters={{ preview: centerAlignPreview, slots: {disabled: true}, cssParts: {disabled: true}, cssVariables: { theme: 'Maersk' } }}>
+    {() => `
+      <div id="" class="p-page__hero p-page__hero--centered">
+        <div class="p-page__hero__wrapper">
+          <div class="p-page__hero__content">
+            <div class="p-page__hero__table">
+              <div class="p-page__hero__cell">
+                <div class="p-page__hero__col--1">
+                  <div class="p-page__hero__copy">
+                    <div class="heading ">
+                      <h1 class="mds-font--display-4">
+                        Center aligned
+                      </h1>
+                    </div>
+                    <div class="mds-rich-text">
+                      <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Ducimus tempora, velit molestias suscipit. Lorem ipsum dolor
+                        sit amet consectetur adipisicing elit. Ducimus tempora, velit
+                        molestias suscipit. Lorem ipsum dolor sit amet consectetur
+                        adipisicing elit. Ducimus tempora, velit molestias suscipit.
+                      </p>
+                    </div>
+                    <div class="p-page__hero__buttons">
+                      <div class="button-group">
+                        <mc-button>Action 1</mc-button>
+                        <mc-button variant="secondary">Action 2</mc-button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      `}
+  </Story>
+  <Story name="Right Aligned" parameters={{ preview: rightAlignPreview, slots: {disabled: true}, cssParts: {disabled: true}, cssVariables: { theme: 'Maersk' } }}>
+    {() => `
+      <div id="" class="p-page__hero p-page__hero--right">
+        <div class="p-page__hero__wrapper">
+          <div class="p-page__hero__content">
+            <div class="p-page__hero__table">
+              <div class="p-page__hero__cell">
+                <div class="p-page__hero__col--1">
+                  <div class="p-page__hero__copy">
+                    <div class="heading ">
+                      <h1 class="mds-font--display-4">
+                        Right aligned
+                      </h1>
+                    </div>
+                    <div class="mds-rich-text">
+                      <p>
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                        Ducimus tempora, velit molestias suscipit. Lorem ipsum dolor
+                        sit amet consectetur adipisicing elit. Ducimus tempora, velit
+                        molestias suscipit. Lorem ipsum dolor sit amet consectetur
+                        adipisicing elit. Ducimus tempora, velit molestias suscipit.
+                      </p>
+                    </div>
+                    <div class="p-page__hero__buttons">
+                      <div class="button-group">
+                          <mc-button>Action 1</mc-button>
+                          <mc-button variant="secondary">Action 2</mc-button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      `}
+  </Story>
+</Canvas>

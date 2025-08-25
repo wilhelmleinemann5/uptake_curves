@@ -1,0 +1,143 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import './mc-badge.mixins.scss';
+
+:host {
+  line-height: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+.mc-badge {
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  min-width: fit-content;
+  pointer-events: none;
+  z-index: 1;
+
+  &.pinned {
+    position: absolute;
+    right: 0;
+    box-shadow: 0 0 0 1px var(--mds_brand_appearance_neutral_inverse_border-color);
+
+    // position & offset for text or number variant
+    &.default {
+      &.top {
+        top: 0;
+
+        &.distance_large {
+          translate: 50% -50%;
+        }
+
+        &.distance_medium {
+          translate: 32% -32%;
+        }
+
+        &.distance_small {
+          translate: 0 0;
+        }
+      }
+
+      &.bottom {
+        bottom: 0;
+
+        &.distance_large {
+          translate: 50% 50%;
+        }
+
+        &.distance_medium {
+          translate: 32% 32%;
+        }
+
+        &.distance_small {
+          translate: 0 0;
+        }
+      }
+    }
+    // position & offset for dot variant
+    &.dot {
+      &.top {
+        top: 0;
+
+        &.distance_large {
+          translate: 25% -25%;
+        }
+
+        &.distance_medium {
+          translate: 0 0%;
+        }
+
+        &.distance_small {
+          translate: -60% 60%;
+        }
+      }
+
+      &.bottom {
+        bottom: 0;
+
+        &.distance_large {
+          translate: 25% 25%;
+        }
+
+        &.distance_medium {
+          translate: 0 0%;
+        }
+
+        &.distance_small {
+          translate: -60% -60%;
+        }
+      }
+    }
+  }
+
+  &.inline {
+    position: relative;
+    margin-left: 8px;
+
+    &.default {
+      &.distance_small {
+        margin-left: 0;
+      }
+    }
+
+    &.dot {
+      &.distance_small {
+        margin-left: 0;
+      }
+    }
+  }
+
+  // appearance
+  &.info {
+    @include apply-tag-appearance('info_default');
+  }
+
+  &.success {
+    @include apply-tag-appearance('success_default');
+  }
+
+  &.warning {
+    @include apply-tag-appearance('warning_default');
+  }
+
+  &.error {
+    @include apply-tag-appearance('error_default');
+  }
+
+  /* small size */
+  &.small {
+    @include apply-mc-badge-fit('small');
+  }
+
+  /* medium size */
+  &.medium {
+    @include apply-mc-badge-fit('medium');
+  }
+
+  /* large size */
+  &.large {
+    @include apply-mc-badge-fit('large');
+  }
+}

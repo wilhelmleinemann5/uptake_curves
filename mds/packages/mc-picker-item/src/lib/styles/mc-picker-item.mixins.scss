@@ -1,0 +1,33 @@
+@mixin apply-mc-picker-item-fit($fit) {
+  .mc-list-item {
+    &::part(button) {
+      height: var(--mds_core_picker-item_#{$fit}_size);
+      min-width: var(--mds_core_picker-item_#{$fit}_size);
+      width: 100%;
+    }
+
+    &::part(text-and-icon) {
+      @if $fit == 'small' {
+        @include mds-apply-font('text', 'x-small', 'normal');
+      } @else if ($fit == 'medium') {
+        @include mds-apply-font('text', 'small', 'normal');
+      } @else if ($fit == 'large') {
+        @include mds-apply-font('text', 'medium', 'normal');
+      }
+    }
+  }
+
+  &.fixed-width {
+    .mc-list-item {
+      &::part(button) {
+        width: var(--mds_core_picker-item_#{$fit}_size);
+      }
+    }
+  }
+}
+
+@mixin neutralise-item() {
+  background-color: transparent;
+  box-shadow: none;
+  color: var(--mds_core_picker-item_focus_text-color);
+}

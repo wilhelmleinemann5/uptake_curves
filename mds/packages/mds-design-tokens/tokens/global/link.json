@@ -1,0 +1,26 @@
+{
+  "global": {
+    "link": {
+      "inline": {
+        "text-decoration": {
+          "value": "underline"
+        },
+        "hover": {
+          "text-decoration": {
+            "value": "none"
+          }
+        }
+      },
+      "stand-alone": {
+        "text-decoration": {
+          "value": "none"
+        },
+        "hover": {
+          "text-decoration": {
+            "value": "underline"
+          }
+        }
+      }
+    }
+  }
+}

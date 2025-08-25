@@ -1,0 +1,39 @@
+@mixin apply-mc-badge-fit($fit) {
+  @if $fit == medium {
+    padding: 2px 6px;
+    min-width: 20px;
+    height: 20px;
+
+    &.dot {
+      width: 10px;
+      min-width: 10px;
+      height: 10px;
+      padding: 0;
+    }
+
+    @include mds-apply-font('text', 'x-small', 'medium');
+  } @else {
+    padding: 0 4px;
+    min-width: 16px;
+    height: 16px;
+
+    &.dot {
+      width: 8px;
+      min-width: 8px;
+      height: 8px;
+      padding: 0;
+    }
+
+    @include mds-apply-font('text', 'x-small', 'medium');
+  }
+}
+
+@mixin apply-tag-appearance($appearance) {
+  background-color: var(--mds_brand_appearance_#{$appearance}_background-color);
+  color: var(--mds_brand_appearance_#{$appearance}_on-background-color);
+
+  mc-button::part(icon),
+  mc-icon::part(icon) {
+    fill: var(--mds_brand_appearance_#{$appearance}_on-background-color);
+  }
+}

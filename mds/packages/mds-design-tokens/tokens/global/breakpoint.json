@@ -1,0 +1,43 @@
+{
+    "global": {
+        "breakpoint": {
+            "xs": {
+                "min-width": {
+                    "value": 0
+                },
+                "max-width": {
+                    "value": 640
+                }
+            },
+            "sm": {
+                "min-width": {
+                    "value": 641
+                },
+                "max-width": {
+                    "value": 1024
+                }
+            },
+            "md": {
+                "min-width": {
+                    "value": 1025
+                },
+                "max-width": {
+                    "value": 1440
+                }
+            },
+            "lg": {
+                "min-width": {
+                    "value": 1441
+                },
+                "max-width": {
+                    "value": 1920
+                }
+            },
+            "xl": {
+                "min-width": {
+                    "value": 1921
+                }
+            }
+        }
+    }
+}

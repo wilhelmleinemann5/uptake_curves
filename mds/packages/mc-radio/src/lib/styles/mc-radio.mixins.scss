@@ -1,0 +1,16 @@
+@mixin apply-radio-fit($fit) {
+  gap: var(--mds_core_radio_#{$fit}_gap);
+  min-height: var(--mds_core_radio_#{$fit}_label_line-height);
+
+  .checkmark {
+    height: var(--mds_core_radio_#{$fit}_checkmark_height);
+    width: var(--mds_core_radio_#{$fit}_checkmark_width);
+    min-width: var(--mds_core_radio_#{$fit}_checkmark_width);
+    margin-top: var(--mds_core_radio_#{$fit}_checkmark_margin);
+
+    .bullet {
+      height: var(--mds_core_radio_#{$fit}_bullet_height);
+      width: var(--mds_core_radio_#{$fit}_bullet_width);
+    }
+  }
+}

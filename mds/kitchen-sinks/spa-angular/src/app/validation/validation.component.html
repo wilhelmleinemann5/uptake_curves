@@ -1,0 +1,37 @@
+<div class="mds-grid mds-grid-cols-1">
+  <form [formGroup]="validationForm" (ngSubmit)="onSubmit()">
+    <h3>Unified error message for all validations</h3>
+    <div>
+      <mc-input-date label="Birthdate" errormessage="Invalid date!" min="2024-11-02" max="2024-11-16" />
+    </div>
+
+    <h3>State-based error messages</h3>
+    <mc-input-date
+      label="Birthdate"
+      [errormessage]="errormessage"
+      min="2024-11-02"
+      max="2024-11-16"
+      (invalid)="onBirthDateInvalid($event)"
+    >
+    </mc-input-date>
+
+    <h3>Slotted state-based error messages</h3>
+    <div>
+      <mc-input-date
+        ngDefaultControl
+        label="Birthdate"
+        formControlName="birthdate"
+        min="2024-11-02"
+        max="2024-11-16"
+        #birthdate
+      >
+        <div slot="errormessage" *ngIf="birthdate.validity.rangeUnderflow">The date is underflown!</div>
+        <div slot="errormessage" *ngIf="birthdate.validity.rangeOverflow">The date is overflown!</div>
+      </mc-input-date>
+    </div>
+
+    <mc-button type="submit">Submit</mc-button>
+  </form>
+
+  <a routerLink="/">Back to home</a>
+</div>

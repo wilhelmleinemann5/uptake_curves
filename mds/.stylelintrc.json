@@ -1,0 +1,62 @@
+{
+    "plugins": [
+        "stylelint-scss",
+        "stylelint-order"
+    ],
+    "extends": [
+        "stylelint-config-standard",
+        "stylelint-config-sass-guidelines"
+    ],
+    "rules": {
+        "order/order": [
+            "custom-properties",
+            "dollar-variables",
+            "declarations",
+            "rules",
+            "at-rules"
+        ],
+        "at-rule-no-unknown": null,
+        "scss/at-rule-no-unknown": true,
+        "at-rule-empty-line-before": [
+            "always",
+            {
+                "ignoreAtRules": [
+                    "if",
+                    "else if",
+                    "else",
+                    "import",
+                    "include",
+                    "extend"
+                ]
+            }
+        ],
+        "comment-no-empty": true,
+        "custom-property-pattern": null,
+        "max-nesting-depth": 4,
+        "@stylistic/function-parentheses-space-inside": null,
+        "selector-no-qualifying-type": null,
+        "import-notation": "string",
+        "scss/load-no-partial-leading-underscore": null,
+        "scss/at-import-partial-extension-disallowed-list": null,
+        "no-invalid-position-at-import-rule": null,
+        "selector-class-pattern": null,
+        "scss/at-extend-no-missing-placeholder": null,
+        "selector-no-vendor-prefix": null,
+        "property-no-vendor-prefix": null,
+        "selector-max-compound-selectors": 5,
+        "no-descending-specificity": null,
+        "scss/dollar-variable-pattern": null,
+        "media-query-no-invalid": null,
+        "media-feature-range-notation": null,
+        "scss/selector-no-redundant-nesting-selector": null,
+        "selector-not-notation": "simple",
+        "declaration-block-no-redundant-longhand-properties": [
+            true,
+            {
+                "ignoreShorthands": [
+                    "grid-template"
+                ]
+            }
+        ]
+    }
+}

@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222462241,
+  "data": "---\ntitle: Opacity\nhideTOC: true\nhideRelatedPages: true\n---\n\nimport FilteredTokens from \"../../../_components/FilteredTokens.vue\";\nimport ApplyTheme from \"../../../_components/ApplyTheme.vue\";\n\n<ApplyTheme themeID=\"apmterminals-light\" themeName=\"APM Terminals light\" client:only=\"vue\" />\n\n<div class=\"min-h-[1024px] \">\n  <FilteredTokens themeID=\"apmterminals-light\" filter=\"brand_appearance_opacity\" client:only=\"vue\" />\n</div>"
+}

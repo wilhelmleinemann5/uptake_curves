@@ -1,0 +1,47 @@
+<div class="mds-grid mds-grid-cols-1">
+  <!-- Input row with date inputs and typeahead -->
+  <div class="mds-flex mds-gap-200" style="margin-bottom: 1rem">
+    <mc-input-date style="width: 200px" label="From" name="fromDate" (inputdateselected)="onFromDateSelection($event)">
+    </mc-input-date>
+
+    <mc-input-date style="width: 200px" label="To" name="toDate" (inputdateselected)="onToDateSelection($event)">
+    </mc-input-date>
+
+    <mc-typeahead-multi-select
+      #typeaheadRef
+      style="width: 200px"
+      name="city"
+      label="City"
+      placeholder="Start typing city name"
+      [loading]="loadingCities"
+      multiselect
+      hiddentags
+      [data]="cities"
+      (search)="onSearchCities($event)"
+      (optionselected)="onCitySelection($event)"
+    >
+    </mc-typeahead-multi-select>
+  </div>
+
+  <!-- Tags row showing all selections -->
+  <div class="mds-flex mds-gap-200">
+    <!-- From date tag -->
+    <mc-tag *ngIf="selectedFromDate" withaction (dismiss)="removeFromDate()"> FROM: {{ selectedFromDate }} </mc-tag>
+
+    <!-- To date tag -->
+    <mc-tag *ngIf="selectedToDate" withaction (dismiss)="removeToDate()"> TO: {{ selectedToDate }} </mc-tag>
+
+    <!-- City tags -->
+    <mc-tag *ngFor="let city of selectedCities" withaction (dismiss)="removeCity(city)">
+      CITY: {{ city.label }} ({{ city.sublabel }})
+    </mc-tag>
+
+    <!-- No selections message -->
+    <span
+      *ngIf="!hasSelections"
+      style="color: var(--mds_brand_appearance_neutral_weakest_text-color); font-style: italic"
+    >
+      No selections made
+    </span>
+  </div>
+</div>

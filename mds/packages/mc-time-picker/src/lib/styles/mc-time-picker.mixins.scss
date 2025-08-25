@@ -1,0 +1,5 @@
+@mixin apply-mc-time-picker-fit($fit) {
+  padding: var(--mds_core_time-picker_#{$fit}_padding-top) var(--mds_core_time-picker_#{$fit}_padding-right)
+    var(--mds_core_time-picker_#{$fit}_padding-bottom) var(--mds_core_time-picker_#{$fit}_padding-left);
+  gap: var(--mds_core_time-picker_#{$fit}_gap);
+}

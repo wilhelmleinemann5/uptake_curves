@@ -1,0 +1,46 @@
+@import './mc-typeahead-multi-select.mixins.scss';
+
+:host {
+  --selected-tags_small_margin-top: 8px;
+  --selected-tags_medium_margin-top: 12px;
+  --selected-tags_large_margin-top: 12px;
+  --selected-tags_small_column-gap: 4px;
+  --selected-tags_medium_column-gap: 8px;
+  --selected-tags_large_column-gap: 8px;
+  --clear-all_small_padding: 0;
+  --clear-all_medium_padding: 2px;
+  --clear-all_large_padding: 2px;
+}
+
+.mc-typeahead {
+  .selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 8px;
+    align-items: center;
+
+    mc-tag {
+      margin: 0;
+    }
+  }
+
+  mc-button::part(button) {
+    border: 0;
+
+    &:hover {
+      background-color: transparent;
+    }
+  }
+
+  &.small {
+    @include apply-selected-tags-fit('small');
+  }
+
+  &.medium {
+    @include apply-selected-tags-fit('medium');
+  }
+
+  &.large {
+    @include apply-selected-tags-fit('large');
+  }
+}

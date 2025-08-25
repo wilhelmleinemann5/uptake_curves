@@ -6,6 +6,35 @@
     <title>Ocean Carrier Booking Analytics</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <style>
+        /* Maersk Design System Dark Theme */
+        :root {
+            /* MDS Dark Theme Colors */
+            --mds-bg-primary: rgb(20, 20, 20);
+            --mds-bg-secondary: rgb(33, 33, 33);
+            --mds-bg-tertiary: rgb(54, 54, 54);
+            --mds-bg-strong: rgb(76, 76, 76);
+            --mds-text-primary: rgb(240, 240, 240);
+            --mds-text-secondary: rgb(212, 212, 212);
+            --mds-text-weak: rgb(138, 138, 138);
+            --mds-border-default: rgb(76, 76, 76);
+            --mds-border-opacity: rgba(255, 255, 255, 0.24);
+            --mds-link-color: rgb(66, 176, 213);
+            
+            /* Maersk Brand Colors */
+            --maersk-blue: rgb(0, 143, 211);
+            --maersk-light-blue: rgb(66, 176, 213);
+            --maersk-success: rgb(0, 170, 136);
+            --maersk-warning: rgb(255, 165, 0);
+            --maersk-error: rgb(229, 62, 62);
+            
+            /* Chart specific colors for dark theme */
+            --chart-bg: var(--mds-bg-secondary);
+            --chart-surface: var(--mds-bg-tertiary);
+            --chart-text: var(--mds-text-primary);
+            --chart-text-muted: var(--mds-text-weak);
+            --chart-border: var(--mds-border-default);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -13,29 +42,33 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background-color: #f8fafc;
-            color: #1f2937;
+            font-family: 'Maersk Headline', 'Maersk Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background-color: var(--mds-bg-primary);
+            color: var(--mds-text-primary);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            background: linear-gradient(135deg, var(--maersk-blue) 0%, #005fa3 100%);
             color: white;
             padding: 2rem 0;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid var(--mds-border-opacity);
         }
 
         .header h1 {
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 0.5rem;
+            font-family: 'Maersk Headline', system-ui;
         }
 
         .header p {
             font-size: 1.25rem;
-            opacity: 0.9;
+            opacity: 0.95;
+            font-weight: 300;
         }
 
         .container {
@@ -45,26 +78,28 @@
         }
 
         .chart-container {
-            background: white;
+            background: var(--chart-bg);
             border-radius: 12px;
             padding: 2rem;
             margin: 2rem 0;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e5e7eb;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--mds-border-default);
         }
 
         .chart-title {
             font-size: 1.5rem;
             font-weight: 600;
             margin-bottom: 1rem;
-            color: #374151;
+            color: var(--chart-text);
             text-align: center;
+            font-family: 'Maersk Headline', system-ui;
         }
 
         .chart-subtitle {
             text-align: center;
-            color: #6b7280;
+            color: var(--chart-text-muted);
             margin-bottom: 2rem;
+            font-size: 0.95rem;
         }
 
         .insights {
@@ -75,40 +110,88 @@
         }
 
         .insight-card {
-            background: white;
+            background: var(--chart-surface);
             padding: 1.5rem;
             border-radius: 8px;
             border-left: 4px solid;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--mds-border-default);
+            border-left-width: 4px;
         }
 
-        .insight-card.success { border-left-color: #10b981; background: #f0fdf4; }
-        .insight-card.warning { border-left-color: #f59e0b; background: #fef3c7; }
-        .insight-card.neutral { border-left-color: #6b7280; background: #f8fafc; }
+        .insight-card.success { 
+            border-left-color: var(--maersk-success);
+            background: linear-gradient(135deg, var(--chart-surface) 0%, rgba(0, 170, 136, 0.1) 100%);
+        }
+        .insight-card.warning { 
+            border-left-color: var(--maersk-warning);
+            background: linear-gradient(135deg, var(--chart-surface) 0%, rgba(255, 165, 0, 0.1) 100%);
+        }
+        .insight-card.neutral { 
+            border-left-color: var(--mds-text-weak);
+            background: var(--chart-surface);
+        }
 
         .insight-card h3 {
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+            color: var(--chart-text);
         }
 
         .insight-card p {
             font-size: 0.875rem;
-            color: #6b7280;
+            color: var(--mds-text-secondary);
+            line-height: 1.5;
         }
 
         .demo-note {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            background: linear-gradient(135deg, var(--maersk-blue) 0%, #005fa3 100%);
             color: white;
             padding: 1.5rem;
             border-radius: 12px;
             text-align: center;
             margin: 2rem 0;
+            box-shadow: 0 8px 24px rgba(0, 143, 211, 0.3);
         }
 
         .demo-note h3 {
             font-size: 1.25rem;
             margin-bottom: 0.5rem;
+            font-family: 'Maersk Headline', system-ui;
+        }
+
+        /* Maersk-style grid layout like your screenshot */
+        .chart-container {
+            position: relative;
+        }
+
+        .chart-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--maersk-blue) 0%, var(--maersk-light-blue) 100%);
+        }
+
+        /* Dark theme scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--mds-bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--mds-bg-strong);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--mds-text-weak);
         }
 
         @media (max-width: 768px) {
@@ -219,8 +302,8 @@
                             {
                                 label: 'Confidence Upper',
                                 data: confidenceUpper,
-                                backgroundColor: 'rgba(156, 163, 175, 0.3)',
-                                borderColor: 'rgba(156, 163, 175, 0.3)',
+                                backgroundColor: 'rgba(76, 76, 76, 0.4)',
+                                borderColor: 'rgba(76, 76, 76, 0.4)',
                                 borderWidth: 0,
                                 pointRadius: 0,
                                 fill: false,
@@ -229,8 +312,8 @@
                             {
                                 label: 'Confidence Lower',
                                 data: confidenceLower,
-                                backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                borderColor: 'rgba(156, 163, 175, 0.3)',
+                                backgroundColor: 'rgba(20, 20, 20, 0.9)',
+                                borderColor: 'rgba(76, 76, 76, 0.4)',
                                 borderWidth: 0,
                                 pointRadius: 0,
                                 fill: '-1',
@@ -239,40 +322,52 @@
                             {
                                 label: 'Baseline',
                                 data: baseline,
-                                borderColor: '#374151',
+                                borderColor: 'rgb(240, 240, 240)',
                                 backgroundColor: 'transparent',
                                 borderWidth: 3,
                                 pointRadius: 4,
+                                pointBackgroundColor: 'rgb(240, 240, 240)',
+                                pointBorderColor: 'rgb(20, 20, 20)',
+                                pointBorderWidth: 2,
                                 fill: false,
                                 tension: 0.3
                             },
                             {
                                 label: '2025-08-03',
                                 data: sailing1,
-                                borderColor: '#3b82f6',
+                                borderColor: 'rgb(66, 176, 213)', // Maersk light blue
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
                                 pointRadius: 3,
+                                pointBackgroundColor: 'rgb(66, 176, 213)',
+                                pointBorderColor: 'rgb(20, 20, 20)',
+                                pointBorderWidth: 1,
                                 fill: false,
                                 tension: 0.3
                             },
                             {
                                 label: '2025-08-10',
                                 data: sailing2,
-                                borderColor: '#f59e0b',
+                                borderColor: 'rgb(255, 165, 0)', // Maersk orange/warning
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
                                 pointRadius: 3,
+                                pointBackgroundColor: 'rgb(255, 165, 0)',
+                                pointBorderColor: 'rgb(20, 20, 20)',
+                                pointBorderWidth: 1,
                                 fill: false,
                                 tension: 0.3
                             },
                             {
                                 label: '2025-08-17',
                                 data: sailing3,
-                                borderColor: '#10b981',
+                                borderColor: 'rgb(0, 170, 136)', // Maersk success green
                                 backgroundColor: 'transparent',
                                 borderWidth: 2,
                                 pointRadius: 3,
+                                pointBackgroundColor: 'rgb(0, 170, 136)',
+                                pointBorderColor: 'rgb(20, 20, 20)',
+                                pointBorderWidth: 1,
                                 fill: false,
                                 tension: 0.3
                             }
@@ -289,23 +384,45 @@
                                 title: {
                                     display: true,
                                     text: 'Days to Departure',
-                                    font: { size: 14 }
+                                    font: { size: 14, weight: '600' },
+                                    color: 'rgb(212, 212, 212)'
                                 },
-                                reverse: false // Changed: 35 days on left, 0 days on right
+                                reverse: false,
+                                grid: {
+                                    color: 'rgba(76, 76, 76, 0.5)',
+                                    lineWidth: 1
+                                },
+                                ticks: {
+                                    color: 'rgb(138, 138, 138)',
+                                    font: { size: 12 }
+                                },
+                                border: {
+                                    color: 'rgb(76, 76, 76)'
+                                }
                             },
                             y: {
                                 title: {
                                     display: true,
                                     text: 'Booked FFE',
-                                    font: { size: 14 }
+                                    font: { size: 14, weight: '600' },
+                                    color: 'rgb(212, 212, 212)'
                                 },
-                                beginAtZero: true, // Start Y-axis at 0
-                                max: 35000, // Adjusted to better fit the refined data range
+                                beginAtZero: true,
+                                max: 35000,
+                                grid: {
+                                    color: 'rgba(76, 76, 76, 0.5)',
+                                    lineWidth: 1
+                                },
                                 ticks: {
-                                    stepSize: 5000, // 5k increments for better granularity
+                                    stepSize: 5000,
+                                    color: 'rgb(138, 138, 138)',
+                                    font: { size: 12 },
                                     callback: function(value) {
                                         return (value / 1000).toFixed(0) + 'k';
                                     }
+                                },
+                                border: {
+                                    color: 'rgb(76, 76, 76)'
                                 }
                             }
                         },
@@ -314,19 +431,36 @@
                                 display: true,
                                 position: 'bottom',
                                 labels: {
+                                    color: 'rgb(212, 212, 212)',
+                                    font: { size: 12, weight: '500' },
+                                    padding: 15,
+                                    usePointStyle: true,
+                                    pointStyle: 'line',
                                     filter: function(legendItem) {
-                                        // Hide confidence band labels from legend
                                         return !['Confidence Upper', 'Confidence Lower'].includes(legendItem.text);
                                     }
                                 }
                             },
                             tooltip: {
+                                backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                                titleColor: 'rgb(240, 240, 240)',
+                                bodyColor: 'rgb(212, 212, 212)',
+                                borderColor: 'rgb(76, 76, 76)',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                padding: 12,
                                 callbacks: {
                                     label: function(context) {
-                                        return context.dataset.label + ': ' + context.parsed.y.toLocaleString() + ' FFE';
+                                        const value = context.parsed.y.toLocaleString();
+                                        const percentage = ((context.parsed.y / 30000) * 100).toFixed(1);
+                                        return context.dataset.label + ': ' + value + ' FFE (' + percentage + '%)';
                                     }
                                 }
                             }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
                         }
                     }
                 });

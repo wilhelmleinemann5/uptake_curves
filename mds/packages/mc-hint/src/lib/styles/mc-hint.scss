@@ -1,0 +1,18 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+
+:host {
+  line-height: 0;
+}
+
+.mc-hint {
+  display: none;
+  color: var(--mds_core_hint_text-color);
+
+  &.visible {
+    display: flex;
+    margin-top: var(--mds_core_hint_margin-top);
+    column-gap: var(--mds_core_hint_column-gap);
+  }
+
+  @include mds-apply-font('text', 'small', 'normal');
+}

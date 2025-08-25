@@ -1,0 +1,421 @@
+{
+    "brand": {
+        "typography": {
+            "headline": {
+                "font-family": {
+                    "value": "{brand.var.typography.text.font-family}"
+                },
+                "font-family-fallback": {
+                    "value": "{brand.var.typography.text.font-family-fallback}"
+                },
+                "x-small": {
+                    "font-style": {
+                        "value": "{brand.var.typography.text.style.normal}"
+                    },
+                    "font-weight": {
+                        "value": "{brand.var.typography.text.weight.lighter}"
+                    },
+                    "text-transform": {
+                        "value": "none"
+                    },
+                    "desktop": {
+                        "font-size": {
+                            "value": 20
+                        },
+                        "line-height": {
+                            "value": 24
+                        }
+                    },
+                    "mobile": {
+                        "font-size": {
+                            "value": 20
+                        },
+                        "line-height": {
+                            "value": 24
+                        }
+                    }
+                },
+                "small": {
+                    "font-style": {
+                        "value": "{brand.var.typography.text.style.normal}"
+                    },
+                    "font-weight": {
+                        "value": "{brand.var.typography.text.weight.lighter}"
+                    },
+                    "text-transform": {
+                        "value": "none"
+                    },
+                    "desktop": {
+                        "font-size": {
+                            "value": 26
+                        },
+                        "line-height": {
+                            "value": 32
+                        }
+                    },
+                    "mobile": {
+                        "font-size": {
+                            "value": 22
+                        },
+                        "line-height": {
+                            "value": 26
+                        }
+                    }
+                },
+                "medium": {
+                    "font-style": {
+                        "value": "{brand.var.typography.text.style.normal}"
+                    },
+                    "font-weight": {
+                        "value": "{brand.var.typography.text.weight.lighter}"
+                    },
+                    "text-transform": {
+                        "value": "none"
+                    },
+                    "desktop": {
+                        "font-size": {
+                            "value": 40
+                        },
+                        "line-height": {
+                            "value": 40
+                        }
+                    },
+                    "mobile": {
+                        "font-size": {
+                            "value": 26
+                        },
+                        "line-height": {
+                            "value": 32
+                        }
+                    }
+                },
+                "large": {
+                    "font-style": {
+                        "value": "{brand.var.typography.text.style.normal}"
+                    },
+                    "font-weight": {
+                        "value": "{brand.var.typography.text.weight.lighter}"
+                    },
+                    "text-transform": {
+                        "value": "none"
+                    },
+                    "desktop": {
+                        "font-size": {
+                            "value": 50
+                        },
+                        "line-height": {
+                            "value": 56
+                        }
+                    },
+                    "mobile": {
+                        "font-size": {
+                            "value": 38
+                        },
+                        "line-height": {
+                            "value": 38
+                        }
+                    }
+                },
+                "x-large": {
+                    "font-style": {
+                        "value": "{brand.var.typography.text.style.normal}"
+                    },
+                    "font-weight": {
+                        "value": "{brand.var.typography.text.weight.lighter}"
+                    },
+                    "text-transform": {
+                        "value": "none"
+                    },
+                    "desktop": {
+                        "font-size": {
+                            "value": 80
+                        },
+                        "line-height": {
+                            "value": 80
+                        }
+                    },
+                    "mobile": {
+                        "font-size": {
+                            "value": 56
+                        },
+                        "line-height": {
+                            "value": 56
+                        }
+                    }
+                }
+            },
+            "text": {
+                "font-family": {
+                    "value": "{brand.var.typography.text.font-family}"
+                },
+                "font-family-fallback": {
+                    "value": "{brand.var.typography.text.font-family-fallback}"
+                },
+                "x-small": {
+                    "desktop": {
+                        "font-size": {
+                            "value": 12
+                        },
+                        "line-height": {
+                            "value": 16
+                        }
+                    },
+                    "mobile": {
+                        "font-size": {
+                            "value": 12
+                        },
+                        "line-height": {
+                            "value": 16
+                        }
+                    },
+                    "normal": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.normal}"
+                        }
+                    },
+                    "medium": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.medium}"
+                        }
+                    },
+                    "bold": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.bold}"
+                        }
+                    },
+                    "italic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.normal}"
+                        }
+                    },
+                    "mediumitalic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.medium}"
+                        }
+                    },
+                    "bolditalic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.bold}"
+                        }
+                    }
+                },
+                "small": {
+                    "desktop": {
+                        "font-size": {
+                            "value": 14
+                        },
+                        "line-height": {
+                            "value": 20
+                        }
+                    },
+                    "mobile": {
+                        "font-size": {
+                            "value": 14
+                        },
+                        "line-height": {
+                            "value": 20
+                        }
+                    },
+                    "normal": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.normal}"
+                        }
+                    },
+                    "medium": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.medium}"
+                        }
+                    },
+                    "bold": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.bold}"
+                        }
+                    },
+                    "italic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.normal}"
+                        }
+                    },
+                    "mediumitalic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.medium}"
+                        }
+                    },
+                    "bolditalic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.bold}"
+                        }
+                    }
+                },
+                "medium": {
+                    "desktop": {
+                        "font-size": {
+                            "value": 16
+                        },
+                        "line-height": {
+                            "value": 24
+                        }
+                    },
+                    "mobile": {
+                        "font-size": {
+                            "value": 16
+                        },
+                        "line-height": {
+                            "value": 24
+                        }
+                    },
+                    "normal": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.normal}"
+                        }
+                    },
+                    "medium": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.medium}"
+                        }
+                    },
+                    "bold": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.bold}"
+                        }
+                    },
+                    "italic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.normal}"
+                        }
+                    },
+                    "mediumitalic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.medium}"
+                        }
+                    },
+                    "bolditalic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.bold}"
+                        }
+                    }
+                },
+                "large": {
+                    "desktop": {
+                        "font-size": {
+                            "value": 18
+                        },
+                        "line-height": {
+                            "value": 28
+                        }
+                    },
+                    "mobile": {
+                        "font-size": {
+                            "value": 18
+                        },
+                        "line-height": {
+                            "value": 28
+                        }
+                    },
+                    "normal": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.normal}"
+                        }
+                    },
+                    "medium": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.medium}"
+                        }
+                    },
+                    "bold": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.normal}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.bold}"
+                        }
+                    },
+                    "italic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.normal}"
+                        }
+                    },
+                    "mediumitalic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.medium}"
+                        }
+                    },
+                    "bolditalic": {
+                        "font-style": {
+                            "value": "{brand.var.typography.text.style.italic}"
+                        },
+                        "font-weight": {
+                            "value": "{brand.var.typography.text.weight.bold}"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

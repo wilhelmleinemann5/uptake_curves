@@ -1,0 +1,146 @@
+const mdsActionCardTemplate = `
+<div>
+ <div class="action-card">
+   <div class="action-card__spacer">
+     <div class="action-card__copy">
+       <div class="action-card__title">
+         <h3 class="action-card__title__text">
+           Want to contact us?
+         </h3>
+       </div>
+       <div class="mds-rich-text action-card__rich-text">
+         Find offices and shipping information for your origin or destination
+       </div>
+     </div>
+     <div class="action-card__trigger">
+       <mc-button>Find your local office</mc-button>
+     </div>
+   </div>
+ </div>
+</div>`.replace(/\n\s*\n/g, '\n');
+const mdsActionCardImageTemplate = `
+<div>
+  <div class="action-card action-card--with--icon">
+    <div class="action-card__spacer">
+      <div class="action-card__copy">
+        <div class="action-card__title">
+          <figure class="media-image media-image--1x1 media-image--loaded action-card__title__icon">
+            <div class="media-image__placeholder">
+              <mc-loading-indicator label="Loading" hiddenlabel></mc-loading-indicator>
+            </div>
+            <div class="media-image__asset">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" style="width: 40px; height: 40px"><defs><style>.cls-1{fill:none;}.cls-2{fill:black;}</style></defs><title>Asset 153</title><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><rect class="cls-1" x="1.7" y="1.7" width="36.59" height="36.59"/><path class="cls-2" d="M16.19,25.67A11.88,11.88,0,1,1,25.54,6.48h0a11.87,11.87,0,0,1-9.35,19.19Zm0-22.44a10.57,10.57,0,1,0,8.34,4.06h0A10.56,10.56,0,0,0,16.17,3.23Z"/><path class="cls-2" d="M7.58,13.4H7.5a.65.65,0,0,1-.57-.73A9.32,9.32,0,0,1,17.31,4.55a.65.65,0,1,1-.16,1.3,8,8,0,0,0-8.92,7A.67.67,0,0,1,7.58,13.4Z"/><path class="cls-2" d="M26.54,27.71a.67.67,0,0,1-.52-.25l-3.45-4.41a.66.66,0,0,1,.11-.92.65.65,0,0,1,.92.11l3.45,4.41a.65.65,0,0,1-.11.92A.61.61,0,0,1,26.54,27.71Z"/><path class="cls-2" d="M18.57,18.35a2.66,2.66,0,0,1-1.8.84v1.59H15.61V19.24a10.78,10.78,0,0,1-2.31-.34V17.75a12.36,12.36,0,0,0,1.22.25,9.12,9.12,0,0,0,1.37.1,2.42,2.42,0,0,0,1.51-.36,1.52,1.52,0,0,0,.45-1.25,1.68,1.68,0,0,0-.27-1.07,1.8,1.8,0,0,0-.95-.49l-1.28-.33a4.32,4.32,0,0,1-1.24-.49,1.74,1.74,0,0,1-.68-.79A3.51,3.51,0,0,1,13.21,12a2.44,2.44,0,0,1,.56-1.72,2.78,2.78,0,0,1,1.84-.72V8h1.16V9.54a12.37,12.37,0,0,1,1.8.25v1.15c-.3-.07-.67-.14-1.1-.2a10.52,10.52,0,0,0-1.21-.08A2.43,2.43,0,0,0,14.9,11a1.21,1.21,0,0,0-.4,1,1.39,1.39,0,0,0,.3,1,2.13,2.13,0,0,0,1.07.5l1.12.27a4.12,4.12,0,0,1,1.22.49,1.72,1.72,0,0,1,.69.81,3.6,3.6,0,0,1,.23,1.39A2.92,2.92,0,0,1,18.57,18.35Z"/><path class="cls-2" d="M33.07,38.08l-.24,0a1.91,1.91,0,0,1-1.31-.74l-5.86-7.5A2,2,0,0,1,26,27.06l.67-.52a1.92,1.92,0,0,1,1.44-.41,2,2,0,0,1,1.31.74l5.87,7.51A2,2,0,0,1,35,37.14h0l-.67.52A2,2,0,0,1,33.07,38.08ZM27.88,27.43a.68.68,0,0,0-.41.14l-.67.52a.63.63,0,0,0-.24.44.6.6,0,0,0,.13.48l5.86,7.5a.66.66,0,0,0,.44.25.69.69,0,0,0,.48-.13l.67-.52a.67.67,0,0,0,.12-.93l-5.87-7.5a.64.64,0,0,0-.43-.25Z"/><rect class="cls-1" width="40" height="40"/></g></g></svg>
+            </div>
+          </figure>
+          <h3 class="action-card__title__text">
+            Ready to ship?
+          </h3>
+        </div>
+        <div class="mds-rich-text action-card__rich-text">
+          Look up rates for new shipments and inland tariffs
+        </div>
+      </div>
+      <div class="action-card__trigger">
+        <mc-button>Find a price</mc-button>
+      </div>
+    </div>
+  </div>
+</div>`.replace(/\n\s*\n/g, '\n');
+const mdsActionCardFormTemplate = `
+<div>
+  <div class="action-card">
+    <form target="_self" action="#" class="form action-card__spacer" autocomplete="off" method="" novalidate>
+      <div class="action-card__copy">
+        <div class="action-card__title">
+          <h3 class="action-card__title__text">
+            Track shipments
+          </h3>
+        </div>
+        <div class="action-card__form">
+          <div class="form-group">
+            <mc-input type="text" label="Tracking ID" placeholder="Enter a Tracking ID" id="tracking-number" />
+          </div>
+        </div>
+      </div>
+      <div class="action-card__trigger">
+        <mc-button>Track</mc-button>
+      </div>
+    </form>
+  </div>
+</div>`.replace(/\n\s*\n/g, '\n');
+const mdsActionCardMultipleTemplate = `
+<div>
+   <div class="p-section__action-cards p-section__action-cards--2">
+    <h2 class="p-section__action-cards__title">2 Action cards container...</h2>
+     <div class="p-section__action-cards__row">
+          <div class="action-card">
+        <div class="action-card__spacer">
+          <div class="action-card__copy">
+            <div class="action-card__title">
+              <h3 class="action-card__title__text">
+                Action card 1
+              </h3>
+            </div>
+            <div class="mds-rich-text action-card__rich-text">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </div>
+          </div>
+          <div class="action-card__trigger">
+             <mc-button>More info</mc-button>
+          </div>
+        </div>
+      </div>
+         <div class="action-card">
+        <div class="action-card__spacer">
+          <div class="action-card__copy">
+            <div class="action-card__title">
+              <h3 class="action-card__title__text">
+                Action card 1
+              </h3>
+            </div>
+            <div class="mds-rich-text action-card__rich-text">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </div>
+          </div>
+          <div class="action-card__trigger">
+            <mc-button>More info</mc-button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  `.replace(/\n\s*\n/g, '\n');
+
+export const defaultPreview = [
+  {
+    tab: 'HTML',
+    template: mdsActionCardTemplate,
+    language: 'html',
+    copy: true,
+  },
+];
+export const imagePreview = [
+  {
+    tab: 'HTML',
+    template: mdsActionCardImageTemplate,
+    language: 'html',
+    copy: true,
+  },
+];
+export const formPreview = [
+  {
+    tab: 'HTML',
+    template: mdsActionCardFormTemplate,
+    language: 'html',
+    copy: true,
+  },
+];
+export const multiplePreview = [
+  {
+    tab: 'HTML',
+    template: mdsActionCardMultipleTemplate,
+    language: 'html',
+    copy: true,
+  },
+];

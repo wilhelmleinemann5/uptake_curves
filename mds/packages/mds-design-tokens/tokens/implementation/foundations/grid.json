@@ -1,0 +1,39 @@
+{
+  "foundations": {
+    "grid": {
+      "xs": {
+        "columns": {
+          "value": 2
+        },
+        "column-gap": {
+          "value": 16
+        },
+        "row-gap": {
+          "value": 16
+        }
+      },
+      "sm": {
+        "columns": {
+          "value": 6
+        },
+        "column-gap": {
+          "value": 24
+        },
+        "row-gap": {
+          "value": 24
+        }
+      },
+      "md": {
+        "columns": {
+          "value": 12
+        },
+        "column-gap": {
+          "value": 24
+        },
+        "row-gap": {
+          "value": 24
+        }
+      }
+    }
+  }
+}

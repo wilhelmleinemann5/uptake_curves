@@ -1,0 +1,66 @@
+/* Base styles */
+
+/* The code from base.css will be injected here. Don't change anything in lines 1-3 */
+
+/* End base styles */
+footer div:first-of-type {
+  justify-content: center !important;
+}
+
+/* Center aligned layout styles */
+div[data-aut*='component-image'] div {
+  text-align: center;
+}
+
+/* text */
+p {
+  text-align: center;
+}
+
+/* Input form elements general styles */
+div[data-aut*='component-radio'] .group,
+div[data-aut*='component-checkbox'] .group,
+div[data-aut*='component-radio'] > span,
+div[data-aut*='component-checkbox'] > span {
+  justify-content: center;
+}
+
+div[data-aut*='component-radio'] .group div label,
+div[data-aut*='component-checkbox'] .group div label,
+div[data-aut*='component-radio'] .group div label span,
+div[data-aut*='component-checkbox'] .group div label span {
+  text-align: center;
+}
+
+/* Ratings smileys &  0 - 10 */
+div[data-aut*='component-grading'] > div,
+div[data-aut*='component-grading0to10'] > div {
+  width: 100% !important;
+  align-items: center !important;
+}
+
+div[data-aut*='component-grading'] div[role='radiogroup'],
+div[data-aut*='component-grading0to10'] div[role='radiogroup'] {
+  width: auto !important;
+}
+
+div[data-aut*='component-grading'] > div div:not([role='radiogroup']) p,
+div[data-aut*='component-grading0to10'] > div div:not([role='radiogroup']) p {
+  min-width: 40% !important;
+}
+
+/* Ratings smileys */
+div[data-aut*='component-grading'] div div:not([role='radiogroup']) {
+  width: 80% !important;
+  max-width: 350px !important;
+}
+
+/* Ratings 0 - 10 */
+div[data-aut*='component-grading0to10'] div div[role='radiogroup'] div {
+  margin: 0 2px !important;
+}
+
+div[data-aut*='component-grading0to10'] div div:not([role='radiogroup']) {
+  width: 100% !important;
+  max-width: 100% !important;
+}

@@ -1,0 +1,66 @@
+@mixin apply-mc-file-upload-fit($fit) {
+  gap: var(--mds_core_file-upload_#{$fit}_gap);
+
+  .drag-drop-area {
+    gap: var(--mds_core_file-upload_#{$fit}_drag-drop-area_gap);
+    height: var(--mds_core_file-upload_#{$fit}_drag-drop-area_height);
+  }
+
+  .files {
+    max-height: var(--mds_core_file-upload_#{$fit}_files_max-height);
+
+    .file {
+      grid-column-gap: var(--mds_core_file-upload_#{$fit}_file_gap);
+      padding: var(--mds_core_file-upload_#{$fit}_file_padding-top)
+        var(--mds_core_file-upload_#{$fit}_file_padding-right) var(--mds_core_file-upload_#{$fit}_file_padding-bottom)
+        var(--mds_core_file-upload_#{$fit}_file_padding-left);
+
+      .file-name {
+        .name,
+        .extension {
+          padding-top: var(--mds_core_file-upload_#{$fit}_file_name_padding-top);
+        }
+
+        mc-icon {
+          height: var(--mds_core_file-upload_#{$fit}_file_icon_height);
+        }
+      }
+
+      .file-status-text {
+        mc-hint:not([visible]),
+        mc-error:not([visible]) {
+          display: none;
+        }
+
+        mc-hint[visible] {
+          --mds_core_hint_margin-top: var(--mds_core_file-upload_#{$fit}_file-status_margin-top);
+        }
+
+        mc-error[visible] {
+          --mds_core_error_margin-top: var(--mds_core_file-upload_#{$fit}_file-status_margin-top);
+        }
+      }
+
+      .file-status-icon {
+        height: var(--mds_core_file-upload_#{$fit}_file_icon_height);
+        width: var(--mds_core_file-upload_#{$fit}_file_icon_height);
+
+        mc-icon::part(icon),
+        mc-button::part(icon) {
+          fill: var(--mds_core_file-upload_file_text-color);
+        }
+
+        mc-button::part(text-and-icon) {
+          width: calc(var(--mds_core_file-upload_#{$fit}_file_icon_height) - 2px);
+          height: calc(var(--mds_core_file-upload_#{$fit}_file_icon_height) - 2px);
+        }
+      }
+    }
+  }
+
+  @if $fit == 'large' {
+    @include mds-apply-font('text', 'medium', 'normal');
+  } @else {
+    @include mds-apply-font('text', '#{$fit}', 'normal');
+  }
+}

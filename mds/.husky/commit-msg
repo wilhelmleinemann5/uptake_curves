@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo "[HUSKY] commit-msg checks"
+
+npx --no -- commitlint --edit $1

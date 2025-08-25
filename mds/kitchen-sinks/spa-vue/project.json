@@ -1,0 +1,23 @@
+{
+  "name": "spa-vue",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "kitchen-sinks/spa-vue/src",
+  "targets": {
+    "map-node-modules": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "recursive-copy -w dist/packages kitchen-sinks/spa-vue/node_modules/@maersk-global -f '**/*.*' && recursive-copy -w node_modules/@maersk-global/icons kitchen-sinks/spa-vue/node_modules/@maersk-global/icons -f '**/*.*'"
+        ]
+      }
+    },
+    "preview": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npm run preview",
+        "cwd": "kitchen-sinks/spa-vue"
+      }
+    }
+  }
+}

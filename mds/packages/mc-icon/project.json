@@ -1,0 +1,124 @@
+{
+  "name": "mc-icon",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mc-icon/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build:compile-js",
+        "build:vscode-html-data",
+        "build:custom-element-manifest",
+        "build:add-vite-ignore"
+      ]
+    },
+    "build:custom-element-manifest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd packages/mc-icon && cem analyze --config ../../tools/configs/custom-elements-manifest.config.mjs --outdir ../../dist/packages/mds-components-core-icon"
+        ]
+      }
+    },
+    "build:vscode-html-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "wca analyze \"packages/mc-icon/**/*index.ts\" --format vscode --outFile dist/packages/mds-components-core-icon/web-components.html-data.json"
+        ]
+      }
+    },
+    "build:add-vite-ignore": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node tools/scripts/generate-packages/mc-icon-vite-ignore.mjs"
+        ]
+      },
+      "dependsOn": [
+        "build:compile-js"
+      ]
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": true,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-components-core-icon",
+        "outdir": "dist/packages/mds-components-core-icon",
+        "main": "packages/mc-icon/src/index.ts",
+        "tsConfig": "packages/mc-icon/tsconfig.lib.json",
+        "assets": [
+          "packages/mc-icon/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/general.config.cjs"
+      }
+    },
+    "generate:metadata": {
+      "command": "cd packages/mc-icon && node ../../tools/scripts/generate-metadata/components/generate.mjs"
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mc-icon",
+      "options": {
+        "outputPath": "dist/packages/mds-components-core-icon"
+      }
+    },
+    "lint": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "lint:eslint",
+        "lint:stylelint"
+      ]
+    },
+    "lint:eslint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "lint:stylelint": {
+      "executor": "nx-stylelint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/mc-icon/**/*.css",
+          "packages/mc-icon/**/*.scss"
+        ],
+        "fix": true
+      }
+    },
+    "test:ssr": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "web-test-runner packages/mc-icon/tests/**/*.ssr.js"
+        ]
+      },
+      "dependsOn": [
+        "build",
+        "mds:test:ssr:map-node-modules"
+      ]
+    },
+    "test:headless": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "cypress.config.ts",
+        "testingType": "component",
+        "skipServe": true,
+        "spec": "./packages/mc-icon/**/*.component-spec.ts"
+      }
+    },
+    "vitest": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "testTargetName": "vitest",
+        "serveTargetName": "serve",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  },
+  "tags": []
+}

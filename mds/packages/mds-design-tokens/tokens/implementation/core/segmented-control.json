@@ -1,0 +1,24 @@
+{
+    "core": {
+        "segmented-control": {
+            "background-color": {
+                "value": "$brand.appearance.neutral.weak.background-color"
+            },
+            "border-color": {
+                "value": "$brand.appearance.neutral.weak.background-color"
+            },
+            "border-radius": {
+                "value": "$brand.border.large.radius"
+            },
+            "border-style": {
+                "value": "$global.border.style"
+            },
+            "border-width": {
+                "value": 4
+            },
+            "gap": {
+                "value": 4
+            }
+        }
+    }
+}

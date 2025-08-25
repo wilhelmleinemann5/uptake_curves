@@ -1,0 +1,78 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_shadow.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_media.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_modal.scss';
+@import './mc-popover.mixins.scss';
+
+.mc-popover {
+  .content {
+    display: block;
+    left: 0;
+    max-width: calc(100vw - 10px);
+    position: fixed;
+    top: 0;
+    width: max-content;
+    z-index: 99999;
+    border-color: var(--mds_core_popover_border-color);
+    border-style: var(--mds_core_popover_border-style);
+    border-width: var(--mds_core_popover_border-width);
+    border-radius: var(--mds_brand_border_medium_radius);
+
+    .arrow {
+      background: var(--mds_core_popover_background-color);
+      border-color: var(--mds_core_popover_border-color);
+      border-style: var(--mds_core_popover_border-style);
+      border-width: var(--mds_core_popover_border-width);
+      position: absolute;
+      transform: rotate(45deg);
+      z-index: -1;
+    }
+
+    .container {
+      background: var(--mds_core_popover_background-color);
+      border-radius: calc(var(--mds_brand_border_medium_radius) - 1px);
+      color: var(--mds_core_popover_color);
+      overflow: auto;
+
+      .body-slot-wrapper {
+        height: 100%;
+        width: 100%;
+      }
+
+      header,
+      footer {
+        display: none;
+      }
+    }
+
+    @include mds-shadow();
+  }
+
+  &.modal-on-x-small-screen {
+    .content .container {
+      @include mds-viewport-below('sm') {
+        @include mds-modal;
+      }
+    }
+  }
+
+  &.small {
+    @include apply-popover-fit('small');
+  }
+
+  &.medium {
+    @include apply-popover-fit('medium');
+  }
+
+  &.large {
+    @include apply-popover-fit('large');
+  }
+
+  &:not(.open) {
+    .content {
+      display: none;
+    }
+  }
+
+  @include apply-arrow-border();
+}

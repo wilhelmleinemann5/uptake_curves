@@ -1,0 +1,29 @@
+{
+    "core": {
+        "picker-item": {
+            "focus": {
+                "text-color": {
+                    "value": "$brand.appearance.neutral.default.text-color"
+                }
+            },
+            "border-radius": {
+                "value": "$brand.border.medium.radius"
+            },
+            "small": {
+                "size": {
+                    "value": 32
+                }
+            },
+            "medium": {
+                "size": {
+                    "value": 40
+                }
+            },
+            "large": {
+                "size": {
+                    "value": 48
+                }
+            }
+        }
+    }
+}

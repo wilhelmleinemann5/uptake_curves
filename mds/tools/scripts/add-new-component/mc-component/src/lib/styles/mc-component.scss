@@ -1,0 +1,22 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import './mc-component.mixins.scss';
+
+.mc-component {
+  background-color: var(--mds_brand_appearance_neutral_weakest_background-color);
+  color: var(--mds_brand_appearance_neutral_weakest_on-background-color);
+
+  /* small size */
+  &.small {
+    @include apply-mc-component-fit('small');
+  }
+
+  /* medium size */
+  &.medium {
+    @include apply-mc-component-fit('medium');
+  }
+
+  /* large size */
+  &.large {
+    @include apply-mc-component-fit('large');
+  }
+}

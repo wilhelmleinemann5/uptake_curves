@@ -1,0 +1,61 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_media.scss';
+@import './mc-date-range.mixins.scss';
+
+.mc-date-range {
+  display: flex;
+  flex-direction: column;
+
+  .inputs {
+    display: flex;
+    flex-direction: row;
+
+    slot {
+      display: block;
+      flex-grow: 1;
+    }
+
+    &.autolayout {
+      flex-wrap: wrap;
+
+      @include mds-viewport-below('sm') {
+        flex-direction: column;
+      }
+    }
+
+    &.vertical {
+      flex-direction: column;
+    }
+  }
+
+  &.no-feedback {
+    .slot {
+      margin-top: 0;
+    }
+  }
+
+  legend {
+    padding: 0;
+  }
+
+  &.hidden-legend {
+    legend {
+      display: none;
+    }
+  }
+
+  /* small size */
+  &.small {
+    @include apply-mc-date-range-fit('small');
+  }
+
+  /* medium size */
+  &.medium {
+    @include apply-mc-date-range-fit('medium');
+  }
+
+  /* large size */
+  &.large {
+    @include apply-mc-date-range-fit('large');
+  }
+}

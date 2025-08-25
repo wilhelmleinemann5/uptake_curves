@@ -1,0 +1,9 @@
+{
+    "foundations": {
+        "slot": {
+            "gap": {
+                "value": 4
+            }
+        }
+    }
+}

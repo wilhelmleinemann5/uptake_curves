@@ -1,0 +1,81 @@
+{
+  "name": "mc-multi-choice-fieldset",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mc-multi-choice-fieldset/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build:compile-js",
+        "build:vscode-html-data",
+        "build:custom-element-manifest"
+      ]
+    },
+    "build:custom-element-manifest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd packages/mc-multi-choice-fieldset && cem analyze --config ../../tools/configs/custom-elements-manifest.config.mjs --outdir ../../dist/packages/mds-components-core-multi-choice-fieldset"
+        ]
+      }
+    },
+    "build:vscode-html-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "wca analyze \"packages/mc-multi-choice-fieldset/**/*index.ts\" --format vscode --outFile dist/packages/mds-components-core-multi-choice-fieldset/web-components.html-data.json"
+        ]
+      }
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": true,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-components-core-multi-choice-fieldset",
+        "outdir": "dist/packages/mds-components-core-multi-choice-fieldset",
+        "main": "packages/mc-multi-choice-fieldset/src/index.ts",
+        "tsConfig": "packages/mc-multi-choice-fieldset/tsconfig.lib.json",
+        "assets": [
+          "packages/mc-multi-choice-fieldset/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/general.config.cjs"
+      }
+    },
+    "generate:metadata": {
+      "command": "cd packages/mc-multi-choice-fieldset && node ../../tools/scripts/generate-metadata/components/generate.mjs"
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mc-multi-choice-fieldset",
+      "options": {
+        "outputPath": "dist/packages/mds-components-core-multi-choice-fieldset"
+      }
+    },
+    "lint": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "lint:eslint",
+        "lint:stylelint"
+      ]
+    },
+    "lint:eslint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "lint:stylelint": {
+      "executor": "nx-stylelint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/mc-multi-choice-fieldset/**/*.css",
+          "packages/mc-multi-choice-fieldset/**/*.scss"
+        ],
+        "fix": true
+      }
+    }
+  },
+  "tags": []
+}

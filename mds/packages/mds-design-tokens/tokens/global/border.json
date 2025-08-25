@@ -1,0 +1,12 @@
+{
+    "global": {
+        "border": {
+            "width": {
+                "value": 1
+            },
+            "style": {
+                "value": "solid"
+            }
+        }
+    }
+}

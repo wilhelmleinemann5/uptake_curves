@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222429969,
+  "data": "---\ntags:\n  - core\ntitle: List Item\ndescription: >- \nrelatedPages:\n  - /components/list/\n---\n\nimport ListItemDemo from \"./_components/ListItemDemo.vue\";\n\nThe <PageLink path=\"/components/list/\">List</PageLink> component is composed of individual List Item components.\n<br />\n\n<ListItemDemo client:only=\"vue\" />"
+}

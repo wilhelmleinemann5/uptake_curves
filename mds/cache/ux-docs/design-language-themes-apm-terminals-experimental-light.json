@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222459877,
+  "data": "---\ntitle: APM Terminals experimental light tokens\nnavTitle: Light tokens\nsecondaryNavTitle: Colours\nhideTOC: true\nhideRelatedPages: true\nrenderAllChildPagesAsTabs: true\n---\n\nimport Colors from \"../../_components/Colors.vue\";\nimport ApplyTheme from \"../../_components/ApplyTheme.vue\";\n\n<ExperimentalWarning itemName=\"This theme\" />\n\n<ApplyTheme themeID=\"apmterminalsexperimental-light\" themeName=\"APM Terminals Experimental light\" client:only=\"vue\" />\n\n<div class=\"min-h-[1024px] \">\n  <Colors themeID=\"apmterminalsexperimental-light\" client:only=\"vue\" />\n</div>\n"
+}

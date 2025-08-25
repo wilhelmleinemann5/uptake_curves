@@ -1,0 +1,23 @@
+@import './mixins/_grid';
+@import './mixins/_media';
+
+/*
+@description: 
+Base grid system utilities for layouts. 
+The grid system provides a flexible layout structure, allowing for consistent alignment and spacing of elements and is independent of container or viewport size. 
+It includes utilities for defining rows, columns, and spans, enabling developers to create complex layouts with ease.
+For responsive layouts, use the container-based grid system in _container-grid.css or viewport-based grid system in _viewport-grid.css.
+*/
+
+.mds-container .mds-grid {
+  @include mds-grid-base;
+  @include mds-row();
+  @include mds-row-span();
+
+  @include mds-col();
+  @include mds-col-reverse();
+  @include mds-col-span();
+
+  @include mds-cols();
+  @include mds-rows();
+}

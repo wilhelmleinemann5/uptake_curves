@@ -1,0 +1,19 @@
+@mixin apply-mc-text-and-icon-fit($fit) {
+  gap: var(--mds_core_button_#{$fit}_gap);
+
+  @if $fit == 'large' {
+    @include mds-apply-font('text', 'medium', 'normal');
+  } @else {
+    @include mds-apply-font('text', '#{$fit}', 'normal');
+  }
+}
+
+@mixin show-icon-trailingicon() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ::slotted(*) {
+    display: flex;
+  }
+}

@@ -1,0 +1,98 @@
+{
+    "core": {
+        "avatar": {
+            "x-small": {
+                "typography": {
+                    "value": "text-x-small_normal"
+                },
+                "element": {
+                    "size": {
+                        "value": 24
+                    }
+                }
+            },
+            "small": {
+                "typography": {
+                    "value": "text-small_normal"
+                },
+                "element": {
+                    "size": {
+                        "value": 32
+                    }
+                }
+            },
+            "medium": {
+                "typography": {
+                    "value": "text-medium_normal"
+                },
+                "element": {
+                    "size": {
+                        "value": 40
+                    }
+                }
+            },
+            "large": {
+                "typography": {
+                    "value": "text-large_normal"
+                },
+                "element": {
+                    "size": {
+                        "value": 48
+                    }
+                }
+            },
+            "x-large": {
+                "typography": {
+                    "value": "text-large_normal"
+                },
+                "element": {
+                    "size": {
+                        "value": 56
+                    }
+                }
+            },
+            "xx-large": {
+                "typography": {
+                    "value": "text-large_normal"
+                },
+                "element": {
+                    "size": {
+                        "value": 64
+                    }
+                }
+            },
+            "color-1": {
+                "background-color": {
+                    "value": "$brand.appearance.info.weak.background-color"
+                },
+                "color": {
+                    "value": "$brand.appearance.info.weak.on-background-color"
+                }
+            },
+            "color-2": {
+                "background-color": {
+                    "value": "$brand.appearance.success.weak.background-color"
+                },
+                "color": {
+                    "value": "$brand.appearance.success.weak.on-background-color"
+                }
+            },
+            "color-3": {
+                "background-color": {
+                    "value": "$brand.appearance.warning.weak.background-color"
+                },
+                "color": {
+                    "value": "$brand.appearance.warning.weak.on-background-color"
+                }
+            },
+            "color-4": {
+                "background-color": {
+                    "value": "$brand.appearance.error.weak.background-color"
+                },
+                "color": {
+                    "value": "$brand.appearance.error.weak.on-background-color"
+                }
+            }
+        }
+    }
+}

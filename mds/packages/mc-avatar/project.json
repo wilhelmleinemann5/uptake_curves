@@ -1,0 +1,112 @@
+{
+  "name": "mc-avatar",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mc-avatar/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build:compile-js",
+        "build:custom-element-manifest",
+        "build:vscode-html-data"
+      ]
+    },
+    "build:custom-element-manifest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd packages/mc-avatar && cem analyze --config ../../tools/configs/custom-elements-manifest.config.mjs --outdir ../../dist/packages/mds-components-core-avatar"
+        ]
+      }
+    },
+    "build:vscode-html-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "wca analyze \"packages/mc-avatar/**/*index.ts\" --format vscode --outFile dist/packages/mds-components-core-avatar/web-components.html-data.json"
+        ]
+      }
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": true,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-components-core-avatar",
+        "outdir": "dist/packages/mds-components-core-avatar",
+        "main": "packages/mc-avatar/src/index.ts",
+        "tsConfig": "packages/mc-avatar/tsconfig.lib.json",
+        "assets": [
+          "packages/mc-avatar/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/general.config.cjs"
+      }
+    },
+    "generate:metadata": {
+      "command": "cd packages/mc-avatar && node ../../tools/scripts/generate-metadata/components/generate.mjs"
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mc-avatar",
+      "options": {
+        "outputPath": "dist/packages/mds-components-core-avatar"
+      }
+    },
+    "lint": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "lint:eslint",
+        "lint:stylelint"
+      ]
+    },
+    "lint:eslint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "lint:stylelint": {
+      "executor": "nx-stylelint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/mc-avatar/**/*.css",
+          "packages/mc-avatar/**/*.scss"
+        ],
+        "fix": true
+      }
+    },
+    "test:headless": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "cypress.config.ts",
+        "testingType": "component",
+        "skipServe": true,
+        "spec": "./packages/mc-avatar/**/*.component-spec.ts"
+      }
+    },
+    "test:ssr": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "web-test-runner packages/mc-avatar/tests/**/*.ssr.js"
+        ]
+      },
+      "dependsOn": [
+        "build",
+        "mds:test:ssr:map-node-modules"
+      ]
+    },
+    "vitest": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "testTargetName": "vitest",
+        "serveTargetName": "serve",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  },
+  "tags": []
+}

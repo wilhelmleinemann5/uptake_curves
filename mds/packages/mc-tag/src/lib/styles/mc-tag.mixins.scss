@@ -1,0 +1,36 @@
+@mixin apply-tag-fit($fit) {
+  padding: var(--mds_core_tag_#{$fit}_padding-top) var(--mds_core_tag_#{$fit}_padding-right)
+    var(--mds_core_tag_#{$fit}_padding-bottom) var(--mds_core_tag_#{$fit}_padding-left);
+  height: var(--mds_core_tag_#{$fit}_height);
+  gap: var(--mds_core_tag_#{$fit}_gap);
+
+  .mc-text-and-icon {
+    gap: var(--mds_core_tag_#{$fit}_gap);
+  }
+
+  mc-button::part(button) {
+    width: var(--mds_core_tag_#{$fit}_action_width);
+    height: var(--mds_core_tag_#{$fit}_action_height);
+    border-width: 0;
+  }
+
+  @if $fit == small {
+    .mc-text-and-icon {
+      @include mds-apply-font('text', 'x-small', 'normal');
+    }
+  } @else {
+    .mc-text-and-icon {
+      @include mds-apply-font('text', 'small', 'normal');
+    }
+  }
+}
+
+@mixin apply-tag-appearance($appearance) {
+  background-color: var(--mds_core_tag_#{$appearance}_background-color);
+  color: var(--mds_core_tag_#{$appearance}_text-color);
+
+  mc-button::part(icon),
+  mc-icon::part(icon) {
+    fill: var(--mds_core_tag_#{$appearance}_text-color);
+  }
+}

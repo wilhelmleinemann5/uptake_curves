@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222463355,
+  "data": "---\ntitle: Transitions\nhideTOC: true\nhideRelatedPages: true\n---\n\nimport FilteredTokens from \"../../_components/FilteredTokens.vue\";\n\n<div class=\"min-h-[1024px] \">\n  <FilteredTokens themeID=\"maersk-light\" filter=\"global_transition\" client:only=\"vue\" />\n</div>\n"
+}

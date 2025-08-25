@@ -1,0 +1,291 @@
+@import '@maersk-global/mds-foundations/scss/mixins/__all.scss';
+@import './mc-card.mixins.scss';
+
+:host {
+  display: block;
+}
+
+.mc-card {
+  color: var(--mds_core_card_text-color);
+  display: flex;
+  height: 100%;
+  text-align: left;
+  transition-duration: var(--mds_core_card_transition-duration);
+  transition-property: var(--mds_core_card_transition-properties);
+  transition-timing-function: var(--mds_core_card_transition-timing);
+  width: 100%;
+
+  &:focus-within,
+  &:hover {
+    .image-inner {
+      backface-visibility: hidden;
+    }
+  }
+
+  &.image-scale-strength-light {
+    &:focus-within,
+    &:hover {
+      .image-inner {
+        transform: scale(var(--mds_core_card_image_scale_light));
+      }
+    }
+  }
+
+  &.image-scale-strength-medium {
+    &:focus-within,
+    &:hover {
+      .image-inner {
+        transform: scale(var(--mds_core_card_image_scale_medium));
+      }
+    }
+  }
+
+  &.image-scale-strength-prominent {
+    &:focus-within,
+    &:hover {
+      .image-inner {
+        transform: scale(var(--mds_core_card_image_scale_prominent));
+      }
+    }
+  }
+
+  &.image-scale-strength-none {
+    &:focus-within,
+    &:hover {
+      .image-inner {
+        transform: none;
+      }
+    }
+  }
+
+  /** Bordered **/
+  &.bordered {
+    background: var(--mds_core_card_bordered_background-color);
+    border: var(--mds_core_card_bordered_border-width) var(--mds_core_card_bordered_border-style)
+      var(--mds_core_card_bordered_border-color);
+    border-radius: var(--mds_core_card_bordered_border-radius);
+
+    &:focus-within,
+    &:hover,
+    &.hover {
+      @include mds-shadow();
+    }
+
+    &.default-padding {
+      .image-inner-container {
+        border-top-left-radius: var(--mds_core_card_bordered_border-radius);
+        border-top-right-radius: var(--mds_core_card_bordered_border-radius);
+      }
+    }
+  }
+
+  /** Vertical layout **/
+  &.vertical {
+    flex-direction: column;
+
+    &.borderless {
+      .content-inner {
+        margin-bottom: 0;
+      }
+
+      .image-inner-container {
+        border-radius: var(--mds_core_card_bordered_border-radius);
+      }
+
+      .actions {
+        margin-bottom: 0;
+      }
+
+      &.medium {
+        .content {
+          margin: var(--mds_core_card_medium_borderless_vertical_content_margin-top) 0 0 0;
+          row-gap: var(--mds_core_card_medium_borderless_vertical_content_gap);
+        }
+      }
+
+      &.small {
+        .content {
+          margin: var(--mds_core_card_small_borderless_vertical_content_margin-top) 0 0 0;
+          row-gap: var(--mds_core_card_small_borderless_vertical_content_gap);
+        }
+      }
+
+      &.large {
+        .content {
+          margin: var(--mds_core_card_large_borderless_vertical_content_margin-top) 0 0 0;
+          row-gap: var(--mds_core_card_large_borderless_vertical_content_gap);
+        }
+      }
+
+      &.no-image {
+        .content {
+          margin: 0;
+        }
+      }
+    }
+  }
+
+  /** Horizontal layout **/
+  &.horizontal {
+    .image {
+      display: flex;
+      flex: 0 0 auto;
+
+      .image-inner-container {
+        display: flex;
+        flex: 0 0 auto;
+      }
+
+      .image-inner {
+        width: 100%;
+      }
+    }
+
+    .content {
+      flex: 1 1 auto;
+      height: auto;
+    }
+
+    &.bordered {
+      .image-inner-container {
+        border-radius: 0;
+        border-bottom-left-radius: var(--mds_core_card_bordered_border-radius);
+        border-top-left-radius: var(--mds_core_card_bordered_border-radius);
+      }
+    }
+
+    &.borderless {
+      .image-inner-container {
+        border-radius: var(--mds_core_card_bordered_border-radius);
+      }
+
+      &.no-image {
+        .content {
+          margin: 0;
+        }
+
+        .actions {
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+
+  /** Image **/
+  .image {
+    .image-inner-container {
+      overflow: hidden;
+      width: 100%;
+      height: 100%;
+    }
+
+    .image-inner {
+      background-color: var(--mds_core_card_image_background-color);
+      background-position: 50% 50%;
+      background-size: cover;
+      transition-duration: var(--mds_core_card_transition-duration);
+      transition-property: var(--mds_core_card_transition-properties);
+      transition-timing-function: var(--mds_core_card_transition-timing);
+    }
+  }
+
+  .image-as-slot {
+    .image-inner {
+      background-color: transparent;
+    }
+  }
+
+  /** Content **/
+  .content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .content-inner {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  &.content-top {
+    .content-inner {
+      justify-content: flex-start;
+    }
+  }
+
+  &.content-middle {
+    .content-inner {
+      justify-content: center;
+    }
+  }
+
+  &.content-bottom {
+    .content-inner {
+      justify-content: flex-end;
+    }
+  }
+
+  /** Header **/
+  .header {
+    display: flex;
+    flex-direction: column-reverse;
+
+    .heading {
+      margin: 0;
+    }
+
+    .sub-heading {
+      color: var(--mds_core_card_sub-heading_text-color);
+      margin: 0;
+    }
+  }
+
+  /** Footer **/
+  .footer {
+    color: var(--mds_core_card_footer_text-color);
+  }
+
+  /** Typography & spacing etc for different "fit" **/
+  &.small {
+    @include apply-mc-card-fit('small');
+  }
+
+  &.medium {
+    @include apply-mc-card-fit('medium');
+  }
+
+  &.large {
+    @include apply-mc-card-fit('large');
+  }
+
+  /** When the card is a link **/
+  &.link,
+  &.clickable {
+    text-decoration: var(--mds_core_card_link_text-decoration);
+    color: var(--mds_core_card_text-color);
+    cursor: pointer;
+
+    &:hover,
+    &:visited {
+      color: var(--mds_core_card_text-color);
+    }
+
+    &:hover {
+      .heading {
+        text-decoration: var(--mds_core_card_link_hover_text-decoration);
+      }
+    }
+
+    &.bordered,
+    &.borderless {
+      &:focus-within {
+        @include mds-glow-only-on-keyboard-nav($inset: false);
+      }
+    }
+  }
+
+  .hidden {
+    display: none !important;
+  }
+}

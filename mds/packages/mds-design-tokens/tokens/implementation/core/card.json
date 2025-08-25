@@ -1,0 +1,219 @@
+{
+    "core": {
+        "card": {
+            "text-color": {
+                "value": "$brand.appearance.neutral.default.on-background-color"
+            },
+            "transition-properties": {
+                "value": "all"
+            },
+            "transition-duration": {
+                "value": "$global.transition.fast.duration"
+            },
+            "transition-timing": {
+                "value": "$global.transition.fast.timing"
+            },
+            "image": {
+                "background-color": {
+                    "value": "$brand.appearance.neutral.weakest.background-color"
+                },
+                "scale": {
+                    "light": {
+                        "value": 1.02
+                    },
+                    "medium": {
+                        "value": 1.08
+                    },
+                    "prominent": {
+                        "value": 1.2
+                    }
+                }
+            },
+            "sub-heading": {
+                "text-color": {
+                    "value": "$brand.appearance.neutral.weak.text-color"
+                }
+            },
+            "footer": {
+                "text-color": {
+                    "value": "$brand.appearance.neutral.weak.text-color"
+                }
+            },
+            "content": {},
+            "link": {
+                "text-decoration": {
+                    "value": "none"
+                },
+                "hover": {
+                    "text-decoration": {
+                        "value": "underline"
+                    }
+                }
+            },
+            "bordered": {
+                "background-color": {
+                    "value": "$brand.appearance.neutral.default.background-color"
+                },
+                "border-width": {
+                    "value": "$global.border.width"
+                },
+                "border-style": {
+                    "value": "$global.border.style"
+                },
+                "border-color": {
+                    "value": "$brand.appearance.neutral.default.border-color"
+                },
+                "border-radius": {
+                    "value": "$brand.border.x-large.radius"
+                }
+            },
+            "small": {
+                "typography": {
+                    "value": "text-small_normal"
+                },
+                "heading": {
+                    "typography": {
+                        "value": "headline-x-small"
+                    }
+                },
+                "sub-heading": {
+                    "typography": {
+                        "value": "text-x-small_normal"
+                    }
+                },
+                "footer": {
+                    "typography": {
+                        "value": "text-x-small_normal"
+                    }
+                },
+                "content": {
+                    "margin-top": {
+                        "value": 20
+                    },
+                    "margin-left": {
+                        "value": 24
+                    },
+                    "margin-bottom": {
+                        "value": 24
+                    },
+                    "margin-right": {
+                        "value": 24
+                    },
+                    "gap": {
+                        "value": 8
+                    }
+                },
+                "borderless": {
+                    "vertical": {
+                        "content": {
+                            "margin-top": {
+                                "value": 12
+                            },
+                            "gap": {
+                                "value": 24
+                            }
+                        }
+                    }
+                }
+            },
+            "medium": {
+                "typography": {
+                    "value": "text-medium_normal"
+                },
+                "heading": {
+                    "typography": {
+                        "value": "headline-small"
+                    }
+                },
+                "sub-heading": {
+                    "typography": {
+                        "value": "text-small_normal"
+                    }
+                },
+                "footer": {
+                    "typography": {
+                        "value": "text-small_normal"
+                    }
+                },
+                "content": {
+                    "margin-top": {
+                        "value": 20
+                    },
+                    "margin-left": {
+                        "value": 24
+                    },
+                    "margin-bottom": {
+                        "value": 24
+                    },
+                    "margin-right": {
+                        "value": 24
+                    },
+                    "gap": {
+                        "value": 8
+                    }
+                },
+                "borderless": {
+                    "vertical": {
+                        "content": {
+                            "margin-top": {
+                                "value": 16
+                            },
+                            "gap": {
+                                "value": 24
+                            }
+                        }
+                    }
+                }
+            },
+            "large": {
+                "typography": {
+                    "value": "text-medium_normal"
+                },
+                "heading": {
+                    "typography": {
+                        "value": "headline-small"
+                    }
+                },
+                "sub-heading": {
+                    "typography": {
+                        "value": "text-small_normal"
+                    }
+                },
+                "footer": {
+                    "typography": {
+                        "value": "text-small_normal"
+                    }
+                },
+                "content": {
+                    "margin-top": {
+                        "value": 24
+                    },
+                    "margin-left": {
+                        "value": 32
+                    },
+                    "margin-bottom": {
+                        "value": 32
+                    },
+                    "margin-right": {
+                        "value": 32
+                    },
+                    "gap": {
+                        "value": 12
+                    }
+                },
+                "borderless": {
+                    "vertical": {
+                        "content": {
+                            "margin-top": {
+                                "value": 24
+                            },
+                            "gap": {
+                                "value": 32
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

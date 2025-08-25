@@ -1,0 +1,83 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import './mc-tag.mixins.scss';
+
+:host {
+  line-height: 0;
+}
+
+.mc-tag {
+  border-radius: var(--mds_core_tag_border-radius);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  .label {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.full-width {
+    width: 100%;
+
+    .label {
+      text-align: center;
+      width: 100%;
+    }
+
+    &.with-action {
+      justify-content: space-between;
+    }
+  }
+
+  // appearance
+  &.neutral-default {
+    @include apply-tag-appearance('neutral-default');
+  }
+
+  &.neutral-weak {
+    @include apply-tag-appearance('neutral-weak');
+  }
+
+  &.neutral-inverse {
+    @include apply-tag-appearance('neutral-inverse');
+  }
+
+  &.primary {
+    @include apply-tag-appearance('primary');
+  }
+
+  &.secondary {
+    @include apply-tag-appearance('secondary');
+  }
+
+  &.info {
+    @include apply-tag-appearance('info');
+  }
+
+  &.success {
+    @include apply-tag-appearance('success');
+  }
+
+  &.warning {
+    @include apply-tag-appearance('warning');
+  }
+
+  &.error {
+    @include apply-tag-appearance('error');
+  }
+
+  // fit
+  &.small {
+    @include apply-tag-fit('small');
+  }
+
+  &.medium {
+    @include apply-tag-fit('medium');
+  }
+
+  &.large {
+    @include apply-tag-fit('large');
+  }
+}

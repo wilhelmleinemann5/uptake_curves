@@ -1,0 +1,105 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_glow.scss';
+@import './mc-radio.mixins.scss';
+
+.mc-radio {
+  align-items: flex-start;
+  cursor: pointer;
+  display: flex;
+  position: relative;
+
+  &.small {
+    @include apply-radio-fit('small');
+  }
+
+  &.medium {
+    @include apply-radio-fit('medium');
+  }
+
+  &.large {
+    @include apply-radio-fit('large');
+  }
+
+  mc-label::part(label) {
+    padding-bottom: 0;
+  }
+
+  .checkmark {
+    align-items: center;
+    background-color: var(--mds_core_radio_off_background-color);
+    border-radius: 50%;
+    border: var(--mds_core_radio_border-width) var(--mds_core_radio_border-style) var(--mds_core_radio_off_border-color);
+    display: flex;
+    justify-content: center;
+
+    .bullet {
+      display: none;
+      background-color: var(--mds_core_radio_on_checkmark-color);
+      border-radius: 50%;
+    }
+  }
+
+  &.hover:not(.disabled),
+  &:hover:not(.disabled),
+  &.active:not(.disabled),
+  &:active:not(.disabled) {
+    .checkmark {
+      border-color: var(--mds_core_radio_off_hover_border-color);
+    }
+  }
+
+  &.focus {
+    .checkmark {
+      @include mds-glow-and-border();
+    }
+  }
+
+  input[type='radio'] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    opacity: 0;
+
+    &:focus {
+      & + .checkmark {
+        @include mds-glow-and-border();
+      }
+    }
+  }
+}
+
+:host([checked]) {
+  .checkmark {
+    background-color: var(--mds_core_radio_on_background-color);
+    border-color: var(--mds_core_radio_on_border-color);
+
+    .bullet {
+      display: block;
+    }
+  }
+
+  .mc-radio:not(.disabled) {
+    &.hover,
+    &:hover,
+    &.active,
+    &:active {
+      .checkmark {
+        border-color: var(--mds_core_radio_on_hover_border-color);
+        background-color: var(--mds_core_radio_on_hover_background-color);
+      }
+    }
+  }
+}
+
+:host([disabled]:not([checked])) {
+  .checkmark {
+    background-color: var(--mds_core_radio_off_disabled_background-color);
+  }
+}
+
+:host([hiddenlabel]) {
+  .mc-radio {
+    gap: 0;
+  }
+}

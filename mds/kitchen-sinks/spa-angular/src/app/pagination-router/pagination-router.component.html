@@ -1,0 +1,12 @@
+<div class="mds-grid mds-grid-cols-1">
+  <mc-pagination [totalpages]="20" [currentpage]="currentIndex$ | async" [visiblepages]="10">
+    <a [routerLink]="['/paginationrouter/' + page]" *ngFor="let page of pages; index as i">{{ page }}</a>
+  </mc-pagination>
+
+  <hr />
+  <mc-button><a [routerLink]="['/paginationrouter/3']">Set page 3</a></mc-button>
+  <mc-button><a [routerLink]="['/paginationrouter/10']">Set page 10</a></mc-button>
+
+  <hr />
+  <p>Current page: {{ currentIndex$ | async }}</p>
+</div>

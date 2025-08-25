@@ -1,0 +1,117 @@
+{
+    "core": {
+        "popover": {
+            "border-width": {
+                "value": "$global.border.width"
+            },
+            "border-style": {
+                "value": "$global.border.style"
+            },
+            "border-radius": {
+                "value": "$brand.border.large.radius"
+            },
+            "background-color": {
+                "value": "$brand.appearance.neutral.default.background-color"
+            },
+            "border-color": {
+                "value": "$brand.appearance.neutral.default.border-color"
+            },
+            "color": {
+                "value": "$brand.appearance.neutral.default.on-background-color"
+            },
+            "modal": {
+                "body": {
+                    "padding-top": {
+                        "value": 12
+                    },
+                    "padding-right": {
+                        "value": 24
+                    },
+                    "padding-left": {
+                        "value": 24
+                    },
+                    "padding-bottom": {
+                        "value": 24
+                    }
+                },
+                "close": {
+                    "background-color": {
+                        "value": "$brand.appearance.opacity.default.50"
+                    }
+                },
+                "footer": {
+                    "background-color": {
+                        "value": "$brand.appearance.neutral.weakest.background-color"
+                    },
+                    "gap": {
+                        "value": 12
+                    },
+                    "padding-top": {
+                        "value": 12
+                    },
+                    "padding-right": {
+                        "value": 24
+                    },
+                    "padding-left": {
+                        "value": 24
+                    },
+                    "padding-bottom": {
+                        "value": 12
+                    }
+                },
+                "heading": {
+                    "padding-top": {
+                        "value": 20
+                    },
+                    "padding-right": {
+                        "value": 24
+                    },
+                    "padding-left": {
+                        "value": 24
+                    },
+                    "padding-bottom": {
+                        "value": 12
+                    },
+                    "title": {
+                        "margin-top": {
+                            "value": 4
+                        }
+                    }
+                },
+                "zindex": {
+                    "value": 9999
+                }
+            },
+            "small": {
+                "arrow": {
+                    "size": {
+                        "value": 7
+                    },
+                    "margin": {
+                        "value": -3
+                    }
+                }
+            },
+            "medium": {
+                "arrow": {
+                    "size": {
+                        "value": 9
+                    },
+                    "margin": {
+                        "value": -4
+                    }
+                }
+            },
+            "large": {
+                "arrow": {
+                    "size": {
+                        "value": 11
+                    },
+                    "margin": {
+                        "value": -5
+                    }
+                }
+            }
+        }
+    }
+}

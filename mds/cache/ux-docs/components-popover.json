@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222432655,
+  "data": "---\ntags:\n  - core\ntitle: Popover\ndescription: >-\n  Displays an overlay that can contain rich content and child components.\n---\n\nimport PopoverDemo from \"./_components/PopoverDemo.vue\";\n\n<PopoverDemo client:only=\"vue\" />\n\n<br /><br />\n\nThe popover is the basis of a number of Core components including the <PageLink path=\"/components/tooltip\">Tooltip</PageLink> and <PageLink path=\"/components/input-date\">Input Date</PageLink> components.\n\nWhilst similar to the tooltip, the Popover provides lower level control of the user experience in terms of triggering events and content layout.\n\nThe popover will always try to position itself to appear visible to the user irrespective of it's configured position.\n\n"
+}

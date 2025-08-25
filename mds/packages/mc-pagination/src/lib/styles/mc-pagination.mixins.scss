@@ -1,0 +1,12 @@
+@mixin apply-pagination-fit($fit) {
+  .ellipsis {
+    height: var(--mds_core_pagination_#{$fit}_ellipsis_height);
+    padding: var(--mds_core_pagination_#{$fit}_ellipsis_padding);
+
+    @if $fit == 'large' {
+      @include mds-apply-font('text', 'medium', 'normal');
+    } @else {
+      @include mds-apply-font('text', '#{$fit}', 'normal');
+    }
+  }
+}

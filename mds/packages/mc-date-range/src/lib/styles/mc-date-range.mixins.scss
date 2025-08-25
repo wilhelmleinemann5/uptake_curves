@@ -1,0 +1,9 @@
+@mixin apply-mc-date-range-fit($fit) {
+  legend {
+    margin-bottom: var(--mds_core_date-range_#{$fit}_legend_margin-bottom);
+  }
+
+  .inputs {
+    gap: var(--mds_core_date-range_#{$fit}_gap);
+  }
+}

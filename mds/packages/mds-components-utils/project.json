@@ -1,0 +1,77 @@
+{
+  "name": "mds-components-utils",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mds-components-utils/lib",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "copy:assets",
+        "copy:types"
+      ]
+    },
+    "copy:assets": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "recursive-copy -w packages/mds-components-utils/lib dist/packages/mds-components-utils/lib  -f '**/*.json'"
+        ]
+      },
+      "dependsOn": [
+        "build:compile-js"
+      ]
+    },
+    "copy:types": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "recursive-copy -w packages/mds-components-utils/lib dist/packages/mds-components-utils/lib  -f '**/*.d.ts'"
+        ]
+      },
+      "dependsOn": [
+        "build:compile-js"
+      ]
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": true,
+        "bundle": false,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-components-utils",
+        "outdir": "dist/packages/mds-components-utils",
+        "main": "packages/mds-components-utils/lib/index.ts",
+        "tsConfig": "packages/mds-components-utils/tsconfig.lib.json",
+        "assets": [
+          "packages/mds-components-utils/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/no-bundle.config.cjs"
+      }
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mds-components-utils",
+      "options": {
+        "outputPath": "dist/packages/mds-components-utils"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "vitest": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "testTargetName": "vitest",
+        "serveTargetName": "serve",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  },
+  "tags": []
+}

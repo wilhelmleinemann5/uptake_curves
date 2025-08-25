@@ -1,0 +1,16 @@
+<div class="mds-grid mds-grid-cols-1">
+  <mc-tab-bar [currentindex]="currentIndex$ | async">
+    <mc-tab slot="tab"><a routerLink="/tabbarrouter/0">Tab 1</a></mc-tab>
+    <div slot="panel">Tab 1</div>
+    <mc-tab slot="tab"><a routerLink="/tabbarrouter/1">Tab 2</a></mc-tab>
+    <div slot="panel">Tab 2</div>
+    <mc-tab slot="tab"><a routerLink="/tabbarrouter/2">Tab 3</a></mc-tab>
+    <div slot="panel">Tab 3</div>
+  </mc-tab-bar>
+
+  <hr />
+  <mc-button><a routerLink="/tabbarrouter/2">Open tab 3</a></mc-button>
+
+  <hr />
+  <p>Current index: {{ currentIndex$ | async }}</p>
+</div>

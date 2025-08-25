@@ -1,0 +1,164 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_shadow.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_media.scss';
+@import './mc-dialog.mixins.scss';
+
+:host([nonmodal]) {
+  width: min-content;
+  height: min-content;
+}
+
+dialog {
+  padding: 0; //reset the default dialog element padding
+  border-width: 0; //reset the default dialog element border
+  position: fixed;
+  display: none;
+  opacity: 0;
+  flex-direction: column;
+  background-color: var(--mds_core_dialog_background-color);
+  color: var(--mds_core_dialog_text-color);
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  z-index: 999;
+  transition:
+    opacity var(--mds_core_dialog_transition-duration) var(--mds_core_dialog_transition-timing),
+    transform var(--mds_core_dialog_transition-duration) var(--mds_core_dialog_transition-timing),
+    overlay var(--mds_core_dialog_transition-duration) var(--mds_core_dialog_transition-timing) allow-discrete,
+    display var(--mds_core_dialog_transition-duration) var(--mds_core_dialog_transition-timing) allow-discrete;
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-grow: 0;
+
+    h1 {
+      margin: 0;
+      @include mds-apply-font('headline', 'x-small');
+    }
+  }
+
+  .body-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: auto;
+    flex-grow: 1;
+
+    .body {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  &::backdrop {
+    background-color: var(--mds_core_dialog_backdrop_background-color);
+    opacity: 0;
+    transition:
+      opacity var(--mds_core_dialog_transition-duration) var(--mds_core_dialog_transition-timing),
+      overlay var(--mds_core_dialog_transition-duration) var (--mds_core_dialog_transition-timing) allow-discrete,
+      display var(--mds_core_dialog_transition-duration) var(--mds_core_dialog_transition-timing) allow-discrete;
+  }
+
+  footer {
+    display: flex;
+    justify-content: flex-end;
+    flex-grow: 0;
+  }
+
+  &.non-modal {
+    position: fixed;
+  }
+
+  &.no-padding {
+    .body-wrapper {
+      .body {
+        padding: 0;
+      }
+    }
+  }
+
+  &[open] {
+    display: flex;
+    opacity: 1;
+  }
+
+  @include mds-shadow('high');
+}
+
+//needed for higher specificity over default dimension
+:host([dimension]) {
+  dialog {
+    &.breakpoint-widths {
+      width: var(--dialog-width-xs, 100%);
+
+      @include mds-viewport-above('xs') {
+        width: var(--dialog-width-sm, var(--dialog-width-xs));
+      }
+
+      @include mds-viewport-above('sm') {
+        width: var(--dialog-width-md, var(--dialog-width-sm));
+      }
+
+      @include mds-viewport-above('md') {
+        width: var(--dialog-width-lg, var(--dialog-width-md));
+      }
+
+      @include mds-viewport-above('lg') {
+        width: var(--dialog-width-xl, var(--dialog-width-lg));
+      }
+    }
+
+    &.breakpoint-heights {
+      height: var(--dialog-height-xs, auto);
+
+      @include mds-viewport-above('xs') {
+        height: var(--dialog-height-sm, var(--dialog-height-xs));
+      }
+
+      @include mds-viewport-above('sm') {
+        height: var(--dialog-height-md, var(--dialog-height-sm));
+      }
+
+      @include mds-viewport-above('md') {
+        height: var(--dialog-height-lg, var(--dialog-height-md));
+      }
+
+      @include mds-viewport-above('lg') {
+        height: var(--dialog-height-xl, var(--dialog-height-lg));
+      }
+    }
+
+    &:not(.breakpoint-widths):not(.breakpoint-heights) {
+      @include mds-viewport-below('md') {
+        &.dimension--large {
+          @include apply-mc-dialog-fullscreen();
+        }
+      }
+
+      @include mds-viewport-below('sm') {
+        @include apply-mc-dialog-fullscreen();
+      }
+    }
+  }
+}
+
+/* This should prevent the dialog from scrolling the page when it is open. 
+It currently does not work, but putting it there for when the bug is fixed(can get rid of JS style injection when it does)
+ https://github.com/whatwg/html/issues/7732 */
+dialog.disable-page-scroll,
+dialog.disable-page-scroll::backdrop {
+  overscroll-behavior: contain;
+}
+
+//override the shadow from host styles
+:host(:focus),
+:host(:focus-visible),
+:host(:focus) *,
+:host(:focus-visible) * {
+  dialog {
+    @include mds-shadow('high');
+  }
+}

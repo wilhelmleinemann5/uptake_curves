@@ -1,0 +1,37 @@
+.form-fieldset {
+  padding: 0;
+  border: 0;
+
+  .form-label {
+    margin-bottom: 4px;
+  }
+
+  .form-help,
+  .form-label--error {
+    padding: 0;
+    margin-bottom: 4px;
+  }
+
+  legend.form-label + .form-checkbox,
+  legend.form-label + .form-radio {
+    margin-top: 4px;
+  }
+
+  .form-checkbox,
+  .form-radio {
+    margin-top: 8px;
+  }
+
+  legend.form-label + .form-switch {
+    margin-top: 20px;
+  }
+
+  .form-help + .form-switch,
+  .form-label--error + .form-switch {
+    margin-top: 24px;
+  }
+
+  legend.mds-font--display-1 {
+    margin-bottom: 16px;
+  }
+}

@@ -1,0 +1,220 @@
+<div class="mds-grid mds-grid-cols-1">
+  <div class="mds-flex mds-gap-400">
+    <mc-button label="small" (click)="onFitChanged('small')"></mc-button>
+    <mc-button label="medium" (click)="onFitChanged('medium')"></mc-button>
+    <mc-button label="large" (click)="onFitChanged('large')"></mc-button>
+  </div>
+  <mc-step-indicator
+    style="display: block; width: 80%; margin: 0 auto"
+    [currentindex]="currentStepIndex"
+    [labels]="steps"
+    [fit]="fit"
+  ></mc-step-indicator>
+  <form [formGroup]="form" (ngSubmit)="submit($event)">
+    <div *ngIf="currentStepIndex === 0" class="mds-grid mds-grid-cols-2">
+      <mc-input
+        name="fullname"
+        ngDefaultControl
+        formControlName="fullname"
+        [invalid]="form.controls['fullname'].touched && !form.controls['fullname'].valid"
+        errormessage="Fullname is required!"
+        class="field"
+        label="Name"
+        (input)="onInputHandler($event)"
+        placeholder="Write your full name"
+        (keydown.enter)="onEnterHandler()"
+        [fit]="fit"
+        ><span slot="hint">Enter your name and surname</span>
+      </mc-input>
+      <mc-input
+        name="tel"
+        ngDefaultControl
+        formControlName="tel"
+        class="field"
+        label="Telephone number"
+        [fit]="fit"
+        [mask]="mask"
+      >
+      </mc-input>
+      <mc-input
+        name="street"
+        ngDefaultControl
+        formControlName="street"
+        [invalid]="form.controls['street'].touched && !form.controls['street'].valid"
+        errormessage="Street is required!"
+        class="field"
+        (input)="onInputHandler($event)"
+        placeholder="Write your address"
+        (keydown.enter)="onEnterHandler()"
+        [fit]="fit"
+        ><span slot="label"
+          >Street
+          <mc-tooltip>
+            <mc-icon slot="trigger" class="icon" icon="info-circle"></mc-icon>
+            <span *ngIf="showTooltip">The HTML content of the tooltip</span>
+          </mc-tooltip>
+        </span>
+      </mc-input>
+      <mc-date-range
+        name="travelPeriod"
+        ngDefaultControl
+        formControlName="travelPeriod"
+        fromlabel="Checkin date"
+        tolabel="Checkout date"
+      ></mc-date-range>
+      <mc-select-native
+        name="country"
+        ngDefaultControl
+        formControlName="country"
+        class="field"
+        label="Nationality"
+        placeholder="Select country"
+        [options]="countries"
+        [fit]="fit"
+      >
+      </mc-select-native>
+      <mc-input-date
+        name="birthday"
+        ngDefaultControl
+        formControlName="birthday"
+        class="field"
+        label="Birth date"
+        tartofweek="1"
+        format="YYYY-MM-DD"
+        nextlabel="Next month"
+        previouslabel="Previous month"
+        placeholder="YYYY-MM-DD"
+        [fit]="fit"
+        ><span slot="hint">Select your birth date</span>
+      </mc-input-date>
+      <mc-checkbox-group ngDefaultControl formControlName="gender" class="field" legend="Gender" [fit]="fit">
+        <mc-checkbox name="gender" *ngFor="let gender of genders" [value]="gender" [label]="gender" [fit]="fit">
+        </mc-checkbox>
+        <span slot="hint">Choose as many as you like</span>
+      </mc-checkbox-group>
+      <div>
+        <mc-button (click)="currentStepIndex = currentStepIndex + 1" trailingicon="chevron-right" [fit]="fit"
+          >Next step
+        </mc-button>
+      </div>
+    </div>
+
+    <div *ngIf="currentStepIndex === 1" class="mds-grid mds-grid-cols-2">
+      <mc-switch-group
+        class="field"
+        ngDefaultControl
+        formControlName="hobbies"
+        legend="What are you hobbies?"
+        [fit]="fit"
+      >
+        <span slot="hint">Please select as many as you like</span>
+        <mc-switch name="hobbies" *ngFor="let hobby of hobbies" [value]="hobby" [label]="hobby" [fit]="fit">
+        </mc-switch>
+      </mc-switch-group>
+
+      <mc-switch-group fit="small" hiddenlegend ngDefaultControl formControlName="priorityFlag">
+        <mc-switch name="priorityFlag" label="Priority" value="high"></mc-switch>
+      </mc-switch-group>
+
+      <mc-textarea
+        name="comments"
+        ngDefaultControl
+        formControlName="comments"
+        class="field"
+        label="Comment"
+        placeholder="Describe what you do in your spare time"
+        rows="5"
+        maxLength="500"
+        [fit]="fit"
+      >
+      </mc-textarea>
+      <div class="mds-flex mds-gap-400">
+        <mc-button (click)="currentStepIndex = currentStepIndex - 1" variant="outlined" icon="chevron-left" [fit]="fit"
+          >Previous step
+        </mc-button>
+        <mc-button (click)="currentStepIndex = currentStepIndex + 1" trailingicon="chevron-right" [fit]="fit"
+          >Next step
+        </mc-button>
+      </div>
+    </div>
+
+    <div *ngIf="currentStepIndex === 2" class="mds-grid mds-grid-cols-2">
+      <mc-radio-group
+        class="field"
+        ngDefaultControl
+        formControlName="employed"
+        legend="Are you currently employed"
+        [fit]="fit"
+      >
+        <mc-radio name="employed" value="1" label="Yes" [fit]="fit"></mc-radio>
+        <mc-radio name="employed" value="0" label="No" [fit]="fit"></mc-radio>
+      </mc-radio-group>
+      <mc-input
+        name="company"
+        ngDefaultControl
+        formControlName="company"
+        class="field"
+        label="Company"
+        placeholder="Write where you work"
+        ><span slot="hint">Enter company name</span>
+      </mc-input>
+      <mc-select-native
+        name="skills"
+        ngDefaultControl
+        formControlName="skills"
+        variant="multiple"
+        class="field"
+        label="Skills"
+        placeholder="Select your skills"
+        [options]="skills"
+        [fit]="fit"
+      >
+      </mc-select-native>
+      <mc-tooltip [fit]="fit">
+        <mc-checkbox
+          slot="trigger"
+          name="terms"
+          ngDefaultControl
+          formControlName="terms"
+          [fit]="fit"
+          class="field"
+          label="I agree to the terms & conditions"
+          ><span slot="hint"
+            >You might like to read our full <a href="https://designsystem.maersk.com">terms & conditions</a></span
+          ></mc-checkbox
+        >
+        <span>You need to agree to the terms and condition</span>
+      </mc-tooltip>
+      <div class="mds-flex mds-gap-400">
+        <mc-button (click)="currentStepIndex = currentStepIndex - 1" variant="outlined" icon="chevron-left" [fit]="fit"
+          >Previous step
+        </mc-button>
+        <mc-button (click)="showFormValues()" [fit]="fit">Send your application</mc-button>
+      </div>
+    </div>
+
+    <mc-modal (closed)="open = false" [open]="open" heading="Summary of information you entered" [fit]="fit">
+      <div>
+        <p>Name: {{ this.form.value.fullname }}</p>
+        <p>Checkin date: {{ this.form.value.travelPeriod?.from }}</p>
+        <p>Checkout date: {{ this.form.value.travelPeriod?.to }}</p>
+        <p>Country name: {{ this.form.value.country }}</p>
+        <p>Birthday: {{ this.form.value.birthday }}</p>
+        <p>Gender: {{ this.form.value.gender }}</p>
+        <p>Hobbies: {{ this.form.value.hobbies }}</p>
+        <p>Priority: {{ this.form.value.priorityFlag }}</p>
+        <p>Comments: {{ this.form.value.comments }}</p>
+        <p>Is Employed? {{ this.form.value.employed }}</p>
+        <p>Skills: {{ this.form.value.skills }}</p>
+        <p>Company: {{ this.form.value.company }}</p>
+        <p>Agreed to the terms? {{ this.form.value.terms }}</p>
+      </div>
+      <mc-button type="submit" slot="primaryAction" appearance="secondary" dialogAction="ok" [fit]="fit"
+        >Send</mc-button
+      >
+      <mc-button slot="secondaryAction" appearance="neutral" variant="outlined" dialogAction="cancel" [fit]="fit"
+        >Cancel</mc-button
+      >
+    </mc-modal>
+  </form>
+</div>

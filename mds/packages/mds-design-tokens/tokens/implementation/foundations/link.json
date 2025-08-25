@@ -1,0 +1,55 @@
+{
+    "foundations": {
+        "link": {
+            "transition-properties": {
+                "value": "all"
+            },
+            "transition-duration": {
+                "value": "$global.transition.fast.duration"
+            },
+            "transition-timing": {
+                "value": "$global.transition.fast.timing"
+            },
+            "focus": {
+                "border-radius": {
+                    "value": "$brand.border.medium.radius"
+                }
+            },
+            "inline": {
+                "text-decoration": {
+                    "value": "$global.link.inline.text-decoration"
+                },
+                "hover": {
+                    "text-decoration": {
+                        "value": "$global.link.inline.hover.text-decoration"
+                    }
+                }
+            },
+            "stand-alone": {
+                "text-decoration": {
+                    "value": "$global.link.stand-alone.text-decoration"
+                },
+                "hover": {
+                    "text-decoration": {
+                        "value": "$global.link.stand-alone.hover.text-decoration"
+                    }
+                }
+            },
+            "external": {
+                "icon": {
+                    "width": {
+                        "value": 20
+                    },
+                    "height": {
+                        "value": 20
+                    }
+                }
+            },
+            "default": {
+                "text-color": {
+                    "value": "$brand.appearance.primary.default.link-color"
+                }
+            }
+        }
+    }
+}

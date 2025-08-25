@@ -1,0 +1,443 @@
+name: Publish and deploy
+on:
+  push:
+    branches:
+      - 'main'
+      - 'alpha'
+      - 'beta'
+
+jobs:
+  install:
+    if: ${{ !startsWith(github.event.head_commit.message, 'chore(release)') }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Install deps
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm i
+
+  build-and-version-packages:
+    runs-on: ubuntu-latest
+    needs: install
+    outputs:
+      nextver: ${{ steps.ver.outputs.nextVer }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN_GITHUB}}
+
+      - name: Cache dist folders
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Bump the versions & generate the changelog
+        id: ver
+        run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.NPM_TOKEN_GITHUB }}
+
+      - name: Build packages
+        run: npx nx run-many --target=build
+
+      - name: Build metadata
+        run: npx nx run-many --target=generate:metadata
+
+  publish-github:
+    needs: build-and-version-packages
+    if: ${{needs.build-and-version-packages.outputs.nextver != ''}}
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN_GITHUB}}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Publish
+        run: npx nx run-many --target=release
+        env:
+          GITHUB_TOKEN: ${{ secrets.NPM_TOKEN_GITHUB }}
+
+  publish-nexus-devnet:
+    needs: build-and-version-packages
+    if: ${{needs.build-and-version-packages.outputs.nextver != ''}}
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Remove .npmrc
+        run: rm .npmrc
+
+      - run: |
+          git update-index --assume-unchanged .npmrc
+
+      - name: Create token
+        id: token
+        run: echo "NEXUS_TOKEN=$(echo -n ${{ secrets.MDN_NEXUS_WRITE_USERNAME }}:${{ secrets.MDN_NEXUS_WRITE_PASSWORD }} | openssl base64)" >> $GITHUB_OUTPUT
+
+      - name: Set up npmrc
+        uses: Maersk-Global/github-reusable-workflows/.github/actions/nexusSetup@main
+        with:
+          authToken: ${{ steps.token.outputs.NEXUS_TOKEN }}
+          scope: ''
+          tokenFormat: 'legacy'
+          overwrite: 'true'
+          registry: 'https://tools-nexus.maerskdev.net/repository/npm-hosted-internal/'
+
+      - run: cp .npmrc ~/.npmrc
+
+      - name: Publish
+        run: npx nx run-many --target=release
+
+  publish-akamai:
+    needs: [build-and-version-packages, publish-github, publish-nexus-devnet]
+    if: ${{needs.build-and-version-packages.outputs.nextver != ''}}
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      NET_USER: sshacs
+      NET_HOST: assetsprod.upload.akamai.com
+      UPLOAD_FOLDER: dist/cdn/
+      RSYNC_EXCLUDES: --exclude 'metadata' --exclude 'package.json'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Generate local cdn folder
+        run: |
+          node tools/scripts/publish-cdn.mjs
+
+      - run: |
+          git pull origin
+
+      - name: Get package version
+        id: package-version
+        run: |
+          echo "::set-output name=version::$(git describe --tags $(git rev-list --tags --max-count=1))"
+
+      - name: Save version to env
+        run: |
+          echo VERSION=$(echo ${{ steps.package-version.outputs.version }} | tail -c+2) >> $GITHUB_ENV
+
+      - name: Create & store the prod ssh key and create a ssh config file
+        run: |
+          mkdir ~/.ssh
+          chmod 700 ~/.ssh
+          touch akamaikey
+          echo "${{ secrets.AKAMAI_SSH_KEY }}" > akamaikey && chmod 600 akamaikey
+          echo -e 'HostkeyAlgorithms +ssh-dss\nHostkeyAlgorithms +ssh-rsa\nPubkeyAcceptedKeyTypes +ssh-dss\nPubkeyAcceptedKeyTypes +ssh-rsa\nStrictHostKeyChecking no' > ~/.ssh/config
+
+      - name: Create remote directory
+        run: |
+          echo -mkdir $TARGETDIR | sftp -b - -i akamaikey $NET_USER@$NET_HOST
+
+      - name: Deploy latest version to version folder
+        run: |
+          rsync -aq $RSYNC_EXCLUDES --timeout=180 -e 'ssh -oPubkeyAuthentication=yes -i akamaikey' $UPLOAD_FOLDER $NET_USER@$NET_HOST:/${{ env.VERSION }}/
+
+      - name: Deploy latest version to latest folder with delete option
+        run: |
+          rsync -aq $RSYNC_EXCLUDES --timeout=180 -e 'ssh -oPubkeyAuthentication=yes -i akamaikey' $UPLOAD_FOLDER $NET_USER@$NET_HOST:/latest/ --delete
+
+      - name: Remove key
+        run: rm akamaikey
+
+      - name: Create Akamai Credentials
+        run: |
+          touch .edgerc
+          cat << EOF > .edgerc
+          [ccu]
+          client_secret = ${{ secrets.AKAMAI_PURGE_CACHE_CLIENT_SECRET }}
+          host = ${{ secrets.AKAMAI_PURGE_CACHE_HOST }}
+          access_token = ${{ secrets.AKAMAI_PURGE_CACHE_ACCESS_TOKEN }}
+          client_token = ${{ secrets.AKAMAI_PURGE_CACHE_CLIENT_TOKEN }}
+          EOF
+          cat .edgerc
+
+      - name: Purge Akamai cache
+        run: |
+          docker run --rm -t -v $GITHUB_WORKSPACE/.edgerc:/root/.edgerc:ro akamai/purge akamai purge invalidate https://assets.maerskline.com/mds/
+
+  publish-vscode-extension:
+    needs: [build-and-version-packages]
+    if: ${{needs.build-and-version-packages.outputs.nextver != ''}}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Package extension
+        run: npx nx package mds-vscode-extension
+
+      - name: Publish extension
+        run: |
+          cd dist/packages/mds-vscode-extension
+          npx @vscode/vsce publish -p $VSCE_PAT --allow-missing-repository --packagePath *.vsix
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+
+  create-release-notes:
+    needs: [publish-github, publish-nexus-devnet]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set username and email
+        run: |
+          git config --global user.name "designsystem"
+          git config --global user.email "designsystem@maersk.com"
+
+      - run: |
+          git pull origin
+
+      - name: Get package version
+        id: package-version
+        run: |
+          echo "::set-output name=version::$(git describe --tags $(git rev-list --tags --max-count=1))"
+
+      - name: Get release notes
+        id: release-notes
+        run: |
+          RELEASE_NOTES=$(git show ${{ steps.package-version.outputs.version }} --format=%B -s)
+          echo "::set-output name=notes::${RELEASE_NOTES//$'\n'/'%0A'}"
+
+      - name: Create release notes for alpha or beta
+        if: ${{contains(steps.package-version.outputs.version, 'alpha') || contains(steps.package-version.outputs.version, 'beta')}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.NPM_TOKEN_GITHUB }}
+        run: |
+          gh release create ${{ steps.package-version.outputs.version }} --title ${{ steps.package-version.outputs.version }} --notes "${{ steps.release-notes.outputs.notes }}" --prerelease
+
+      - name: Create release notes for latest
+        if: ${{!contains(steps.package-version.outputs.version, 'alpha') && !contains(steps.package-version.outputs.version, 'beta')}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.NPM_TOKEN_GITHUB }}
+        run: |
+          gh release create ${{ steps.package-version.outputs.version }} --title ${{ steps.package-version.outputs.version }} --notes "${{ steps.release-notes.outputs.notes }}" --latest
+
+  deploy-storybook:
+    if: startsWith(github.ref_name, 'main')
+    needs: build-and-version-packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Trust mds repo
+        run: git config --global --add safe.directory /__w/mds/mds
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - run: |
+          git pull origin
+
+      - name: Get package version
+        id: package-version
+        run: |
+          echo "::set-output name=version::$(git describe --tags $(git rev-list --tags --max-count=1))"
+
+      - name: Write version to JSON file
+        run: |
+          echo \{ \"version\": \"${{ steps.package-version.outputs.version }}\" \} > .storybook/version.json
+
+      - name: Build storybook
+        run: npm run ui:build:ci
+
+      - name: Deploy storybook as static web app
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_V2 }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'upload'
+          skip_app_build: true
+          app_location: ${{ env.APP_LOCATION }}
+          app_artifact_location: ${{ env.APP_ARTIFACT_LOCATION }}
+        env:
+          APP_LOCATION: 'dist/storybook/mds' # location of the client code
+          APP_ARTIFACT_LOCATION: 'dist/storybook/mds' # location of client code build output
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Check if container exists
+        id: container
+        run: |
+          azoutput=$(az storage container exists --account-name maerskdesignsystemprod --auth-mode key --name main)
+          echo "exists=$(echo $azoutput | jq ".exists")" >> $GITHUB_OUTPUT
+
+      - name: Create container
+        if: steps.container.outputs.exists == 'false'
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage container create --account-name maerskdesignsystemprod --auth-mode key --name main --public-access blob
+
+      - name: Clean blob storage
+        if: steps.container.outputs.exists == 'true'
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage blob delete-batch --account-name maerskdesignsystemprod --auth-mode key -s main
+
+      - name: Upload to blob storage
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage blob upload-batch --account-name maerskdesignsystemprod --auth-mode key -d main -s dist/storybook/mds/
+
+      - name: Logout from Azure
+        run: |
+          az logout
+        if: always()

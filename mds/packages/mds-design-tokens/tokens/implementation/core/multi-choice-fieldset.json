@@ -1,0 +1,57 @@
+{
+  "core": {
+    "multi-choice-fieldset": {
+      "small": {
+        "items": {
+          "margin-top": {
+            "value": 8
+          },
+          "vertical": {
+            "gap": {
+              "value": 8
+            }
+          },
+          "horizontal": {
+            "gap": {
+              "value": 16
+            }
+          }
+        }
+      },
+      "medium": {
+        "items": {
+          "margin-top": {
+            "value": 12
+          },
+          "vertical": {
+            "gap": {
+              "value": 12
+            }
+          },
+          "horizontal": {
+            "gap": {
+              "value": 20
+            }
+          }
+        }
+      },
+      "large": {
+        "items": {
+          "margin-top": {
+            "value": 16
+          },
+          "vertical": {
+            "gap": {
+              "value": 16
+            }
+          },
+          "horizontal": {
+            "gap": {
+              "value": 24
+            }
+          }
+        }
+      }
+    }
+  }
+}

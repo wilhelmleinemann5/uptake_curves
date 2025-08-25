@@ -1,0 +1,207 @@
+{
+  "core": {
+    "input": {
+      "transition-properties": {
+        "value": "all"
+      },
+      "transition-duration": {
+        "value": "$global.transition.fast.duration"
+      },
+      "transition-timing": {
+        "value": "$global.transition.fast.timing"
+      },
+      "border-width": {
+        "value": "$global.border.width"
+      },
+      "border-radius": {
+        "value": "$brand.border.medium.radius"
+      },
+      "border-style": {
+        "value": "$global.border.style"
+      },
+      "placeholder": {
+        "text-color": {
+          "value": "$brand.appearance.neutral.weakest.text-color"
+        }
+      },
+      "default": {
+        "background-color": {
+          "value": "$brand.appearance.neutral.default.background-color"
+        },
+        "text-color": {
+          "value": "$brand.appearance.neutral.default.on-background-color"
+        },
+        "border-color": {
+          "value": "$brand.appearance.neutral.default.border-color"
+        },
+        "hover": {
+          "border-color": {
+            "value": "$brand.appearance.state.neutral.default.hover.border-color"
+          }
+        }
+      },
+      "vanity": {
+        "background-color": {
+          "value": "transparent"
+        },
+        "text-color": {
+          "value": "$brand.appearance.neutral.default.text-color"
+        },
+        "border-radius": {
+          "value": 0
+        },
+        "border-top-width": {
+          "value": 0
+        },
+        "border-right-width": {
+          "value": 0
+        },
+        "border-left-width": {
+          "value": 0
+        }
+      },
+      "small": {
+        "height": {
+          "value": 32
+        },
+        "padding-top": {
+          "value": 0
+        },
+        "padding-right": {
+          "value": 7
+        },
+        "padding-bottom": {
+          "value": 0
+        },
+        "padding-left": {
+          "value": 7
+        },
+        "type-color": {
+          "padding-left": {
+            "value": 2
+          },
+          "padding-right": {
+            "value": 2
+          }
+        },
+        "affix": {
+          "padding-right": {
+            "value": 2
+          },
+          "padding-left": {
+            "value": 2
+          },
+          "icon": {
+            "padding": {
+              "value": 2
+            },
+            "margin": {
+              "value": 5
+            },
+            "gap": {
+              "value": 2
+            }
+          }
+        }
+      },
+      "medium": {
+        "height": {
+          "value": 40
+        },
+        "padding-top": {
+          "value": 0
+        },
+        "padding-right": {
+          "value": 11
+        },
+        "padding-bottom": {
+          "value": 0
+        },
+        "padding-left": {
+          "value": 11
+        },
+        "type-color": {
+          "padding-left": {
+            "value": 2
+          },
+          "padding-right": {
+            "value": 2
+          }
+        },
+        "affix": {
+          "padding-right": {
+            "value": 4
+          },
+          "padding-left": {
+            "value": 4
+          },
+          "icon": {
+            "padding": {
+              "value": 4
+            },
+            "margin": {
+              "value": 7
+            },
+            "gap": {
+              "value": 4
+            }
+          }
+        }
+      },
+      "large": {
+        "height": {
+          "value": 48
+        },
+        "padding-top": {
+          "value": 0
+        },
+        "padding-right": {
+          "value": 15
+        },
+        "padding-bottom": {
+          "value": 0
+        },
+        "padding-left": {
+          "value": 15
+        },
+        "type-color": {
+          "padding-left": {
+            "value": 2
+          },
+          "padding-right": {
+            "value": 2
+          }
+        },
+        "affix": {
+          "padding-right": {
+            "value": 6
+          },
+          "padding-left": {
+            "value": 6
+          },
+          "icon": {
+            "padding": {
+              "value": 4
+            },
+            "margin": {
+              "value": 11
+            },
+            "gap": {
+              "value": 6
+            }
+          }
+        }
+      },
+      "error": {
+        "border-color": {
+          "value": "$brand.appearance.error.default.border-color"
+        }
+      },
+      "disabled": {
+        "background-color": {
+          "value": "transparent"
+        }
+      }
+    }
+  }
+}

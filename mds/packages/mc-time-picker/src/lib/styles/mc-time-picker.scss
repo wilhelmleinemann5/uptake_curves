@@ -1,0 +1,20 @@
+@import './mc-time-picker.mixins.scss';
+
+.mc-time-picker {
+  display: flex;
+
+  /* small size */
+  &.small {
+    @include apply-mc-time-picker-fit('small');
+  }
+
+  /* medium size */
+  &.medium {
+    @include apply-mc-time-picker-fit('medium');
+  }
+
+  /* large size */
+  &.large {
+    @include apply-mc-time-picker-fit('large');
+  }
+}

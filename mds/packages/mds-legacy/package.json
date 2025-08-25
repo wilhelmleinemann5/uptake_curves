@@ -1,0 +1,25 @@
+{
+  "name": "@maersk-global/mds-legacy",
+  "version": "2.135.5",
+  "description": "The Maersk Design System legacy components",
+  "author": "Design System Team",
+  "homepage": "https://designsystem.maersk.com",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Maersk-Global/mds",
+    "directory": "packages/mds-legacy"
+  },
+  "bugs": {
+    "url": "https://github.com/Maersk-Global/mds/issues"
+  },
+  "keywords": [
+    "MaerskDesignSystem",
+    "MdsLegacy"
+  ],
+  "main": "index",
+  "dependencies": {
+    "@maersk-global/mds-design-tokens": "^2.135.5",
+    "@maersk-global/mds-foundations": "^2.135.5"
+  }
+}

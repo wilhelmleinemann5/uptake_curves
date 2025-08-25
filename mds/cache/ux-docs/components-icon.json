@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222427714,
+  "data": "---\ntags:\n  - core\ntitle: Icon\ndescription: Display a Maersk Design System icon\n---\n\nimport IconDemo from \"./_components/IconDemo.vue\";\n\n<Notification>\n  Please visit our <PageLink path=\"/icons/\">icons page</PageLink> to see all of the icons supported by the Maersk Design System.\n</Notification>\n\n<IconDemo client:only=\"vue\"  />\n"
+}

@@ -1,0 +1,86 @@
+{
+    "core": {
+        "tab-bar": {
+            "separator": {
+                "background-color": {
+                    "value": "$brand.appearance.neutral.weak.border-color"
+                },
+                "height": {
+                    "value": 2
+                }
+            },
+            "small": {
+                "scroll-button": {
+                    "padding-top": {
+                        "value": 10
+                    },
+                    "padding-right": {
+                        "value": 8
+                    },
+                    "padding-bottom": {
+                        "value": 10
+                    },
+                    "padding-left": {
+                        "value": 8
+                    }
+                },
+                "panel": {
+                    "padding-top": {
+                        "value": 8
+                    },
+                    "padding-bottom": {
+                        "value": 8
+                    }
+                }
+            },
+            "medium": {
+                "scroll-button": {
+                    "padding-top": {
+                        "value": 12
+                    },
+                    "padding-right": {
+                        "value": 8
+                    },
+                    "padding-bottom": {
+                        "value": 12
+                    },
+                    "padding-left": {
+                        "value": 8
+                    }
+                },
+                "panel": {
+                    "padding-top": {
+                        "value": 16
+                    },
+                    "padding-bottom": {
+                        "value": 16
+                    }
+                }
+            },
+            "large": {
+                "scroll-button": {
+                    "padding-top": {
+                        "value": 16
+                    },
+                    "padding-right": {
+                        "value": 8
+                    },
+                    "padding-bottom": {
+                        "value": 16
+                    },
+                    "padding-left": {
+                        "value": 8
+                    }
+                },
+                "panel": {
+                    "padding-top": {
+                        "value": 16
+                    },
+                    "padding-bottom": {
+                        "value": 16
+                    }
+                }
+            }
+        }
+    }
+}

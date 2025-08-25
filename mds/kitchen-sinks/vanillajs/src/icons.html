@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>MaerskIcons-20px</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 0;
+        padding: 10px 20px;
+      }
+      .container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: start;
+      }
+
+      .preview {
+        margin-bottom: 16px;
+        width: 300px;
+      }
+      .preview__icon {
+        display: inline-block;
+        width: 32px;
+        text-align: center;
+      }
+    </style>
+    <!-- <link rel="stylesheet" href="https://assets.maerskline.com/mds/icons/latest/fonts/web/20px/icons.css" /> -->
+    <link rel="stylesheet" href="./icons.module.scss" />
+  </head>
+  <body class="mds">
+    <div class="mds-layout">
+      <mc-top-bar product="VanillaJS" productshort="VanillaJS" href="/"></mc-top-bar>
+      <mc-side-bar>
+        <nav role="navigation">
+          <ol>
+            <li><a href="/src/form.html">Form example</a></li>
+            <li><a href="/src/validation.html">Validation example</a></li>
+            <li><a href="/src/content.html">Content example</a></li>
+            <li><a href="/src/icons.html">Icons scss</a></li>
+          </ol>
+        </nav>
+      </mc-side-bar>
+      <div class="mds-page mds-container">
+        <div class="mds-grid mds-grid-cols-2">
+          <div class="preview">
+            <span class="preview__icon">
+              <span class="mi-20px mi-airplane-arrival"></span>
+            </span>
+            <span class="mi-20px">airplane-arrival</span>
+            <span>mi-airplane-arrival (e0db, airplane-arrival)</span>
+          </div>
+          <div class="preview">
+            <span class="preview__icon">
+              <span class="mi-20px mi-airplane-departure"></span>
+            </span>
+            <span class="mi-20px">airplane-departure</span>
+            <span>mi-airplane-departure (e0da, airplane-departure)</span>
+          </div>
+          <div class="preview">
+            <span class="preview__icon">
+              <span class="mi-20px mi-airplane"></span>
+            </span>
+            <span class="mi-20px">airplane</span>
+            <span>mi-airplane (e0a1, airplane)</span>
+          </div>
+          <div class="preview">
+            <span class="preview__icon">
+              <span class="mi-20px mi-anchor"></span>
+            </span>
+            <span class="mi-20px">anchor</span>
+            <span>mi-anchor (e087, anchor)</span>
+          </div>
+        </div>
+        <footer>VanillaJS code examples</footer>
+      </div>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

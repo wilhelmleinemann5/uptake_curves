@@ -1,0 +1,486 @@
+name: Pull request to main
+on:
+  pull_request:
+    branches:
+      - 'main'
+      - 'alpha'
+      - 'beta'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Cache dist folders
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+          restore-keys: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Install
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm i
+
+      - name: Build packages
+        run: npx nx run-many --target=build --configuration=ci --skip-nx-cache=true
+
+      - name: Build metadata
+        run: npx nx run-many --target=generate:metadata
+
+      - name: Build storybook
+        run: npm run ui:build:ci
+
+  unit-tests:
+    if: github.event.pull_request.draft == false
+    needs: [build-and-lint]
+    runs-on: ubuntu-latest
+    name: Unit tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Unit tests
+        run: npx nx run-many --target=vitest
+
+  component-tests:
+    if: github.event.pull_request.draft == false
+    needs: [build-and-lint]
+    name: Component tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        containers: [1, 2, 3, 4, 5, 6, 7, 8]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Component tests
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          command: npx nx run-many --target=component-test:headless:ci --configuration=ci
+          config-file: cypress.config.ts
+          component: true
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SPLIT: ${{ strategy.job-total }}
+          SPLIT_INDEX: ${{ strategy.job-index }}
+
+  ssr-tests:
+    if: github.event.pull_request.draft == false
+    needs: [build-and-lint]
+    runs-on: ubuntu-latest
+    name: SSR tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: SSR tests
+        run: npm run test:ssr
+
+  integration-tests:
+    needs: [component-tests]
+    if: github.event.pull_request.draft == false
+    name: Integration tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Integration tests VUE
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          command: npx nx run spa-vue:e2e:headless:ci --configuration=ci
+          build: npx nx run spa-vue:build-app --skip-nx-cache=true
+          start: npx nx run spa-vue:preview
+          wait-on: 'http://localhost:4400/'
+          wait-on-timeout: 360
+          config-file: ./kitchen-sinks/spa-vue/cypress.config.ts
+          record: true
+          browser: chrome
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Integration tests Angular
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          build: npx nx run spa-angular:build-app --skip-nx-cache=true
+          start: npx nx run spa-angular:preview
+          wait-on: 'http://localhost:4200/'
+          wait-on-timeout: 360
+          config-file: cypress.config.ts
+          project: ./kitchen-sinks/spa-angular
+          record: true
+          browser: chrome
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Integration tests VanillaJs
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          command: npx nx run vanillajs:e2e:headless:ci --configuration=ci
+          build: npx nx run vanillajs:build-app --skip-nx-cache=true
+          start: npx nx run vanillajs:preview
+          wait-on: 'http://localhost:4500/'
+          wait-on-timeout: 360
+          config-file: ./kitchen-sinks/vanillajs/cypress.config.ts
+          record: true
+          browser: chrome
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Integration tests React
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          command: npx nx run spa-react:e2e:headless:ci --configuration=ci
+          build: npx nx run spa-react:build-app --skip-nx-cache=true
+          start: npx nx run spa-react:preview
+          wait-on: 'http://localhost:4300/'
+          wait-on-timeout: 360
+          config-file: ./kitchen-sinks/spa-react/cypress.config.ts
+          record: true
+          browser: chrome
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: JEST tests React
+        run: npx nx run spa-react:jest:test
+
+      - name: Integration tests NextJs
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          command: npx nx run nextjs:e2e:headless:ci --configuration=ci
+          build: npx nx run nextjs:build-app --skip-nx-cache=true
+          start: npx nx run nextjs:preview
+          wait-on: 'http://localhost:3000/'
+          wait-on-timeout: 360
+          config-file: ./kitchen-sinks/nextjs/cypress.config.ts
+          record: true
+          browser: chrome
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  accessibility-tests:
+    needs: [component-tests]
+    if: github.event.pull_request.draft == false
+    name: Accessibility tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - uses: cypress-io/github-action@v6
+        with:
+          install: false
+          command: npm run accessibility:headless:ci --configuration=ci
+          config-file: ./cypress.config.ts
+          record: true
+          browser: chrome
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  visual-regression-tests:
+    needs: [build-and-lint]
+    if: github.event.pull_request.draft == false
+    name: Visual regression tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Build storybook for visual regression
+        run: npm run ui:build:vr
+
+      - name: Publish to Chromatic
+        id: chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN_NEXT }}
+          buildScriptName: ui:build:vr
+          exitZeroOnChanges: false
+
+  lighthouse:
+    if: github.event.pull_request.draft == false
+    needs: [component-tests]
+    name: Lighthouse tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Restore cache dist folder
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            */*/dist
+          key: ${{ runner.os }}-dist-${{ github.sha }}
+
+      - name: Run Lighthouse checks
+        run: npm run lighthouse:run
+
+      - name: Upload lighthouse reports
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse
+          path: |
+            .lighthouseci
+          retention-days: 1
+
+  medalia:
+    needs: [component-tests]
+    if: github.event.pull_request.draft == false
+    name: Medalia tests
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Restore cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json') }}
+
+      - name: Integration tests Medalia
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          command: npx nx run medalia:actual:ci --configuration=ci
+          config-file: ./medalia/cypress.config.ts
+          record: true
+          browser: chrome
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

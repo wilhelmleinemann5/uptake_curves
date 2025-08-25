@@ -1,0 +1,5 @@
+// Style for no selections message
+span[style*='italic'] {
+  color: var(--mds_brand_appearance_neutral_weakest_text-color);
+  font-style: italic;
+}

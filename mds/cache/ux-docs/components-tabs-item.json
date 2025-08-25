@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222435869,
+  "data": "---\ntags:\n  - core\n  - layout\n  - organise\n  - content\n  - navigation\ntitle: Tab\n---\n\nimport TabDemo from \"./_components/TabDemo.vue\";\n\nThe <PageLink path=\"/components/tabs/\">Tab Bar</PageLink> component is composed of individual Tab components.\n<br />\n\n<TabDemo client:only=\"vue\" />"
+}

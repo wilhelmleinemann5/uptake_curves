@@ -1,0 +1,81 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_glow.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_media.scss';
+@import './mc-input-date.mixins.scss';
+
+.mc-input {
+  width: 100%;
+
+  mc-icon.type-suffix {
+    margin: auto 0;
+    pointer-events: none;
+
+    &.affix.type-suffix {
+      &::part(icon) {
+        fill: var(--mds_core_input-date_icon-color);
+      }
+    }
+  }
+
+  h2 {
+    padding-left: var(--mds_core_input-date_modal_title_padding-left);
+  }
+
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='date']::-webkit-inner-spin-button {
+    height: 100%;
+    position: absolute;
+    right: 0;
+    opacity: 0;
+  }
+
+  input[type='date']::-webkit-datetime-edit {
+    color: var(--mds_core_input_placeholder_text-color);
+  }
+
+  &.open .container .inner .field {
+    @include mds-glow-and-border();
+  }
+
+  &.open .vanity .container .inner .field {
+    @include mds-glow-and-border-vanity();
+  }
+
+  /* fit */
+  &.small {
+    @include apply-input-date-fit('small');
+  }
+
+  &.medium {
+    @include apply-input-date-fit('medium');
+  }
+
+  &.large {
+    @include apply-input-date-fit('large');
+  }
+
+  .calendar-drawer {
+    display: none;
+  }
+
+  .calendar-popover {
+    display: block;
+  }
+
+  @include mds-viewport-below('sm') {
+    .calendar-drawer {
+      display: block;
+    }
+
+    .calendar-popover {
+      display: none;
+    }
+  }
+}
+
+.mc-calendar--hidden {
+  display: none;
+}
+
+mc-drawer mc-calendar::part(calendar) {
+  padding: 0 !important;
+}

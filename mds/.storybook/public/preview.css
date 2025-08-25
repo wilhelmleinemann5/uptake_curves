@@ -1,0 +1,199 @@
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+* {
+  text-rendering: geometricPrecision !important;
+}
+
+#root-inner {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+}
+#root-inner > :first-child {
+  align-self: flex-start;
+  width: auto;
+}
+#root-inner .home-hero {
+  width: 100%;
+}
+#root-inner > mc-side-bar {
+  width: auto;
+}
+
+#root-inner mc-c-code-preview,
+#root-inner mc-top-bar,
+#root-inner mc-notification,
+#root-inner mc-typeahead-multi-select {
+  width: 100%;
+}
+
+#selectedOption {
+  margin-top: 36px;
+}
+
+.e2e-canvas {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 16px;
+}
+
+.e2e-canvas-card {
+  flex: 1 0 200px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--mds_brand_appearance_neutral_default_background-color);
+}
+
+.e2e-canvas-card .css-example div[class*='border-color'] {
+  border-width: 2px;
+  border-style: var(--mds_global_border_style);
+}
+
+.e2e-canvas-card--large {
+  padding: 30px;
+  margin-bottom: 40px;
+  margin-right: 40px;
+}
+
+.e2e-canvas-card--center .e2e-canvas-card-item {
+  display: flex;
+  justify-content: center;
+}
+
+.e2e-canvas__full-width,
+.e2e-canvas-card__full-width {
+  width: 100%;
+}
+
+.e2e-canvas-card-title {
+  box-sizing: content-box !important;
+  color: var(--mdt-theme-on-background-color);
+  display: block !important;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 12px !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
+  letter-spacing: normal !important;
+  line-height: normal !important;
+  margin-bottom: 4px !important;
+  text-rendering: auto !important;
+  text-size-adjust: auto !important;
+  -webkit-font-smoothing: auto !important;
+}
+.e2e-canvas-card-item {
+  height: 100%;
+  width: 100%;
+}
+.e2e-canvas-card--height-300 {
+  height: 300px;
+}
+
+.e2e-canvas-relative {
+  position: relative;
+  width: 600px;
+}
+
+#tooltip__container {
+  display: inline-flex;
+  margin: 120px;
+}
+
+#tooltip__container mc-tooltip {
+  margin: 0 16px;
+}
+
+*:focus {
+  outline: none;
+}
+
+/* overriding foundation.css */
+body,
+html {
+  overflow-x: visible !important;
+  /*line-height: normal !important;*/
+}
+
+/* design-tokens */
+.tokens--align-items {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+.box__color {
+  border: 1px solid gray;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 8px;
+  display: inline-block;
+}
+.box__value {
+  display: inline-block;
+}
+.box__token {
+  font-size: 12px;
+  color: #a9a9a9;
+  display: none;
+}
+.box__state {
+  font-size: 12px;
+  color: #a9a9a9;
+}
+.cell__container {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.sbdocs-content > *:first-child,
+.mds-rich-text > *:first-child {
+  margin-top: 0;
+}
+
+.overflow-container {
+  height: 245px;
+  overflow-y: auto;
+}
+
+.css-example {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mdsdocs {
+  padding: 0px !important;
+  margin: 0 !important;
+  position: unset !important;
+}
+.mdsdocs.sb-show-main {
+  background-color: var(--mds_brand_appearance_neutral_weakest_background-color) !important;
+}
+.mdsdocs.mdsdocs-dark {
+  color-scheme: only dark;
+}
+.mdsdocs.mdsdocs-fullscreen {
+  padding: 24px !important;
+}
+
+.mdsdocs #root-inner {
+  padding: 24px !important;
+  gap: 0px !important;
+}
+
+.mdsdocs #toggle-code {
+  margin-bottom: 16px;
+}
+.mdsdocs mc-c-code-preview {
+  margin: 64px 0px 0px 0px !important;
+}
+
+.story-notification {
+  width: 100%;
+}

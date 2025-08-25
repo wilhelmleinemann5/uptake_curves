@@ -1,0 +1,110 @@
+{
+    "core": {
+        "list": {
+            "background-color": {
+                "value": "$brand.appearance.neutral.default.background-color"
+            },
+            "border-color": {
+                "value": "$brand.appearance.neutral.default.border-color"
+            },
+            "border-style": {
+                "value": "$global.border.style"
+            },
+            "border-width": {
+                "value": "$global.border.width"
+            },
+            "border-radius": {
+                "value": "$brand.border.medium.radius"
+            },
+            "min-width": {
+                "value": 96
+            },
+            "group": {
+                "text-color": {
+                    "value": "$brand.appearance.neutral.weak.text-color"
+                }
+            },
+            "small": {
+                "padding-bottom": {
+                    "value": 4
+                },
+                "padding-top": {
+                    "value": 4
+                },
+                "divider": {
+                    "margin": {
+                        "value": 4
+                    }
+                },
+                "group": {
+                    "margin-top": {
+                        "value": 6
+                    },
+                    "margin-right": {
+                        "value": 8
+                    },
+                    "margin-bottom": {
+                        "value": 2
+                    },
+                    "margin-left": {
+                        "value": 8
+                    }
+                }
+            },
+            "medium": {
+                "padding-bottom": {
+                    "value": 4
+                },
+                "padding-top": {
+                    "value": 4
+                },
+                "divider": {
+                    "margin": {
+                        "value": 4
+                    }
+                },
+                "group": {
+                    "margin-top": {
+                        "value": 8
+                    },
+                    "margin-right": {
+                        "value": 12
+                    },
+                    "margin-bottom": {
+                        "value": 2
+                    },
+                    "margin-left": {
+                        "value": 12
+                    }
+                }
+            },
+            "large": {
+                "padding-bottom": {
+                    "value": 4
+                },
+                "padding-top": {
+                    "value": 4
+                },
+                "divider": {
+                    "margin": {
+                        "value": 4
+                    }
+                },
+                "group": {
+                    "margin-top": {
+                        "value": 8
+                    },
+                    "margin-right": {
+                        "value": 16
+                    },
+                    "margin-bottom": {
+                        "value": 4
+                    },
+                    "margin-left": {
+                        "value": 16
+                    }
+                }
+            }
+        }
+    }
+}

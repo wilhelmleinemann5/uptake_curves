@@ -1,0 +1,33 @@
+{
+    "brand": {
+        "appearance": {
+            "secondary": {
+                "default": {
+                    "text-color": {
+                        "value": "rgb(204,77,0)"
+                    },
+                    "background-color": {
+                        "value": "rgb(10,110,130)"
+                    },
+                    "on-background-color": {
+                        "value": "rgb(255,255,255)"
+                    },
+                    "border-color": {
+                        "value": "rgb(10,110,130)"
+                    }
+                },
+                "weak": {
+                    "background-color": {
+                        "value": "rgb(230,240,242)"
+                    },
+                    "on-background-color": {
+                        "value": "rgb(60,60,70)"
+                    },
+                    "border-color": {
+                        "value": "rgb(157,197,205)"
+                    }
+                }
+            }
+        }
+    }
+}

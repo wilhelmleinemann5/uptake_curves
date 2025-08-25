@@ -1,0 +1,21 @@
+{
+    "foundations": {
+        "horizontal-rule": {
+            "margin-top": {
+                "value": 40
+            },
+            "margin-bottom": {
+                "value": 40
+            },
+            "border-width": {
+                "value": "$global.border.width"
+            },
+            "border-style": {
+                "value": "$global.border.style"
+            },
+            "border-color": {
+                "value": "$brand.appearance.neutral.default.border-color"
+            }
+        }
+    }
+}

@@ -1,0 +1,42 @@
+name: Clean-up feature or alpha branch
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - 'main'
+      - 'alpha'
+      - 'beta'
+
+jobs:
+  clean-deployment:
+    if: startsWith(github.head_ref, 'feat/') || startsWith(github.head_ref, 'docs') || startsWith(github.head_ref, 'fix')|| startsWith(github.head_ref, 'alpha')
+    name: Clean feature branch deployment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Branch name and type
+        id: branch
+        run: |
+          echo "name=$(echo ${{github.head_ref}} | cut -d/ -f 2 | sed -r 's/[_]+/-/g')" >> $GITHUB_OUTPUT
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Check if container exists
+        id: container
+        run: |
+          azoutput=$(az storage container exists --account-name maerskdesignsystemprod --auth-mode key --name ${{ steps.branch.outputs.name }})
+          echo "exists=$(echo $azoutput | jq ".exists")" >> $GITHUB_OUTPUT
+
+      - name: Delete container
+        if: steps.container.outputs.exists == 'true'
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage container delete --account-name maerskdesignsystemprod --auth-mode key --name ${{ steps.branch.outputs.name }}
+
+      - name: Logout from Azure
+        run: |
+          az logout
+        if: always()

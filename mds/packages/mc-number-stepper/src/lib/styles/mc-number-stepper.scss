@@ -1,0 +1,55 @@
+.mc-input {
+  .field {
+    display: flex;
+    border-radius: 0 !important;
+    margin-left: var(--mds_core_number-stepper_input_margin-left);
+    margin-right: var(--mds_core_number-stepper_input_margin-right);
+
+    &:has(input:focus),
+    &:has(input.focus),
+    &:has(.hover),
+    &:has(:hover),
+    &:has(.active),
+    &:has(:active) {
+      z-index: 1;
+    }
+  }
+
+  .input {
+    border-radius: 0 !important;
+    text-align: center;
+  }
+
+  mc-button {
+    &::part(button) {
+      border-color: var(--mds_core_input_default_border-color);
+    }
+  }
+
+  mc-button.button--minus {
+    &::part(button) {
+      border-bottom-right-radius: 0;
+      border-top-right-radius: 0;
+    }
+  }
+
+  mc-button.button--plus {
+    &::part(button) {
+      border-bottom-left-radius: 0;
+      border-top-left-radius: 0;
+    }
+  }
+}
+
+.button {
+  &:focus,
+  &.focus {
+    z-index: 2;
+  }
+}
+
+:host([invalid]) .mc-input {
+  .field {
+    z-index: 3;
+  }
+}

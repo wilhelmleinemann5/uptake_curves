@@ -1,0 +1,51 @@
+@mixin apply-tab-fit($fit) {
+  &::part(button) {
+    padding: var(--mds_core_tab_#{$fit}_padding-top) var(--mds_core_tab_#{$fit}_padding-right)
+      var(--mds_core_tab_#{$fit}_padding-bottom) var(--mds_core_tab_#{$fit}_padding-left);
+  }
+
+  ::slotted(a) {
+    padding: var(--mds_core_tab_#{$fit}_padding-top) var(--mds_core_tab_#{$fit}_padding-right)
+      var(--mds_core_tab_#{$fit}_padding-bottom) var(--mds_core_tab_#{$fit}_padding-left);
+    margin: calc(var(--mds_core_tab_#{$fit}_padding-top) * -1) calc(var(--mds_core_tab_#{$fit}_padding-right) * -1)
+      calc(var(--mds_core_tab_#{$fit}_padding-bottom) * -1) calc(var(--mds_core_tab_#{$fit}_padding-left) * -1);
+  }
+
+  .slots-container {
+    gap: var(--mds_core_tab_#{$fit}_gap);
+  }
+}
+
+@mixin apply-slot-icon-fit($fit, $type) {
+  ::slotted(a) {
+    @if ($type == 'icon') {
+      padding-left: calc(
+        var(--mds_core_tab_#{$fit}_padding-left) +
+        var(--mds_core_button_#{$fit}_icon_width) +
+        var(--mds_core_button_#{$fit}_gap)
+      );
+      margin-left: calc(
+        (
+          var(--mds_core_tab_#{$fit}_padding-left) +
+          var(--mds_core_button_#{$fit}_icon_width) +
+          var(--mds_core_button_#{$fit}_gap)
+        ) *
+        -1
+      );
+    } @else {
+      padding-right: calc(
+        var(--mds_core_tab_#{$fit}_padding-right) +
+        var(--mds_core_button_#{$fit}_icon_width) +
+        var(--mds_core_button_#{$fit}_gap)
+      );
+      margin-right: calc(
+        (
+          var(--mds_core_tab_#{$fit}_padding-right) +
+          var(--mds_core_button_#{$fit}_icon_width) +
+          var(--mds_core_button_#{$fit}_gap)
+        ) *
+        -1
+      );
+    }
+  }
+}

@@ -1,0 +1,46 @@
+@mixin apply-notification-fit($fit) {
+  gap: var(--mds_core_notification_#{$fit}_icon_margin-right);
+  padding: var(--mds_core_notification_#{$fit}_padding-top) var(--mds_core_notification_#{$fit}_padding-right)
+    var(--mds_core_notification_#{$fit}_padding-bottom) var(--mds_core_notification_#{$fit}_padding-left);
+
+  .heading {
+    @if $fit == 'large' {
+      @include mds-apply-font('text', 'medium', 'bold');
+    } @else {
+      @include mds-apply-font('text', '#{$fit}', 'bold');
+    }
+  }
+
+  .content {
+    gap: var(--mds_core_notification_#{$fit}_gap);
+  }
+
+  .icon {
+    height: var(--mds_core_notification_#{$fit}_icon_height);
+    display: flex;
+    align-items: center;
+  }
+
+  @if $fit == 'large' {
+    @include mds-apply-font('text', 'medium', 'normal');
+  } @else {
+    @include mds-apply-font('text', '#{$fit}', 'normal');
+  }
+}
+
+@mixin apply-notification-appearance($appearance) {
+  background-color: var(--mds_core_notification_#{$appearance}_background-color);
+  color: var(--mds_core_notification_#{$appearance}_on-background-color);
+
+  mc-button::part(icon) {
+    fill: var(--mds_core_notification_#{$appearance}_icon-close_fill);
+  }
+
+  mc-icon::part(icon) {
+    fill: var(--mds_core_notification_#{$appearance}_icon_fill);
+  }
+
+  a {
+    @include mds-apply-link-color('--mds_core_notification_#{$appearance}_on-background-color');
+  }
+}

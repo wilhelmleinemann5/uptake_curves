@@ -1,0 +1,32 @@
+{
+    "core": {
+        "calendar-month-year-picker": {
+            "border-radius": {
+                "value": "$brand.border.medium.radius"
+            },
+            "transition-duration": {
+                "value": "$global.transition.fast.duration"
+            },
+            "background-color": {
+                "value": "$brand.appearance.neutral.default.background-color"
+            },
+            "gap": {
+                "value": 8
+            },
+            "padding-right": {
+                "value": 8
+            },
+            "padding-left": {
+                "value": 8
+            },
+            "confirm-button": {
+                "padding-left": {
+                    "value": 5
+                },
+                "padding-right": {
+                    "value": 5
+                }
+            }
+        }
+    }
+}

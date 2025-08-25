@@ -1,0 +1,127 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_glow.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import '../../../../mc-button/src/lib/styles/mc-button.mixins.scss';
+@import './mc-segmented-control-item.mixins.scss';
+
+:host {
+  flex-basis: 0;
+  flex-grow: 1;
+  scroll-behavior: smooth;
+  scroll-snap-align: center;
+}
+
+::slotted(a) {
+  color: var(--mds_core_button_neutral_plain_text-color) !important;
+}
+
+:host([icon]) {
+  .mc-button {
+    &.small {
+      @include apply-slot-icon-fit('small', 'icon');
+    }
+
+    &.medium {
+      @include apply-slot-icon-fit('medium', 'icon');
+    }
+
+    &.large {
+      @include apply-slot-icon-fit('large', 'icon');
+    }
+  }
+}
+
+:host([trailingicon]) {
+  .mc-button {
+    &.small {
+      @include apply-slot-icon-fit('small', 'trailingicon');
+    }
+
+    &.medium {
+      @include apply-slot-icon-fit('medium', 'trailingicon');
+    }
+
+    &.large {
+      @include apply-slot-icon-fit('large', 'trailingicon');
+    }
+  }
+}
+
+mc-button {
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+
+  &::part(text-and-icon),
+  .label,
+  .sublabel {
+    align-items: flex-start;
+    text-align: left;
+    text-wrap: nowrap;
+  }
+
+  &::part(button) {
+    border-radius: var(--mds_brand_border_small_radius);
+
+    &:hover {
+      background-color: transparent;
+    }
+
+    &:focus-visible {
+      @include mds-glow-only-on-keyboard-nav($inset: true);
+    }
+  }
+
+  &:not(.selected) {
+    &:hover {
+      &::part(button) {
+        color: var(--mds_core_segmented-control-item_hover_text-color);
+      }
+
+      ::part(icon) {
+        fill: var(--mds_core_segmented-control-item_hover_text-color);
+      }
+    }
+  }
+
+  &.selected {
+    &::part(button):hover {
+      background-color: var(--mds_core_segmented-control-item_selected_background-color);
+    }
+
+    .sublabel {
+      color: var(--mds_core_segmented-control-item_selected_sublabel_text-color);
+    }
+  }
+
+  &.small {
+    @include apply-segmented-control-item-fit('small');
+  }
+
+  &.medium {
+    @include apply-segmented-control-item-fit('medium');
+  }
+
+  &.large {
+    @include apply-segmented-control-item-fit('large');
+  }
+}
+
+/******* Vertical *******/
+:host([orientation='vertical']) {
+  mc-button {
+    &::part(trailing-icon) {
+      margin-left: auto;
+    }
+  }
+}
+
+/******* Horizontal *******/
+:host([orientation='horizontal']) {
+  mc-button {
+    height: 100%;
+
+    &::part(button) {
+      height: 100%;
+    }
+  }
+}

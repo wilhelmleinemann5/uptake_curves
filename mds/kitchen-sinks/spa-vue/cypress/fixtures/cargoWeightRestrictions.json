@@ -1,0 +1,146 @@
+{
+    "__DecisionID__": "string",
+    "response": {
+        "containerWeightLimitDetails": {
+            "containerWeightLimitStructure": [
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "8 6",
+                        "equipmentSizeCd": "20",
+                        "equipmentTypeCd": "DRY"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 28300,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "8 6",
+                        "equipmentSizeCd": "40",
+                        "equipmentTypeCd": "DRY"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 28870,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "9 6",
+                        "equipmentSizeCd": "40",
+                        "equipmentTypeCd": "DRY"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 28690,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "8 6",
+                        "equipmentSizeCd": "20",
+                        "equipmentTypeCd": "OPEN"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 28310,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "8 6",
+                        "equipmentSizeCd": "40",
+                        "equipmentTypeCd": "OPEN"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 28400,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "9 6",
+                        "equipmentSizeCd": "40",
+                        "equipmentTypeCd": "OPEN"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 28400,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "8 6",
+                        "equipmentSizeCd": "20",
+                        "equipmentTypeCd": "FLAT"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 83309,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "8 6",
+                        "equipmentSizeCd": "40",
+                        "equipmentTypeCd": "FLAT"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 47300,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "9 6",
+                        "equipmentSizeCd": "40",
+                        "equipmentTypeCd": "FLAT"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 47300,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "8 6",
+                        "equipmentSizeCd": "20",
+                        "equipmentTypeCd": "REEF"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 27770,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "8 6",
+                        "equipmentSizeCd": "20",
+                        "equipmentTypeCd": "TANK"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 99999,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                },
+                {
+                    "containerProfile": {
+                        "iSOContainerHeightCd": "8 6",
+                        "equipmentSizeCd": "40",
+                        "equipmentTypeCd": "TANK"
+                    },
+                    "grossWeight": 0,
+                    "maxWeight": 99999,
+                    "minWeight": 0,
+                    "sumOfTareWeight": 0
+                }
+            ]
+        },
+        "statusInfo": {
+            "statusType": "Success",
+            "statusCode": "DS000",
+            "statusDescription": "Cargo Weight Restrictions: Found validations for the given request."
+        }
+    }
+}

@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Starter Maersk web components app build with Webpack" />
+    <title>VanillaJS</title>
+  </head>
+
+  <body class="mds">
+    <div class="mds-layout">
+      <mc-top-bar product="VanillaJS" productshort="VanillaJS" href="/"></mc-top-bar>
+      <mc-side-bar>
+        <nav role="navigation">
+          <ol>
+            <li><a href="/src/form.html">Form example</a></li>
+            <li><a href="/src/validation.html">Validation example</a></li>
+            <li><a href="/src/content.html">Content example</a></li>
+            <li><a href="/src/icons.html">Icons scss</a></li>
+          </ol>
+        </nav>
+      </mc-side-bar>
+      <div class="mds-page mds-container">
+        <div class="mds-grid mds-grid-cols-1">
+          <div class="size-selector">
+            <mc-button label="small" onclick="setFit('small')"></mc-button>
+            <mc-button label="medium" onclick="setFit('medium')"></mc-button>
+            <mc-button label="large" onclick="setFit('large')"></mc-button>
+          </div>
+          <mc-step-indicator id="step-indicator" currentindex="0" class="custom-element"></mc-step-indicator>
+          <form id="info">
+            <div id="Personal">
+              <div>
+                <mc-input name="fullname" class="field custom-element" label="Name" placeholder="Write your full name"
+                  ><span slot="hint">Enter your <b>name and surname</b></span>
+                </mc-input>
+                <mc-select-native name="country" id="country" class="field custom-element" placeholder="Select country">
+                  <span slot="label"
+                    >Nationality <a href="https://designsystem.maersk.com/components/button/index.html">link</a></span
+                  >
+                </mc-select-native>
+                <mc-input
+                  name="birthday"
+                  class="field custom-element"
+                  label="Birth date"
+                  type="date"
+                  placeholder="dd/mm/yyyy"
+                  hint="Select your birth date"
+                ></mc-input>
+                <mc-checkbox-group class="field custom-element" legend="Gender">
+                  <mc-checkbox name="gender" value="Female" label="Female" class="custom-element"></mc-checkbox>
+                  <mc-checkbox name="gender" value="Male" label="Male" class="custom-element"></mc-checkbox>
+                  <mc-checkbox name="gender" value="Non-binary" label="Non-binary" class="custom-element"></mc-checkbox>
+                  <mc-checkbox
+                    name="gender"
+                    value="Transgender"
+                    label="Transgender"
+                    class="custom-element"
+                  ></mc-checkbox>
+                  <mc-checkbox name="gender" value="Intersex" label="Intersex" class="custom-element"></mc-checkbox>
+                  <mc-checkbox
+                    name="gender"
+                    value="I prefer not to say"
+                    label="I prefer not to say"
+                    class="custom-element"
+                  >
+                  </mc-checkbox>
+                  <span slot="hint">Choose as many as you like</span>
+                </mc-checkbox-group>
+              </div>
+              <div class="layout layout__row">
+                <mc-button onclick="goToStep(1)" icon="chevron-right" class="custom-element">Next step </mc-button>
+              </div>
+            </div>
+
+            <div id="Interests">
+              <div>
+                <mc-switch-group class="field custom-element" legend="What are you hobbies?">
+                  <span slot="hint">Please select as many as you like</span>
+                  <mc-switch name="hobbies" value="Sport" label="Sport" class="custom-element"></mc-switch>
+                  <mc-switch name="hobbies" value="Music" label="Music" class="custom-element"></mc-switch>
+                  <mc-switch name="hobbies" value="Art" label="Art" class="custom-element"></mc-switch>
+                  <mc-switch name="hobbies" value="Gaming" label="Gaming" class="custom-element"></mc-switch>
+                  <mc-switch name="hobbies" value="Books" label="Books" class="custom-element"></mc-switch>
+                </mc-switch-group>
+                <mc-textarea
+                  name="comments custom-element"
+                  class="field custom-element"
+                  label="Comment"
+                  placeholder="Describe what you do in your spare time"
+                  rows="5"
+                  maxLength="500"
+                >
+                </mc-textarea>
+              </div>
+              <div class="layout layout__row button-group">
+                <mc-button onclick="goToStep(0)" variant="outlined" icon="chevron-left" class="custom-element"
+                  >Previous step
+                </mc-button>
+                <mc-button onclick="goToStep(2)" icon="chevron-right" class="custom-element">Next step </mc-button>
+              </div>
+            </div>
+
+            <div id="Work">
+              <div>
+                <mc-radio-group class="field custom-element" legend="Are you currently employed">
+                  <mc-radio name="employed" value="1" label="Yes" checked="true" class="custom-element"></mc-radio>
+                  <mc-radio name="employed" value="0" label="No" class="custom-element"></mc-radio>
+                </mc-radio-group>
+                <mc-input name="company" class="field custom-element" label="Company" placeholder="Write where you work"
+                  ><span slot="hint">Enter company name</span>
+                </mc-input>
+                <mc-select-native
+                  name="skills"
+                  id="skills"
+                  variant="multiple"
+                  class="field custom-element"
+                  label="Skills"
+                  placeholder="Select your skills"
+                >
+                </mc-select-native>
+                <mc-tooltip class="custom-element">
+                  <mc-checkbox
+                    slot="trigger"
+                    name="terms"
+                    value="agreed"
+                    class="field custom-element"
+                    label="I agree to the terms & conditions"
+                    ><span slot="hint"
+                      >You might like to read our full
+                      <a href="https://designsystem.maersk.com">terms & conditions</a></span
+                    ></mc-checkbox
+                  >
+                  <span>You need to agree to the terms and condition</span>
+                </mc-tooltip>
+              </div>
+              <div class="layout layout__row button-group">
+                <mc-button onclick="goToStep(1)" variant="outlined" icon="chevron-left" class="custom-element"
+                  >Previous step
+                </mc-button>
+                <mc-button onclick="getFormData()" class="custom-element">Send your application</mc-button>
+              </div>
+            </div>
+
+            <mc-modal heading="Summary of information you entered" class="custom-element">
+              <div id="summary"></div>
+              <mc-button slot="primaryAction" type="submit" variant="filled" dialogAction="ok" class="custom-element"
+                >Submit
+              </mc-button>
+              <mc-button
+                slot="secondaryAction"
+                appearance="neutral"
+                variant="outlined"
+                dialogAction="cancel"
+                onclick="toggleModal()"
+                class="custom-element"
+              >
+                Cancel</mc-button
+              >
+            </mc-modal>
+          </form>
+        </div>
+        <footer>VanillaJS code examples</footer>
+      </div>
+    </div>
+    <script type="module" src="./index.ts"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function (event) {
+        initFormStepOne();
+        goToStep(0);
+      });
+    </script>
+  </body>
+</html>

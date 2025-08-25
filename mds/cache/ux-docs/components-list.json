@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222429747,
+  "data": "---\ntags:\n  - core\ntitle: List\ndescription: >-\n  Presents a list of selectable items to the user.\nrenderAllChildPagesAsTabs: true\n---\n\nimport ListDemo from \"./_components/ListDemo.vue\";\n\n<ListDemo client:only=\"vue\" />\n\n"
+}

@@ -1,0 +1,15 @@
+@mixin apply-select-fit($fit) {
+  &:not(.vanity) .input {
+    padding-right: var(--mds_core_select-native_#{$fit}_padding-right);
+  }
+
+  &.vanity .input {
+    padding-right: var(--mds_core_select-native_#{$fit}_vanity_padding-right);
+  }
+
+  &.suffix {
+    mc-icon {
+      top: var(--mds_core_select-native_#{$fit}_chevron_top);
+    }
+  }
+}

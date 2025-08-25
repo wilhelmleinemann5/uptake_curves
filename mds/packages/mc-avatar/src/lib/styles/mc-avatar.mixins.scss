@@ -1,0 +1,26 @@
+@mixin apply-mc-avatar-fit($fit) {
+  img,
+  .mc-avatar--element {
+    width: var(--mds_core_avatar_#{$fit}_element_size);
+    height: var(--mds_core_avatar_#{$fit}_element_size);
+  }
+
+  .mc-avatar--element {
+    @if $fit == 'xx-large' {
+      @include mds-apply-font('text', 'large', 'normal');
+    } @else if $fit == 'x-large' {
+      @include mds-apply-font('text', 'large', 'normal');
+    } @else if $fit == 'large' {
+      @include mds-apply-font('text', 'large', 'normal');
+    } @else {
+      @include mds-apply-font('text', '#{$fit}', 'normal');
+    }
+  }
+}
+
+@mixin apply-mc-avatar-appearance($appearance) {
+  .mc-avatar--element {
+    background-color: var(--mds_core_avatar_#{$appearance}_background-color);
+    color: var(--mds_core_avatar_#{$appearance}_color);
+  }
+}

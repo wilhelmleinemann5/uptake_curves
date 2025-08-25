@@ -1,0 +1,112 @@
+{
+  "name": "mc-typeahead",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mc-typeahead/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build:compile-js",
+        "build:vscode-html-data",
+        "build:custom-element-manifest"
+      ]
+    },
+    "build:custom-element-manifest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd packages/mc-typeahead && cem analyze --config ../../tools/configs/custom-elements-manifest.config.mjs --outdir ../../dist/packages/mds-components-core-typeahead"
+        ]
+      }
+    },
+    "build:vscode-html-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "wca analyze \"packages/mc-typeahead/**/*index.ts\" --format vscode --outFile dist/packages/mds-components-core-typeahead/web-components.html-data.json"
+        ]
+      }
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": true,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-components-core-typeahead",
+        "outdir": "dist/packages/mds-components-core-typeahead",
+        "main": "packages/mc-typeahead/src/index.ts",
+        "tsConfig": "packages/mc-typeahead/tsconfig.lib.json",
+        "assets": [
+          "packages/mc-typeahead/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/general.config.cjs"
+      }
+    },
+    "generate:metadata": {
+      "command": "cd packages/mc-typeahead && node ../../tools/scripts/generate-metadata/components/generate.mjs"
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mc-typeahead",
+      "options": {
+        "outputPath": "dist/packages/mds-components-core-typeahead"
+      }
+    },
+    "lint": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "lint:eslint",
+        "lint:stylelint"
+      ]
+    },
+    "lint:eslint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "lint:stylelint": {
+      "executor": "nx-stylelint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/mc-typeahead/**/*.css",
+          "packages/mc-typeahead/**/*.scss"
+        ],
+        "fix": true
+      }
+    },
+    "test:ssr": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "web-test-runner packages/mc-typeahead/tests/**/*.ssr.js"
+        ]
+      },
+      "dependsOn": [
+        "build",
+        "mds:test:ssr:map-node-modules"
+      ]
+    },
+    "test:headless": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "cypress.config.ts",
+        "testingType": "component",
+        "skipServe": true,
+        "spec": "./packages/mc-typeahead/**/*.component-spec.ts"
+      }
+    },
+    "vitest": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "testTargetName": "vitest",
+        "serveTargetName": "serve",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  },
+  "tags": []
+}

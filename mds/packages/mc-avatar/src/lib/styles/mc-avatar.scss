@@ -1,0 +1,73 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import './mc-avatar.mixins.scss';
+
+.mc-avatar {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+
+  img,
+  .mc-avatar--element {
+    border-radius: 50%;
+  }
+
+  .mc-avatar--element {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &.mc-avatar--hiddentooltip {
+    .avatar-info {
+      display: none;
+    }
+  }
+
+  /* small x-size */
+  &.mc-avatar--x-small {
+    @include apply-mc-avatar-fit('x-small');
+  }
+
+  /* small size */
+  &.mc-avatar--small {
+    @include apply-mc-avatar-fit('small');
+  }
+
+  /* medium size */
+  &.mc-avatar--medium {
+    @include apply-mc-avatar-fit('medium');
+  }
+
+  /* large size */
+  &.mc-avatar--large {
+    @include apply-mc-avatar-fit('large');
+  }
+
+  /* x-large size */
+  &.mc-avatar--x-large {
+    @include apply-mc-avatar-fit('x-large');
+  }
+
+  /* xx-large size */
+  &.mc-avatar--xx-large {
+    @include apply-mc-avatar-fit('xx-large');
+  }
+
+  /* appearance */
+  &.mc-avatar--color-1 {
+    @include apply-mc-avatar-appearance('color-1');
+  }
+
+  &.mc-avatar--color-2 {
+    @include apply-mc-avatar-appearance('color-2');
+  }
+
+  &.mc-avatar--color-3 {
+    @include apply-mc-avatar-appearance('color-3');
+  }
+
+  &.mc-avatar--color-4 {
+    @include apply-mc-avatar-appearance('color-4');
+  }
+}

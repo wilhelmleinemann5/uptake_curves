@@ -1,0 +1,166 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_media.scss';
+@import './mc-drawer.mixins.scss';
+
+dialog {
+  margin: 0;
+  max-width: 100%;
+  max-height: 100%;
+  top: 0;
+  left: 0;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+
+  footer {
+    justify-content: flex-start;
+  }
+
+  &.no-footer {
+    footer {
+      display: none;
+    }
+  }
+
+  header {
+    position: relative;
+
+    mc-button {
+      position: absolute;
+    }
+  }
+
+  /* small size */
+  &.small {
+    @include apply-mc-drawer-fit('small');
+  }
+
+  /* medium size */
+  &.medium {
+    @include apply-mc-drawer-fit('medium');
+  }
+
+  /* large size */
+  &.large {
+    @include apply-mc-drawer-fit('large');
+  }
+
+  &.left {
+    transform: translateX(-100%);
+    left: 0;
+    border-top-right-radius: var(--mds_brand_border_2x-large_radius);
+    border-bottom-right-radius: var(--mds_brand_border_2x-large_radius);
+
+    &.dimension--small {
+      @include apply-mc-drawer-dimension('small', 'left');
+    }
+
+    &.dimension--medium {
+      @include apply-mc-drawer-dimension('medium', 'left');
+    }
+
+    &.dimension--large {
+      @include apply-mc-drawer-dimension('large', 'left');
+    }
+  }
+
+  &.right {
+    transform: translateX(100%);
+    left: unset;
+    right: 0;
+    border-top-left-radius: var(--mds_brand_border_2x-large_radius);
+    border-bottom-left-radius: var(--mds_brand_border_2x-large_radius);
+
+    &.dimension--small {
+      @include apply-mc-drawer-dimension('small', 'right');
+    }
+
+    &.dimension--medium {
+      @include apply-mc-drawer-dimension('medium', 'right');
+    }
+
+    &.dimension--large {
+      @include apply-mc-drawer-dimension('large', 'right');
+    }
+  }
+
+  &.top {
+    transform: translateX(0%) translateY(-100%);
+    top: 0;
+    border-bottom-right-radius: var(--mds_brand_border_2x-large_radius);
+    border-bottom-left-radius: var(--mds_brand_border_2x-large_radius);
+
+    &.dimension--small {
+      @include apply-mc-drawer-dimension('small', 'top');
+    }
+
+    &.dimension--medium {
+      @include apply-mc-drawer-dimension('medium', 'top');
+    }
+
+    &.dimension--large {
+      @include apply-mc-drawer-dimension('large', 'top');
+    }
+  }
+
+  &.bottom {
+    transform: translateX(0%) translateY(100%);
+    top: unset;
+    bottom: 0;
+    border-top-right-radius: var(--mds_brand_border_2x-large_radius);
+    border-top-left-radius: var(--mds_brand_border_2x-large_radius);
+
+    &.dimension--small {
+      @include apply-mc-drawer-dimension('small', 'bottom');
+    }
+
+    &.dimension--medium {
+      @include apply-mc-drawer-dimension('medium', 'bottom');
+    }
+
+    &.dimension--large {
+      @include apply-mc-drawer-dimension('large', 'bottom');
+    }
+  }
+
+  @include mds-viewport-below('sm') {
+    @include apply-mc-drawer-fullscreen();
+  }
+}
+
+dialog[open] {
+  opacity: 1;
+  pointer-events: auto;
+  transform: none;
+
+  &::backdrop {
+    opacity: 1;
+  }
+}
+
+@starting-style {
+  dialog[open] {
+    opacity: 0;
+    pointer-events: none;
+
+    &.left {
+      transform: translateX(-100%);
+    }
+
+    &.right {
+      transform: translateX(100%);
+    }
+
+    &.top {
+      transform: translateY(-100%);
+    }
+
+    &.bottom {
+      transform: translateY(100%);
+    }
+
+    &::backdrop {
+      opacity: 0;
+    }
+  }
+}

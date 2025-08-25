@@ -1,0 +1,39 @@
+{
+    "core": {
+        "input-time": {
+            "icon-color": {
+                "value": "$brand.appearance.neutral.weak.text-color"
+            },
+            "small": {
+                "width": {
+                    "value": 86
+                },
+                "with-prefix": {
+                    "width": {
+                        "value": 116
+                    }
+                }
+            },
+            "medium": {
+                "width": {
+                    "value": 120
+                },
+                "with-prefix": {
+                    "width": {
+                        "value": 150
+                    }
+                }
+            },
+            "large": {
+                "width": {
+                    "value": 140
+                },
+                "with-prefix": {
+                    "width": {
+                        "value": 170
+                    }
+                }
+            }
+        }
+    }
+}

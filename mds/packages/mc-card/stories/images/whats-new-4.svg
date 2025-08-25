@@ -1,0 +1,28 @@
+<svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_396_4214)">
+<rect width="120" height="120" fill="white"/>
+<rect width="120" height="120" fill="#B5E0F5" fill-opacity="0.3"/>
+<path d="M-16 51C-16 49.3431 -14.6569 48 -13 48H65C66.6569 48 68 49.3431 68 51V69C68 70.6569 66.6569 72 65 72H-13C-14.6569 72 -16 70.6569 -16 69V51Z" fill="white"/>
+<path d="M-16 51C-16 49.3431 -14.6569 48 -13 48H65C66.6569 48 68 49.3431 68 51V69C68 70.6569 66.6569 72 65 72H-13C-14.6569 72 -16 70.6569 -16 69V51Z" fill="#4DB5AB" fill-opacity="0.8"/>
+<rect x="-10" y="54" width="59" height="3" fill="white"/>
+<rect x="-10" y="54" width="59" height="3" fill="#4DB5AB" fill-opacity="0.2"/>
+<rect x="-10" y="60" width="37" height="3" fill="white"/>
+<rect x="-10" y="60" width="37" height="3" fill="#4DB5AB" fill-opacity="0.2"/>
+<path d="M52 85C52 83.3431 53.3431 82 55 82H133C134.657 82 136 83.3431 136 85V103C136 104.657 134.657 106 133 106H55C53.3431 106 52 104.657 52 103V85Z" fill="white"/>
+<path d="M52 85C52 83.3431 53.3431 82 55 82H133C134.657 82 136 83.3431 136 85V103C136 104.657 134.657 106 133 106H55C53.3431 106 52 104.657 52 103V85Z" fill="#FFA201" fill-opacity="0.6"/>
+<rect x="58" y="88" width="52" height="3" fill="white"/>
+<rect x="58" y="88" width="52" height="3" fill="#FFA201" fill-opacity="0.2"/>
+<rect x="58" y="94" width="22" height="3" fill="white"/>
+<rect x="58" y="94" width="22" height="3" fill="#FFA201" fill-opacity="0.2"/>
+<path d="M52 17C52 15.3431 53.3431 14 55 14H133C134.657 14 136 15.3431 136 17V35C136 36.6569 134.657 38 133 38H55C53.3431 38 52 36.6569 52 35V17Z" fill="#B5E0F5"/>
+<rect x="58" y="20" width="56" height="3" fill="white"/>
+<rect x="58" y="20" width="56" height="3" fill="#B5E0F5" fill-opacity="0.3"/>
+<rect x="58" y="26" width="41" height="3" fill="white"/>
+<rect x="58" y="26" width="41" height="3" fill="#B5E0F5" fill-opacity="0.3"/>
+</g>
+<defs>
+<clipPath id="clip0_396_4214">
+<rect width="120" height="120" fill="white"/>
+</clipPath>
+</defs>
+</svg>

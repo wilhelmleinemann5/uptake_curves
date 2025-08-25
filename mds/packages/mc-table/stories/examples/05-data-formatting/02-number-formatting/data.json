@@ -1,0 +1,42 @@
+[
+    {
+        "id": 1,
+        "name": "Emma Maersk",
+        "latitude": 11.1626327,
+        "longitude": -68.7259306,
+        "price": 4637.49,
+        "built": 2006
+    },
+    {
+        "id": 2,
+        "name": "Gerner Maersk",
+        "latitude": 60.3641945,
+        "longitude": 15.7292196,
+        "price": 699.73,
+        "built": 2008
+    },
+    {
+        "id": 3,
+        "name": "Johannes Maersk",
+        "latitude": 52.0108,
+        "longitude": 86.5467,
+        "price": 7148.57,
+        "built": 2001
+    },
+    {
+        "id": 4,
+        "name": "Madrid Maersk",
+        "latitude": 21.238501,
+        "longitude": -77.5246795,
+        "price": 4840.12,
+        "built": 2017
+    },
+    {
+        "id": 5,
+        "name": "Mary Maersk",
+        "latitude": 40.2367283,
+        "longitude": 44.6917527,
+        "price": 533.35,
+        "built": 2013
+    }
+]

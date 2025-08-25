@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222458429,
+  "data": "---\ntitle: APM Terminals experimental brand tokens\nnavTitle: Brand tokens\nsecondaryNavTitle: Typography\nhideTOC: true\nhideRelatedPages: true\nrenderAllChildPagesAsTabs: true\n---\n\nimport Typography from \"../../_components/Typography.vue\";\nimport designTokensCSS from \"@public/@maersk-global/mds-design-tokens/apmterminalsexperimental/light/css/design-tokens-px.css?raw\";\n\n<ExperimentalWarning itemName=\"This theme\" />\n\n<div class=\"min-h-[1024px]\" style={designTokensCSS.replace(\":root {\", \"\").replace(\"}\", \"\")}>\n  <Typography themeID=\"apmterminalsexperimental-light\" client:only=\"vue\" />\n</div>"
+}

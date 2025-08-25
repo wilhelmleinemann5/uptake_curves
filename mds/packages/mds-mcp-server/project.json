@@ -1,0 +1,65 @@
+{
+  "name": "mds-mcp-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mds-mcp-server/lib",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "copy:types"
+      ]
+    },
+    "copy:types": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "recursive-copy -w packages/mds-mcp-server/lib dist/packages/mds-mcp-server/lib  -f '**/*.d.ts'"
+        ]
+      },
+      "dependsOn": [
+        "build:compile-js"
+      ]
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": false,
+        "bundle": false,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-mcp-server",
+        "outdir": "dist/packages/mds-mcp-server",
+        "main": "packages/mds-mcp-server/lib/index.ts",
+        "tsConfig": "packages/mds-mcp-server/tsconfig.lib.json",
+        "assets": [
+          "packages/mds-mcp-server/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/no-bundle.config.cjs"
+      }
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mds-mcp-server",
+      "options": {
+        "outputPath": "dist/packages/mds-mcp-server"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "vitest": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "testTargetName": "vitest",
+        "serveTargetName": "serve",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  },
+  "tags": []
+}

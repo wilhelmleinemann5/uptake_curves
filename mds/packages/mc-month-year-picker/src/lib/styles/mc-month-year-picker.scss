@@ -1,0 +1,38 @@
+@import './mc-month-year-picker.mixins.scss';
+
+:host([fullwidth]) {
+  width: 100%;
+
+  .mc-month-year-picker {
+    width: 100%;
+
+    mc-picker {
+      width: 100%;
+    }
+  }
+}
+
+:host([nopadding]) {
+  .mc-month-year-picker {
+    padding: 0;
+  }
+}
+
+.mc-month-year-picker {
+  display: flex;
+
+  /* small size */
+  &.small {
+    @include apply-mc-month-year-picker-fit('small');
+  }
+
+  /* medium size */
+  &.medium {
+    @include apply-mc-month-year-picker-fit('medium');
+  }
+
+  /* large size */
+  &.large {
+    @include apply-mc-month-year-picker-fit('large');
+  }
+}

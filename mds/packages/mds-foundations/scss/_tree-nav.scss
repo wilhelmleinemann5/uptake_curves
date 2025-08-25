@@ -1,0 +1,173 @@
+@import './mixins/_typography';
+@import './mixins/_color';
+@import './mixins/_tree-nav';
+
+.mds-tree-nav {
+  ul,
+  ol {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    @include mds-apply-font('text', 'small', 'normal');
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
+
+    &.mds-tree-nav--separator {
+      border-top: 1px solid var(--mds_brand_appearance_neutral_weak_border-color);
+      margin: 10px 0;
+      padding: 0;
+    }
+  }
+
+  summary,
+  a {
+    position: relative;
+    border-radius: var(--mds_brand_border_medium_radius);
+    cursor: pointer;
+    display: flex;
+    justify-content: flex-start;
+    margin-bottom: 2px;
+    overflow: hidden;
+    padding: 6px 36px 6px 8px;
+    text-decoration: var(--mds_foundations_link_stand-alone_text-decoration);
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+
+    mc-icon {
+      margin-right: 8px;
+
+      &::part(icon) {
+        fill: var(--mds_brand_appearance_neutral_weak_text-color);
+      }
+    }
+
+    &:visited {
+      @include mds-generate-color-properties('neutral', 'weak', 'text');
+    }
+
+    &:hover,
+    &:active {
+      background-color: var(--mds_brand_appearance_state_neutral_default_hover_background-color);
+      color: var(--mds_brand_appearance_neutral_default_text-color);
+
+      mc-icon::part(icon) {
+        fill: var(--mds_brand_appearance_neutral_default_text-color);
+      }
+
+      @include mds-apply-font('text', 'small', 'normal');
+      @include mds-generate-color-properties('neutral', 'default', 'text');
+    }
+
+    &:focus-visible {
+      outline: 0;
+      box-shadow: inset var(--mds_brand_appearance_state_focus_default_shadow_offset-x)
+        var(--mds_brand_appearance_state_focus_default_shadow_offset-y)
+        var(--mds_brand_appearance_state_focus_default_shadow_blur-radius)
+        var(--mds_brand_appearance_state_focus_default_shadow_spread-radius)
+        var(--mds_brand_appearance_state_focus_default_shadow_color);
+    }
+
+    @include mds-generate-color-properties('neutral', 'weak', 'text');
+  }
+
+  a {
+    &.mds-tree-nav__active {
+      background-color: var(--mds_brand_appearance_info_weak_background-color);
+      color: var(--mds_brand_appearance_neutral_default_text-color);
+
+      mc-icon::part(icon) {
+        fill: var(--mds_brand_appearance_neutral_default_text-color);
+      }
+
+      @include mds-apply-font('text', 'small', 'medium');
+    }
+
+    &.mds-tree-nav__external::after {
+      margin-left: 16px;
+      display: inline;
+      height: 20px;
+      width: 20px;
+      background-color: var(--mds_brand_appearance_neutral_weak_text-color);
+      content: '';
+      -webkit-mask: url($chevronDown) no-repeat 50% 50%;
+      mask: url($chevronDown) no-repeat 50% 50%;
+      -webkit-mask-size: cover;
+      mask-size: cover;
+    }
+  }
+
+  summary {
+    list-style-type: none;
+    border-radius: var(--mds_brand_border_large_radius);
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+
+  details[open] {
+    color: var(--mds_brand_appearance_neutral_default_text-color);
+  }
+
+  details > summary::after,
+  a.mds-tree-nav__external::after {
+    position: absolute;
+    right: 8px;
+  }
+
+  details > summary::after {
+    margin-left: 16px;
+    height: 20px;
+    width: 20px;
+    background-color: var(--mds_brand_appearance_neutral_weak_text-color);
+    content: '';
+    -webkit-mask: url($chevronUp) no-repeat 50% 50%;
+    mask: url($chevronUp) no-repeat 50% 50%;
+    -webkit-mask-size: cover;
+    mask-size: cover;
+  }
+
+  details[open] > summary {
+    &::after {
+      -webkit-mask: url('data:image/svg+xml,<svg part="icon" id="mi-chevron-up" shape-rendering="geometricPrecision" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M10.517 7H9.483l-5.1 6.072-.766-.644 5.1-6.071A1 1 0 0 1 9.483 6h1.034a1 1 0 0 1 .766.357l5.1 6.071-.766.644L10.517 7z"/></svg>')
+        no-repeat 50% 50%;
+      mask: url('data:image/svg+xml,<svg part="icon" id="mi-chevron-up" shape-rendering="geometricPrecision" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M10.517 7H9.483l-5.1 6.072-.766-.644 5.1-6.071A1 1 0 0 1 9.483 6h1.034a1 1 0 0 1 .766.357l5.1 6.071-.766.644L10.517 7z"/></svg>')
+        no-repeat 50% 50%;
+    }
+
+    @include mds-apply-font('text', 'small', 'medium');
+  }
+
+  details > summary:hover::after {
+    background-color: var(--mds_brand_appearance_neutral_default_text-color);
+  }
+
+  // with badge
+  summary:has(mc-badge),
+  a:has(mc-badge) {
+    padding-right: 8px;
+  }
+
+  summary:has(mc-badge[position='right']),
+  a:has(mc-badge[position='right']) {
+    justify-content: space-between;
+  }
+
+  summary mc-badge[position='right'] {
+    padding-right: 28px;
+  }
+
+  .mds-tree-nav__external mc-badge[position='right'] {
+    padding-right: 28px;
+  }
+
+  @include tree-view-padding();
+}

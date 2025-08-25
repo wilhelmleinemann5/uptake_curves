@@ -1,0 +1,18 @@
+{
+  "name": "nextjs",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "kitchen-sinks/nextjs",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project nextjs --web",
+  "targets": {
+    "map-node-modules": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "recursive-copy -w dist/packages kitchen-sinks/nextjs/node_modules/@maersk-global -f '**/*.*' && recursive-copy -w node_modules/@maersk-global/icons kitchen-sinks/nextjs/node_modules/@maersk-global/icons -f '**/*.*'"
+        ]
+      }
+    }
+  }
+}

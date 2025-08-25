@@ -1,0 +1,1495 @@
+[
+    {
+        "global_border_width": [
+            "core_button_border-width",
+            "core_calendar_border-width",
+            "core_checkbox_border-width",
+            "core_input_border-width",
+            "core_multi-choice-fieldset_item_vertical_border-width",
+            "core_radio_border-width",
+            "core_step-indicator-item_border-width",
+            "core_switch_track_border-width",
+            "core_tooltip_border-width",
+            "community_card_bordered_border-width",
+            "community_list_border-width",
+            "foundations_horizontal-rule_border-width",
+            "foundations_table_border-width"
+        ]
+    },
+    {
+        "global_border_style": [
+            "core_button_border-style",
+            "core_calendar_border-style",
+            "core_checkbox_border-style",
+            "core_input_border-style",
+            "core_multi-choice-fieldset_item_vertical_border-style",
+            "core_radio_border-style",
+            "core_step-indicator-item_border-style",
+            "core_switch_track_border-style",
+            "core_tooltip_border-style",
+            "core_tooltip_border-radius",
+            "community_card_bordered_border-style",
+            "community_list_border-style",
+            "foundations_horizontal-rule_border-style",
+            "foundations_table_border-style"
+        ]
+    },
+    {
+        "global_link_inline_text-decoration": [
+            "foundations_link_inline_text-decoration"
+        ]
+    },
+    {
+        "global_link_inline_hover_text-decoration": [
+            "foundations_link_inline_hover_text-decoration"
+        ]
+    },
+    {
+        "global_link_stand-alone_text-decoration": [
+            "foundations_link_stand-alone_text-decoration"
+        ]
+    },
+    {
+        "global_link_stand-alone_hover_text-decoration": [
+            "foundations_link_stand-alone_hover_text-decoration"
+        ]
+    },
+    {
+        "global_transition_slow_duration": []
+    },
+    {
+        "global_transition_slow_timing": []
+    },
+    {
+        "global_transition_medium_duration": []
+    },
+    {
+        "global_transition_medium_timing": []
+    },
+    {
+        "global_transition_fast_duration": [
+            "core_button_transition-duration",
+            "core_checkbox_transition-duration",
+            "core_input_transition-duration",
+            "core_modal_transition-duration",
+            "core_radio_transition-duration",
+            "core_switch_track_transition-duration",
+            "core_tab_transition-duration",
+            "community_card_transition-duration",
+            "foundations_link_transition-duration"
+        ]
+    },
+    {
+        "global_transition_fast_timing": [
+            "core_button_transition-timing",
+            "core_checkbox_transition-timing",
+            "core_input_transition-timing",
+            "core_modal_transition-timing",
+            "core_radio_transition-timing",
+            "core_switch_track_transition-timing",
+            "core_tab_transition-timing",
+            "community_card_transition-timing",
+            "foundations_link_transition-timing"
+        ]
+    },
+    {
+        "brand_border_small_radius": [
+            "core_button_small_border-radius",
+            "core_checkbox_small_checkmark_border-radius",
+            "core_input_small_border-radius",
+            "core_notification_small_border-radius",
+            "core_tooltip_small_border-radius",
+            "community_card_small_bordered_border-radius",
+            "community_party-card_border-radius",
+            "community_party-finder_party-card_border-radius",
+            "foundations_link_focus_border-radius",
+            "foundations_table_small_border-radius"
+        ]
+    },
+    {
+        "brand_border_medium_radius": [
+            "core_button_medium_border-radius",
+            "core_calendar_border-radius",
+            "core_checkbox_medium_checkmark_border-radius",
+            "core_input_medium_border-radius",
+            "core_modal_small_border-radius",
+            "core_notification_medium_border-radius",
+            "core_notification_large_border-radius",
+            "core_tooltip_medium_border-radius",
+            "community_card_medium_bordered_border-radius",
+            "community_list_border-radius",
+            "foundations_table_medium_border-radius"
+        ]
+    },
+    {
+        "brand_border_large_radius": [
+            "core_button_large_border-radius",
+            "core_checkbox_large_checkmark_border-radius",
+            "core_input_large_border-radius",
+            "core_modal_medium_border-radius",
+            "core_modal_large_border-radius",
+            "core_tooltip_large_border-radius",
+            "community_card_large_bordered_border-radius",
+            "foundations_table_large_border-radius"
+        ]
+    },
+    {
+        "brand_typography_headline_font-family": []
+    },
+    {
+        "brand_typography_headline_font-family-fallback": []
+    },
+    {
+        "brand_typography_headline_x-small_font-style": []
+    },
+    {
+        "brand_typography_headline_x-small_font-weight": []
+    },
+    {
+        "brand_typography_headline_x-small_text-transform": []
+    },
+    {
+        "brand_typography_headline_x-small_desktop_font-size": []
+    },
+    {
+        "brand_typography_headline_x-small_desktop_line-height": []
+    },
+    {
+        "brand_typography_headline_x-small_mobile_font-size": []
+    },
+    {
+        "brand_typography_headline_x-small_mobile_line-height": []
+    },
+    {
+        "brand_typography_headline_small_font-style": []
+    },
+    {
+        "brand_typography_headline_small_font-weight": []
+    },
+    {
+        "brand_typography_headline_small_text-transform": []
+    },
+    {
+        "brand_typography_headline_small_desktop_font-size": []
+    },
+    {
+        "brand_typography_headline_small_desktop_line-height": []
+    },
+    {
+        "brand_typography_headline_small_mobile_font-size": []
+    },
+    {
+        "brand_typography_headline_small_mobile_line-height": []
+    },
+    {
+        "brand_typography_headline_medium_font-style": []
+    },
+    {
+        "brand_typography_headline_medium_font-weight": []
+    },
+    {
+        "brand_typography_headline_medium_text-transform": []
+    },
+    {
+        "brand_typography_headline_medium_desktop_font-size": []
+    },
+    {
+        "brand_typography_headline_medium_desktop_line-height": []
+    },
+    {
+        "brand_typography_headline_medium_mobile_font-size": []
+    },
+    {
+        "brand_typography_headline_medium_mobile_line-height": []
+    },
+    {
+        "brand_typography_headline_large_font-style": []
+    },
+    {
+        "brand_typography_headline_large_font-weight": []
+    },
+    {
+        "brand_typography_headline_large_text-transform": []
+    },
+    {
+        "brand_typography_headline_large_desktop_font-size": []
+    },
+    {
+        "brand_typography_headline_large_desktop_line-height": []
+    },
+    {
+        "brand_typography_headline_large_mobile_font-size": []
+    },
+    {
+        "brand_typography_headline_large_mobile_line-height": []
+    },
+    {
+        "brand_typography_headline_x-large_font-style": []
+    },
+    {
+        "brand_typography_headline_x-large_font-weight": []
+    },
+    {
+        "brand_typography_headline_x-large_text-transform": []
+    },
+    {
+        "brand_typography_headline_x-large_desktop_font-size": []
+    },
+    {
+        "brand_typography_headline_x-large_desktop_line-height": []
+    },
+    {
+        "brand_typography_headline_x-large_mobile_font-size": []
+    },
+    {
+        "brand_typography_headline_x-large_mobile_line-height": []
+    },
+    {
+        "brand_typography_text_font-family": []
+    },
+    {
+        "brand_typography_text_font-family-fallback": []
+    },
+    {
+        "brand_typography_text_x-small_desktop_font-size": []
+    },
+    {
+        "brand_typography_text_x-small_desktop_line-height": []
+    },
+    {
+        "brand_typography_text_x-small_mobile_font-size": []
+    },
+    {
+        "brand_typography_text_x-small_mobile_line-height": []
+    },
+    {
+        "brand_typography_text_x-small_normal_font-style": []
+    },
+    {
+        "brand_typography_text_x-small_normal_font-weight": []
+    },
+    {
+        "brand_typography_text_x-small_medium_font-style": []
+    },
+    {
+        "brand_typography_text_x-small_medium_font-weight": []
+    },
+    {
+        "brand_typography_text_x-small_bold_font-style": []
+    },
+    {
+        "brand_typography_text_x-small_bold_font-weight": []
+    },
+    {
+        "brand_typography_text_x-small_italic_font-style": []
+    },
+    {
+        "brand_typography_text_x-small_italic_font-weight": []
+    },
+    {
+        "brand_typography_text_x-small_mediumitalic_font-style": []
+    },
+    {
+        "brand_typography_text_x-small_mediumitalic_font-weight": []
+    },
+    {
+        "brand_typography_text_x-small_bolditalic_font-style": []
+    },
+    {
+        "brand_typography_text_x-small_bolditalic_font-weight": []
+    },
+    {
+        "brand_typography_text_small_desktop_font-size": []
+    },
+    {
+        "brand_typography_text_small_desktop_line-height": []
+    },
+    {
+        "brand_typography_text_small_mobile_font-size": []
+    },
+    {
+        "brand_typography_text_small_mobile_line-height": []
+    },
+    {
+        "brand_typography_text_small_normal_font-style": []
+    },
+    {
+        "brand_typography_text_small_normal_font-weight": []
+    },
+    {
+        "brand_typography_text_small_medium_font-style": []
+    },
+    {
+        "brand_typography_text_small_medium_font-weight": []
+    },
+    {
+        "brand_typography_text_small_bold_font-style": []
+    },
+    {
+        "brand_typography_text_small_bold_font-weight": []
+    },
+    {
+        "brand_typography_text_small_italic_font-style": []
+    },
+    {
+        "brand_typography_text_small_italic_font-weight": []
+    },
+    {
+        "brand_typography_text_small_mediumitalic_font-style": []
+    },
+    {
+        "brand_typography_text_small_mediumitalic_font-weight": []
+    },
+    {
+        "brand_typography_text_small_bolditalic_font-style": []
+    },
+    {
+        "brand_typography_text_small_bolditalic_font-weight": []
+    },
+    {
+        "brand_typography_text_medium_desktop_font-size": []
+    },
+    {
+        "brand_typography_text_medium_desktop_line-height": []
+    },
+    {
+        "brand_typography_text_medium_mobile_font-size": []
+    },
+    {
+        "brand_typography_text_medium_mobile_line-height": []
+    },
+    {
+        "brand_typography_text_medium_normal_font-style": []
+    },
+    {
+        "brand_typography_text_medium_normal_font-weight": []
+    },
+    {
+        "brand_typography_text_medium_medium_font-style": []
+    },
+    {
+        "brand_typography_text_medium_medium_font-weight": []
+    },
+    {
+        "brand_typography_text_medium_bold_font-style": []
+    },
+    {
+        "brand_typography_text_medium_bold_font-weight": []
+    },
+    {
+        "brand_typography_text_medium_italic_font-style": []
+    },
+    {
+        "brand_typography_text_medium_italic_font-weight": []
+    },
+    {
+        "brand_typography_text_medium_mediumitalic_font-style": []
+    },
+    {
+        "brand_typography_text_medium_mediumitalic_font-weight": []
+    },
+    {
+        "brand_typography_text_medium_bolditalic_font-style": []
+    },
+    {
+        "brand_typography_text_medium_bolditalic_font-weight": []
+    },
+    {
+        "brand_typography_text_large_desktop_font-size": []
+    },
+    {
+        "brand_typography_text_large_desktop_line-height": []
+    },
+    {
+        "brand_typography_text_large_mobile_font-size": []
+    },
+    {
+        "brand_typography_text_large_mobile_line-height": []
+    },
+    {
+        "brand_typography_text_large_normal_font-style": []
+    },
+    {
+        "brand_typography_text_large_normal_font-weight": []
+    },
+    {
+        "brand_typography_text_large_medium_font-style": []
+    },
+    {
+        "brand_typography_text_large_medium_font-weight": []
+    },
+    {
+        "brand_typography_text_large_bold_font-style": []
+    },
+    {
+        "brand_typography_text_large_bold_font-weight": []
+    },
+    {
+        "brand_typography_text_large_italic_font-style": []
+    },
+    {
+        "brand_typography_text_large_italic_font-weight": []
+    },
+    {
+        "brand_typography_text_large_mediumitalic_font-style": []
+    },
+    {
+        "brand_typography_text_large_mediumitalic_font-weight": []
+    },
+    {
+        "brand_typography_text_large_bolditalic_font-style": []
+    },
+    {
+        "brand_typography_text_large_bolditalic_font-weight": []
+    },
+    {
+        "brand_appearance_neutral_default_text-color": [
+            "core_button_neutral_outlined_text-color",
+            "core_button_neutral_outlined_hover_text-color",
+            "core_button_neutral_outlined_active_text-color",
+            "core_button_neutral_plain_text-color",
+            "core_button_neutral_plain_hover_text-color",
+            "core_button_neutral_plain_active_text-color",
+            "core_icon_color",
+            "core_label_text-color",
+            "core_loading-indicator_spinner_default_label_text-color",
+            "core_loading-indicator_bar_default_label_text-color",
+            "core_notification_neutral_icon_fill",
+            "community_accordion-item_content_text-color",
+            "community_accordion-item_title_text-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_default_background-color": [
+            "core_button_neutral_filled_background-color",
+            "core_button_inverse_filled_background-color",
+            "core_calendar_background-color",
+            "core_checkbox_off_background-color",
+            "core_input_default_background-color",
+            "core_loading-indicator_spinner_inverse_track_color",
+            "core_loading-indicator_bar_inverse_track_background-color",
+            "core_modal_dialog_background-color",
+            "core_radio_off_background-color",
+            "core_tooltip_default_background-color",
+            "community_accordion-item_background-color",
+            "community_card_bordered_background-color",
+            "community_list-item_static_hover_background-color",
+            "community_list_background-color",
+            "community_party-card_background-color",
+            "foundations_body_background-color",
+            "foundations_table_cell_background-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_default_on-background-color": [
+            "core_button_neutral_filled_text-color",
+            "core_button_neutral_filled_hover_text-color",
+            "core_button_neutral_filled_active_text-color",
+            "core_button_inverse_filled_text-color",
+            "core_button_inverse_filled_hover_text-color",
+            "core_button_inverse_filled_active_text-color",
+            "core_input_default_text-color",
+            "core_tooltip_default_color",
+            "community_card_text-color",
+            "foundations_body_text-color",
+            "foundations_table_cell_text-color",
+            "foundations_table_caption_text-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_default_border-color": [
+            "core_button_neutral_filled_border-color",
+            "core_button_neutral_filled_hover_border-color",
+            "core_button_neutral_filled_active_border-color",
+            "core_button_neutral_outlined_border-color",
+            "core_button_neutral_outlined_hover_border-color",
+            "core_button_neutral_outlined_active_border-color",
+            "core_calendar_border-color",
+            "core_checkbox_off_border-color",
+            "core_input_default_border-color",
+            "core_loading-indicator_spinner_default_track_color",
+            "core_loading-indicator_bar_default_track_background-color",
+            "core_multi-choice-fieldset_item_vertical_border-color",
+            "core_radio_off_border-color",
+            "core_tab-bar_separator_background-color",
+            "core_tab_indicator_background-color",
+            "core_tooltip_default_border-color",
+            "community_card_bordered_border-color",
+            "community_list_border-color",
+            "foundations_horizontal-rule_border-color",
+            "foundations_table_border-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_subtle_text-color": [
+            "core_hint_text-color",
+            "core_input_placeholder_text-color",
+            "community_list-item_secondary_text-color",
+            "community_party-card_text-color",
+            "community_customer-search_legend_text-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_subtle_background-color": [
+            "core_modal_footer_background-color",
+            "core_notification_neutral_background-color",
+            "core_tag_neutral_background-color",
+            "community_card_image_background-color",
+            "community_party-card_message_background-color",
+            "community_typeahead_list_footer_background-color",
+            "foundations_table_header-cell_background-color",
+            "foundations_table_zebra-stripe_background-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_subtle_on-background-color": [
+            "core_notification_neutral_on-background-color",
+            "core_notification_neutral_icon-close_fill",
+            "core_tag_neutral_text-color",
+            "foundations_table_header-cell_text-color",
+            "foundations_table_zebra-stripe_text-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_subtle_border-color": [
+            "core_step-indicator-item_pending_marker_border-color",
+            "core_step-indicator-item_pending_marker_fill",
+            "core_step-indicator-item_pending_line_background-color",
+            "core_step-indicator-item_current_line_background-color",
+            "community_accordion-item_border-color",
+            "community_accordion_border-color",
+            "community_party-card_border-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_alt_text-color": [
+            "core_textarea_counter_text-color",
+            "community_card_sub-heading_text-color",
+            "community_card_footer_text-color",
+            "foundations_table_subtext_text-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_alt_background-color": [
+            "core_switch_off_track_background-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_alt_on-background-color": []
+    },
+    {
+        "brand_appearance_neutral_inverse_text-color": []
+    },
+    {
+        "brand_appearance_neutral_inverse_background-color": [
+            "core_tooltip_inverse_background-color",
+            "core_tooltip_inverse_border-color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_inverse_on-background-color": [
+            "core_button_inverse_outlined_text-color",
+            "core_button_inverse_outlined_hover_text-color",
+            "core_button_inverse_outlined_active_text-color",
+            "core_button_inverse_plain_text-color",
+            "core_button_inverse_plain_hover_text-color",
+            "core_button_inverse_plain_active_text-color",
+            "core_tooltip_inverse_color"
+        ]
+    },
+    {
+        "brand_appearance_neutral_inverse_border-color": [
+            "core_button_inverse_outlined_border-color",
+            "core_button_inverse_outlined_hover_border-color",
+            "core_button_inverse_outlined_active_border-color"
+        ]
+    },
+    {
+        "brand_appearance_primary_default_text-color": [
+            "core_button_primary_outlined_text-color",
+            "core_button_primary_outlined_hover_text-color",
+            "core_button_primary_outlined_active_text-color",
+            "core_button_primary_plain_text-color",
+            "core_button_primary_plain_hover_text-color",
+            "core_button_primary_plain_active_text-color",
+            "core_calendar_today_text-color",
+            "core_notification_primary_icon_fill",
+            "community_party-finder_button_text-color",
+            "community_customer-search_button_text-color",
+            "foundations_link_default_text-color"
+        ]
+    },
+    {
+        "brand_appearance_primary_default_background-color": [
+            "core_button_primary_filled_background-color",
+            "core_checkbox_on_background-color",
+            "core_loading-indicator_spinner_default_progress_color",
+            "core_loading-indicator_bar_default_progress_background-color",
+            "core_radio_on_background-color",
+            "core_step-indicator-item_completed_marker_background-color",
+            "core_switch_on_track_background-color",
+            "core_tab_indicator_hover_background-color",
+            "core_tab_indicator_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_primary_default_on-background-color": [
+            "core_button_primary_filled_text-color",
+            "core_button_primary_filled_hover_text-color",
+            "core_button_primary_filled_active_text-color",
+            "core_checkbox_on_checkmark-color",
+            "core_loading-indicator_spinner_inverse_label_text-color",
+            "core_loading-indicator_spinner_inverse_progress_color",
+            "core_loading-indicator_bar_inverse_label_text-color",
+            "core_loading-indicator_bar_inverse_progress_background-color",
+            "core_radio_on_checkmark-color",
+            "core_step-indicator-item_completed_marker_fill",
+            "core_switch_track-handle_background-color"
+        ]
+    },
+    {
+        "brand_appearance_primary_default_border-color": [
+            "core_button_primary_outlined_border-color",
+            "core_button_primary_outlined_hover_border-color",
+            "core_button_primary_outlined_active_border-color",
+            "core_checkbox_on_border-color",
+            "core_radio_on_border-color",
+            "core_step-indicator-item_current_marker_border-color",
+            "core_step-indicator-item_current_marker_fill",
+            "core_step-indicator-item_completed_marker_border-color",
+            "core_step-indicator-item_completed_line_background-color"
+        ]
+    },
+    {
+        "brand_appearance_primary_subtle_background-color": [
+            "core_notification_primary_background-color",
+            "core_tag_primary_background-color",
+            "foundations_table_cell_hover_background-color"
+        ]
+    },
+    {
+        "brand_appearance_primary_subtle_on-background-color": [
+            "core_notification_primary_on-background-color",
+            "core_notification_primary_icon-close_fill",
+            "core_tag_primary_text-color",
+            "foundations_table_cell_hover_text-color"
+        ]
+    },
+    {
+        "brand_appearance_primary_subtle_border-color": []
+    },
+    {
+        "brand_appearance_secondary_default_text-color": [
+            "core_button_secondary_outlined_text-color",
+            "core_button_secondary_outlined_hover_text-color",
+            "core_button_secondary_outlined_active_text-color",
+            "core_button_secondary_plain_text-color",
+            "core_button_secondary_plain_hover_text-color",
+            "core_button_secondary_plain_active_text-color",
+            "core_notification_secondary_icon_fill"
+        ]
+    },
+    {
+        "brand_appearance_secondary_default_background-color": [
+            "core_button_secondary_filled_background-color"
+        ]
+    },
+    {
+        "brand_appearance_secondary_default_on-background-color": [
+            "core_button_secondary_filled_text-color",
+            "core_button_secondary_filled_hover_text-color",
+            "core_button_secondary_filled_active_text-color"
+        ]
+    },
+    {
+        "brand_appearance_secondary_default_border-color": [
+            "core_button_secondary_outlined_border-color",
+            "core_button_secondary_outlined_hover_border-color",
+            "core_button_secondary_outlined_active_border-color"
+        ]
+    },
+    {
+        "brand_appearance_secondary_subtle_background-color": [
+            "core_notification_secondary_background-color",
+            "core_tag_secondary_background-color"
+        ]
+    },
+    {
+        "brand_appearance_secondary_subtle_on-background-color": [
+            "core_notification_secondary_on-background-color",
+            "core_notification_secondary_icon-close_fill",
+            "core_tag_secondary_text-color"
+        ]
+    },
+    {
+        "brand_appearance_secondary_subtle_border-color": []
+    },
+    {
+        "brand_appearance_success_default_text-color": [
+            "core_notification_success_icon_fill"
+        ]
+    },
+    {
+        "brand_appearance_success_default_background-color": []
+    },
+    {
+        "brand_appearance_success_default_on-background-color": []
+    },
+    {
+        "brand_appearance_success_default_border-color": []
+    },
+    {
+        "brand_appearance_success_subtle_background-color": [
+            "core_notification_success_background-color",
+            "core_tag_success_background-color",
+            "community_avatar_color-2_background-color"
+        ]
+    },
+    {
+        "brand_appearance_success_subtle_on-background-color": [
+            "core_notification_success_on-background-color",
+            "core_notification_success_icon-close_fill",
+            "core_tag_success_text-color",
+            "community_avatar_color-2_color"
+        ]
+    },
+    {
+        "brand_appearance_success_subtle_border-color": []
+    },
+    {
+        "brand_appearance_warning_default_text-color": [
+            "core_notification_warning_icon_fill"
+        ]
+    },
+    {
+        "brand_appearance_warning_default_background-color": []
+    },
+    {
+        "brand_appearance_warning_default_on-background-color": []
+    },
+    {
+        "brand_appearance_warning_default_border-color": []
+    },
+    {
+        "brand_appearance_warning_subtle_background-color": [
+            "core_notification_warning_background-color",
+            "core_tag_warning_background-color",
+            "community_avatar_color-3_background-color"
+        ]
+    },
+    {
+        "brand_appearance_warning_subtle_on-background-color": [
+            "core_notification_warning_on-background-color",
+            "core_notification_warning_icon-close_fill",
+            "core_tag_warning_text-color",
+            "community_avatar_color-3_color"
+        ]
+    },
+    {
+        "brand_appearance_warning_subtle_border-color": []
+    },
+    {
+        "brand_appearance_error_default_text-color": [
+            "core_button_error_outlined_text-color",
+            "core_button_error_outlined_hover_text-color",
+            "core_button_error_outlined_active_text-color",
+            "core_button_error_plain_text-color",
+            "core_button_error_plain_hover_text-color",
+            "core_button_error_plain_active_text-color",
+            "core_error_text-color",
+            "core_notification_error_icon_fill"
+        ]
+    },
+    {
+        "brand_appearance_error_default_background-color": [
+            "core_button_error_filled_background-color",
+            "core_checkbox_error_background-color"
+        ]
+    },
+    {
+        "brand_appearance_error_default_on-background-color": [
+            "core_button_error_filled_text-color",
+            "core_button_error_filled_hover_text-color",
+            "core_button_error_filled_active_text-color"
+        ]
+    },
+    {
+        "brand_appearance_error_default_border-color": [
+            "core_button_error_outlined_border-color",
+            "core_button_error_outlined_hover_border-color",
+            "core_button_error_outlined_active_border-color",
+            "core_checkbox_error_border-color",
+            "core_input_error_border-color"
+        ]
+    },
+    {
+        "brand_appearance_error_subtle_background-color": [
+            "core_notification_error_background-color",
+            "core_tag_error_background-color",
+            "community_avatar_color-4_background-color"
+        ]
+    },
+    {
+        "brand_appearance_error_subtle_on-background-color": [
+            "core_notification_error_on-background-color",
+            "core_notification_error_icon-close_fill",
+            "core_tag_error_text-color",
+            "community_avatar_color-4_color"
+        ]
+    },
+    {
+        "brand_appearance_error_subtle_border-color": []
+    },
+    {
+        "brand_appearance_info_default_text-color": [
+            "core_notification_info_icon_fill"
+        ]
+    },
+    {
+        "brand_appearance_info_default_background-color": []
+    },
+    {
+        "brand_appearance_info_default_on-background-color": []
+    },
+    {
+        "brand_appearance_info_default_border-color": []
+    },
+    {
+        "brand_appearance_info_subtle_background-color": [
+            "core_notification_info_background-color",
+            "core_tag_info_background-color",
+            "community_avatar_color-1_background-color"
+        ]
+    },
+    {
+        "brand_appearance_info_subtle_on-background-color": [
+            "core_notification_info_on-background-color",
+            "core_notification_info_icon-close_fill",
+            "core_tag_info_text-color",
+            "community_avatar_color-1_color"
+        ]
+    },
+    {
+        "brand_appearance_info_subtle_border-color": []
+    },
+    {
+        "brand_appearance_opacity_default_10": []
+    },
+    {
+        "brand_appearance_opacity_default_30": []
+    },
+    {
+        "brand_appearance_opacity_default_50": []
+    },
+    {
+        "brand_appearance_opacity_default_70": []
+    },
+    {
+        "brand_appearance_opacity_default_90": []
+    },
+    {
+        "brand_appearance_opacity_inverse_10": []
+    },
+    {
+        "brand_appearance_opacity_inverse_30": []
+    },
+    {
+        "brand_appearance_opacity_inverse_50": [
+            "core_modal_backdrop_background-color"
+        ]
+    },
+    {
+        "brand_appearance_opacity_inverse_70": []
+    },
+    {
+        "brand_appearance_opacity_inverse_90": []
+    },
+    {
+        "brand_appearance_shadow_first-layer_color": []
+    },
+    {
+        "brand_appearance_shadow_first-layer_offset-x": []
+    },
+    {
+        "brand_appearance_shadow_first-layer_offset-y": []
+    },
+    {
+        "brand_appearance_shadow_first-layer_blur-radius": []
+    },
+    {
+        "brand_appearance_shadow_first-layer_spread-radius": []
+    },
+    {
+        "brand_appearance_shadow_second-layer_color": []
+    },
+    {
+        "brand_appearance_shadow_second-layer_offset-x": []
+    },
+    {
+        "brand_appearance_shadow_second-layer_offset-y": []
+    },
+    {
+        "brand_appearance_shadow_second-layer_blur-radius": []
+    },
+    {
+        "brand_appearance_shadow_second-layer_spread-radius": []
+    },
+    {
+        "brand_appearance_shadow_third-layer_color": []
+    },
+    {
+        "brand_appearance_shadow_third-layer_offset-x": []
+    },
+    {
+        "brand_appearance_shadow_third-layer_offset-y": []
+    },
+    {
+        "brand_appearance_shadow_third-layer_blur-radius": []
+    },
+    {
+        "brand_appearance_shadow_third-layer_spread-radius": []
+    },
+    {
+        "brand_appearance_state_neutral_default_hover_background-color": [
+            "core_button_neutral_filled_hover_background-color",
+            "core_button_inverse_filled_hover_background-color",
+            "foundations_table_header-cell_sort_hover_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_neutral_default_hover_border-color": [
+            "core_checkbox_off_hover_border-color",
+            "core_input_default_hover_border-color",
+            "core_radio_off_hover_border-color",
+            "community_party-finder_party-card_border-color"
+        ]
+    },
+    {
+        "brand_appearance_state_neutral_default_active_background-color": [
+            "core_button_neutral_filled_active_background-color",
+            "core_button_inverse_filled_active_background-color",
+            "foundations_table_header-cell_sort_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_neutral_default_active_border-color": []
+    },
+    {
+        "brand_appearance_state_neutral_subtle_hover_background-color": [
+            "core_button_neutral_outlined_hover_background-color",
+            "core_button_neutral_plain_hover_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_neutral_subtle_active_background-color": [
+            "core_button_neutral_outlined_active_background-color",
+            "core_button_neutral_plain_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_neutral_alt_hover_background-color": [
+            "core_switch_off_hover_track_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_neutral_alt_active_background-color": []
+    },
+    {
+        "brand_appearance_state_neutral_inverse_hover_background-color": [
+            "core_button_inverse_outlined_hover_background-color",
+            "core_button_inverse_plain_hover_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_neutral_inverse_active_background-color": [
+            "core_button_inverse_outlined_active_background-color",
+            "core_button_inverse_plain_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_primary_default_hover_background-color": [
+            "core_button_primary_filled_hover_background-color",
+            "core_checkbox_on_hover_background-color",
+            "core_radio_on_hover_background-color",
+            "core_switch_on_hover_track_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_primary_default_hover_border-color": [
+            "core_checkbox_on_hover_border-color",
+            "core_radio_on_hover_border-color"
+        ]
+    },
+    {
+        "brand_appearance_state_primary_default_active_background-color": [
+            "core_button_primary_filled_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_primary_default_active_border-color": []
+    },
+    {
+        "brand_appearance_state_primary_subtle_hover_background-color": [
+            "core_button_primary_outlined_hover_background-color",
+            "core_button_primary_plain_hover_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_primary_subtle_active_background-color": [
+            "core_button_primary_outlined_active_background-color",
+            "core_button_primary_plain_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_secondary_default_hover_background-color": [
+            "core_button_secondary_filled_hover_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_secondary_default_active_background-color": [
+            "core_button_secondary_filled_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_secondary_subtle_hover_background-color": [
+            "core_button_secondary_outlined_hover_background-color",
+            "core_button_secondary_plain_hover_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_secondary_subtle_active_background-color": [
+            "core_button_secondary_outlined_active_background-color",
+            "core_button_secondary_plain_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_success_default_hover_background-color": []
+    },
+    {
+        "brand_appearance_state_success_default_active_background-color": []
+    },
+    {
+        "brand_appearance_state_success_subtle_hover_background-color": []
+    },
+    {
+        "brand_appearance_state_success_subtle_active_background-color": []
+    },
+    {
+        "brand_appearance_state_warning_default_hover_background-color": []
+    },
+    {
+        "brand_appearance_state_warning_default_active_background-color": []
+    },
+    {
+        "brand_appearance_state_warning_subtle_hover_background-color": []
+    },
+    {
+        "brand_appearance_state_warning_subtle_active_background-color": []
+    },
+    {
+        "brand_appearance_state_error_default_hover_background-color": [
+            "core_button_error_filled_hover_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_error_default_active_background-color": [
+            "core_button_error_filled_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_error_subtle_hover_background-color": [
+            "core_button_error_outlined_hover_background-color",
+            "core_button_error_plain_hover_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_error_subtle_active_background-color": [
+            "core_button_error_outlined_active_background-color",
+            "core_button_error_plain_active_background-color"
+        ]
+    },
+    {
+        "brand_appearance_state_info_default_hover_background-color": []
+    },
+    {
+        "brand_appearance_state_info_default_active_background-color": []
+    },
+    {
+        "brand_appearance_state_info_subtle_hover_background-color": []
+    },
+    {
+        "brand_appearance_state_info_subtle_active_background-color": []
+    },
+    {
+        "brand_appearance_state_focus_border-color": []
+    },
+    {
+        "brand_appearance_state_focus_default_shadow_offset-x": []
+    },
+    {
+        "brand_appearance_state_focus_default_shadow_offset-y": []
+    },
+    {
+        "brand_appearance_state_focus_default_shadow_blur-radius": []
+    },
+    {
+        "brand_appearance_state_focus_default_shadow_spread-radius": []
+    },
+    {
+        "brand_appearance_state_focus_default_shadow_color": []
+    },
+    {
+        "brand_appearance_state_focus_vanity_shadow_offset-x": []
+    },
+    {
+        "brand_appearance_state_focus_vanity_shadow_offset-y": []
+    },
+    {
+        "brand_appearance_state_focus_vanity_shadow_blur-radius": []
+    },
+    {
+        "brand_appearance_state_focus_vanity_shadow_spread-radius": []
+    },
+    {
+        "brand_appearance_state_focus_vanity_shadow_color": []
+    },
+    {
+        "brand_appearance_state_disabled_opacity": []
+    },
+    {
+        "foundations_body_typography": []
+    },
+    {
+        "foundations_body_background-color": []
+    },
+    {
+        "foundations_body_text-color": []
+    },
+    {
+        "foundations_horizontal-rule_margin-top": []
+    },
+    {
+        "foundations_horizontal-rule_margin-bottom": []
+    },
+    {
+        "foundations_horizontal-rule_border-width": []
+    },
+    {
+        "foundations_horizontal-rule_border-style": []
+    },
+    {
+        "foundations_horizontal-rule_border-color": []
+    },
+    {
+        "foundations_link_transition-properties": []
+    },
+    {
+        "foundations_link_transition-duration": []
+    },
+    {
+        "foundations_link_transition-timing": []
+    },
+    {
+        "foundations_link_focus_border-radius": []
+    },
+    {
+        "foundations_link_inline_text-decoration": []
+    },
+    {
+        "foundations_link_inline_hover_text-decoration": []
+    },
+    {
+        "foundations_link_stand-alone_text-decoration": []
+    },
+    {
+        "foundations_link_stand-alone_hover_text-decoration": []
+    },
+    {
+        "foundations_link_default_text-color": []
+    },
+    {
+        "foundations_list_margin-top": []
+    },
+    {
+        "foundations_list_margin-bottom": []
+    },
+    {
+        "foundations_list_item_padding-left": []
+    },
+    {
+        "foundations_list_vertical_padding-left": []
+    },
+    {
+        "foundations_list_vertical_item_gap": []
+    },
+    {
+        "foundations_list_horizontal_item_gap": []
+    },
+    {
+        "foundations_list_unordered_list-style": []
+    },
+    {
+        "foundations_list_ordered_list-style": []
+    },
+    {
+        "foundations_slot_gap": []
+    },
+    {
+        "foundations_table_border-width": []
+    },
+    {
+        "foundations_table_border-style": []
+    },
+    {
+        "foundations_table_border-color": []
+    },
+    {
+        "foundations_table_row-selector_margin-top": []
+    },
+    {
+        "foundations_table_cell_typography": []
+    },
+    {
+        "foundations_table_cell_background-color": []
+    },
+    {
+        "foundations_table_cell_text-color": []
+    },
+    {
+        "foundations_table_cell_hover_background-color": []
+    },
+    {
+        "foundations_table_cell_hover_text-color": []
+    },
+    {
+        "foundations_table_header-cell_typography": []
+    },
+    {
+        "foundations_table_header-cell_sort-button_font-weight": []
+    },
+    {
+        "foundations_table_header-cell_background-color": []
+    },
+    {
+        "foundations_table_header-cell_text-color": []
+    },
+    {
+        "foundations_table_header-cell_sort_hover_background-color": []
+    },
+    {
+        "foundations_table_header-cell_sort_active_background-color": []
+    },
+    {
+        "foundations_table_footer-cell_typography": []
+    },
+    {
+        "foundations_table_zebra-stripe_background-color": []
+    },
+    {
+        "foundations_table_zebra-stripe_text-color": []
+    },
+    {
+        "foundations_table_caption_text-color": []
+    },
+    {
+        "foundations_table_subtext_text-color": []
+    },
+    {
+        "foundations_table_subtext_font-weight": []
+    },
+    {
+        "foundations_table_small_border-radius": []
+    },
+    {
+        "foundations_table_small_caption_typography": []
+    },
+    {
+        "foundations_table_small_caption_margin-bottom": []
+    },
+    {
+        "foundations_table_small_cell_typography": []
+    },
+    {
+        "foundations_table_small_cell_padding-top": []
+    },
+    {
+        "foundations_table_small_cell_padding-right": []
+    },
+    {
+        "foundations_table_small_cell_padding-bottom": []
+    },
+    {
+        "foundations_table_small_cell_padding-left": []
+    },
+    {
+        "foundations_table_small_header-cell_typography": []
+    },
+    {
+        "foundations_table_small_header-cell_sortable_padding-top": []
+    },
+    {
+        "foundations_table_small_header-cell_sortable_padding-bottom": []
+    },
+    {
+        "foundations_table_small_subtext_typography": []
+    },
+    {
+        "foundations_table_medium_border-radius": []
+    },
+    {
+        "foundations_table_medium_caption_typography": []
+    },
+    {
+        "foundations_table_medium_caption_margin-bottom": []
+    },
+    {
+        "foundations_table_medium_cell_typography": []
+    },
+    {
+        "foundations_table_medium_cell_padding-top": []
+    },
+    {
+        "foundations_table_medium_cell_padding-right": []
+    },
+    {
+        "foundations_table_medium_cell_padding-bottom": []
+    },
+    {
+        "foundations_table_medium_cell_padding-left": []
+    },
+    {
+        "foundations_table_medium_header-cell_typography": []
+    },
+    {
+        "foundations_table_medium_header-cell_sortable_padding-top": []
+    },
+    {
+        "foundations_table_medium_header-cell_sortable_padding-bottom": []
+    },
+    {
+        "foundations_table_medium_subtext_typography": []
+    },
+    {
+        "foundations_table_large_border-radius": []
+    },
+    {
+        "foundations_table_large_caption_typography": []
+    },
+    {
+        "foundations_table_large_caption_margin-bottom": []
+    },
+    {
+        "foundations_table_large_cell_typography": []
+    },
+    {
+        "foundations_table_large_cell_padding-top": []
+    },
+    {
+        "foundations_table_large_cell_padding-right": []
+    },
+    {
+        "foundations_table_large_cell_padding-bottom": []
+    },
+    {
+        "foundations_table_large_cell_padding-left": []
+    },
+    {
+        "foundations_table_large_header-cell_typography": []
+    },
+    {
+        "foundations_table_large_header-cell_sortable_padding-top": []
+    },
+    {
+        "foundations_table_large_header-cell_sortable_padding-bottom": []
+    },
+    {
+        "foundations_table_large_subtext_typography": []
+    },
+    {
+        "foundations_typography_heading-1_typography": []
+    },
+    {
+        "foundations_typography_heading-1_margin-top": []
+    },
+    {
+        "foundations_typography_heading-1_margin-bottom": []
+    },
+    {
+        "foundations_typography_heading-2_typography": []
+    },
+    {
+        "foundations_typography_heading-2_margin-top": []
+    },
+    {
+        "foundations_typography_heading-2_margin-bottom": []
+    },
+    {
+        "foundations_typography_heading-3_typography": []
+    },
+    {
+        "foundations_typography_heading-3_margin-top": []
+    },
+    {
+        "foundations_typography_heading-3_margin-bottom": []
+    },
+    {
+        "foundations_typography_heading-4_typography": []
+    },
+    {
+        "foundations_typography_heading-4_margin-top": []
+    },
+    {
+        "foundations_typography_heading-4_margin-bottom": []
+    },
+    {
+        "foundations_typography_heading-5_typography": []
+    },
+    {
+        "foundations_typography_heading-5_margin-top": []
+    },
+    {
+        "foundations_typography_heading-5_margin-bottom": []
+    },
+    {
+        "foundations_typography_heading-6_typography": []
+    },
+    {
+        "foundations_typography_heading-6_margin-top": []
+    },
+    {
+        "foundations_typography_heading-6_margin-bottom": []
+    },
+    {
+        "foundations_typography_paragraph_margin-top": []
+    },
+    {
+        "foundations_typography_paragraph_margin-bottom": []
+    },
+    {
+        "foundations_typography_paragraph_x-small_typography": []
+    },
+    {
+        "foundations_typography_paragraph_small_typography": []
+    },
+    {
+        "foundations_typography_paragraph_medium_typography": []
+    },
+    {
+        "foundations_typography_emphasise_x-small_typography": []
+    },
+    {
+        "foundations_typography_emphasise_small_typography": []
+    },
+    {
+        "foundations_typography_emphasise_medium_typography": []
+    },
+    {
+        "foundations_typography_strong_x-small_typography": []
+    },
+    {
+        "foundations_typography_strong_small_typography": []
+    },
+    {
+        "foundations_typography_strong_medium_typography": []
+    }
+]

@@ -1,0 +1,34 @@
+@mixin apply-button-group-item-fit($fit) {
+  .sublabel {
+    @if $fit == 'small' or $fit == 'medium' {
+      @include mds-apply-font('text', 'x-small', 'normal');
+    } @else {
+      @include mds-apply-font('text', 'small', 'normal');
+    }
+  }
+
+  ::slotted(a) {
+    padding: var(--mds_core_button_#{$fit}_padding-top) var(--mds_core_button_#{$fit}_padding-right)
+      var(--mds_core_button_#{$fit}_padding-bottom) var(--mds_core_button_#{$fit}_padding-left);
+    margin: calc(var(--mds_core_button_#{$fit}_padding-top) * -1)
+      calc(var(--mds_core_button_#{$fit}_padding-right) * -1) calc(var(--mds_core_button_#{$fit}_padding-bottom) * -1)
+      calc(var(--mds_core_button_#{$fit}_padding-left) * -1);
+  }
+}
+
+@mixin focus-glow() {
+  box-shadow: none;
+  outline: none;
+
+  &::after {
+    border: 2px var(--mds_global_border_style) var(--mds_brand_appearance_state_focus_default_shadow_color);
+    box-sizing: border-box;
+    content: '';
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: calc(var(--button-group-item_z-index) + 1);
+  }
+}

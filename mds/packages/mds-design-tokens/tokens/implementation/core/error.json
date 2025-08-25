@@ -1,0 +1,18 @@
+{
+    "core": {
+        "error": {
+            "typography": {
+                "value": "text-small_normal"
+            },
+            "text-color": {
+                "value": "$brand.appearance.error.default.text-color"
+            },
+            "margin-top": {
+                "value": 4
+            },
+            "column-gap": {
+                "value": 4
+            }
+        }
+    }
+}

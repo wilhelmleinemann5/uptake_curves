@@ -1,0 +1,64 @@
+{
+    "core": {
+        "tooltip": {
+            "neutral-default": {
+                "background-color": {
+                    "value": "$brand.appearance.neutral.default.background-color"
+                },
+                "color": {
+                    "value": "$brand.appearance.neutral.default.on-background-color"
+                }
+            },
+            "neutral-inverse": {
+                "background-color": {
+                    "value": "$brand.appearance.neutral.inverse.background-color"
+                },
+                "color": {
+                    "value": "$brand.appearance.neutral.inverse.on-background-color"
+                }
+            },
+            "small": {
+                "padding-top": {
+                    "value": 4
+                },
+                "padding-right": {
+                    "value": 8
+                },
+                "padding-bottom": {
+                    "value": 4
+                },
+                "padding-left": {
+                    "value": 8
+                }
+            },
+            "medium": {
+                "padding-top": {
+                    "value": 8
+                },
+                "padding-right": {
+                    "value": 12
+                },
+                "padding-bottom": {
+                    "value": 8
+                },
+                "padding-left": {
+                    "value": 12
+                }
+            },
+            "large": {
+                "padding-top": {
+                    "value": 12
+                },
+                "padding-right": {
+                    "value": 16
+                },
+                "padding-bottom": {
+                    "value": 12
+                },
+                "padding-left": {
+                    "value": 16
+                }
+            }
+        }
+    }
+}

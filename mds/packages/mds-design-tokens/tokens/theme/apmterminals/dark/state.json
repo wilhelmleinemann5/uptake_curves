@@ -1,0 +1,262 @@
+{
+    "brand": {
+        "appearance": {
+            "state": {
+                "neutral": {
+                    "default": {
+                        "hover": {
+                            "background-color": {
+                                "value": "rgb(36,36,42)"
+                            },
+                            "border-color": {
+                                "value": "rgb(177,177,181)"
+                            }
+                        },
+                        "active": {
+                            "background-color": {
+                                "value": "rgb(48,48,56)"
+                            },
+                            "border-color": {
+                                "value": "rgb(216,216,218)"
+                            }
+                        }
+                    },
+                    "weakest": {
+                        "opacity": {
+                            "hover": {
+                                "background-color": {
+                                    "value": "rgba(255,255,255,0.12)"
+                                }
+                            },
+                            "active": {
+                                "background-color": {
+                                    "value": "rgba(255,255,255,0.2)"
+                                }
+                            }
+                        }
+                    },
+                    "weak": {
+                        "opacity": {
+                            "hover": {
+                                "background-color": {
+                                    "value": "rgba(255,255,255,0.24)"
+                                }
+                            },
+                            "active": {
+                                "background-color": {
+                                    "value": "rgba(255,255,255,0.32)"
+                                }
+                            }
+                        }
+                    },
+                    "strongest": {
+                        "hover": {
+                            "background-color": {
+                                "value": "rgb(177,177,181)"
+                            }
+                        },
+                        "active": {
+                            "background-color": {
+                                "value": "rgb(216,216,218)"
+                            }
+                        }
+                    },
+                    "inverse": {
+                        "opacity": {
+                            "hover": {
+                                "background-color": {
+                                    "value": "rgba(60,60,70,0.08)"
+                                }
+                            },
+                            "active": {
+                                "background-color": {
+                                    "value": "rgba(60,60,70,0.2)"
+                                }
+                            }
+                        }
+                    }
+                },
+                "primary": {
+                    "default": {
+                        "hover": {
+                            "background-color": {
+                                "value": "rgb(255,96,0)"
+                            },
+                            "border-color": {
+                                "value": "rgb(255,96,0)"
+                            }
+                        },
+                        "active": {
+                            "background-color": {
+                                "value": "rgb(204,77,0)"
+                            },
+                            "border-color": {
+                                "value": "rgb(204,77,0)"
+                            }
+                        }
+                    },
+                    "weakest": {
+                        "opacity": {
+                            "hover": {
+                                "background-color": {
+                                    "value": "rgba(255,128,51,0.14)"
+                                }
+                            },
+                            "active": {
+                                "background-color": {
+                                    "value": "rgba(255,128,51,0.22)"
+                                }
+                            }
+                        }
+                    }
+                },
+                "secondary": {
+                    "default": {
+                        "hover": {
+                            "background-color": {
+                                "value": "rgb(10,110,130)"
+                            }
+                        },
+                        "active": {
+                            "background-color": {
+                                "value": "rgb(8,88,104)"
+                            }
+                        }
+                    },
+                    "weakest": {
+                        "opacity": {
+                            "hover": {
+                                "background-color": {
+                                    "value": "rgba(59, 139, 155, 0.2)"
+                                }
+                            },
+                            "active": {
+                                "background-color": {
+                                    "value": "rgba(59, 139, 155, 0.28)"
+                                }
+                            }
+                        }
+                    }
+                },
+                "success": {
+                    "default": {
+                        "hover": {
+                            "background-color": {
+                                "value": "rgb(49,99,7)"
+                            }
+                        },
+                        "active": {
+                            "background-color": {
+                                "value": "rgb(10,48,2)"
+                            }
+                        }
+                    }
+                },
+                "warning": {
+                    "default": {
+                        "hover": {
+                            "background-color": {
+                                "value": "rgb(144,62,0)"
+                            }
+                        },
+                        "active": {
+                            "background-color": {
+                                "value": "rgb(82,33,0)"
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "default": {
+                        "hover": {
+                            "background-color": {
+                                "value": "rgb(152,31,25)"
+                            }
+                        },
+                        "active": {
+                            "background-color": {
+                                "value": "rgb(101,4,4)"
+                            }
+                        }
+                    },
+                    "weakest": {
+                        "opacity": {
+                            "hover": {
+                                "background-color": {
+                                    "value": "rgba(184,56,45,0.2)"
+                                }
+                            },
+                            "active": {
+                                "background-color": {
+                                    "value": "rgba(184,56,45,0.32)"
+                                }
+                            }
+                        }
+                    }
+                },
+                "info": {
+                    "default": {
+                        "hover": {
+                            "background-color": {
+                                "value": "rgb(0,62,98)"
+                            }
+                        },
+                        "active": {
+                            "background-color": {
+                                "value": "rgb(0,36,61)"
+                            }
+                        }
+                    }
+                },
+                "focus": {
+                    "border-color": {
+                        "value": "rgb(108,168,180)"
+                    },
+                    "default": {
+                        "shadow": {
+                            "offset-x": {
+                                "value": 0
+                            },
+                            "offset-y": {
+                                "value": 0
+                            },
+                            "blur-radius": {
+                                "value": 0
+                            },
+                            "spread-radius": {
+                                "value": 3
+                            },
+                            "color": {
+                                "value": "rgb(8,88,104)"
+                            }
+                        }
+                    },
+                    "vanity": {
+                        "shadow": {
+                            "offset-x": {
+                                "value": 0
+                            },
+                            "offset-y": {
+                                "value": 3
+                            },
+                            "blur-radius": {
+                                "value": 0
+                            },
+                            "spread-radius": {
+                                "value": 0
+                            },
+                            "color": {
+                                "value": "rgb(8,88,104)"
+                            }
+                        }
+                    }
+                },
+                "disabled": {
+                    "opacity": {
+                        "value": 0.5
+                    }
+                }
+            }
+        }
+    }
+}

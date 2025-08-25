@@ -1,0 +1,147 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import './mc-file-upload.mixins.scss';
+
+.mc-file-upload {
+  border-width: 0;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+
+  .drag-drop-area {
+    align-items: center;
+    background-color: var(--mds_core_file-upload_drag-drop-area_background-color);
+    border-color: var(--mds_core_file-upload_drag-drop-area_border-color);
+    border-radius: var(--mds_core_file-upload_drag-drop-area_border-radius);
+    border-style: var(--mds_core_file-upload_drag-drop-area_border-style);
+    border-width: var(--mds_core_file-upload_drag-drop-area_border-width);
+    color: var(--mds_core_file-upload_drag-drop-area_color);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+
+    &:hover,
+    &.drag-over {
+      border-color: var(--mds_core_file-upload_drag-drop-area_hover_border-color);
+    }
+  }
+
+  input[type='file'] {
+    display: none;
+  }
+
+  .files {
+    -ms-overflow-style: none;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    overflow-y: scroll;
+    padding: 0;
+    scrollbar-width: none;
+    gap: var(--mds_core_file-upload_files_gap);
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .file {
+      background-color: var(--mds_core_file-upload_file_background-color);
+      border-color: var(--mds_core_file-upload_file_border-color);
+      border-radius: var(--mds_core_file-upload_file_border-radius);
+      border-style: solid;
+      border-width: var(--mds_core_file-upload_file_border-width);
+      color: var(--mds_core_file-upload_file_text-color);
+      width: 100%;
+      display: grid;
+      grid-template-columns: 85% auto;
+      grid-row-gap: 0;
+      align-items: center;
+
+      &.error {
+        border-color: var(--mds_brand_appearance_error_default_border-color);
+      }
+
+      .file-name {
+        display: flex;
+        align-items: center;
+
+        .name {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        mc-icon {
+          display: flex;
+          align-items: center;
+        }
+      }
+
+      .file-status-text {
+        mc-hint:not([visible]),
+        mc-error:not([visible]) {
+          display: none;
+        }
+      }
+
+      .file-status-icon {
+        display: grid;
+        gap: 0;
+        place-self: start end;
+        justify-content: center;
+        align-items: center;
+
+        mc-icon::part(icon),
+        mc-button::part(icon) {
+          fill: var(--mds_core_file-upload_file_text-color);
+        }
+      }
+    }
+  }
+
+  .no-feedback {
+    display: none;
+  }
+
+  legend {
+    padding: 0;
+  }
+
+  &.hidden-legend {
+    legend {
+      display: none;
+      height: 0;
+    }
+  }
+
+  /* small size */
+  &.small {
+    @include apply-mc-file-upload-fit('small');
+  }
+
+  /* medium size */
+  &.medium {
+    @include apply-mc-file-upload-fit('medium');
+  }
+
+  /* large size */
+  &.large {
+    @include apply-mc-file-upload-fit('large');
+  }
+
+  /* label, hint, error overrides */
+  mc-label::part(label) {
+    padding-bottom: 0;
+  }
+
+  mc-error::part(error) {
+    margin-top: 0;
+  }
+
+  mc-hint::part(hint) {
+    margin-top: 0;
+  }
+}

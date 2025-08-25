@@ -1,0 +1,26 @@
+{
+  "name": "spa-angular",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "prefix": "app",
+  "sourceRoot": "kitchen-sinks/spa-angular/src",
+  "tags": [],
+  "targets": {
+    "preview": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "spa-angular:build-app",
+        "staticFilePath": "./dist/kitchen-sinks/spa-angular/browser",
+        "port": 4200
+      }
+    },
+    "map-node-modules": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "recursive-copy -w dist/packages kitchen-sinks/spa-angular/node_modules/@maersk-global -f '**/*.*' && recursive-copy -w node_modules/@maersk-global/icons kitchen-sinks/spa-angular/node_modules/@maersk-global/icons -f '**/*.*' && recursive-copy -w node_modules/@maersk-global/fonts kitchen-sinks/spa-angular/node_modules/@maersk-global/fonts -f '**/*.*'"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,43 @@
+@import './mc-select-native.mixins.scss';
+
+.mc-input {
+  &.suffix {
+    mc-icon {
+      position: absolute;
+      right: 0;
+      cursor: pointer;
+      pointer-events: none;
+    }
+  }
+
+  &.multiple {
+    .mc-input__input {
+      height: unset;
+    }
+  }
+
+  .input {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    position: relative;
+
+    &.active-placeholder {
+      color: var(--mds_core_input_placeholder_text-color);
+    }
+  }
+
+  /* fit */
+  &.small {
+    @include apply-select-fit('small');
+  }
+
+  &.medium {
+    @include apply-select-fit('medium');
+  }
+
+  &.large {
+    @include apply-select-fit('large');
+  }
+}

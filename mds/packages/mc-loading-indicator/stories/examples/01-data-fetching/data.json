@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "name": "Madrid Maersk",
+    "type": "Container ship",
+    "built": "2017",
+    "length": 399,
+    "capacity": 19630,
+    "inService": true,
+    "status": "On schedule",
+    "speed": "16.2",
+    "position": "Track on map",
+    "lastPort": "Shanghai",
+    "lastCountry": "China"
+  },
+  {
+    "id": 2,
+    "name": "Mary Maersk",
+    "type": "Container ship",
+    "built": "2013",
+    "length": 399,
+    "capacity": 18270,
+    "inService": true,
+    "status": "Delayed",
+    "speed": "2.1",
+    "position": "Track on map",
+    "lastPort": "Busan",
+    "lastCountry": "South Korea"
+  },
+  {
+    "id": 3,
+    "name": "Gerner Maersk",
+    "type": "Container ship",
+    "built": "2008",
+    "length": 367,
+    "capacity": 9038,
+    "inService": true,
+    "status": "On schedule",
+    "speed": "10.7",
+    "position": "Track on map",
+    "lastPort": "Rotterdam",
+    "lastCountry": "Netherlands"
+  },
+  {
+    "id": 4,
+    "name": "Emma Maersk",
+    "type": "Container ship",
+    "built": "2006",
+    "length": 398,
+    "capacity": 15550,
+    "inService": true,
+    "status": "On schedule",
+    "speed": "13.0",
+    "position": "Track on map",
+    "lastPort": "Los Angeles",
+    "lastCountry": "United States"
+  }
+]

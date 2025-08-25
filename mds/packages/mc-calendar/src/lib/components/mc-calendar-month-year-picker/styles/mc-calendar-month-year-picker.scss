@@ -1,0 +1,47 @@
+.mc-calendar-month-year-picker {
+  align-items: center;
+  justify-content: center;
+  background-color: var(--mds_core_calendar-month-year-picker_background-color);
+  border-radius: var(--mds_core_calendar-month-year-picker_border-radius);
+  position: absolute;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  transition: opacity var(--mds_core_calendar_transition-duration) ease-in-out;
+  padding: 0 var(--mds_core_calendar-month-year-picker_padding-right) 0
+    var(--mds_core_calendar-month-year-picker_padding-left);
+
+  &.fade-out,
+  &.fade-in {
+    display: flex;
+  }
+
+  &.fade-out {
+    opacity: 0;
+  }
+
+  &.fade-in {
+    opacity: 1;
+  }
+}
+
+:host([noanimation]) {
+  .mc-calendar-month-year-picker {
+    &.fade-out {
+      animation: none;
+      top: 0;
+    }
+
+    &.fade-in {
+      animation: none;
+      top: 0;
+    }
+  }
+}
+
+:host([positionstatic]) {
+  .mc-calendar-month-year-picker {
+    position: static;
+  }
+}

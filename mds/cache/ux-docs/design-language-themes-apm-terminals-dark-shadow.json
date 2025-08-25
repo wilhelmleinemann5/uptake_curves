@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222461503,
+  "data": "---\ntitle: Shadow\nhideTOC: true\nhideRelatedPages: true\n---\n\nimport FilteredTokens from \"../../../_components/FilteredTokens.vue\";\nimport ApplyTheme from \"../../../_components/ApplyTheme.vue\";\n\n<ApplyTheme themeID=\"apmterminals-dark\" themeName=\"APM Terminals dark\" client:only=\"vue\" />\n\n<div class=\"min-h-[1024px] \">\n  <FilteredTokens themeID=\"apmterminals-dark\" filter=\"brand_appearance_shadow\" client:only=\"vue\" />\n</div>"
+}

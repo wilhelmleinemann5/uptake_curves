@@ -1,0 +1,59 @@
+{
+    "core": {
+        "multi-select": {
+            "select-all": {
+                "color": {
+                    "value": "$brand.appearance.info.default.text-color"
+                }
+            },
+            "small": {
+                "select-all": {
+                    "padding-top": {
+                        "value": 6
+                    },
+                    "padding-right": {
+                        "value": 8
+                    },
+                    "padding-bottom": {
+                        "value": 6
+                    },
+                    "padding-left": {
+                        "value": 8
+                    }
+                }
+            },
+            "medium": {
+                "select-all": {
+                    "padding-top": {
+                        "value": 8
+                    },
+                    "padding-right": {
+                        "value": 12
+                    },
+                    "padding-bottom": {
+                        "value": 8
+                    },
+                    "padding-left": {
+                        "value": 12
+                    }
+                }
+            },
+            "large": {
+                "select-all": {
+                    "padding-top": {
+                        "value": 10
+                    },
+                    "padding-right": {
+                        "value": 16
+                    },
+                    "padding-bottom": {
+                        "value": 10
+                    },
+                    "padding-left": {
+                        "value": 16
+                    }
+                }
+            }
+        }
+    }
+}

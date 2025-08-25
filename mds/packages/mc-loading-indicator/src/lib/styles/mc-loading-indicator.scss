@@ -1,0 +1,139 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import './mc-loading-indicator.mixins.scss';
+
+.mc-loading-indicator {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+
+  &.horizontal {
+    flex-direction: row;
+  }
+
+  &.vertical {
+    flex-direction: column;
+  }
+
+  label:empty {
+    display: none;
+  }
+
+  /* ring */
+  &.ring {
+    &.horizontal {
+      gap: var(--mds_core_loading-indicator_ring_row-gap);
+    }
+
+    &.vertical {
+      gap: var(--mds_core_loading-indicator_ring_column-gap);
+    }
+
+    svg {
+      animation: ring 1s infinite;
+    }
+
+    &.primary {
+      @include apply-loading-indicator-ring-appearance('primary');
+    }
+
+    &.neutral-inverse {
+      @include apply-loading-indicator-ring-appearance('neutral_inverse');
+    }
+  }
+
+  /* bar */
+  &.bar {
+    &.horizontal {
+      gap: var(--mds_core_loading-indicator_bar_row-gap);
+    }
+
+    &.vertical {
+      align-items: flex-start;
+      gap: var(--mds_core_loading-indicator_bar_column-gap);
+    }
+
+    .wrapper {
+      overflow: hidden;
+      position: relative;
+      min-width: 60px;
+    }
+
+    .progress {
+      animation: bar 1.2s infinite;
+      left: 0;
+      position: absolute;
+      right: auto;
+      top: 0;
+      width: 40%;
+    }
+
+    &.primary {
+      @include apply-loading-indicator-bar-appearance('primary');
+    }
+
+    &.neutral-inverse {
+      @include apply-loading-indicator-bar-appearance('neutral_inverse');
+    }
+  }
+}
+
+/* fit small */
+.small {
+  .label {
+    @include mds-apply-font('text', 'small', 'normal');
+  }
+
+  @include apply-loading-indicator-fit('small');
+}
+
+/* fit medium */
+.medium {
+  .label {
+    @include mds-apply-font('text', 'small', 'normal');
+  }
+
+  @include apply-loading-indicator-fit('medium');
+}
+
+/* fit large */
+.large {
+  .label {
+    @include mds-apply-font('text', 'small', 'normal');
+  }
+
+  @include apply-loading-indicator-fit('large');
+}
+
+@keyframes ring {
+  0% {
+    transform: rotate(220deg);
+  }
+
+  100% {
+    transform: rotate(580deg);
+  }
+}
+
+@keyframes bar {
+  0% {
+    left: 0;
+    transform: translateX(-100%);
+  }
+
+  100% {
+    left: 100%;
+    transform: translateX(0);
+  }
+}
+
+:host(.no-animation),
+.no-animation {
+  * {
+    animation: none !important;
+
+    &::after,
+    &::before {
+      animation: none !important;
+    }
+  }
+}

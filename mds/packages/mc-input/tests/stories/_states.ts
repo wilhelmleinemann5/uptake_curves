@@ -1,0 +1,267 @@
+export const states = [
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    accessibility: true,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    labelposition: 'left',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    value: 'hellouser',
+    accessibility: true,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    hiddenlabel: true,
+    value: 'hellouser',
+    accessibility: true,
+  },
+  // prefix and suffix
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    icon: 'heart',
+    accessibility: true,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    trailingicon: 'heart',
+    width: '50',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    trailingicon: 'heart',
+    width: '50',
+    labelposition: 'left',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    icon: 'star',
+    trailingicon: 'heart',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    icon: 'star',
+    trailingicon: 'heart',
+    labelposition: 'left',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    icon: 'heart',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    icon: 'heart',
+    width: '50',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    prefix: '$',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    suffix: 'kg',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    prefix: '$',
+    suffix: 'kg',
+    accessibility: true,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    prefix: '$',
+    suffix: 'kg',
+    value:
+      'very long text very long text very long text very long text very long text very long text very long text very long text very long text very long text very long text very long text very long text',
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    prefix: '$',
+    suffix: 'kg',
+    width: '50',
+    value:
+      'very long text very long text very long text very long text very long text very long text very long text very long text very long text very long text very long text very long text very long text',
+    accessibility: false,
+  },
+  // disabled
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    disabled: true,
+    accessibility: true,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    value: 'hellouser',
+    disabled: true,
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    suffix: '$$',
+    prefix: '%%',
+    disabled: true,
+    accessibility: false,
+  },
+  // hover
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    hover: true,
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    value: 'hellouser',
+    hover: true,
+    accessibility: false,
+  },
+  // focus
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    focus: true,
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    value: 'hellouser',
+    focus: true,
+    accessibility: false,
+  },
+  // hover & focus
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    hover: true,
+    focus: true,
+    accessibility: false,
+  },
+  // active
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    active: true,
+    accessibility: false,
+  },
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    value: 'hellouser',
+    active: true,
+    accessibility: false,
+  },
+  // error
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    invalid: true,
+    errormessage: 'The username is not a Mearsk.com user',
+    accessibility: false,
+  },
+  // hint
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    hint: 'Use your maersk.com username',
+    accessibility: false,
+  },
+  // error & hint
+  {
+    label: 'Username (optional)',
+    type: 'text',
+    placeholder: 'Insert your username',
+    invalid: true,
+    errormessage: 'The username is not a Mearsk.com user',
+    hint: 'Use your maersk.com username',
+    accessibility: true,
+  },
+  // slots
+  {
+    slots: [
+      {
+        name: 'hint',
+        content: `<b slot="hint">check me!</b>`,
+      },
+      {
+        name: 'errormessage',
+        content: `<b slot="errormessage">invalid!</b>`,
+      },
+      {
+        name: 'label',
+        content: `<b slot="label">Label</b>`,
+      },
+    ],
+    invalid: true,
+    accessibility: false,
+  },
+  //type color
+  {
+    label: 'Pick a color',
+    type: 'color',
+    accessibility: false,
+  },
+  // clickable trailing icon
+  {
+    label: 'Password',
+    type: 'password',
+    placeholder: 'Type a strong password',
+    trailingicon: 'eye',
+    clickabletrailingicon: true,
+    trailingiconlabel: 'Show password',
+    accessibility: true,
+  },
+];

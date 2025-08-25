@@ -1,0 +1,237 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_glow.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import './mc-input.mixins.scss';
+
+.mc-input {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  .container {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+
+    .inner {
+      display: flex;
+      align-items: flex-start;
+
+      .field {
+        background-color: var(--mds_core_input_default_background-color);
+        border-color: var(--mds_core_input_default_border-color);
+        border-radius: var(--mds_core_input_border-radius);
+        border-style: var(--mds_core_input_border-style);
+        border-width: var(--mds_core_input_border-width);
+        display: flex;
+        width: 100%;
+
+        .input-container {
+          display: flex;
+          justify-items: center;
+          position: relative;
+          width: 100%;
+        }
+
+        .input,
+        ::slotted(input) {
+          background-color: var(--mds_core_input_default_background-color);
+          border-radius: var(--mds_core_input_border-radius);
+        }
+
+        &:hover,
+        &.hover,
+        &:has(.input.hover),
+        &.active,
+        &:active,
+        &:has(.input.active) {
+          border-color: var(--mds_core_input_default_hover_border-color);
+        }
+
+        // only for Safari 14 and the fact that it doesn't support :has()
+        &.focused {
+          @include mds-glow-and-border();
+        }
+
+        &:has(.input.focus),
+        &:has(.input:focus) {
+          @include mds-glow-and-border();
+        }
+      }
+    }
+  }
+
+  /* fit */
+  &.small {
+    @include apply-input-fit('small');
+  }
+
+  &.medium {
+    @include apply-input-fit('medium');
+  }
+
+  &.large {
+    @include apply-input-fit('large');
+  }
+
+  &.left {
+    flex-direction: row;
+    align-items: flex-start;
+
+    @media screen and (max-width: 700px) {
+      /* small screens move label back to the top */
+      flex-direction: column;
+    }
+  }
+
+  /* default */
+  .input,
+  ::slotted(input) {
+    border-width: 0;
+    color: var(--mds_core_input_default_text-color);
+    transition-duration: var(--mds_core_input_transition-duration);
+    transition-property: var(--mds_core_input_transition-properties);
+    transition-timing-function: var(--mds_core_input_transition-timing);
+    width: 100%;
+
+    &::placeholder {
+      color: var(--mds_core_input_placeholder_text-color);
+    }
+
+    &.focus,
+    &:focus {
+      outline: none;
+    }
+  }
+
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+
+  input[type='color'] {
+    height: 100%;
+    cursor: pointer;
+    border-color: var(--mds_core_input_default_border-color);
+
+    &::-moz-color-swatch-wrapper {
+      border-color: var(--mds_core_input_default_border-color);
+    }
+
+    &::-moz-color-swatch {
+      border-color: var(--mds_core_input_default_border-color);
+    }
+
+    &::-webkit-color-swatch {
+      border-color: var(--mds_core_input_default_border-color);
+    }
+
+    &:hover {
+      border-color: var(--mds_core_input_default_hover_border-color);
+
+      &::-moz-color-swatch-wrapper {
+        border-color: var(--mds_core_input_default_hover_border-color);
+      }
+
+      &::-moz-color-swatch {
+        border-color: var(--mds_core_input_default_hover_border-color);
+      }
+
+      &::-webkit-color-swatch {
+        border-color: var(--mds_core_input_default_hover_border-color);
+      }
+    }
+  }
+
+  /* affix */
+  .affix {
+    color: var(--mds_brand_appearance_neutral_weakest_text-color);
+
+    &::part(icon) {
+      fill: var(--mds_brand_appearance_neutral_weakest_text-color);
+    }
+  }
+
+  /* affix -> clear button */
+  mc-button.clear,
+  mc-button.iconbutton {
+    &.affix {
+      transition-duration: var(--mds_core_input_transition-duration);
+      transition-property: var(--mds_core_input_transition-properties);
+      transition-timing-function: var(--mds_core_input_transition-timing);
+    }
+
+    &::part(icon) {
+      fill: var(--mds_brand_appearance_neutral_weakest_text-color);
+    }
+
+    &::part(button) {
+      width: auto;
+    }
+
+    &::part(button):hover,
+    &::part(button):active {
+      background-color: transparent;
+    }
+
+    &::part(icon):hover,
+    &::part(icon):active {
+      fill: var(--mds_brand_appearance_neutral_default_text-color);
+    }
+  }
+
+  /* vanity */
+  &.vanity {
+    .container .inner .field {
+      background-color: var(--mds_core_input_vanity_background-color);
+      border-left-width: var(--mds_core_input_vanity_border-left-width);
+      border-radius: var(--mds_core_input_vanity_border-radius);
+      border-right-width: var(--mds_core_input_vanity_border-right-width);
+      border-top-width: var(--mds_core_input_vanity_border-top-width);
+      color: var(--mds_core_input_vanity_text-color);
+      padding-left: 0;
+      padding-right: 0;
+
+      .input,
+      ::slotted(input) {
+        background-color: var(--mds_core_input_vanity_background-color);
+      }
+
+      &:has(input.focus) {
+        @include mds-glow-and-border-vanity();
+      }
+    }
+
+    .type-prefix {
+      justify-content: flex-start;
+    }
+
+    .type-suffix {
+      justify-content: flex-end;
+    }
+  }
+
+  .hiddenlabel {
+    height: 0;
+  }
+}
+
+:host([invalid]) {
+  .mc-input .field {
+    border-color: var(--mds_core_input_error_border-color) !important;
+  }
+}
+
+:host([disabled]) {
+  .mc-input .input,
+  .mc-input ::slotted(input),
+  .affix {
+    background-color: var(--mds_core_input_disabled_background-color) !important;
+  }
+}

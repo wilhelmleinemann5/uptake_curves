@@ -1,0 +1,9 @@
+@mixin apply-mc-component-fit($fit) {
+  border-radius: var(--mds_brand_border_medium_radius);
+
+  @if $fit == 'large' {
+    @include mds-apply-font('text', 'medium', 'normal');
+  } @else {
+    @include mds-apply-font('text', '#{$fit}', 'normal');
+  }
+}

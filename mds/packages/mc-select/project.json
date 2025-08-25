@@ -1,0 +1,134 @@
+{
+  "name": "mc-select",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mc-select/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build:compile-js",
+        "build:vscode-html-data",
+        "build:custom-element-manifest"
+      ]
+    },
+    "build:custom-element-manifest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd packages/mc-select && cem analyze --config ../../tools/configs/custom-elements-manifest.config.mjs --outdir ../../dist/packages/mds-components-core-select"
+        ]
+      }
+    },
+    "build:vscode-html-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "wca analyze \"packages/mc-select/**/*index.ts\" --format vscode --outFile dist/packages/mds-components-core-select/web-components.html-data.json"
+        ]
+      }
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": true,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-components-core-select",
+        "outdir": "dist/packages/mds-components-core-select",
+        "main": "packages/mc-select/src/index.ts",
+        "tsConfig": "packages/mc-select/tsconfig.lib.json",
+        "assets": [
+          "packages/mc-select/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/general.config.cjs"
+      },
+      "dependsOn": [
+        "build:compile-base-class"
+      ]
+    },
+    "generate:metadata": {
+      "command": "cd packages/mc-select && node ../../tools/scripts/generate-metadata/components/generate.mjs"
+    },
+    "build:compile-base-class": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": true,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-components-core-select",
+        "outdir": "dist/packages/mds-components-core-select",
+        "main": "packages/mc-select/src/base.ts",
+        "tsConfig": "packages/mc-select/tsconfig.lib.json",
+        "assets": [
+          "packages/mc-select/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/general.config.cjs"
+      }
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mc-select",
+      "options": {
+        "outputPath": "dist/packages/mds-components-core-select"
+      }
+    },
+    "lint": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "lint:eslint",
+        "lint:stylelint"
+      ]
+    },
+    "lint:eslint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "lint:stylelint": {
+      "executor": "nx-stylelint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/mc-select/**/*.css",
+          "packages/mc-select/**/*.scss"
+        ],
+        "fix": true
+      }
+    },
+    "test:ssr": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "web-test-runner packages/mc-select/tests/**/*.ssr.js"
+        ]
+      },
+      "dependsOn": [
+        "build",
+        "mds:test:ssr:map-node-modules"
+      ]
+    },
+    "test:headless": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "cypress.config.ts",
+        "testingType": "component",
+        "skipServe": true,
+        "spec": "./packages/mc-select/**/*.component-spec.ts"
+      }
+    },
+    "vitest": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "testTargetName": "vitest",
+        "serveTargetName": "serve",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,4 @@
+{
+  "timestamp": 1752222462014,
+  "data": "---\ntitle: APM Terminals light tokens\nnavTitle: Light tokens\nsecondaryNavTitle: Colours\nhideTOC: true\nhideRelatedPages: true\nrenderAllChildPagesAsTabs: true\n---\n\nimport Colors from \"../../_components/Colors.vue\";\nimport ApplyTheme from \"../../_components/ApplyTheme.vue\";\n\n<ApplyTheme themeID=\"apmterminals-light\" themeName=\"APM Terminals light\" client:only=\"vue\" />\n\n<div class=\"min-h-[1024px] \">\n  <Colors themeID=\"apmterminals-light\" client:only=\"vue\" />\n</div>\n"
+}

@@ -1,0 +1,223 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_glow.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import './mc-list-item.mixins.scss';
+
+:host {
+  flex-grow: 1;
+  overflow-x: hidden;
+}
+
+:host([orientation='vertical']) {
+  flex-grow: 0;
+
+  mc-button.mc-list-item {
+    &::part(trailing-icon) {
+      margin-left: auto;
+    }
+  }
+}
+
+::slotted(a) {
+  color: var(--mds_core_button_neutral_plain_text-color) !important;
+  pointer-events: auto;
+  touch-action: auto;
+}
+
+:host([fit='small']) {
+  @include apply-slot-with-anchor-fit('small');
+}
+
+:host([fit='medium']) {
+  @include apply-slot-with-anchor-fit('medium');
+}
+
+:host([fit='large']) {
+  @include apply-slot-with-anchor-fit('large');
+}
+
+:host([orientation='horizontal']) ::slotted(a) {
+  padding-left: 100vw !important;
+  margin-left: -100vw !important;
+}
+
+:host(mc-option) {
+  mc-button.mc-list-item {
+    &.small {
+      @include apply-option-fit('small');
+    }
+
+    &.medium {
+      @include apply-option-fit('medium');
+    }
+
+    &.large {
+      @include apply-option-fit('large');
+    }
+  }
+}
+
+:host([data-keyboard-nav]) {
+  /* button styles */
+  mc-button.mc-list-item:not(.focused) {
+    &::part(button):hover {
+      background-color: transparent;
+      color: inherit;
+      box-shadow: none;
+      outline: none;
+    }
+
+    &:hover {
+      ::part(icon),
+      &::part(icon) {
+        fill: inherit;
+      }
+
+      .sublabel {
+        color: var(--mds_core_list-item_sublabel_text-color);
+      }
+    }
+  }
+
+  /* checkbox styles */
+  mc-checkbox.mc-list-item:not(.focused) {
+    &:hover {
+      &::part(label-container) {
+        color: inherit;
+        background-color: transparent;
+      }
+
+      &::part(checkmark) {
+        border-color: var(--mds_core_checkbox_off_border-color);
+      }
+    }
+
+    &.selected:hover {
+      &::part(checkmark) {
+        border-color: var(--mds_core_checkbox_on_border-color);
+      }
+    }
+  }
+}
+
+mc-button.mc-list-item {
+  display: flex;
+  flex-grow: 1;
+
+  &::part(text-and-icon) {
+    align-items: flex-start;
+    text-align: left;
+
+    /**
+    * This is needed otherwise the 'slotted' options will not be selectable by clicking on their label in mc-typeahead!
+    */
+    pointer-events: none;
+    touch-action: none;
+  }
+
+  &::part(button) {
+    border: 0;
+    border-radius: 0;
+    transition: none;
+
+    &:hover {
+      @include apply-button-focus();
+    }
+
+    &:focus {
+      box-shadow: none;
+    }
+  }
+
+  &.selected {
+    &::part(button) {
+      background-color: var(--mds_core_list-item_focused_background-color);
+    }
+  }
+
+  .sublabel {
+    color: var(--mds_core_list-item_sublabel_text-color);
+    text-align: left;
+  }
+
+  &.focused {
+    &::part(button) {
+      @include apply-button-focus();
+    }
+
+    &::part(button):focus {
+      @include apply-button-focus();
+    }
+
+    &::part(button):focus-visible {
+      @include apply-button-focus();
+    }
+
+    .sublabel {
+      color: var(--mds_core_list-item_focused_text-color);
+    }
+  }
+
+  &.small {
+    @include apply-list-item-button-fit('small');
+  }
+
+  &.medium {
+    @include apply-list-item-button-fit('medium');
+  }
+
+  &.large {
+    @include apply-list-item-button-fit('large');
+  }
+}
+
+mc-checkbox.mc-list-item {
+  &:hover {
+    &::part(label-container) {
+      color: var(--mds_core_list-item_focused_text-color);
+      background-color: var(--mds_core_list-item_focused_background-color);
+    }
+
+    &::part(checkmark) {
+      box-shadow: none;
+      transition: none;
+      border-color: var(--mds_core_list-item_checkbox_off_hover_border-color);
+    }
+  }
+
+  &.focused {
+    &::part(label-container) {
+      color: var(--mds_core_list-item_focused_text-color);
+      background-color: var(--mds_core_list-item_focused_background-color);
+    }
+
+    &::part(checkmark) {
+      box-shadow: none;
+      transition: none;
+      border-color: var(--mds_core_list-item_checkbox_off_hover_border-color);
+    }
+  }
+
+  &.selected {
+    &::part(checkmark) {
+      border-color: var(--mds_core_list-item_checkbox_on_hover_border-color);
+    }
+
+    &:hover {
+      &::part(checkmark) {
+        border-color: var(--mds_core_list-item_checkbox_on_hover_border-color);
+      }
+    }
+  }
+
+  &.small {
+    @include apply-list-item-checkbox-fit('small');
+  }
+
+  &.medium {
+    @include apply-list-item-checkbox-fit('medium');
+  }
+
+  &.large {
+    @include apply-list-item-checkbox-fit('large');
+  }
+}

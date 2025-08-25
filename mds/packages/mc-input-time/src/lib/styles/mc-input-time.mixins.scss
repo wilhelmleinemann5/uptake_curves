@@ -1,0 +1,13 @@
+@mixin apply-input-time-fit($fit) {
+  .container .inner .field {
+    width: var(--mds_core_input-time_#{$fit}_width);
+  }
+
+  &.prefix .field {
+    width: var(--mds_core_input-time_#{$fit}_with-prefix_width);
+  }
+
+  &.suffix.#{$fit} .input {
+    padding-right: 0;
+  }
+}

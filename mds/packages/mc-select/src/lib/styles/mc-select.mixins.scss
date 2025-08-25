@@ -1,0 +1,37 @@
+@mixin apply-input-fit($fit) {
+  .selected-option-label {
+    height: var(--mds_core_input_#{$fit}_height);
+    padding: var(--mds_core_input_#{$fit}_padding-top) 0 var(--mds_core_input_#{$fit}_padding-bottom)
+      var(--mds_core_input_#{$fit}_padding-left);
+
+    @if $fit == 'large' {
+      @include mds-apply-font('text', 'medium', 'normal');
+    } @else {
+      @include mds-apply-font('text', '#{$fit}', 'normal');
+    }
+  }
+
+  .field {
+    .input-container {
+      min-width: var(--mds_core_select_#{$fit}_selected-option-label_min-width);
+
+      .input {
+        padding-right: 0;
+      }
+    }
+  }
+
+  &.vanity .selected-option-label {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  &.prefix .selected-option-label {
+    padding-left: 0;
+    margin-left: var(--mds_core_input_medium_padding-left);
+  }
+
+  &.prefix.vanity .selected-option-label {
+    margin-left: 0;
+  }
+}

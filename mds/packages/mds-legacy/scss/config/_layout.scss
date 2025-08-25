@@ -1,0 +1,6 @@
+// max width
+// $layout__max-width: breakpoint(13);
+// temporarily have to change this scale to match maxWidth/padding combinations used on IGN and AO apps
+// unified max-width / padding approach required across all web apps
+$layout__max-width: breakpoint(13) + spacing(6);
+$layout__max-wording-width: breakpoint(8);

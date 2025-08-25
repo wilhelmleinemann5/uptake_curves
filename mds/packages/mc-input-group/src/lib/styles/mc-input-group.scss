@@ -1,0 +1,14 @@
+.mc-input-group {
+  color: var(--mds_brand_appearance_neutral_weakest_on-background-color);
+  background: none;
+  border-radius: var(--mds_brand_border_medium_radius);
+
+  legend {
+    margin-bottom: 0.5rem;
+  }
+
+  slot {
+    display: flex;
+    align-items: center;
+  }
+}

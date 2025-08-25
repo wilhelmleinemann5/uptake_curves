@@ -1,0 +1,60 @@
+@import './mixins/_grid';
+@import './mixins/_media';
+
+/*
+@description: 
+Container and grid system utilities for responsive layouts. 
+Container-based grid respond to the width of the container rather than the entire viewport. 
+This enables more granular control over layout behavior—allowing components to adapt based on their immediate context. 
+It’s especially effective in complex or modular layouts where sections of a page need to remain visually consistent, even within wider screens.
+It includes utilities for defining rows, columns, and spans, enabling developers to create complex layouts with ease.
+*/
+
+.mds-container {
+  /*
+  @name: mds-container
+  @category: Grid
+  */
+  container-type: inline-size;
+  contain: layout;
+  position: relative;
+  z-index: 1;
+
+  .mds-grid {
+    // xs: 0 - 640px
+    @include mds-container-below('sm') {
+      @include mds-grid-xs;
+      @include mds-col('xs');
+      @include mds-col-reverse('xs');
+      @include mds-col-span('xs');
+      @include mds-cols('xs');
+      @include mds-row('xs');
+      @include mds-row-span('xs');
+      @include mds-rows('xs');
+    }
+
+    // sm: 641px - 1024px
+    @include mds-container-above('xs') {
+      @include mds-grid-sm;
+      @include mds-col('sm');
+      @include mds-col-reverse('sm');
+      @include mds-col-span('sm');
+      @include mds-cols('sm');
+      @include mds-row('sm');
+      @include mds-row-span('sm');
+      @include mds-rows('sm');
+    }
+
+    // md: 1025px - ...
+    @include mds-container-above('sm') {
+      @include mds-grid-md;
+      @include mds-col('md');
+      @include mds-col-reverse('md');
+      @include mds-col-span('md');
+      @include mds-cols('md');
+      @include mds-row('md');
+      @include mds-row-span('md');
+      @include mds-rows('md');
+    }
+  }
+}

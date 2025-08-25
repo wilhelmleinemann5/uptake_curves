@@ -1,0 +1,33 @@
+<div class="mds-grid mds-grid-cols-1">
+  <mc-button (click)="toggleFirstTabVisibility()">Toggle</mc-button>
+  <mc-tab-bar>
+    <mc-tab *ngIf="showFirstTab" slot="tab" label="Tab 1"></mc-tab>
+    <div *ngIf="showFirstTab" slot="panel">Tab 1</div>
+
+    <mc-tab slot="tab" label="Tab 2"></mc-tab>
+    <div slot="panel">Tab 2</div>
+
+    <mc-tab slot="tab" label="Tab 3"></mc-tab>
+    <div slot="panel">Tab 3</div>
+  </mc-tab-bar>
+
+  <br />
+  <br />
+  <br />
+  <br />
+  <mc-button (click)="openModal()">Open modal</mc-button>
+
+  <mc-modal heading="Modal" modalhiddenclose [open]="open">
+    <mc-tab-bar [currentindex]="currentIndex">
+      <mc-tab slot="tab" label="Tab 1"></mc-tab>
+      <div slot="panel">Tab 1</div>
+      <mc-tab slot="tab" label="Tab 2"></mc-tab>
+      <div slot="panel">Tab 2</div>
+    </mc-tab-bar>
+
+    <mc-button (click)="closeModal()" slot="primaryAction" appearance="neutral" dialogaction="cancel">
+      Cancel
+    </mc-button>
+  </mc-modal>
+  <p>Current index: {{ currentIndex }}</p>
+</div>

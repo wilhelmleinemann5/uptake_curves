@@ -1,0 +1,55 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_media.scss';
+@import './mc-multi-choice-fieldset.mixins.scss';
+
+.mc-multi-choice-fieldset {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  border: 0;
+
+  legend {
+    padding: 0;
+  }
+
+  .hiddenlegend {
+    height: 0;
+  }
+
+  &.small {
+    @include apply-multi-choice-fieldset-fit('small');
+  }
+
+  &.medium {
+    @include apply-multi-choice-fieldset-fit('medium');
+  }
+
+  &.large {
+    @include apply-multi-choice-fieldset-fit('large');
+  }
+
+  &.hidden-legend {
+    legend {
+      display: none;
+    }
+  }
+
+  .slot {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &.horizontal {
+    .slot {
+      flex-direction: row;
+    }
+  }
+
+  &.autolayout {
+    @include mds-viewport-below('sm') {
+      .slot {
+        flex-direction: column;
+      }
+    }
+  }
+}

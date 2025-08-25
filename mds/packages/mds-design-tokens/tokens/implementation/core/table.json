@@ -1,0 +1,11 @@
+{
+    "core": {
+        "table": {
+            "sticky-column": {
+                "border-width": {
+                    "value": 3
+                }
+            }
+        }
+    }
+}

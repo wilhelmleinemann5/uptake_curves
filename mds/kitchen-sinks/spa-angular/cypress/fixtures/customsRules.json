@@ -1,0 +1,68 @@
+[
+    {
+        "productGroupId": "importCustomsClearance",
+        "productGroupName": "Import Customs Clearance",
+        "products": [
+            {
+                "productId": "ba500805-603d-434b-aad2-97f741b53810",
+                "productName": "Standard Import Clearance + Importer Security Filing (ISF)",
+                "productDescription": "\"Maersk will apply to the authorities on your behalf,  a standard import clearance based on the information from your transport booking, together with your commercial documents. Bookings may not exceed 5 HS codes per container\nExceptions apply and will be clarified during your first booking and are subject to our terms and conditions including those set out in the Maersk \"\"Letter of Representation\"\" / \"\"Power of Attorney\"\"\". Rate quoted inclusive of GST-7%%.\nMax 50 lines free, after which SGD30 per permit. Above rate are NOT applicable for DG Cargo, machinery and second hand. \n",
+                "productCharges": [
+                    {
+                        "productChargeId": "7f74a262-b293-4d9e-a1a1-8cdf92c5d484",
+                        "productChargeUnitType": "BILL_OF_LADING",
+                        "productChargeUnitName": "per B/L",
+                        "productChargeType": "PRODUCT_CHARGES",
+                        "productChargeName": "Customs Service Charge",
+                        "productChargeDescription": "Charge for providing customs brokerage services.",
+                        "currencyIsoCode": "SGD",
+                        "amount": 33
+                    }
+                ],
+                "totalPrice": {
+                    "amount": 33,
+                    "currencyIsoCode": "SGD"
+                },
+                "defaultProduct": true
+            }
+        ],
+        "clearanceCountry": "SG",
+        "clearancePort": "SGSIN",
+        "exportClearanceCountryChanged": false,
+        "importClearanceCountryChanged": false,
+        "preContractedCustomer": false
+    },
+    {
+        "productGroupId": "exportCustomsClearance",
+        "productGroupName": "Export Customs Clearance",
+        "products": [
+            {
+                "productId": "46cfdf61-f5d7-4e5a-9899-a4c3979d68c8",
+                "productName": "Standard Export Clearance",
+                "productDescription": "\"Maersk will apply to the authorities on your behalf,  a standard import clearance based on the information from your transport booking, together with your commercial documents. Bookings may not exceed 5 HS codes per container\nExceptions apply and will be clarified during your first booking and are subject to our terms and conditions including those set out in the Maersk \"\"Letter of Representation\"\" / \"\"Power of Attorney\"\"\".  The rates are applicable for general cargo only (personal effects, drugs, weapons, alcohol, tobacco cannot be cleared by Maersk UAE). Specific conditions may apply.",
+                "productCharges": [
+                    {
+                        "productChargeId": "6abf1393-0cbf-4541-afcf-0fe740f6d1e4",
+                        "productChargeUnitType": "BILL_OF_LADING",
+                        "productChargeUnitName": "per B/L",
+                        "productChargeType": "PRODUCT_CHARGES",
+                        "productChargeName": "Customs Service Charge",
+                        "productChargeDescription": "Charge for providing customs brokerage services.",
+                        "currencyIsoCode": "AED",
+                        "amount": 200
+                    }
+                ],
+                "totalPrice": {
+                    "amount": 200,
+                    "currencyIsoCode": "AED"
+                },
+                "defaultProduct": true
+            }
+        ],
+        "clearanceCountry": "AE",
+        "clearancePort": "AEJEA",
+        "exportClearanceCountryChanged": false,
+        "importClearanceCountryChanged": false,
+        "preContractedCustomer": false
+    }
+]

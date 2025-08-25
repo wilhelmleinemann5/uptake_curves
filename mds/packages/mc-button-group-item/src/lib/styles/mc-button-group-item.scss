@@ -1,0 +1,244 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_glow.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import './mc-button-group-item.mixins.scss';
+@import '../../../../mc-button/src/lib/styles/mc-button.mixins.scss';
+
+:host([disabled]) {
+  opacity: 1;
+}
+
+:host([disabled]) > mc-button::part(text-and-icon) {
+  opacity: var(--mds_brand_appearance_state_disabled_opacity);
+}
+
+:host {
+  flex-basis: 0;
+  flex-grow: 1;
+  scroll-behavior: smooth;
+  scroll-snap-align: center;
+}
+
+::slotted(a) {
+  color: var(--mds_brand_appearance_neutral_default_text-color) !important;
+}
+
+:host([icon]) {
+  .mc-button {
+    &.small {
+      @include apply-slot-icon-fit('small', 'icon');
+    }
+
+    &.medium {
+      @include apply-slot-icon-fit('medium', 'icon');
+    }
+
+    &.large {
+      @include apply-slot-icon-fit('large', 'icon');
+    }
+  }
+}
+
+:host([trailingicon]) {
+  .mc-button {
+    &.small {
+      @include apply-slot-icon-fit('small', 'trailingicon');
+    }
+
+    &.medium {
+      @include apply-slot-icon-fit('medium', 'trailingicon');
+    }
+
+    &.large {
+      @include apply-slot-icon-fit('large', 'trailingicon');
+    }
+  }
+}
+
+mc-button {
+  --button-group-item_z-index: 1;
+
+  display: flex;
+  flex-grow: 1;
+  position: relative;
+
+  // The separator
+  &::before {
+    background-color: var(--mds_brand_appearance_neutral_default_border-color);
+    box-sizing: border-box;
+    content: '';
+    display: none;
+    left: 0;
+    position: absolute;
+    top: 0;
+    z-index: var(--button-group-item_z-index);
+  }
+
+  &::part(button) {
+    border-radius: 0;
+
+    &:focus-visible {
+      @include mds-glow-only-on-keyboard-nav($inset: true);
+    }
+  }
+
+  &::part(text-and-icon),
+  .label,
+  .sublabel {
+    text-align: left;
+    text-wrap: nowrap;
+  }
+
+  .sublabel {
+    color: var(--mds_brand_appearance_neutral_weakest_text-color);
+  }
+
+  &.selected {
+    ::part(icon) {
+      fill: var(--mds_brand_appearance_primary_default_on-background-color);
+    }
+
+    .sublabel {
+      color: var(--mds_brand_appearance_primary_default_on-background-color);
+    }
+  }
+
+  &.small {
+    @include apply-button-group-item-fit('small');
+  }
+
+  &.medium {
+    @include apply-button-group-item-fit('medium');
+  }
+
+  &.large {
+    @include apply-button-group-item-fit('large');
+  }
+}
+
+// Separator is visible in case of two adjacent selected items.
+:host(:not(:first-child):not([selected]):not(.after-selected)),
+:host(:not(:first-child)[selected].after-selected) {
+  mc-button::before {
+    display: block;
+  }
+}
+
+/******* Vertical *******/
+// The seperator in the vertical mode.
+:host(:not(:first-child)[orientation='vertical']) {
+  mc-button::before {
+    border-left: var(--mds_global_border_width) var(--mds_global_border_style)
+      var(--mds_brand_appearance_neutral_default_border-color);
+    border-right: var(--mds_global_border_width) var(--mds_global_border_style)
+      var(--mds_brand_appearance_neutral_default_border-color);
+    height: var(--mds_global_border_width);
+    width: 100%;
+  }
+}
+
+:host(:not(:first-child):not(:last-child)[orientation='vertical']) {
+  mc-button {
+    &::part(button) {
+      border-bottom-width: 0;
+      border-top-width: 0;
+    }
+  }
+}
+
+:host([orientation='vertical']) {
+  mc-button {
+    flex-direction: column;
+
+    &::part(button) {
+      border-radius: 0;
+    }
+
+    &::part(trailing-icon) {
+      margin-left: auto;
+    }
+  }
+}
+
+:host(:first-child[orientation='vertical']) {
+  mc-button {
+    &::part(button),
+    &::part(button)::after {
+      border-radius: var(--mds_brand_border_medium_radius) var(--mds_brand_border_medium_radius) 0 0;
+    }
+
+    &::part(button) {
+      border-bottom-width: 0;
+    }
+  }
+}
+
+:host(:last-child[orientation='vertical']) {
+  mc-button {
+    &::part(button),
+    &::part(button)::after {
+      border-radius: 0 0 var(--mds_brand_border_medium_radius) var(--mds_brand_border_medium_radius);
+    }
+
+    &::part(button) {
+      border-top-width: 0;
+    }
+  }
+}
+
+/******* Horizontal *******/
+:host([orientation='horizontal']) {
+  mc-button {
+    height: 100%;
+
+    &::part(button) {
+      height: 100%;
+    }
+  }
+}
+
+// The seperator in the horizontal mode.
+:host(:not(:first-child)[orientation='horizontal']) {
+  mc-button::before {
+    border-bottom: var(--mds_global_border_width) var(--mds_global_border_style)
+      var(--mds_brand_appearance_neutral_default_border-color);
+    border-top: var(--mds_global_border_width) var(--mds_global_border_style)
+      var(--mds_brand_appearance_neutral_default_border-color);
+    height: 100%;
+    width: var(--mds_global_border_width);
+  }
+}
+
+:host(:not(:first-child):not(:last-child)[orientation='horizontal']) {
+  mc-button {
+    &::part(button) {
+      border-left-width: 0;
+      border-right-width: 0;
+    }
+  }
+}
+
+:host(:first-child[orientation='horizontal']) {
+  mc-button {
+    &::part(button),
+    &::part(button)::after {
+      border-radius: var(--mds_brand_border_medium_radius) 0 0 var(--mds_brand_border_medium_radius);
+    }
+
+    &::part(button) {
+      border-right-width: 0;
+    }
+  }
+}
+
+:host(:last-child[orientation='horizontal']) {
+  mc-button {
+    &::part(button),
+    &::part(button)::after {
+      border-radius: 0 var(--mds_brand_border_medium_radius) var(--mds_brand_border_medium_radius) 0;
+    }
+
+    &::part(button) {
+      border-left-width: 0;
+    }
+  }
+}

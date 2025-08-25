@@ -1,0 +1,112 @@
+{
+  "name": "mc-input-date",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mc-input-date/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "build:compile-js",
+        "build:vscode-html-data",
+        "build:custom-element-manifest"
+      ]
+    },
+    "build:custom-element-manifest": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd packages/mc-input-date && cem analyze --config ../../tools/configs/custom-elements-manifest.config.mjs --outdir ../../dist/packages/mds-components-core-input-date"
+        ]
+      }
+    },
+    "build:vscode-html-data": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "wca analyze \"packages/mc-input-date/**/*index.ts\" --format vscode --outFile dist/packages/mds-components-core-input-date/web-components.html-data.json"
+        ]
+      }
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "target": "es2020",
+        "minify": true,
+        "deleteOutputPath": false,
+        "outputPath": "dist/packages/mds-components-core-input-date",
+        "outdir": "dist/packages/mds-components-core-input-date",
+        "main": "packages/mc-input-date/src/index.ts",
+        "tsConfig": "packages/mc-input-date/tsconfig.lib.json",
+        "assets": [
+          "packages/mc-input-date/*.md"
+        ],
+        "esbuildConfig": "tools/scripts/esbuild-config/general.config.cjs"
+      }
+    },
+    "generate:metadata": {
+      "command": "cd packages/mc-input-date && node ../../tools/scripts/generate-metadata/components/generate.mjs"
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mc-input-date",
+      "options": {
+        "outputPath": "dist/packages/mds-components-core-input-date"
+      }
+    },
+    "lint": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "lint:eslint",
+        "lint:stylelint"
+      ]
+    },
+    "lint:eslint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "lint:stylelint": {
+      "executor": "nx-stylelint:lint",
+      "options": {
+        "lintFilePatterns": [
+          "packages/mc-input-date/**/*.css",
+          "packages/mc-input-date/**/*.scss"
+        ],
+        "fix": true
+      }
+    },
+    "test:ssr": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "web-test-runner packages/mc-input-date/tests/**/*.ssr.js"
+        ]
+      },
+      "dependsOn": [
+        "build",
+        "mds:test:ssr:map-node-modules"
+      ]
+    },
+    "test:headless": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "cypress.config.ts",
+        "testingType": "component",
+        "skipServe": true,
+        "spec": "./packages/mc-input-date/**/*.component-spec.ts"
+      }
+    },
+    "vitest": {
+      "executor": "@nx/vite:test",
+      "options": {
+        "buildTargetName": "build",
+        "previewTargetName": "preview",
+        "testTargetName": "vitest",
+        "serveTargetName": "serve",
+        "serveStaticTargetName": "serve-static"
+      }
+    }
+  },
+  "tags": []
+}

@@ -1,0 +1,117 @@
+@import '@maersk-global/mds-foundations/scss/mixins/_typography.scss';
+@import '@maersk-global/mds-foundations/scss/mixins/_media.scss';
+
+:host {
+  display: flex;
+  height: 64px;
+}
+
+.mc-top-bar {
+  align-items: center;
+  display: grid;
+  gap: 0;
+  grid-template-areas: 'logo-and-product content actions';
+  grid-template-columns: auto 1fr auto;
+  grid-template-rows: 64px;
+  width: 100%;
+
+  .logo-and-product {
+    grid-area: logo-and-product;
+    display: flex;
+    text-decoration: none;
+    align-items: center;
+    position: relative;
+  }
+
+  .logo {
+    background-image: var(--mds_brand_appearance_static_logo_url);
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 40px;
+    line-height: 0;
+    width: var(--mds_brand_appearance_static_logo_width);
+  }
+
+  &.with-product-name {
+    .logo {
+      background-image: var(--mds_brand_appearance_static_logo-short_url);
+      width: var(--mds_brand_appearance_static_logo-short_width);
+    }
+  }
+
+  .product,
+  .product-mobile {
+    align-items: center;
+    color: var(--mds_brand_appearance_neutral_default_text-color);
+    padding-left: 20px;
+
+    &::before {
+      content: '';
+      border-right: 1px solid var(--mds_brand_appearance_neutral_default_border-color);
+      display: inline-block;
+      height: 26px;
+      margin-right: 16px;
+      width: 0;
+    }
+
+    @include mds-apply-font('text', 'large', 'medium');
+  }
+
+  .content {
+    grid-area: content;
+    margin: 0 0 0 24px;
+
+    ::slotted(*) {
+      align-items: center;
+      display: flex;
+    }
+  }
+
+  .actions {
+    grid-area: actions;
+
+    ::slotted(*) {
+      align-items: center;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+  }
+
+  // 0px - 1024px
+  @include mds-viewport-below('md') {
+    .product {
+      display: none;
+    }
+
+    .product-mobile {
+      padding-left: 16px;
+      display: flex;
+
+      &::before {
+        margin-right: 12px;
+      }
+    }
+  }
+
+  // md: 1025px - ...
+  @include mds-viewport-above('sm') {
+    .product {
+      display: flex;
+    }
+
+    .product-mobile {
+      display: none;
+    }
+  }
+}
+
+::slotted(a) {
+  text-decoration: none !important;
+  display: inline-block !important;
+  position: absolute !important;
+  z-index: 1 !important;
+  color: transparent !important;
+  width: 100% !important;
+  height: 100% !important;
+}

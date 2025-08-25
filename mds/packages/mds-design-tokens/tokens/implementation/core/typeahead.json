@@ -1,0 +1,11 @@
+{
+    "core": {
+        "typeahead": {
+            "mark": {
+                "font-weight": {
+                    "value": 700
+                }
+            }
+        }
+    }
+}

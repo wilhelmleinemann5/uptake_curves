@@ -1,0 +1,38 @@
+{
+    "core": {
+        "picker": {
+            "background-color": {
+                "value": "$brand.appearance.neutral.default.background-color"
+            },
+            "gradient": {
+                "start": {
+                    "value": "rgba(255, 255, 255, 0)"
+                },
+                "middle": {
+                    "value": "$brand.appearance.opacity.default.70"
+                },
+                "end": {
+                    "value": "$brand.appearance.opacity.default.90"
+                }
+            },
+            "selection-window": {
+                "background-color": {
+                    "value": "$brand.appearance.primary.default.background-color"
+                },
+                "text-color": {
+                    "value": "$brand.appearance.primary.default.on-background-color"
+                },
+                "active": {
+                    "background-color": {
+                        "value": "$brand.appearance.state.primary.default.active.background-color"
+                    }
+                }
+            },
+            "icon": {
+                "color": {
+                    "value": "$brand.appearance.neutral.default.text-color"
+                }
+            }
+        }
+    }
+}

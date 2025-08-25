@@ -1,0 +1,58 @@
+@mixin apply-loading-indicator-fit($fit) {
+  &.ring {
+    svg {
+      height: var(--mds_core_loading-indicator_#{$fit}_ring_height);
+      width: var(--mds_core_loading-indicator_#{$fit}_ring_width);
+
+      .track,
+      .progress {
+        stroke-width: var(--mds_core_loading-indicator_#{$fit}_ring_stroke-width);
+      }
+    }
+  }
+
+  &.bar {
+    .wrapper {
+      height: var(--mds_core_loading-indicator_#{$fit}_bar_height);
+      width: 100%;
+    }
+
+    .track {
+      height: var(--mds_core_loading-indicator_#{$fit}_bar_height);
+      width: 100%;
+    }
+
+    .progress {
+      height: var(--mds_core_loading-indicator_#{$fit}_bar_height);
+    }
+  }
+}
+
+@mixin apply-loading-indicator-ring-appearance($appearance) {
+  .label {
+    color: var(--mds_brand_appearance_#{$appearance}_text-color);
+  }
+
+  .track {
+    stroke: var(--mds_core_loading-indicator_ring_#{$appearance}_track_color);
+  }
+
+  .progress {
+    stroke: var(--mds_core_loading-indicator_ring_#{$appearance}_progress_color);
+  }
+}
+
+@mixin apply-loading-indicator-bar-appearance($appearance) {
+  .label {
+    color: var(--mds_brand_appearance_#{$appearance}_text-color);
+  }
+
+  .track {
+    background-color: var(--mds_core_loading-indicator_bar_#{$appearance}_track_background-color);
+    opacity: var(--mds_core_loading-indicator_bar_#{$appearance}_track_opacity);
+  }
+
+  .progress {
+    background-color: var(--mds_core_loading-indicator_bar_#{$appearance}_progress_background-color);
+  }
+}

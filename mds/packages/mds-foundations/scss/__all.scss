@@ -1,0 +1,57 @@
+@import './mixins/_all';
+@import './mixins/_gap';
+@import './mixins/_media';
+
+.mds {
+  @import './normalize';
+  @import './reset';
+  @import './slot';
+  @import './breadcrumb';
+  @import './tree-nav';
+  @import './color';
+  @import './layout';
+  @import './base-grid';
+  @import './container-grid';
+  @import './typography';
+  @import './gap';
+  @import './flex';
+  @import './horizontal-rule';
+  @import './link';
+  @import './list';
+  @import './svg';
+  @import './table';
+
+  // xs: 0 - 640px
+  @include mds-container-below('sm') {
+    @include mds-gap('xs');
+  }
+
+  // sm: 641px - 1024px
+  @include mds-container-above('xs') {
+    @include mds-gap('sm');
+  }
+
+  // md: 1025px - 1440px
+  @include mds-container-above('sm') {
+    @include mds-gap('md');
+  }
+
+  // lg: 1441px - 1920px
+  @include mds-container-above('md') {
+    @include mds-gap('lg');
+  }
+
+  // xl: 1921px - ...
+  @include mds-container-above('lg') {
+    @include mds-gap('xl');
+  }
+}
+
+.mds-content {
+  @import './content';
+}
+
+body.mds {
+  margin: 0;
+  padding: 0;
+}

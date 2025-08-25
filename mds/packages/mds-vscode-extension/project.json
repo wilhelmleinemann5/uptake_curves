@@ -1,0 +1,122 @@
+{
+  "name": "mds-vscode-extension",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mds-vscode-extension/src",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "^mds-design-tokens:build",
+        "^mds-foundations:build",
+        "extract-classes",
+        "extract-tokens",
+        "extract-icons",
+        "build:compile-js"
+      ]
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "vitest",
+        "cwd": "packages/mds-vscode-extension"
+      }
+    },
+    "extract-icons": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "ts-node packages/mds-vscode-extension/scripts/extract-icons.ts"
+        ]
+      }
+    },
+    "extract-classes": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "ts-node packages/mds-vscode-extension/scripts/extract-foundations-classes.ts"
+        ]
+      },
+      "dependsOn": [
+        "^mds-foundations:build"
+      ]
+    },
+    "extract-tokens": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "ts-node packages/mds-vscode-extension/scripts/extract-design-tokens.ts"
+        ]
+      },
+      "dependsOn": [
+        "^mds-design-tokens:build"
+      ]
+    },
+    "build:compile-js": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "options": {
+        "bundle": true,
+        "format": [
+          "cjs"
+        ],
+        "minify": true,
+        "sourcemap": true,
+        "sourcesContent": false,
+        "platform": "node",
+        "outputPath": "dist/packages/mds-vscode-extension",
+        "main": "packages/mds-vscode-extension/src/extension.ts",
+        "tsConfig": "packages/mds-vscode-extension/tsconfig.json",
+        "external": [
+          "vscode"
+        ],
+        "assets": [
+          {
+            "glob": "package.json",
+            "input": "packages/mds-vscode-extension",
+            "output": "."
+          },
+          {
+            "glob": "README.md",
+            "input": "packages/mds-vscode-extension",
+            "output": "."
+          },
+          {
+            "glob": ".vscodeignore",
+            "input": "packages/mds-vscode-extension",
+            "output": "."
+          },
+          {
+            "glob": "LICENSE",
+            "input": "packages/mds-vscode-extension",
+            "output": "."
+          },
+          {
+            "glob": "**/*",
+            "input": "packages/mds-vscode-extension/assets/images",
+            "output": "assets/images"
+          }
+        ],
+        "esbuildConfig": "packages/mds-vscode-extension/esbuild.config.js"
+      }
+    },
+    "package": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cd dist/packages/mds-vscode-extension && npx @vscode/vsce package --allow-missing-repository"
+        ],
+        "parallel": false
+      },
+      "dependsOn": [
+        "build"
+      ]
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    }
+  },
+  "tags": []
+}

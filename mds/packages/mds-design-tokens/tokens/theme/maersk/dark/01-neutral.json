@@ -1,0 +1,87 @@
+{
+    "brand": {
+        "appearance": {
+            "neutral": {
+                "default": {
+                    "text-color": {
+                        "value": "rgb(240,240,240)"
+                    },
+                    "background-color": {
+                        "value": "rgb(20,20,20)"
+                    },
+                    "on-background-color": {
+                        "value": "rgb(240,240,240)"
+                    },
+                    "border-color": {
+                        "value": "rgb(76,76,76)"
+                    },
+                    "opacity": {
+                        "border-color": {
+                            "value": "rgba(255,255,255,0.24)"
+                        }
+                    }
+                },
+                "weakest": {
+                    "text-color": {
+                        "value": "rgb(138,138,138)"
+                    },
+                    "background-color": {
+                        "value": "rgb(33,33,33)"
+                    },
+                    "on-background-color": {
+                        "value": "rgb(240,240,240)"
+                    }
+                },
+                "weak": {
+                    "text-color": {
+                        "value": "rgb(212,212,212)"
+                    },
+                    "background-color": {
+                        "value": "rgb(54,54,54)"
+                    },
+                    "on-background-color": {
+                        "value": "rgb(240,240,240)"
+                    },
+                    "border-color": {
+                        "value": "rgb(54,54,54)"
+                    },
+                    "opacity": {
+                        "background-color": {
+                            "value": "rgba(255,255,255,0.14)"
+                        }
+                    }
+                },
+                "strong": {
+                    "background-color": {
+                        "value": "rgb(76,76,76)"
+                    },
+                    "on-background-color": {
+                        "value": "rgb(240,240,240)"
+                    }
+                },
+                "strongest": {
+                    "background-color": {
+                        "value": "rgb(106,106,106)"
+                    },
+                    "on-background-color": {
+                        "value": "rgb(240,240,240)"
+                    }
+                },
+                "inverse": {
+                    "text-color": {
+                        "value": "rgb(20,20,20)"
+                    },
+                    "background-color": {
+                        "value": "rgb(255,255,255)"
+                    },
+                    "on-background-color": {
+                        "value": "rgb(20,20,20)"
+                    },
+                    "border-color": {
+                        "value": "rgb(20,20,20)"
+                    }
+                }
+            }
+        }
+    }
+}

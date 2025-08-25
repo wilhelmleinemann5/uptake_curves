@@ -1,0 +1,129 @@
+{
+	"foundations": {
+		"typography": {
+			"heading-1": {
+				"typography": {
+					"value": "headline-large"
+				},
+				"margin-top": {
+					"value": 48
+				},
+				"margin-bottom": {
+					"value": 24
+				}
+			},
+			"heading-2": {
+				"typography": {
+					"value": "headline-medium"
+				},
+				"margin-top": {
+					"value": 48
+				},
+				"margin-bottom": {
+					"value": 24
+				}
+			},
+			"heading-3": {
+				"typography": {
+					"value": "headline-small"
+				},
+				"margin-top": {
+					"value": 48
+				},
+				"margin-bottom": {
+					"value": 16
+				}
+			},
+			"heading-4": {
+				"typography": {
+					"value": "headline-x-small"
+				},
+				"margin-top": {
+					"value": 24
+				},
+				"margin-bottom": {
+					"value": 16
+				}
+			},
+			"heading-5": {
+				"typography": {
+					"value": "text-medium_bold"
+				},
+				"margin-top": {
+					"value": 24
+				},
+				"margin-bottom": {
+					"value": 16
+				}
+			},
+			"heading-6": {
+				"typography": {
+					"value": "text-medium_bold"
+				},
+				"margin-top": {
+					"value": 24
+				},
+				"margin-bottom": {
+					"value": 16
+				}
+			},
+			"paragraph": {
+				"margin-top": {
+					"value": 24
+				},
+				"margin-bottom": {
+					"value": 24
+				},
+				"x-small": {
+					"typography": {
+						"value": "text-x-small_normal"
+					}
+				},
+				"small": {
+					"typography": {
+						"value": "text-small_normal"
+					}
+				},
+				"medium": {
+					"typography": {
+						"value": "text-medium_normal"
+					}
+				}
+			},
+			"emphasise": {
+				"x-small": {
+					"typography": {
+						"value": "text-x-small_italic"
+					}
+				},
+				"small": {
+					"typography": {
+						"value": "text-small_italic"
+					}
+				},
+				"medium": {
+					"typography": {
+						"value": "text-medium_italic"
+					}
+				}
+			},
+			"strong": {
+				"x-small": {
+					"typography": {
+						"value": "text-x-small_bold"
+					}
+				},
+				"small": {
+					"typography": {
+						"value": "text-small_bold"
+					}
+				},
+				"medium": {
+					"typography": {
+						"value": "text-medium_bold"
+					}
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,27 @@
+@import './mc-multi-select.mixins.scss';
+
+:host {
+  --mds_core_multi-select_small_search_input_padding: 4px 8px 8px 8px;
+  --mds_core_multi-select_medium_search_input_padding: 8px 12px 8px 12px;
+  --mds_core_multi-select_large_search_input_padding: 12px 16px 8px 16px;
+}
+
+.mc-select {
+  ::part(text-and-icon) {
+    color: var(--mds_brand_appearance_primary_default_link-color);
+    text-decoration: underline;
+  }
+
+  /* fit */
+  .small {
+    @include apply-select-all-fit('small');
+  }
+
+  .medium {
+    @include apply-select-all-fit('medium');
+  }
+
+  .large {
+    @include apply-select-all-fit('large');
+  }
+}

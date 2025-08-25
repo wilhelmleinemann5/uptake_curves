@@ -1,0 +1,11 @@
+@mixin apply-textarea-fit($fit) {
+  .field {
+    min-height: var(--mds_core_textarea_#{$fit}_min-height);
+    height: auto;
+
+    .input {
+      padding: var(--mds_core_textarea_#{$fit}_padding-top) var(--mds_core_textarea_#{$fit}_padding-right)
+        var(--mds_core_textarea_#{$fit}_padding-bottom) var(--mds_core_textarea_#{$fit}_padding-left);
+    }
+  }
+}

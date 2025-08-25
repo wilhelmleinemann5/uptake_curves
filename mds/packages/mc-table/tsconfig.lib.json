@@ -1,0 +1,8 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../../dist"
+  },
+  "include": ["src/**/*.ts", "controller.ts", "utils.ts"],
+  "files": ["../mds-dev-utils/lib/types/index.d.ts"]
+}

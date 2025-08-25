@@ -1,0 +1,36 @@
+{
+  "name": "mds-legacy",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/mds-legacy",
+  "projectType": "library",
+  "targets": {
+    "build": {
+      "executor": "nx:noop",
+      "dependsOn": [
+        "run:build",
+        "copy:assets"
+      ]
+    },
+    "run:build": {
+      "command": "node packages/mds-legacy/scripts/build.mjs"
+    },
+    "copy:assets": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "cp packages/mds-legacy/package.json dist/packages/mds-legacy/package.json"
+        ]
+      },
+      "dependsOn": [
+        "run:build"
+      ]
+    },
+    "release": {
+      "command": "node tools/scripts/publish.mjs mds-legacy",
+      "options": {
+        "outputPath": "dist/packages/mds-legacy"
+      }
+    }
+  },
+  "tags": []
+}

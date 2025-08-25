@@ -1,0 +1,3617 @@
+[
+  {
+    "className": "mds-grid",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-1",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-2",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-3",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-4",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-5",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-6",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-7",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-8",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-9",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-10",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-11",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-12",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-13",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-14",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-15",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-16",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-17",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-18",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-19",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-20",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-21",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-22",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-23",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-24",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-to-end",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-to-start",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-1",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-2",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-3",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-4",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-5",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-6",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-7",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-8",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-9",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-10",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-11",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-12",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-13",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-14",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-15",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-16",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-17",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-18",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-19",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-20",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-21",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-22",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-23",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-row-span-24",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-1",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-2",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-3",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-4",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-5",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-6",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-7",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-8",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-9",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-10",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-11",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-12",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-1-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-2-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-3-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-4-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-5-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-6-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-7-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-8-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-9-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-10-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-11-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-12-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-13-reverse",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-to-end",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-to-start",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-1",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-2",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-3",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-4",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-5",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-6",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-7",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-8",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-9",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-10",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-11",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-col-span-12",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-1",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-2",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-3",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-4",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-5",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-6",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-7",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-8",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-9",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-10",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-11",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-cols-12",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-1",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-2",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-3",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-4",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-5",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-6",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-7",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-8",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-9",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-10",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-11",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-12",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-13",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-14",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-15",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-16",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-17",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-18",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-19",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-20",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-21",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-22",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-23",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-grid-rows-24",
+    "category": "base-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_base-grid.css"
+  },
+  {
+    "className": "mds-breadcrumb",
+    "category": "breadcrumb",
+    "packageFile": "@maersk-global/mds-foundations/css/_breadcrumb.css"
+  },
+  {
+    "className": "mds-breadcrumb__long-and-truncated",
+    "category": "breadcrumb",
+    "packageFile": "@maersk-global/mds-foundations/css/_breadcrumb.css"
+  },
+  {
+    "className": "mds-neutral__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--weakest__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--weak__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--strong__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--strongest__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--inverse__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--subtle__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--alt__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--weakest__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--weak__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--strong__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--strongest__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--inverse__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--subtle__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--alt__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--weakest__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--weak__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--strong__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--strongest__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--inverse__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--subtle__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--alt__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--weakest__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--weak__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--strong__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--strongest__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--inverse__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--subtle__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-neutral--alt__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary--weak__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary--subtle__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary--weak__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary--subtle__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary--weak__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary--subtle__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary--weak__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-primary--subtle__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary--weak__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary--subtle__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary--weak__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary--subtle__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary--weak__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary--subtle__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary--weak__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-secondary--subtle__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info--weak__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info--subtle__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info--weak__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info--subtle__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info--weak__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info--subtle__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info--weak__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-info--subtle__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error--weak__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error--subtle__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error--weak__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error--subtle__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error--weak__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error--subtle__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error--weak__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-error--subtle__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning--weak__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning--subtle__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning--weak__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning--subtle__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning--weak__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning--subtle__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning--weak__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-warning--subtle__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success--weak__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success--subtle__text-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success--weak__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success--subtle__background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success--weak__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success--subtle__on-background-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success--weak__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-success--subtle__border-color",
+    "category": "color",
+    "packageFile": "@maersk-global/mds-foundations/css/_color.css"
+  },
+  {
+    "className": "mds-container",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-1-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-2-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-3-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-4-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-5-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-6-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-7-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-8-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-9-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-10-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-11-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-12-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-col-span-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-cols-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-13",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-14",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-15",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-16",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-17",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-18",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-19",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-20",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-21",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-22",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-23",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-24",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-13",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-14",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-15",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-16",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-17",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-18",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-19",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-20",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-21",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-22",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-23",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-row-span-24",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-13",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-14",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-15",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-16",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-17",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-18",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-19",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-20",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-21",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-22",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-23",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-xs-rows-24",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-1-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-2-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-3-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-4-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-5-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-6-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-7-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-8-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-9-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-10-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-11-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-12-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-col-span-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-cols-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-13",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-14",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-15",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-16",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-17",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-18",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-19",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-20",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-21",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-22",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-23",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-24",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-13",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-14",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-15",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-16",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-17",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-18",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-19",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-20",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-21",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-22",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-23",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-row-span-24",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-13",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-14",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-15",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-16",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-17",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-18",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-19",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-20",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-21",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-22",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-23",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-sm-rows-24",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-1-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-2-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-3-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-4-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-5-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-6-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-7-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-8-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-9-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-10-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-11-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-12-reverse",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-col-span-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-cols-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-13",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-14",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-15",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-16",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-17",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-18",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-19",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-20",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-21",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-22",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-23",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-24",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-13",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-14",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-15",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-16",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-17",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-18",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-19",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-20",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-21",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-22",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-23",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-row-span-24",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-1",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-2",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-3",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-4",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-5",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-6",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-7",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-8",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-9",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-10",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-11",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-12",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-13",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-14",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-15",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-16",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-17",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-18",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-19",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-20",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-21",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-22",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-23",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-grid-md-rows-24",
+    "category": "container-grid",
+    "packageFile": "@maersk-global/mds-foundations/css/_container-grid.css"
+  },
+  {
+    "className": "mds-flex",
+    "category": "flex",
+    "packageFile": "@maersk-global/mds-foundations/css/_flex.css"
+  },
+  {
+    "className": "mds-flex-items-start",
+    "category": "flex",
+    "packageFile": "@maersk-global/mds-foundations/css/_flex.css"
+  },
+  {
+    "className": "mds-flex-items-center",
+    "category": "flex",
+    "packageFile": "@maersk-global/mds-foundations/css/_flex.css"
+  },
+  {
+    "className": "mds-flex-items-end",
+    "category": "flex",
+    "packageFile": "@maersk-global/mds-foundations/css/_flex.css"
+  },
+  {
+    "className": "mds-flex-items-baseline",
+    "category": "flex",
+    "packageFile": "@maersk-global/mds-foundations/css/_flex.css"
+  },
+  {
+    "className": "mds-flex-items-stretch",
+    "category": "flex",
+    "packageFile": "@maersk-global/mds-foundations/css/_flex.css"
+  },
+  {
+    "className": "mds-gap-50",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-50",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-50",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-100",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-100",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-100",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-150",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-150",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-150",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-200",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-200",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-200",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-300",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-300",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-300",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-400",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-400",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-400",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-500",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-500",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-500",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-600",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-600",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-600",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-700",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-700",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-700",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-800",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-800",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-800",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-900",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-900",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-900",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-1000",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-1000",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-1000",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-1200",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-1200",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-1200",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-1600",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-1600",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-1600",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-2000",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-2000",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-2000",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-2400",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-2400",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-2400",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-2800",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-2800",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-2800",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-gap-3200",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-col-gap-3200",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-row-gap-3200",
+    "category": "gap",
+    "packageFile": "@maersk-global/mds-foundations/css/_gap.css"
+  },
+  {
+    "className": "mds-layout",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-tree-nav",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-page",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-grid",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-full-width",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-footer",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-layout-no-side-bar",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-page-centered",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-page-full-width",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-skip-to",
+    "category": "layout",
+    "packageFile": "@maersk-global/mds-foundations/css/_layout.css"
+  },
+  {
+    "className": "mds-link--stand-alone",
+    "category": "link",
+    "packageFile": "@maersk-global/mds-foundations/css/_link.css"
+  },
+  {
+    "className": "mds-link--disabled",
+    "category": "link",
+    "packageFile": "@maersk-global/mds-foundations/css/_link.css"
+  },
+  {
+    "className": "mds-link--external",
+    "category": "link",
+    "packageFile": "@maersk-global/mds-foundations/css/_link.css"
+  },
+  {
+    "className": "mds-list--horizontal",
+    "category": "list",
+    "packageFile": "@maersk-global/mds-foundations/css/_list.css"
+  },
+  {
+    "className": "mds-table",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__subtext",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__header-cell--sortable",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table--zebra-stripes-with-expand",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table--outer-border-none",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table--outer-border-dashed",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table--outer-border-dotted",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table--outer-border-corners-square",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table--nowrap",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__cell--nowrap",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__column--row-selector",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__column--row-expander",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table--scrollable",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__column--sticky",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__cell--text-center",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__cell--number",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__cell--content-top",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__cell--content-center",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__cell--content-bottom",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__expanded-row--hidden",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table__expanded-row--visible",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table-and-caption",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table-caption",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table-caption--small",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-table-caption--large",
+    "category": "table",
+    "packageFile": "@maersk-global/mds-foundations/css/_table.css"
+  },
+  {
+    "className": "mds-tree-nav--separator",
+    "category": "tree-nav",
+    "packageFile": "@maersk-global/mds-foundations/css/_tree-nav.css"
+  },
+  {
+    "className": "mds-tree-nav__active",
+    "category": "tree-nav",
+    "packageFile": "@maersk-global/mds-foundations/css/_tree-nav.css"
+  },
+  {
+    "className": "mds",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-headline--x-large",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--x-small-normal",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--x-small-medium",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--x-small-bold",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--x-small-italic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--x-small-mediumitalic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--x-small-bolditalic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--small-normal",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--small-medium",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--small-bold",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--small-italic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--small-mediumitalic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--small-bolditalic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--medium-normal",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--medium-medium",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--medium-italic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--medium-mediumitalic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--medium-bolditalic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--large-normal",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--large-medium",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--large-bold",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--large-italic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--large-mediumitalic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-text--large-bolditalic",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-tabular-figures",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-numeric",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  },
+  {
+    "className": "mds-underline--dotted",
+    "category": "typography",
+    "packageFile": "@maersk-global/mds-foundations/css/_typography.css"
+  }
+]

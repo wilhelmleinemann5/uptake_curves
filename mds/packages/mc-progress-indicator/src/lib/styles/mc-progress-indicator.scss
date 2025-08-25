@@ -1,0 +1,21 @@
+[role='progressbar'] {
+  /* Override ring animation */
+  &.ring {
+    svg {
+      animation: none;
+    }
+
+    .progress {
+      animation: none;
+      transition: stroke-dashoffset var(--mds_global_transition_fast_duration) var(--mds_global_transition_fast_timing);
+    }
+  }
+
+  /* Override bar animation */
+  &.bar {
+    .progress {
+      animation: none;
+      transition: width var(--mds_global_transition_fast_duration) var(--mds_global_transition_fast_timing);
+    }
+  }
+}

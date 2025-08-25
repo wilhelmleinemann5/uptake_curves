@@ -1,0 +1,46 @@
+{
+  "name": "@maersk-global/mds-mcp-server",
+  "version": "2.135.5",
+  "description": "The Maersk Design System MCP server to provide context to LLMs",
+  "author": "Design System Team",
+  "homepage": "https://designsystem.maersk.com",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Maersk-Global/mds",
+    "directory": "packages/mds-mcp-server"
+  },
+  "bugs": {
+    "url": "https://github.com/Maersk-Global/mds/issues"
+  },
+  "keywords": [
+    "MaerskDesignSystem",
+    "MDS",
+    "MCP server",
+    "LLM",
+    "context",
+    "AI"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/inspector": "^0.16.1",
+    "@modelcontextprotocol/sdk": "^1.17.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@maersk-global/mds-dev-utils": "2.135.5"
+  },
+  "type": "module",
+  "main": "./index.js",
+  "module": "./index.ts",
+  "typings": "./index.d.ts",
+  "bin": {
+    "@maersk-global/mds-mcp-server": "./index.js"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./*": "./index.js",
+    "./lib/": "./lib/",
+    "./lib": "./lib/index.js",
+    "./lib/*": "./lib/*"
+  }
+}

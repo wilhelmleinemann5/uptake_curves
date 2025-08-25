@@ -1,0 +1,12 @@
+{
+  "version": "2.54.2",
+  "npmClient": "npm",
+  "packages": ["packages/*", "utils/*"],
+  "publish": {
+    "message": "chore(release): publish"
+  },
+  "publishConfig": {
+    "directory": "dist"
+  },
+  "ignoreChanges": []
+}

@@ -1,0 +1,18 @@
+{
+  "name": "spa-react",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "kitchen-sinks/spa-react/src",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project spa-react --web",
+  "targets": {
+    "map-node-modules": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "recursive-copy -w dist/packages kitchen-sinks/spa-react/node_modules/@maersk-global -f '**/*.*' && recursive-copy -w node_modules/@maersk-global/icons kitchen-sinks/spa-react/node_modules/@maersk-global/icons -f '**/*.*'"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+    "brand": {
+        "border": {
+            "x-small": {
+                "radius": {
+                    "value": "{brand.var.border.x-small.radius}",
+                    "description": "Border radius for x-small elements, typically used for small buttons or inputs."
+                }
+            },
+            "small": {
+                "radius": {
+                    "value": "{brand.var.border.small.radius}",
+                    "description": "Border radius for small elements, such as small cards or buttons."
+                }
+            },
+            "medium": {
+                "radius": {
+                    "value": "{brand.var.border.medium.radius}",
+                    "description": "Border radius for medium elements, commonly used for standard buttons or form fields."
+                }
+            },
+            "large": {
+                "radius": {
+                    "value": "{brand.var.border.large.radius}",
+                    "description": "Border radius for large elements, suitable for larger buttons or containers."
+                }
+            },
+            "x-large": {
+                "radius": {
+                    "value": "{brand.var.border.x-large.radius}",
+                    "description": "Border radius for x-large elements, often used for large cards or sections."
+                }
+            },
+            "2x-large": {
+                "radius": {
+                    "value": "{brand.var.border.2x-large.radius}",
+                    "description": "Border radius for 2x-large elements, typically used for very large containers or sections."
+                }
+            }
+        }
+    }
+}

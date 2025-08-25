@@ -1,0 +1,30 @@
+{
+    "foundations": {
+        "toast": {
+            "padding": {
+                "value": 16
+            },
+            "gap": {
+                "value": 16
+            },
+            "min-width": {
+                "value": 280
+            },
+            "max-width": {
+                "value": 600
+            },
+            "width": {
+                "value": 480
+            },
+            "transition-properties": {
+                "value": "box-shadow"
+            },
+            "transition-duration": {
+                "value": "$global.transition.fast.duration"
+            },
+            "transition-timing": {
+                "value": "$global.transition.fast.timing"
+            }
+        }
+    }
+}

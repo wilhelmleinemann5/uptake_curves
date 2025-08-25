@@ -1,0 +1,68 @@
+{
+  "core": {
+    "textarea": {
+      "small": {
+        "padding-top": {
+          "value": 6
+        },
+        "padding-right": {
+          "value": 7
+        },
+        "padding-bottom": {
+          "value": 6
+        },
+        "padding-left": {
+          "value": 7
+        },
+        "min-height": {
+          "value": 60
+        }
+      },
+      "medium": {
+        "padding-top": {
+          "value": 8
+        },
+        "padding-right": {
+          "value": 11
+        },
+        "padding-bottom": {
+          "value": 8
+        },
+        "padding-left": {
+          "value": 11
+        },
+        "min-height": {
+          "value": 72
+        }
+      },
+      "large": {
+        "padding-top": {
+          "value": 12
+        },
+        "padding-right": {
+          "value": 15
+        },
+        "padding-bottom": {
+          "value": 12
+        },
+        "padding-left": {
+          "value": 15
+        },
+        "min-height": {
+          "value": 80
+        }
+      },
+      "counter": {
+        "typography": {
+          "value": "text-small_normal"
+        },
+        "text-color": {
+          "value": "$brand.appearance.neutral.weak.text-color"
+        },
+        "margin-top": {
+          "value": 4
+        }
+      }
+    }
+  }
+}

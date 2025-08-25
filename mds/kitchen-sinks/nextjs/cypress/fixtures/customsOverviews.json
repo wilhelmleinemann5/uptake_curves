@@ -1,0 +1,54 @@
+{
+    "billOfLading": "586925237",
+    "from": {
+        "countryCode": "AE",
+        "countryName": "United Arab Emirates",
+        "etd": "2029-09-30T07:00:00",
+        "portCode": "AEJEA",
+        "portName": "Jebel Ali Dubai"
+    },
+    "to": {
+        "countryCode": "SG",
+        "countryName": "Singapore",
+        "eta": "2029-10-12T20:00:00",
+        "portCode": "SGSIN",
+        "portName": "Singapore"
+    },
+    "containers": [
+        {
+            "quantity": 1,
+            "type": "DRY",
+            "size": "20"
+        }
+    ],
+    "productGroups": [
+        {
+            "productGroupId": "exportCustomsClearance",
+            "statusUpdated": "2023-07-05T09:05:07.968",
+            "status": "CUSTOMS_AVAILABLE"
+        },
+        {
+            "productGroupId": "importCustomsClearance",
+            "statusUpdated": "2023-07-05T09:05:07.968",
+            "status": "CUSTOMS_AVAILABLE"
+        }
+    ],
+    "customs": {
+        "importCustoms": {
+            "offersResult": {
+                "preContractedCustomer": false,
+                "productsAvailable": true
+            },
+            "productsPurchased": []
+        },
+        "exportCustoms": {
+            "offersResult": {
+                "preContractedCustomer": false,
+                "productsAvailable": true
+            },
+            "productsPurchased": []
+        }
+    },
+    "exportServiceMode": "CY",
+    "importServiceMode": "CY"
+}

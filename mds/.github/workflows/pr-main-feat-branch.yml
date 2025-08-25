@@ -1,0 +1,125 @@
+name: Deploy feature branch
+on:
+  pull_request:
+    branches:
+      - 'main'
+      - 'alpha'
+      - 'beta'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy-storybook:
+    if: startsWith(github.head_ref, 'feat/') || startsWith(github.head_ref, 'docs') || startsWith(github.head_ref, 'fix') || startsWith(github.head_ref, 'alpha')
+    name: Deploy feature branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up npm registry
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com/
+          scope: '@maersk-global'
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GHCR_PULL_TOKEN}}
+
+      - name: Trust mds repo
+        run: git config --global --add safe.directory /__w/mds/mds
+
+      - name: Branch name and type
+        id: branch
+        run: |
+          echo "name=$(echo ${{github.head_ref}} | cut -d/ -f 2 | sed -r 's/[_]+/-/g')" >> $GITHUB_OUTPUT
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        id: cache
+        with:
+          path: |
+            ~/.cache/Cypress
+            node_modules
+            packages/*/node_modules
+            utils/*/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json', 'utils/**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-${{ hashFiles('package-lock.json', 'packages/**/package-lock.json', 'utils/**/package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm i
+
+      - name: Build packages
+        run: npx nx run-many --target=build
+
+      - name: Build metadata
+        run: npx nx run-many --target=generate:metadata
+
+      - name: Build storybook
+        run: VITE_FEAT_BRANCH=${{ steps.branch.outputs.name }} npm run ui:build:feat
+
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Check if container exists
+        id: container
+        run: |
+          azoutput=$(az storage container exists --account-name maerskdesignsystemprod --auth-mode key --name ${{ steps.branch.outputs.name }})
+          echo "exists=$(echo $azoutput | jq ".exists")" >> $GITHUB_OUTPUT
+
+      - name: Create container
+        if: steps.container.outputs.exists == 'false'
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage container create --account-name maerskdesignsystemprod --auth-mode key --name ${{ steps.branch.outputs.name }} --public-access blob
+
+      - name: Clean blob storage
+        if: steps.container.outputs.exists == 'true'
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage blob delete-batch --account-name maerskdesignsystemprod --auth-mode key -s ${{ steps.branch.outputs.name }}
+
+      - name: Upload to blob storage
+        uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage blob upload-batch --account-name maerskdesignsystemprod --auth-mode key -d ${{ steps.branch.outputs.name }} -s dist/storybook/mds/
+
+      - name: Logout from Azure
+        run: |
+          az logout
+        if: always()
+
+      - name: Deployed link
+        run: |
+          echo "https://maerskdesignsystemprod.blob.core.windows.net/${{ steps.branch.outputs.name }}/index.html"
+
+      - name: Post deployed link
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const issue_number = context.issue.number;
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const body = 'https://maerskdesignsystemprod.blob.core.windows.net/${{ steps.branch.outputs.name }}/index.html';
+            const comments = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number
+            });
+            const existingComment = comments.data.find(comment => comment.body === body);
+            if (!existingComment) {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number,
+                body
+              });
+            }

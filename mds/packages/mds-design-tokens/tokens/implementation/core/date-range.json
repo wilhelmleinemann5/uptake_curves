@@ -1,0 +1,36 @@
+{
+    "core": {
+        "date-range": {
+            "small": {
+                "gap": {
+                    "value": 10
+                },
+                "legend": {
+                    "margin-bottom": {
+                        "value": 2
+                    }
+                }
+            },
+            "medium": {
+                "gap": {
+                    "value": 12
+                },
+                "legend": {
+                    "margin-bottom": {
+                        "value": 4
+                    }
+                }
+            },
+            "large": {
+                "gap": {
+                    "value": 14
+                },
+                "legend": {
+                    "margin-bottom": {
+                        "value": 6
+                    }
+                }
+            }
+        }
+    }
+}
