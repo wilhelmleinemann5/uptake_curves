@@ -191,15 +191,15 @@
                     return;
                 }
                 
-                // Days to departure (reversed)
+                // Days to departure (35 days on left, 0 days on right - matches original)
                 const labels = ['35 days', '30 days', '25 days', '20 days', '15 days', '10 days', '5 days', '0 days'];
                 
-                // Baseline data with confidence bands
+                // Baseline data with confidence bands (curves build up from left to right)
                 const baseline = [2500, 4500, 7000, 13500, 24000, 33000, 40500, 45500];
                 const confidenceUpper = [3200, 5600, 8700, 16800, 30000, 41200, 50600, 56900];
                 const confidenceLower = [1800, 3400, 5300, 10200, 18000, 24800, 30400, 34100];
                 
-                // Current sailing curves
+                // Current sailing curves (building up over time)
                 const sailing1 = [2200, 4800, 7800, 16200, 27000, 33000, 36800, 39000]; // Aug 3
                 const sailing2 = [1800, 3900, 6500, 14000, 25000, 31800, 36500, 39200]; // Aug 10  
                 const sailing3 = [2800, 5600, 8800, 17200, 28000, 34000, 37800, 40000]; // Aug 17
@@ -284,7 +284,7 @@
                                     text: 'Days to Departure',
                                     font: { size: 14 }
                                 },
-                                reverse: true
+                                reverse: false // Changed: 35 days on left, 0 days on right
                             },
                             y: {
                                 title: {
@@ -292,7 +292,10 @@
                                     text: 'Booked FFE',
                                     font: { size: 14 }
                                 },
+                                beginAtZero: true, // Start Y-axis at 0
+                                max: 60000, // Set max to match your original scale
                                 ticks: {
+                                    stepSize: 10000, // 10k increments
                                     callback: function(value) {
                                         return (value / 1000).toFixed(0) + 'k';
                                     }
