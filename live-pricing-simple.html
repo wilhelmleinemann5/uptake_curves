@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live FFE Booking Monitor</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <style>
         /* Maersk Design System Dark Theme */
         :root {
@@ -218,7 +218,7 @@
     </div>
 
     <script>
-        window.addEventListener('load', function() {
+        function initChart() {
             try {
                 const ctx = document.getElementById('bookingChart');
                 if (!ctx) {
@@ -227,10 +227,18 @@
                 }
 
                 if (typeof Chart === 'undefined') {
-                    console.error('Chart.js not loaded');
-                    ctx.getContext('2d').fillText('Chart loading...', 10, 50);
+                    console.error('Chart.js not loaded, retrying...');
+                    const canvas = ctx.getContext('2d');
+                    canvas.fillStyle = 'rgb(240, 240, 240)';
+                    canvas.font = '16px sans-serif';
+                    canvas.fillText('Loading chart...', 20, 200);
+                    
+                    // Retry after 1 second
+                    setTimeout(initChart, 1000);
                     return;
                 }
+
+                console.log('Chart.js loaded, version:', Chart.version);
                 
                 // Data points
                 const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
@@ -251,7 +259,7 @@
                 const feb22_most_likely = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200];
                 const feb22_pessimistic = [null, null, null, null, null, null, null, null, 7000, 9200, 12800, 16500, 19000];
 
-                const chart = new Chart(ctx, {
+                window.chartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
                         labels: labels,
@@ -445,45 +453,53 @@
                     }
                 });
                 
-                // Add TODAY vertical line
-                const todayPlugin = {
-                    id: 'todayLine',
-                    beforeDraw: (chart) => {
-                        const ctx = chart.ctx;
-                        const xAxis = chart.scales.x;
-                        const yAxis = chart.scales.y;
-                        
-                        const x = xAxis.getPixelForValue(todayIndex);
-                        
-                        ctx.save();
-                        ctx.setLineDash([5, 5]);
-                        ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
-                        ctx.lineWidth = 2;
-                        ctx.beginPath();
-                        ctx.moveTo(x, yAxis.top);
-                        ctx.lineTo(x, yAxis.bottom);
-                        ctx.stroke();
-                        
-                        // Add TODAY label
-                        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-                        ctx.fillRect(x - 20, yAxis.top + 5, 40, 20);
-                        ctx.fillStyle = 'rgb(20, 20, 20)';
-                        ctx.font = 'bold 12px sans-serif';
-                        ctx.textAlign = 'center';
-                        ctx.fillText('TODAY', x, yAxis.top + 18);
-                        
-                        ctx.restore();
+                // Add TODAY vertical line as annotation
+                window.chartInstance.options.plugins.annotation = {
+                    annotations: {
+                        todayLine: {
+                            type: 'line',
+                            xMin: todayIndex,
+                            xMax: todayIndex,
+                            borderColor: 'rgba(255, 255, 255, 0.8)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: 'TODAY',
+                                position: 'start',
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                color: 'rgb(20, 20, 20)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
                     }
                 };
-                
-                Chart.register(todayPlugin);
                 
                 console.log('Chart created successfully');
                 
             } catch (error) {
                 console.error('Error creating chart:', error);
+                // Show error message on canvas
+                const canvas = ctx.getContext('2d');
+                canvas.fillStyle = 'rgb(229, 62, 62)';
+                canvas.font = '16px sans-serif';
+                canvas.fillText('Error loading chart. Please refresh page.', 20, 200);
             }
-        });
+        }
+
+        // Initialize chart when page loads
+        window.addEventListener('load', initChart);
+        
+        // Fallback: try again after 2 seconds if first attempt fails
+        setTimeout(function() {
+            if (!window.chartInstance) {
+                console.log('Fallback: retrying chart initialization');
+                initChart();
+            }
+        }, 2000);
     </script>
 </body>
 </html>
