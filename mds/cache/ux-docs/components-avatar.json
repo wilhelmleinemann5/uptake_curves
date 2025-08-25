@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222424232,
-  "data": "---\ntags:\n  - core\n  - content\n  - user\ntitle: Avatar\ndescription: An avatar is a visual representation of an object or an entity e.g. a person, a group of people, a category etc.\n---\n\nimport AvatarDemo from \"./_components/AvatarDemo.vue\";\n\n<AvatarDemo client:only=\"vue\" />\n\n## Best practice\n\n- Always provide a descriptive label for the tooltip\n- Also provide a descriptive label when the tooltip is hidden so screen reader can make sense of avatars\n- In most cases, it is better to use images than the initials and fallback icon options.\n"
-}

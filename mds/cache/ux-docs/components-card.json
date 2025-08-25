@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222425975,
-  "data": "---\ntags:\n  - core\n  - content\n  - user\ntitle: Card\ndescription: A card is a focused way of displaying content and actions on a specific topic.\n---\n\nimport CardDemo from \"./_components/CardDemo.vue\";\n\n<CardDemo client:only=\"vue\" />\n\n\n## Best practice\n\n- Keep the card simple so the message is easy to understand\n- Make sure that the text inside the card is concise and easy to read\n- Avoid overloading the card with too many actions and/or links\n- If the whole card is clickable then make sure it is easy to predict what is happening when clicked\n- Cards work well as a teaser for e.g. news articles or blog posts\n- Cards are a good way to display related topics\n- On desktop, cards work well in a column-based layout e.g. 3 or 4 cards in a row\n- Do not stretch a card across the entire page\n\n"
-}

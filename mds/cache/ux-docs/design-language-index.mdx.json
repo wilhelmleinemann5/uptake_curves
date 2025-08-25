@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222455013,
-  "data": "---\ntitle: Design language\ndescription: >- \nchildPageOrder:\n  - colour-roles\n  - typography\n  - iconography\n  - spacing\n  - corner-radius\n  - component-fit\n  - themes\nredirectToPath: /design-language/spacing/\n---\n"
-}

@@ -1,7 +1,0 @@
-node_modules
-dist
-tools/scripts/add-new-component
-packages/mds-legacy
-packages/mds-design-tokens
-index.stories.ts
-packages/mc-modal/src/lib/material/**

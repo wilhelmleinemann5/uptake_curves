@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222464294,
-  "data": "---\ntitle: Maersk dark tokens\nnavTitle: Dark tokens\nsecondaryNavTitle: Colours\nhideTOC: true\nhideRelatedPages: true\nrenderAllChildPagesAsTabs: true\n---\n\nimport Colors from \"../../_components/Colors.vue\";\nimport ApplyTheme from \"../../_components/ApplyTheme.vue\";\n\n<ApplyTheme themeID=\"maersk-dark\" themeName=\"Maersk dark\" client:only=\"vue\" />\n\n<div class=\"min-h-[1024px] \">\n  <Colors themeID=\"maersk-dark\" client:only=\"vue\" />\n</div>\n"
-}

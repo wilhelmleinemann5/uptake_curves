@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222457406,
-  "data": "---\ntitle: Aliança light tokens\nnavTitle: Light tokens\nsecondaryNavTitle: Colours\nhideTOC: true\nhideRelatedPages: true\nrenderAllChildPagesAsTabs: true\n---\n\nimport Colors from \"../../_components/Colors.vue\";\nimport ApplyTheme from \"../../_components/ApplyTheme.vue\";\n\n<ApplyTheme themeID=\"alianca-light\" themeName=\"Aliança light\" client:only=\"vue\" />\n\n<div class=\"min-h-[1024px] \">\n  <Colors themeID=\"alianca-light\" client:only=\"vue\" />\n</div>\n"
-}

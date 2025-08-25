@@ -1,5 +1,0 @@
-@mixin apply-input-date-fit($fit) {
-  .field {
-    min-width: var(--mds_core_input-date_#{$fit}_min-width);
-  }
-}

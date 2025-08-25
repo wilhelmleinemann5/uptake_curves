@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222436604,
-  "data": "---\ntags:\n  - core\n  - light\n  - dark\ntitle: Theme switch\ndescription: >-\n  Switch between light and dark themes for a brand.\n---\n\nimport ThemeSwitchDemo from \"./_components/ThemeSwitchDemo.vue\";\n\n<ThemeSwitchDemo client:only=\"vue\" />"
-}

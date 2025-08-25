@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222462866,
-  "data": "---\ntitle: Global tokens\nsecondaryNavTitle: Borders\ndescription: Design tokens applicable across all themes.\nhideTOC: true\nhideRelatedPages: true\nrenderAllChildPagesAsTabs: true\n---\n\nimport FilteredTokens from \"../_components/FilteredTokens.vue\";\n\n<div class=\"min-h-[1024px] \">\n  <FilteredTokens themeID=\"maersk-light\" filter=\"global_border\" client:only=\"vue\" />\n</div>"
-}

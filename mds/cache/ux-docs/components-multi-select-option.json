@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222431258,
-  "data": "---\ntags:\n  - core\n  - select\n  - form\n  - option\ntitle: Option\nrelatedPages:\n  - /components/list/\n  - /components/list/item/\n---\n\nimport OptionDemo from \"./_components/OptionDemo.vue\";\n\nThe <PageLink path=\"/components/multi-select/\">Multi-Select</PageLink> component is composed of individual Option components.\n<br />\n\n<OptionDemo client:only=\"vue\" />"
-}

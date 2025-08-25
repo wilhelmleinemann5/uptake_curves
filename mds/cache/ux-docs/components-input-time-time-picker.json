@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222428728,
-  "data": "---\ntags:\n  - core\n  - date\n  - time\ntitle: Time Picker\ndescription: >-\n  The Time Picker allows the user to select a time and can be used as the basis for custom time selection components / patterns.\nrelatedPages:\n  - /components/input-time\n  - /components/picker\n---\n\nimport TimePickerDemo from \"./_components/TimePickerDemo.vue\";\n\nThe <PageLink path=\"/components/input-time/\">Input Time</PageLink> component utilises the Time Picker component.\n<br /><br />\n\n\n<TimePickerDemo client:only=\"vue\" />\n\n"
-}

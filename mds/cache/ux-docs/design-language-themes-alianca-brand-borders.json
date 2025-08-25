@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222455769,
-  "data": "---\ntitle: Borders\nhideTOC: true\nhideRelatedPages: true\nrenderAsTab: true\n---\n\nimport FilteredTokens from \"../../../_components/FilteredTokens.vue\";\n\n<div class=\"min-h-[1024px] \">\n  <FilteredTokens themeID=\"alianca-light\" filter=\"brand_border\" client:only=\"vue\" />\n</div>\n"
-}

@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222432176,
-  "data": "---\ntags:\n  - core\n  - utility\ntitle: Picker\ndescription: >-\n  The picker component is a utility component that allows users to select a combination of values.\nrenderAllChildPagesAsTabs: true\n---\n\nimport PickerDemo from \"./_components/PickerDemo.vue\";\n\n<PickerDemo client:only=\"vue\" />"
-}

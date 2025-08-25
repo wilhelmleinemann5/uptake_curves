@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222425177,
-  "data": "---\ntags:\n  - segmented\n  - action\n  - select\n  - multi-select\n  - toggle\n  - form\n  - toolbar\n  - split\ntitle: Button Group Item\ndescription: >-\n  Combines individual buttons that have a logical relationship into a cohesive group of actions. \nrelatedPages:\n  - /components/button/\n---\n\nimport ButtonGroupItemDemo from \"./_components/ButtonGroupItemDemo.vue\";\n\nThe <PageLink path=\"/components/button-group/\">Button Group</PageLink> component is composed of individual Button Group Item components.\n<br />\n\n<ButtonGroupItemDemo client:only=\"vue\" />"
-}

@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222434588,
-  "data": "---\ntags:\n  - core\n  - progress\n  - bar\ntitle: Step Indicator Item\n---\n\nimport StepIndicatorItemDemo from \"./_components/StepIndicatorItemDemo.vue\";\n\nThe <PageLink path=\"/components/step-indicator/\">Step Indicator</PageLink> component is composed of individual Step Indicator Item components.\n<br />\n\n<StepIndicatorItemDemo client:only=\"vue\" />"
-}

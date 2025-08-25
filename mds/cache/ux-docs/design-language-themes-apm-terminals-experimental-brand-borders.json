@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222458151,
-  "data": "---\ntitle: Borders\nhideTOC: true\nhideRelatedPages: true\nrenderAsTab: true\n---\n\nimport FilteredTokens from \"../../../_components/FilteredTokens.vue\";\n\n<ExperimentalWarning itemName=\"This theme\" />\n\n<div class=\"min-h-[1024px] \">\n  <FilteredTokens themeID=\"apmterminalsexperimental-light\" filter=\"brand_border\" client:only=\"vue\" />\n</div>"
-}

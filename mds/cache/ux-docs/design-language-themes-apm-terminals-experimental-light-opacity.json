@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222460093,
-  "data": "---\ntitle: Opacity\nhideTOC: true\nhideRelatedPages: true\n---\n\nimport FilteredTokens from \"../../../_components/FilteredTokens.vue\";\nimport ApplyTheme from \"../../../_components/ApplyTheme.vue\";\n\n<ExperimentalWarning itemName=\"This theme\" />\n\n<ApplyTheme themeID=\"apmterminalsexperimental-light\" themeName=\"APM Terminals Experimental light\" client:only=\"vue\" />\n\n<div class=\"min-h-[1024px] \">\n  <FilteredTokens themeID=\"apmterminalsexperimental-light\" filter=\"brand_appearance_opacity\" client:only=\"vue\" />\n</div>"
-}

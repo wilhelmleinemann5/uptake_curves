@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222432420,
-  "data": "---\ntags:\n  - core\n  - utility\ntitle: Item\nrelatedPages:\n  - /components/picker/\n---\n\nimport PickerItemDemo from \"./_components/PickerItemDemo.vue\";\n\nThe <PageLink path=\"/components/picker/\">Picker</PageLink> component is composed of individual Picker Item components.\n<br />\n\n<PickerItemDemo client:only=\"vue\" />"
-}

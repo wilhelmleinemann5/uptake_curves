@@ -1,4 +1,0 @@
-{
-  "timestamp": 1752222433538,
-  "data": "---\ntags:\n  - core\n  - switcher\n  - tab\n  - select\n  - filter\n  - search\n  - toolbar\n  - view\n  - toggle\ntitle: Segmented Control Item\nrelatedPages:\n  - /components/segmented-control/\n---\n\nimport SegmentedControlItemDemo from \"./_components/SegmentedControlItemDemo.vue\";\n\nThe <PageLink path=\"/components/segmented-control/\">Segmented Control</PageLink> component is composed of individual Segmented Control Item components.\n<br />\n\n<SegmentedControlItemDemo client:only=\"vue\" />"
-}

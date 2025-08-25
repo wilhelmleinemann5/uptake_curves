@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-echo "[HUSKY] pre-push checks"
-
-npx nx affected --target=lint && npx nx format:write --uncommitted
