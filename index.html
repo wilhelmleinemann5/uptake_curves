@@ -133,7 +133,7 @@
 
         <div class="chart-container">
             <h2 class="chart-title">FFE Booking Curve - C1E Trade Lane</h2>
-            <p class="chart-subtitle">Asia to North Europe • Capacity: 45,500 FFE • Gray area shows 10-90% confidence band</p>
+            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Gray area shows 10-90% confidence band</p>
             <div style="position: relative; height: 400px; width: 100%;">
                 <canvas id="bookingChart"></canvas>
             </div>
@@ -142,15 +142,15 @@
         <div class="insights">
             <div class="insight-card success">
                 <h3>📈 2025-08-17 Sailing</h3>
-                <p>Booking ahead of baseline by 8%. Consider moderate rate increase (+$50-100/FFE) to capitalize on strong demand.</p>
+                <p>Strong early booking momentum - 6% ahead of baseline. Consider modest rate increase (+$50/FFE) to optimize revenue from high demand.</p>
             </div>
             <div class="insight-card neutral">
                 <h3>✅ 2025-08-03 Sailing</h3>
-                <p>Tracking close to baseline. Monitor velocity over next 7 days before adjusting rates.</p>
+                <p>Tracking closely with baseline curve. Continue monitoring daily velocity. No immediate pricing action required.</p>
             </div>
             <div class="insight-card warning">
                 <h3>📉 2025-08-10 Sailing</h3>
-                <p>Booking 12% below baseline. Consider rate reduction (-$75/FFE) or promotional activity to stimulate bookings.</p>
+                <p>Slow initial uptake - 15% below baseline. Consider targeted promotional pricing (-$50/FFE) or sales push to stimulate bookings.</p>
             </div>
         </div>
 
@@ -191,18 +191,25 @@
                     return;
                 }
                 
-                // Days to departure (35 days on left, 0 days on right - matches original)
-                const labels = ['35 days', '30 days', '25 days', '20 days', '15 days', '10 days', '5 days', '0 days'];
+                // More data points for smoother curves (matches original density)
+                const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
                 
-                // Baseline data with confidence bands (curves build up from left to right)
-                const baseline = [2500, 4500, 7000, 13500, 24000, 33000, 40500, 45500];
-                const confidenceUpper = [3200, 5600, 8700, 16800, 30000, 41200, 50600, 56900];
-                const confidenceLower = [1800, 3400, 5300, 10200, 18000, 24800, 30400, 34100];
+                // Baseline curve with more realistic booking accumulation pattern
+                const baseline = [250, 500, 800, 1200, 1800, 2600, 3800, 5500, 8000, 11500, 16000, 21000, 24500];
                 
-                // Current sailing curves (building up over time)
-                const sailing1 = [2200, 4800, 7800, 16200, 27000, 33000, 36800, 39000]; // Aug 3
-                const sailing2 = [1800, 3900, 6500, 14000, 25000, 31800, 36500, 39200]; // Aug 10  
-                const sailing3 = [2800, 5600, 8800, 17200, 28000, 34000, 37800, 40000]; // Aug 17
+                // Confidence bands (10-90% range around baseline)
+                const confidenceUpper = [400, 750, 1150, 1700, 2500, 3600, 5100, 7300, 10500, 15000, 20500, 26500, 30000];
+                const confidenceLower = [150, 300, 500, 750, 1100, 1600, 2400, 3500, 5200, 7500, 10500, 14500, 18000];
+                
+                // Current sailing curves with more realistic patterns
+                // Aug 3 - tracking close to baseline (blue line)
+                const sailing1 = [280, 520, 780, 1150, 1700, 2500, 3600, 5200, 7800, 11200, 15800, 20500, 24000];
+                
+                // Aug 10 - slower start, catching up later (orange line)  
+                const sailing2 = [180, 350, 600, 950, 1400, 2100, 3100, 4600, 7000, 10500, 15200, 20000, 23800];
+                
+                // Aug 17 - strong early booking, ahead of baseline (green line)
+                const sailing3 = [320, 580, 900, 1350, 2000, 2900, 4200, 6000, 8800, 12500, 17000, 22000, 26000];
 
                 const chart = new Chart(ctx, {
                     type: 'line',
@@ -293,9 +300,9 @@
                                     font: { size: 14 }
                                 },
                                 beginAtZero: true, // Start Y-axis at 0
-                                max: 60000, // Set max to match your original scale
+                                max: 35000, // Adjusted to better fit the refined data range
                                 ticks: {
-                                    stepSize: 10000, // 10k increments
+                                    stepSize: 5000, // 5k increments for better granularity
                                     callback: function(value) {
                                         return (value / 1000).toFixed(0) + 'k';
                                     }
