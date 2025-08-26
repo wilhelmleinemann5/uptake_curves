@@ -135,11 +135,11 @@
                     <!-- Action Buttons -->
                     <div id="actionButtons" style="display: none; gap: 0.75rem; margin-top: 1rem; justify-content: center;">
                         <button id="applyRecommendation" onclick="applyRecommendedPriceChange()" 
-                                style="background: var(--maersk-secondary); color: var(--mds-text-primary); border: 1px solid var(--maersk-secondary); padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;">
+                                style="background: var(--maersk-light-blue); color: white; border: 1px solid var(--maersk-light-blue); padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;">
                             Apply -5%
                         </button>
                         <button id="autoApplyToggle" onclick="toggleAutoApply()" 
-                                style="background: var(--maersk-secondary); color: var(--mds-text-primary); border: 1px solid var(--maersk-secondary); padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;">
+                                style="background: var(--maersk-light-blue); color: white; border: 1px solid var(--maersk-light-blue); padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;">
                             <span id="autoApplyText">🤖 Auto-Apply</span>
                         </button>
                     </div>
@@ -1161,9 +1161,9 @@
             
             setTimeout(() => {
                 applyButton.textContent = originalText;
-                applyButton.style.background = 'var(--maersk-secondary)';
-                applyButton.style.color = 'var(--mds-text-primary)';
-                applyButton.style.borderColor = 'var(--maersk-secondary)';
+                applyButton.style.background = 'var(--maersk-light-blue)';
+                applyButton.style.color = 'white';
+                applyButton.style.borderColor = 'var(--maersk-light-blue)';
             }, 2000);
         }
         
@@ -1185,9 +1185,9 @@
                 // TODO: In production, this would set up a time-based batch job
             } else {
                 autoApplyText.textContent = '🤖 Auto-Apply';
-                autoApplyButton.style.background = 'var(--maersk-secondary)';
-                autoApplyButton.style.color = 'var(--mds-text-primary)';
-                autoApplyButton.style.borderColor = 'var(--maersk-secondary)';
+                autoApplyButton.style.background = 'var(--maersk-light-blue)';
+                autoApplyButton.style.color = 'white';
+                autoApplyButton.style.borderColor = 'var(--maersk-light-blue)';
                 
                 console.log('Auto-Apply disabled');
             }
