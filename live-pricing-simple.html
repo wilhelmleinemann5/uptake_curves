@@ -855,7 +855,7 @@
             
             const adjustedOptimistic = adjustedMostLikely.map((value, index) => {
                 if (index <= todayIndex) return value;
-                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                const daysFromToday = Math.abs(dayPoints[index] - dayPoints[todayIndex]);
                 const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
                 const upperValue = Math.round(value * (1 + uncertaintyFactor));
                 return Math.max(upperValue, todayValue);
@@ -863,7 +863,7 @@
             
             const adjustedPessimistic = adjustedMostLikely.map((value, index) => {
                 if (index <= todayIndex) return value;
-                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                const daysFromToday = Math.abs(dayPoints[index] - dayPoints[todayIndex]);
                 const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
                 const lowerValue = Math.round(value * (1 - uncertaintyFactor));
                 return Math.max(lowerValue, todayValue);
