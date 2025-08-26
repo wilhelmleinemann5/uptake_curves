@@ -258,6 +258,11 @@
                 const simulatedOptimistic = feb22_optimistic.slice();
                 const simulatedMostLikely = feb22_most_likely.slice();
                 const simulatedPessimistic = feb22_pessimistic.slice();
+                
+                // DEBUG: Check initial simulated arrays
+                console.log('Initial simulatedOptimistic:', simulatedOptimistic);
+                console.log('Initial simulatedPessimistic:', simulatedPessimistic);
+                console.log('Initial simulatedMostLikely:', simulatedMostLikely);
 
                 window.chartInstance = new Chart(ctx, {
                     type: 'line',
@@ -562,6 +567,8 @@
                 };
                 
                 console.log('Chart created successfully');
+                console.log('Chart datasets count:', window.chartInstance.data.datasets.length);
+                console.log('Chart dataset labels:', window.chartInstance.data.datasets.map(d => d.label));
                 
                 // Initialize target insight
                 updateTargetInsight(targetValue);
@@ -870,9 +877,17 @@
             }
             
             // STEP 5: Update chart datasets (order: Pessimistic, Optimistic, Most Likely)
+            console.log('All chart dataset labels:', window.chartInstance.data.datasets.map(d => d.label));
+            
             const simulatedPessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
             const simulatedOptimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Optimistic');
             const simulatedMostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
+            
+            console.log('Found datasets:', {
+                pessimistic: !!simulatedPessimisticDataset,
+                optimistic: !!simulatedOptimisticDataset,
+                mostLikely: !!simulatedMostLikelyDataset
+            });
             
             if (simulatedOptimisticDataset && simulatedMostLikelyDataset && simulatedPessimisticDataset) {
                 // DEBUG: Log updated simulation data
