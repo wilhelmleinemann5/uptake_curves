@@ -857,8 +857,12 @@
                 return Math.max(lowerValue, todayValue);
             });
             
-            // STEP 4: Keep confidence intervals for entire timeline
-            // Historical points show past confidence range, future points show projections
+            // STEP 4: Set historical points to null - confidence intervals only show from "today" forward
+            for (let i = 0; i < todayIndex; i++) {
+                adjustedOptimistic[i] = null;
+                adjustedMostLikely[i] = null;
+                adjustedPessimistic[i] = null;
+            }
             
             // STEP 5: Update chart datasets (order: Pessimistic, Optimistic, Most Likely)
             const simulatedPessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
@@ -986,7 +990,7 @@
             return curve;
         }
         
-        // Generate complete confidence intervals for entire timeline
+        // Generate projection curves from "today" forward only
         function generateProjectionCurves(baseline, todayIndex = 8) {
             const todayValue = baseline[todayIndex];
             const dayPoints = CONFIG.time.dayPoints;
@@ -998,21 +1002,16 @@
                 return Math.max(value, todayValue);
             });
             
-            // STEP 2: Create uncertainty bounds for ENTIRE timeline
+            // STEP 2: Create uncertainty bounds ONLY for future points
             const baseVariance = 0.02; // 2% base uncertainty
             const varianceGrowth = 0.015; // 1.5% additional per sqrt(days)
             
             const optimistic = mostLikely.map((value, index) => {
-                // Calculate uncertainty based on distance from today
-                let uncertaintyFactor;
-                if (index <= todayIndex) {
-                    // Historical: static confidence band (for context)
-                    uncertaintyFactor = 0.08; // 8% historical variance
-                } else {
-                    // Future: expanding uncertainty
-                    const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
-                    uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
-                }
+                if (index <= todayIndex) return value; // Historical: same as baseline (will be nulled later)
+                
+                // Future: expanding uncertainty
+                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
                 
                 // Scale Most Likely upward
                 const upperValue = Math.round(value * (1 + uncertaintyFactor));
@@ -1020,23 +1019,26 @@
             });
             
             const pessimistic = mostLikely.map((value, index) => {
-                // Calculate uncertainty based on distance from today
-                let uncertaintyFactor;
-                if (index <= todayIndex) {
-                    // Historical: static confidence band (for context)
-                    uncertaintyFactor = 0.08; // 8% historical variance
-                } else {
-                    // Future: expanding uncertainty
-                    const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
-                    uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
-                }
+                if (index <= todayIndex) return value; // Historical: same as baseline (will be nulled later)
+                
+                // Future: expanding uncertainty
+                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
                 
                 // Scale Most Likely downward (with monotonicity floor)
                 const lowerValue = Math.round(value * (1 - uncertaintyFactor));
                 return Math.max(lowerValue, todayValue);
             });
             
-            return { optimistic, mostLikely, pessimistic };
+            // STEP 3: Set historical points to null for projection-only display
+            const projections = { optimistic, mostLikely, pessimistic };
+            for (let i = 0; i < todayIndex; i++) {
+                projections.optimistic[i] = null;
+                projections.mostLikely[i] = null;
+                projections.pessimistic[i] = null;
+            }
+            
+            return projections;
         }
 
         // Initialize chart when page loads
