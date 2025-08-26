@@ -1034,8 +1034,8 @@
             const optimistic = mostLikely.map((value, index) => {
                 if (index <= todayIndex) return value; // Historical: same as baseline (will be nulled later)
                 
-                // Future: expanding uncertainty
-                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                // Future: expanding uncertainty (use absolute value since days decrease)
+                const daysFromToday = Math.abs(dayPoints[index] - dayPoints[todayIndex]);
                 const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
                 
                 // Scale Most Likely upward
@@ -1046,8 +1046,8 @@
             const pessimistic = mostLikely.map((value, index) => {
                 if (index <= todayIndex) return value; // Historical: same as baseline (will be nulled later)
                 
-                // Future: expanding uncertainty
-                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                // Future: expanding uncertainty (use absolute value since days decrease)
+                const daysFromToday = Math.abs(dayPoints[index] - dayPoints[todayIndex]);
                 const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
                 
                 // Scale Most Likely downward (with monotonicity floor)
