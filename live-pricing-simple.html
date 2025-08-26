@@ -938,28 +938,51 @@
         // Generate projection curves for today forward (from day 11 onwards)
         function generateProjectionCurves(baseline, todayIndex = 8) {
             const todayValue = baseline[todayIndex];
-            const baselineFinal = baseline[baseline.length - 1];
+            const dayPoints = [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
             
-            // Generate sigmoid-based projections with different final targets
+            // Most likely follows the baseline sigmoid exactly
+            const mostLikely = baseline.slice();
+            
+            // Time-based uncertainty scaling: uncertainty grows with distance from today
+            const baseVariance = 0.02; // 2% base uncertainty
+            const varianceGrowth = 0.015; // 1.5% additional per sqrt(days)
+            
             const projections = {
                 optimistic: baseline.map((value, index) => {
                     if (index <= todayIndex) return value;
-                    // Use sigmoid shape but scale to optimistic final target
-                    const optimisticFinal = baselineFinal * 1.2;
-                    const sigmoidRatio = (baseline[index] - todayValue) / (baselineFinal - todayValue);
-                    return Math.round(todayValue + (optimisticFinal - todayValue) * sigmoidRatio);
+                    
+                    // Calculate days from today
+                    const daysFromToday = dayPoints[index] - dayPoints[todayIndex]; // Always positive
+                    
+                    // Expanding uncertainty: farther = more uncertain
+                    const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
+                    const upperMultiplier = 1 + uncertaintyFactor;
+                    
+                    // Apply to most likely value (baseline)
+                    const optimisticValue = Math.round(baseline[index] * upperMultiplier);
+                    
+                    // Ensure monotonicity: must be >= todayValue
+                    return Math.max(optimisticValue, todayValue);
                 }),
-                mostLikely: baseline.map((value, index) => {
+                mostLikely: mostLikely.map((value, index) => {
                     if (index <= todayIndex) return value;
-                    // Most likely follows the baseline sigmoid exactly
-                    return value;
+                    return value; // Follows baseline sigmoid exactly
                 }),
                 pessimistic: baseline.map((value, index) => {
                     if (index <= todayIndex) return value;
-                    // Use sigmoid shape but scale to pessimistic final target
-                    const pessimisticFinal = baselineFinal * 0.8;
-                    const sigmoidRatio = (baseline[index] - todayValue) / (baselineFinal - todayValue);
-                    return Math.round(todayValue + (pessimisticFinal - todayValue) * sigmoidRatio);
+                    
+                    // Calculate days from today
+                    const daysFromToday = dayPoints[index] - dayPoints[todayIndex]; // Always positive
+                    
+                    // Expanding uncertainty: farther = more uncertain
+                    const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
+                    const lowerMultiplier = 1 - uncertaintyFactor;
+                    
+                    // Apply to most likely value (baseline)
+                    const pessimisticValue = Math.round(baseline[index] * lowerMultiplier);
+                    
+                    // Ensure monotonicity: must be >= todayValue
+                    return Math.max(pessimisticValue, todayValue);
                 })
             };
             
