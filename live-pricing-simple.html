@@ -80,7 +80,7 @@
             <!-- Main Chart -->
             <div class="chart-container" style="flex: 2;">
                 <h2 class="chart-title">Feb 22 Departure - Uncertainty Cone</h2>
-                <p class="chart-subtitle">Asia to North Europe • Capacity: 5,000 FFE • Sigmoid-based booking trajectory and projections</p>
+                <p class="chart-subtitle">APA to Europe • Capacity: 5,000 FFE • History-based booking trajectory and projections</p>
                 <div style="position: relative; height: 400px; width: 100%;">
                     <canvas id="bookingChart"></canvas>
                 </div>
@@ -120,10 +120,29 @@
                     </div>
                 </div>
                 
-                <!-- Quick Actions -->
+                <!-- Enhanced Recommendations -->
                 <div style="text-align: center;">
                     <div style="color: var(--mds-text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">Recommendation</div>
-                    <div style="font-size: 0.9rem; font-weight: 500;" id="quickRecommendation">Monitor trajectory</div>
+                    <div style="font-size: 0.9rem; font-weight: 500; margin-bottom: 0.75rem;" id="quickRecommendation">Monitor trajectory</div>
+                    
+                    <!-- Price Change Recommendation -->
+                    <div id="priceChangeRecommendation" style="display: none; margin-bottom: 0.75rem;">
+                        <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Recommended Price Change</div>
+                        <div style="font-size: 1rem; font-weight: 600; color: var(--maersk-warning);" id="recommendedChange">-5%</div>
+                        <div style="color: var(--mds-text-secondary); font-size: 0.75rem; margin-top: 0.25rem;" id="changeRationale">To reach target forecast</div>
+                    </div>
+                    
+                    <!-- Action Buttons -->
+                    <div id="actionButtons" style="display: none; gap: 0.5rem;">
+                        <button id="applyRecommendation" onclick="applyRecommendedPriceChange()" 
+                                style="background: var(--maersk-primary); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500;">
+                            Apply -5%
+                        </button>
+                        <button id="autoApplyToggle" onclick="toggleAutoApply()" 
+                                style="background: var(--mds-bg-tertiary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-primary); padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 500;">
+                            <span id="autoApplyText">🤖 Auto-Apply</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -787,18 +806,63 @@
                 }
             }
             
-            // Update recommendation
+            // Update enhanced recommendation with calculated price changes
             const quickRecommendation = document.getElementById('quickRecommendation');
+            const priceChangeRecommendation = document.getElementById('priceChangeRecommendation');
+            const actionButtons = document.getElementById('actionButtons');
+            const recommendedChange = document.getElementById('recommendedChange');
+            const changeRationale = document.getElementById('changeRationale');
+            const applyButton = document.getElementById('applyRecommendation');
+            
             if (quickRecommendation) {
-                if (mostLikelyFinal > upperThreshold) {
-                    quickRecommendation.textContent = 'Consider price increase';
-                    quickRecommendation.style.color = 'var(--maersk-warning)';
-                } else if (mostLikelyFinal < lowerThreshold) {
-                    quickRecommendation.textContent = 'Consider price reduction';
-                    quickRecommendation.style.color = 'var(--maersk-warning)';
+                // Get current sensitivity for calculations
+                const sensitivitySelect = document.getElementById('sensitivity');
+                let currentSensitivity = CONFIG.defaults.sensitivity;
+                if (sensitivitySelect.value === 'custom') {
+                    currentSensitivity = parseFloat(document.getElementById('customSensitivity').value) || CONFIG.defaults.sensitivity;
                 } else {
-                    quickRecommendation.textContent = 'Monitor trajectory';
+                    currentSensitivity = parseFloat(sensitivitySelect.value) || CONFIG.defaults.sensitivity;
+                }
+                
+                if (mostLikelyFinal > upperThreshold) {
+                    // Above target - recommend price increase
+                    const recommendedPriceChange = calculateRecommendedPriceChange(mostLikelyFinal, targetValue, currentSensitivity);
+                    
+                    quickRecommendation.textContent = 'Forecast above target';
+                    quickRecommendation.style.color = 'var(--maersk-warning)';
+                    
+                    if (recommendedChange && changeRationale && applyButton) {
+                        recommendedChange.textContent = `+${recommendedPriceChange}%`;
+                        changeRationale.textContent = `To reach ${targetValue.toLocaleString()} FFE target`;
+                        applyButton.textContent = `Apply +${recommendedPriceChange}%`;
+                        priceChangeRecommendation.style.display = 'block';
+                        actionButtons.style.display = 'flex';
+                    }
+                    
+                } else if (mostLikelyFinal < lowerThreshold) {
+                    // Below target - recommend price decrease
+                    const recommendedPriceChange = calculateRecommendedPriceChange(mostLikelyFinal, targetValue, currentSensitivity);
+                    
+                    quickRecommendation.textContent = 'Forecast below target';
+                    quickRecommendation.style.color = 'var(--maersk-warning)';
+                    
+                    if (recommendedChange && changeRationale && applyButton) {
+                        recommendedChange.textContent = `${recommendedPriceChange}%`;
+                        changeRationale.textContent = `To reach ${targetValue.toLocaleString()} FFE target`;
+                        applyButton.textContent = `Apply ${recommendedPriceChange}%`;
+                        priceChangeRecommendation.style.display = 'block';
+                        actionButtons.style.display = 'flex';
+                    }
+                    
+                } else {
+                    // Within range - no action needed
+                    quickRecommendation.textContent = 'Forecast on target';
                     quickRecommendation.style.color = 'var(--maersk-success)';
+                    
+                    if (priceChangeRecommendation && actionButtons) {
+                        priceChangeRecommendation.style.display = 'none';
+                        actionButtons.style.display = 'none';
+                    }
                 }
             }
         }
@@ -1066,6 +1130,63 @@
             }
             
             return projections;
+        }
+
+        // Calculate recommended price change to reach target
+        function calculateRecommendedPriceChange(currentForecast, targetValue, sensitivity) {
+            const gap = targetValue - currentForecast;
+            const gapPercentage = gap / currentForecast;
+            
+            // Using elasticity formula: Volume Change = Price Change ^ elasticity
+            // Rearranged: Price Change = (Volume Change) ^ (1/elasticity)
+            const recommendedPriceChange = Math.pow(1 + gapPercentage, 1 / sensitivity) - 1;
+            
+            // Round to nearest 0.5% for practical implementation
+            return Math.round(recommendedPriceChange * 200) / 2;
+        }
+        
+        // Apply the recommended price change
+        function applyRecommendedPriceChange() {
+            const recommendedChange = parseFloat(document.getElementById('recommendedChange').textContent.replace('%', ''));
+            document.getElementById('priceChange').value = recommendedChange;
+            updatePricingSimulation();
+            
+            // Show confirmation
+            const applyButton = document.getElementById('applyRecommendation');
+            const originalText = applyButton.textContent;
+            applyButton.textContent = '✓ Applied';
+            applyButton.style.background = 'var(--maersk-success)';
+            
+            setTimeout(() => {
+                applyButton.textContent = originalText;
+                applyButton.style.background = 'var(--maersk-primary)';
+            }, 2000);
+        }
+        
+        // Toggle auto-apply functionality (placeholder for future backend integration)
+        let autoApplyEnabled = false;
+        function toggleAutoApply() {
+            autoApplyEnabled = !autoApplyEnabled;
+            const autoApplyText = document.getElementById('autoApplyText');
+            const autoApplyButton = document.getElementById('autoApplyToggle');
+            
+            if (autoApplyEnabled) {
+                autoApplyText.textContent = '🤖 Auto-Apply ON';
+                autoApplyButton.style.background = 'var(--maersk-success)';
+                autoApplyButton.style.color = 'white';
+                autoApplyButton.style.borderColor = 'var(--maersk-success)';
+                
+                // Show status message
+                console.log('Auto-Apply enabled - will monitor forecast and apply recommended changes automatically');
+                // TODO: In production, this would set up a time-based batch job
+            } else {
+                autoApplyText.textContent = '🤖 Auto-Apply';
+                autoApplyButton.style.background = 'var(--mds-bg-tertiary)';
+                autoApplyButton.style.color = 'var(--mds-text-primary)';
+                autoApplyButton.style.borderColor = 'var(--mds-border-primary)';
+                
+                console.log('Auto-Apply disabled');
+            }
         }
 
         // Initialize chart when page loads
