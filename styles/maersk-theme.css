@@ -1,0 +1,172 @@
+/* Maersk Design System Dark Theme */
+:root {
+    /* MDS Dark Theme Colors */
+    --mds-bg-primary: rgb(20, 20, 20);
+    --mds-bg-secondary: rgb(33, 33, 33);
+    --mds-bg-tertiary: rgb(54, 54, 54);
+    --mds-bg-strong: rgb(76, 76, 76);
+    --mds-text-primary: rgb(240, 240, 240);
+    --mds-text-secondary: rgb(212, 212, 212);
+    --mds-text-weak: rgb(138, 138, 138);
+    --mds-border-default: rgb(76, 76, 76);
+    --mds-border-opacity: rgba(255, 255, 255, 0.24);
+    --mds-link-color: rgb(66, 176, 213);
+    
+    /* Maersk Brand Colors */
+    --maersk-blue: rgb(0, 143, 211);
+    --maersk-light-blue: rgb(66, 176, 213);
+    --maersk-success: rgb(0, 170, 136);
+    --maersk-warning: rgb(255, 165, 0);
+    --maersk-error: rgb(229, 62, 62);
+    
+    /* Chart specific colors for dark theme */
+    --chart-bg: var(--mds-bg-secondary);
+    --chart-surface: var(--mds-bg-tertiary);
+    --chart-text: var(--mds-text-primary);
+    --chart-text-muted: var(--mds-text-weak);
+    --chart-border: var(--mds-border-default);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Maersk Headline', 'Maersk Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background-color: var(--mds-bg-primary);
+    color: var(--mds-text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+.header {
+    background: linear-gradient(135deg, var(--maersk-blue) 0%, #005fa3 100%);
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid var(--mds-border-opacity);
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-family: 'Maersk Headline', system-ui;
+}
+
+.header p {
+    font-size: 1.25rem;
+    opacity: 0.95;
+    font-weight: 300;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.chart-container {
+    background: var(--chart-bg);
+    border-radius: 12px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--mds-border-default);
+    position: relative;
+}
+
+.chart-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--maersk-blue) 0%, var(--maersk-light-blue) 100%);
+}
+
+.chart-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--chart-text);
+    text-align: center;
+    font-family: 'Maersk Headline', system-ui;
+}
+
+.chart-subtitle {
+    text-align: center;
+    color: var(--chart-text-muted);
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+}
+
+.demo-note {
+    background: linear-gradient(135deg, var(--maersk-blue) 0%, #005fa3 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    text-align: center;
+    margin: 2rem 0;
+    box-shadow: 0 8px 24px rgba(0, 143, 211, 0.3);
+}
+
+.demo-note h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    font-family: 'Maersk Headline', system-ui;
+}
+
+.insights {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.insight-card {
+    background: var(--chart-surface);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--mds-border-default);
+    border-left-width: 4px;
+}
+
+.insight-card.success { 
+    border-left-color: var(--maersk-success);
+    background: linear-gradient(135deg, var(--chart-surface) 0%, rgba(0, 170, 136, 0.1) 100%);
+}
+.insight-card.warning { 
+    border-left-color: var(--maersk-warning);
+    background: linear-gradient(135deg, var(--chart-surface) 0%, rgba(255, 165, 0, 0.1) 100%);
+}
+.insight-card.neutral { 
+    border-left-color: var(--mds-text-weak);
+    background: var(--chart-surface);
+}
+
+.insight-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--chart-text);
+}
+
+.insight-card p {
+    font-size: 0.875rem;
+    color: var(--mds-text-secondary);
+    line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+    .header h1 { font-size: 2rem; }
+    .header p { font-size: 1rem; }
+    .container { padding: 1rem; }
+    .chart-container { padding: 1rem; }
+}
