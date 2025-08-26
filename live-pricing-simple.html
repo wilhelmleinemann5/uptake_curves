@@ -344,27 +344,30 @@
                             {
                                 label: 'Simulated Pessimistic',
                                 data: simulatedPessimistic,
-                                borderColor: 'rgba(66, 176, 213, 0.6)',
-                                backgroundColor: 'rgba(66, 176, 213, 0.2)',
+                                borderColor: 'rgba(66, 176, 213, 0.7)',
+                                backgroundColor: 'transparent',
                                 borderWidth: 2,
                                 pointRadius: 0,
-                                fill: 'origin', // Fill to zero line
+                                fill: false,
                                 tension: 0.3,
                                 borderDash: [4, 4],
-                                spanGaps: false
+                                spanGaps: true
                             },
-                            // SIMULATED CONE - Optimistic (Upper bound with fill to pessimistic)
+                            // SIMULATED CONE - Optimistic (Upper bound with fill)
                             {
                                 label: 'Simulated Optimistic',
                                 data: simulatedOptimistic,
                                 borderColor: 'rgba(66, 176, 213, 0.8)',
-                                backgroundColor: 'rgba(66, 176, 213, 0.15)', // Lighter fill
+                                backgroundColor: 'rgba(66, 176, 213, 0.25)',
                                 borderWidth: 2,
                                 pointRadius: 0,
-                                fill: '-1', // Fill to previous dataset (pessimistic)
+                                fill: {
+                                    target: 'Simulated Pessimistic',
+                                    above: 'rgba(66, 176, 213, 0.25)'
+                                },
                                 tension: 0.3,
                                 borderDash: [4, 4],
-                                spanGaps: false
+                                spanGaps: true
                             },
                             // SIMULATED CONE - Most Likely (main projection)
                             {
@@ -654,7 +657,8 @@
             
             // Get current most likely forecast final value
             const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
-            const currentForecast = mostLikelyDataset ? mostLikelyDataset.data[12] : 3000; // Final point (index 12)
+            const finalIndex = CONFIG.constraints.totalDataPoints - 1;
+            const currentForecast = mostLikelyDataset ? mostLikelyDataset.data[finalIndex] : CONFIG.sigmoid.finalFFE;
             
             const statusElement = document.getElementById('guardrailStatus');
             
@@ -723,12 +727,13 @@
             const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
             const pessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
             
-            const optimisticFinal = optimisticDataset ? optimisticDataset.data[12] : 3200;
-            const mostLikelyFinal = mostLikelyDataset ? mostLikelyDataset.data[12] : 3000;
-            const pessimisticFinal = pessimisticDataset ? pessimisticDataset.data[12] : 2800;
+            const finalIndex = CONFIG.constraints.totalDataPoints - 1;
+            const optimisticFinal = optimisticDataset ? optimisticDataset.data[finalIndex] : (CONFIG.sigmoid.finalFFE * 1.2);
+            const mostLikelyFinal = mostLikelyDataset ? mostLikelyDataset.data[finalIndex] : CONFIG.sigmoid.finalFFE;
+            const pessimisticFinal = pessimisticDataset ? pessimisticDataset.data[finalIndex] : (CONFIG.sigmoid.finalFFE * 0.8);
             
-            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 3200;
-            const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
+            const targetValue = getCurrentTargetValue();
+            const thresholdBuffer = getCurrentThresholdBuffer();
             const { upperThreshold, lowerThreshold } = calculateThresholds(targetValue, thresholdBuffer);
             
             // Update forecast range display
