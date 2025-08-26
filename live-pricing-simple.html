@@ -198,7 +198,7 @@
             </div>
             <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-blue);">
                 <label for="ffeTarget" style="font-weight: 600; margin-right: 8px;">🎯 FFE Target:</label>
-                <input type="number" id="ffeTarget" value="25000" min="15000" max="35000" step="500" 
+                <input type="number" id="ffeTarget" value="3200" min="2000" max="4000" step="100" 
                        style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 80px; font-size: 14px;"
                        onchange="updateTargetLine()">
             </div>
@@ -252,7 +252,7 @@
             <!-- Main Chart -->
             <div class="chart-container" style="flex: 2;">
                 <h2 class="chart-title">Feb 22 Departure - Uncertainty Cone</h2>
-                <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Booking trajectory and projections</p>
+                <p class="chart-subtitle">Asia to North Europe • Capacity: 5,000 FFE • Sigmoid-based booking trajectory and projections</p>
                 <div style="position: relative; height: 400px; width: 100%;">
                     <canvas id="bookingChart"></canvas>
                 </div>
@@ -335,23 +335,26 @@
                 const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
                 const todayIndex = 8; // Today is at "11 days" (index 8)
                 
-                // Historical baseline for context
-                const baseline = [250, 500, 800, 1200, 1800, 2600, 3800, 5500, 8000, 11500, 16000, 21000, 24500];
+                // Generate sigmoid-based booking curve (3k final FFE)
+                const baseline = generateSigmoidBookingCurve(3000, 15, 0.4);
+                const uncertaintyBands = generateUncertaintyBands(baseline);
+                const confidenceUpper = uncertaintyBands.upper;
+                const confidenceLower = uncertaintyBands.lower;
                 
-                // Historical confidence bands
-                const confidenceUpper = [400, 750, 1150, 1700, 2500, 3600, 5100, 7300, 10500, 15000, 20500, 26500, 30000];
-                const confidenceLower = [150, 300, 500, 750, 1100, 1600, 2400, 3500, 5200, 7500, 10500, 14500, 18000];
+                // Current booking data (actual bookings so far - up to today at index 8)
+                const feb22_actual = baseline.map((value, index) => index <= 8 ? value : null);
                 
-                // Feb 22 actual bookings (up to today)
-                const feb22_actual = [180, 350, 600, 950, 1400, 2100, 3100, 4600, 7000, null, null, null, null];
+                // Generate projection curves from today forward
+                const projections = generateProjectionCurves(baseline, 8);
+                const feb22_optimistic = projections.optimistic;
+                const feb22_most_likely = projections.mostLikely;
+                const feb22_pessimistic = projections.pessimistic;
                 
-                // Uncertainty cone projections from today
-                const feb22_optimistic = [null, null, null, null, null, null, null, null, 7000, 11000, 16500, 22000, 26500];
-                const feb22_most_likely = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200];
-                const feb22_pessimistic = [null, null, null, null, null, null, null, null, 7000, 9200, 12800, 16500, 19000];
+                console.log('Generated sigmoid baseline:', baseline);
+                console.log('Today value (index 8):', baseline[8], 'Final value:', baseline[12]);
                 
-                // FFE Target line (user-adjustable)
-                const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
+                // FFE Target line (user-adjustable) - scaled to match new 3k baseline
+                const targetValue = parseInt(document.getElementById('ffeTarget').value) || 3200;
                 const targetLine = new Array(labels.length).fill(targetValue);
                 
                 // Target-anchored threshold lines
@@ -584,7 +587,7 @@
                                     color: 'rgb(212, 212, 212)'
                                 },
                                 beginAtZero: true,
-                                max: 35000,
+                                max: 5000,
                                 grid: {
                                     color: 'rgba(138, 138, 138, 0.3)',
                                     lineWidth: 1
@@ -987,7 +990,7 @@
         }
 
         function updateSimulationInsight(priceChangePercent, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier, sensitivity) {
-            const originalMostLikely = 23200;
+            const originalMostLikely = 3000;
             const volumeChangePercent = ((volumeMultiplier - 1) * 100).toFixed(1);
             const volumeDelta = Math.round(newMostLikely - originalMostLikely);
             
@@ -1027,10 +1030,11 @@
         }
 
         function updateTargetInsight(target) {
-            const currentFFE = 7000;
-            const mostLikelyFinal = 23200;
-            const optimisticFinal = 26500;
-            const pessimisticFinal = 19000;
+            // Use current sigmoid-based values (approximate for now)
+            const currentFFE = 1500; // Approximate today's value from sigmoid
+            const mostLikelyFinal = 3000; // Sigmoid final value
+            const optimisticFinal = 3600; // 20% optimistic
+            const pessimisticFinal = 2400; // 20% pessimistic
             
             let status, action, cardClass;
             
@@ -1060,6 +1064,70 @@
                     <p><strong>Current Status:</strong> ${currentFFE.toLocaleString()} FFE vs ${target.toLocaleString()} target. <strong>Gap:</strong> ${(target - currentFFE).toLocaleString()} FFE remaining. <strong>Action:</strong> ${action}</p>
                 `;
             }
+        }
+
+        // Sigmoid booking curve generation function
+        function generateSigmoidBookingCurve(finalFFE = 3000, inflectionDay = 15, steepness = 0.4) {
+            const curve = [];
+            
+            // Generate 13 data points from day 35 to day 0 (every ~3 days)
+            const dayPoints = [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            
+            for (let i = 0; i < dayPoints.length; i++) {
+                const daysOut = dayPoints[i];
+                // Invert for sigmoid: we want growth as we approach day 0
+                const t = 35 - daysOut;
+                const inflectionPoint = 35 - inflectionDay;
+                
+                // Sigmoid function: FFE = finalFFE / (1 + e^(-steepness * (t - inflectionPoint)))
+                const ffe = finalFFE / (1 + Math.exp(-steepness * (t - inflectionPoint)));
+                curve.push(Math.round(ffe));
+            }
+            
+            return curve;
+        }
+        
+        // Generate uncertainty bands around baseline curve
+        function generateUncertaintyBands(baseline, upperVariance = 0.15, lowerVariance = 0.12) {
+            const upper = baseline.map(value => Math.round(value * (1 + upperVariance)));
+            const lower = baseline.map(value => Math.round(value * (1 - lowerVariance)));
+            return { upper, lower };
+        }
+        
+        // Generate projection curves for today forward (from day 11 onwards)
+        function generateProjectionCurves(baseline, todayIndex = 8) {
+            const todayValue = baseline[todayIndex];
+            const finalValue = baseline[baseline.length - 1];
+            
+            // Create optimistic, most likely, pessimistic projections
+            const projections = {
+                optimistic: baseline.map((value, index) => {
+                    if (index <= todayIndex) return value;
+                    const progress = (index - todayIndex) / (baseline.length - 1 - todayIndex);
+                    const targetFinal = finalValue * 1.2; // 20% optimistic
+                    return Math.round(todayValue + (targetFinal - todayValue) * progress);
+                }),
+                mostLikely: baseline.map((value, index) => {
+                    if (index <= todayIndex) return value;
+                    const progress = (index - todayIndex) / (baseline.length - 1 - todayIndex);
+                    return Math.round(todayValue + (finalValue - todayValue) * progress);
+                }),
+                pessimistic: baseline.map((value, index) => {
+                    if (index <= todayIndex) return value;
+                    const progress = (index - todayIndex) / (baseline.length - 1 - todayIndex);
+                    const targetFinal = finalValue * 0.8; // 20% pessimistic
+                    return Math.round(todayValue + (targetFinal - todayValue) * progress);
+                })
+            };
+            
+            // Set values before today to null for projection curves
+            for (let i = 0; i < todayIndex; i++) {
+                projections.optimistic[i] = null;
+                projections.mostLikely[i] = null; 
+                projections.pessimistic[i] = null;
+            }
+            
+            return projections;
         }
 
         // Initialize chart when page loads
