@@ -994,15 +994,22 @@
             let priceColor = priceChangePercent < 0 ? 'var(--maersk-success)' : 'var(--maersk-warning)';
             let volumeColor = volumeDelta > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)';
             
-            // Get sensitivity description
-            const sensitivityMap = {
-                '-0.5': '📈 Conservative',
-                '-1.0': '🎯 Balanced', 
-                '-1.5': '⚡ Moderate',
-                '-2.0': '🔥 Aggressive',
-                '-3.0': '💥 Extreme'
-            };
-            const sensitivityLabel = sensitivityMap[sensitivity.toString()] || `🧮 Custom (${sensitivity})`;
+            // Get sensitivity description - check what's actually selected
+            const sensitivitySelect = document.getElementById('sensitivity');
+            let sensitivityLabel;
+            
+            if (sensitivitySelect.value === 'custom') {
+                sensitivityLabel = `🧮 Custom (${sensitivity})`;
+            } else {
+                const sensitivityMap = {
+                    '-0.5': '📈 Conservative',
+                    '-1.0': '🎯 Balanced', 
+                    '-1.5': '⚡ Moderate',
+                    '-2.0': '🔥 Aggressive',
+                    '-3.0': '💥 Extreme'
+                };
+                sensitivityLabel = sensitivityMap[sensitivitySelect.value] || `🧮 Custom (${sensitivity})`;
+            }
             
             const insightCard = document.querySelector('.insight-card');
             if (insightCard) {
