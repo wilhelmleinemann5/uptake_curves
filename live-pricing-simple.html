@@ -523,7 +523,7 @@
                                 filter: function(tooltipItem) {
                                     // Only show key datasets in tooltip - hide the ghosted original cone
                                     const hiddenInTooltip = [
-                                        'Historical Upper', 'Historical Lower', 'Historical Baseline',
+                                        'Historical Baseline',  // Keep baseline hidden (redundant with actual)
                                         'Original Optimistic', 'Original Most Likely', 'Original Pessimistic'
                                     ];
                                     return !hiddenInTooltip.includes(tooltipItem.dataset.label);
@@ -544,6 +544,8 @@
                                             'Simulated Optimistic': '📈 Optimistic',
                                             'Simulated Most Likely': '🎯 Most Likely', 
                                             'Simulated Pessimistic': '📉 Pessimistic',
+                                            'Historical Upper': '📈 Upper Range',
+                                            'Historical Lower': '📉 Lower Range',
                                             'FFE Target': '🎯 Target'
                                         };
                                         
