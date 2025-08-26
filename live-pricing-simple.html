@@ -740,9 +740,26 @@
             const pessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
             
             const finalIndex = CONFIG.time.totalDataPoints - 1;
-            const optimisticFinal = optimisticDataset ? optimisticDataset.data[finalIndex] : (CONFIG.sigmoid.finalFFE * 1.2);
-            const mostLikelyFinal = mostLikelyDataset ? mostLikelyDataset.data[finalIndex] : CONFIG.sigmoid.finalFFE;
-            const pessimisticFinal = pessimisticDataset ? pessimisticDataset.data[finalIndex] : (CONFIG.sigmoid.finalFFE * 0.8);
+            
+            // DEBUG: Check for NaN sources
+            const optimisticValue = optimisticDataset?.data?.[finalIndex];
+            const mostLikelyValue = mostLikelyDataset?.data?.[finalIndex];
+            const pessimisticValue = pessimisticDataset?.data?.[finalIndex];
+            
+            console.log('DEBUG updateDay0Panel:', {
+                finalIndex,
+                optimisticValue,
+                mostLikelyValue,
+                pessimisticValue,
+                optimisticDataset: !!optimisticDataset,
+                mostLikelyDataset: !!mostLikelyDataset,
+                pessimisticDataset: !!pessimisticDataset
+            });
+            
+            // Safe fallbacks with explicit null checks
+            const optimisticFinal = (optimisticValue != null && !isNaN(optimisticValue)) ? optimisticValue : (CONFIG.sigmoid.finalFFE * 1.2);
+            const mostLikelyFinal = (mostLikelyValue != null && !isNaN(mostLikelyValue)) ? mostLikelyValue : CONFIG.sigmoid.finalFFE;
+            const pessimisticFinal = (pessimisticValue != null && !isNaN(pessimisticValue)) ? pessimisticValue : (CONFIG.sigmoid.finalFFE * 0.8);
             
             const targetValue = getCurrentTargetValue();
             const thresholdBuffer = getCurrentThresholdBuffer();
