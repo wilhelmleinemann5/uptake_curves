@@ -769,56 +769,71 @@
             
             console.log(`Price change: ${(priceChange * 100).toFixed(1)}%, Volume multiplier: ${volumeMultiplier.toFixed(3)}`);
             
-            // Get original sigmoid-based projection values
+            // CLEAN APPROACH: Generate new projections with price elasticity applied
             const baseline = generateSigmoidBookingCurve(3000, 15, 0.4);
-            const originalProjections = generateProjectionCurves(baseline, 8);
-            const originalOptimistic = originalProjections.optimistic;
-            const originalMostLikely = originalProjections.mostLikely;
-            const originalPessimistic = originalProjections.pessimistic;
-            
-            // Apply elasticity only to future points (from today index 8 onwards)
             const todayIndex = 8;
+            const todayValue = baseline[todayIndex];
             
-            function applyElasticity(originalData) {
-                return originalData.map((value, index) => {
-                    if (value === null || index <= todayIndex) {
-                        return value; // Keep original value for historical data and today
-                    }
-                    
-                    const todayValue = originalData[todayIndex]; // Current FFE at today
-                    const originalFinalValue = originalData[originalData.length - 1]; // Original final value
-                    
-                    // Calculate new final value with elasticity
-                    const newFinalValue = Math.round(originalFinalValue * volumeMultiplier);
-                    
-                    // MONOTONICITY CONSTRAINT: Ensure newFinalValue >= todayValue
-                    const constrainedFinalValue = Math.max(newFinalValue, todayValue);
-                    
-                    // Preserve sigmoid shape by scaling proportionally
-                    const sigmoidRatio = (value - todayValue) / (originalFinalValue - todayValue);
-                    const newValue = Math.round(todayValue + (constrainedFinalValue - todayValue) * sigmoidRatio);
-                    
-                    // MONOTONICITY CONSTRAINT: Ensure all future points >= todayValue
-                    return Math.max(newValue, todayValue);
-                });
+            // STEP 1: Apply price elasticity to Most Likely scenario
+            const adjustedMostLikely = baseline.map((value, index) => {
+                if (index <= todayIndex) return value; // Keep historical data unchanged
+                
+                // Apply elasticity to future points while preserving sigmoid shape
+                const originalFinalValue = baseline[baseline.length - 1];
+                const newFinalValue = Math.round(originalFinalValue * volumeMultiplier);
+                const constrainedFinalValue = Math.max(newFinalValue, todayValue); // Monotonicity
+                
+                // Scale proportionally to preserve sigmoid curve
+                const sigmoidRatio = (value - todayValue) / (originalFinalValue - todayValue);
+                const newValue = Math.round(todayValue + (constrainedFinalValue - todayValue) * sigmoidRatio);
+                
+                return Math.max(newValue, todayValue); // Final monotonicity check
+            });
+            
+            // STEP 2: Generate uncertainty bounds from adjusted Most Likely
+            const dayPoints = [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            const baseVariance = 0.02;
+            const varianceGrowth = 0.015;
+            
+            const adjustedOptimistic = adjustedMostLikely.map((value, index) => {
+                if (index <= todayIndex) return value;
+                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
+                const upperValue = Math.round(value * (1 + uncertaintyFactor));
+                return Math.max(upperValue, todayValue);
+            });
+            
+            const adjustedPessimistic = adjustedMostLikely.map((value, index) => {
+                if (index <= todayIndex) return value;
+                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
+                const lowerValue = Math.round(value * (1 - uncertaintyFactor));
+                return Math.max(lowerValue, todayValue);
+            });
+            
+            // STEP 4: Set historical points to null for projection-only display
+            for (let i = 0; i < todayIndex; i++) {
+                adjustedOptimistic[i] = null;
+                adjustedMostLikely[i] = null;
+                adjustedPessimistic[i] = null;
             }
             
-            // Update simulated datasets
+            // STEP 5: Update chart datasets
             const simulatedOptimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Optimistic');
             const simulatedMostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
             const simulatedPessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
             
             if (simulatedOptimisticDataset && simulatedMostLikelyDataset && simulatedPessimisticDataset) {
-                simulatedOptimisticDataset.data = applyElasticity(originalOptimistic);
-                simulatedMostLikelyDataset.data = applyElasticity(originalMostLikely);
-                simulatedPessimisticDataset.data = applyElasticity(originalPessimistic);
+                simulatedOptimisticDataset.data = adjustedOptimistic;
+                simulatedMostLikelyDataset.data = adjustedMostLikely;
+                simulatedPessimisticDataset.data = adjustedPessimistic;
                 
                 window.chartInstance.update('none');
                 
-                // Update insights with new simulated values
-                const newMostLikely = simulatedMostLikelyDataset.data[12]; // Final value
-                const newOptimistic = simulatedOptimisticDataset.data[12];
-                const newPessimistic = simulatedPessimisticDataset.data[12];
+                // Update insights with new simulated values (safe fallbacks to prevent NaN)
+                const newMostLikely = adjustedMostLikely[12] || 3000; // Final value
+                const newOptimistic = adjustedOptimistic[12] || 3200;
+                const newPessimistic = adjustedPessimistic[12] || 2800;
                 
                 updateSimulationInsight(priceChange * 100, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier, sensitivity);
                 
@@ -935,58 +950,48 @@
             return { upper, lower };
         }
         
-        // Generate projection curves for today forward (from day 11 onwards)
+        // Generate clean projection system: Most Likely + Upper/Lower bounds
         function generateProjectionCurves(baseline, todayIndex = 8) {
             const todayValue = baseline[todayIndex];
             const dayPoints = [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
             
-            // Most likely follows the baseline sigmoid exactly
-            const mostLikely = baseline.slice();
+            // STEP 1: Generate Most Likely scenario (baseline sigmoid with monotonicity)
+            const mostLikely = baseline.map((value, index) => {
+                if (index <= todayIndex) return value;
+                // Future points follow baseline but ensure monotonicity
+                return Math.max(value, todayValue);
+            });
             
-            // Time-based uncertainty scaling: uncertainty grows with distance from today
+            // STEP 2: Create uncertainty bounds by scaling Most Likely scenario
             const baseVariance = 0.02; // 2% base uncertainty
             const varianceGrowth = 0.015; // 1.5% additional per sqrt(days)
             
-            const projections = {
-                optimistic: baseline.map((value, index) => {
-                    if (index <= todayIndex) return value;
-                    
-                    // Calculate days from today
-                    const daysFromToday = dayPoints[index] - dayPoints[todayIndex]; // Always positive
-                    
-                    // Expanding uncertainty: farther = more uncertain
-                    const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
-                    const upperMultiplier = 1 + uncertaintyFactor;
-                    
-                    // Apply to most likely value (baseline)
-                    const optimisticValue = Math.round(baseline[index] * upperMultiplier);
-                    
-                    // Ensure monotonicity: must be >= todayValue
-                    return Math.max(optimisticValue, todayValue);
-                }),
-                mostLikely: mostLikely.map((value, index) => {
-                    if (index <= todayIndex) return value;
-                    return value; // Follows baseline sigmoid exactly
-                }),
-                pessimistic: baseline.map((value, index) => {
-                    if (index <= todayIndex) return value;
-                    
-                    // Calculate days from today
-                    const daysFromToday = dayPoints[index] - dayPoints[todayIndex]; // Always positive
-                    
-                    // Expanding uncertainty: farther = more uncertain
-                    const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
-                    const lowerMultiplier = 1 - uncertaintyFactor;
-                    
-                    // Apply to most likely value (baseline)
-                    const pessimisticValue = Math.round(baseline[index] * lowerMultiplier);
-                    
-                    // Ensure monotonicity: must be >= todayValue
-                    return Math.max(pessimisticValue, todayValue);
-                })
-            };
+            const optimistic = mostLikely.map((value, index) => {
+                if (index <= todayIndex) return value;
+                
+                // Calculate expanding uncertainty
+                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
+                
+                // Scale Most Likely upward
+                const upperValue = Math.round(value * (1 + uncertaintyFactor));
+                return Math.max(upperValue, todayValue);
+            });
             
-            // Set values before today to null for projection curves
+            const pessimistic = mostLikely.map((value, index) => {
+                if (index <= todayIndex) return value;
+                
+                // Calculate expanding uncertainty
+                const daysFromToday = dayPoints[index] - dayPoints[todayIndex];
+                const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
+                
+                // Scale Most Likely downward (with monotonicity floor)
+                const lowerValue = Math.round(value * (1 - uncertaintyFactor));
+                return Math.max(lowerValue, todayValue);
+            });
+            
+            // STEP 3: Set historical values to null for projection-only display
+            const projections = { optimistic, mostLikely, pessimistic };
             for (let i = 0; i < todayIndex; i++) {
                 projections.optimistic[i] = null;
                 projections.mostLikely[i] = null; 
