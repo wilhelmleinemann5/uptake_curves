@@ -139,6 +139,16 @@
     <script>
         // CENTRALIZED CONFIGURATION - Single source of truth
         const CONFIG = {
+            // Time structure - SINGLE SOURCE OF TRUTH for all day references
+            time: {
+                dayPoints: [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0],
+                todayIndex: 8, // Index for "11 days" (today)
+                todayValue: 11, // Days remaining today
+                get totalDataPoints() { return this.dayPoints.length; },
+                get labels() { 
+                    return this.dayPoints.map(days => `${days} days`); 
+                }
+            },
             // Sigmoid parameters
             sigmoid: {
                 finalFFE: 3000,
@@ -157,12 +167,14 @@
                 yAxisMax: 5000,
                 yAxisStep: 1000
             },
-            // Data constraints
-            constraints: {
-                ffeTargetMin: 2000,
-                ffeTargetMax: 4000,
-                todayIndex: 8,
-                totalDataPoints: 13
+            // Data constraints (computed from time structure)
+            get constraints() {
+                return {
+                    ffeTargetMin: 2000,
+                    ffeTargetMax: 4000,
+                    todayIndex: this.time.todayIndex,
+                    totalDataPoints: this.time.totalDataPoints
+                };
             }
         };
         
@@ -203,9 +215,9 @@
 
                 console.log('Chart.js loaded, version:', Chart.version);
                 
-                // Data points
-                const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
-                const todayIndex = 8; // Today is at "11 days" (index 8)
+                // Data points from centralized time configuration
+                const labels = CONFIG.time.labels;
+                const todayIndex = CONFIG.time.todayIndex;
                 
                 // Generate sigmoid-based booking curve using centralized config
                 const baseline = generateSigmoidBookingCurve(CONFIG.sigmoid.finalFFE, CONFIG.sigmoid.inflectionDay, CONFIG.sigmoid.steepness);
@@ -599,7 +611,7 @@
             if (!window.chartInstance) return;
             
             const targetValue = getCurrentTargetValue();
-            const targetLine = new Array(CONFIG.constraints.totalDataPoints).fill(targetValue);
+            const targetLine = new Array(CONFIG.time.totalDataPoints).fill(targetValue);
             
             // Find the target dataset (should be the last one)
             const targetDataset = window.chartInstance.data.datasets.find(d => d.label === 'FFE Target');
@@ -657,7 +669,7 @@
             
             // Get current most likely forecast final value
             const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
-            const finalIndex = CONFIG.constraints.totalDataPoints - 1;
+            const finalIndex = CONFIG.time.totalDataPoints - 1;
             const currentForecast = mostLikelyDataset ? mostLikelyDataset.data[finalIndex] : CONFIG.sigmoid.finalFFE;
             
             const statusElement = document.getElementById('guardrailStatus');
@@ -727,7 +739,7 @@
             const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
             const pessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
             
-            const finalIndex = CONFIG.constraints.totalDataPoints - 1;
+            const finalIndex = CONFIG.time.totalDataPoints - 1;
             const optimisticFinal = optimisticDataset ? optimisticDataset.data[finalIndex] : (CONFIG.sigmoid.finalFFE * 1.2);
             const mostLikelyFinal = mostLikelyDataset ? mostLikelyDataset.data[finalIndex] : CONFIG.sigmoid.finalFFE;
             const pessimisticFinal = pessimisticDataset ? pessimisticDataset.data[finalIndex] : (CONFIG.sigmoid.finalFFE * 0.8);
@@ -817,7 +829,7 @@
             // CLEAN APPROACH: Generate new projections with price elasticity applied
             // Use centralized configuration
             const baseline = generateSigmoidBookingCurve(CONFIG.sigmoid.finalFFE, CONFIG.sigmoid.inflectionDay, CONFIG.sigmoid.steepness);
-            const todayIndex = CONFIG.constraints.todayIndex;
+            const todayIndex = CONFIG.time.todayIndex;
             const todayValue = baseline[todayIndex];
             
             // STEP 1: Apply price elasticity to Most Likely scenario
@@ -837,7 +849,7 @@
             });
             
             // STEP 2: Generate uncertainty bounds from adjusted Most Likely
-            const dayPoints = [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            const dayPoints = CONFIG.time.dayPoints;
             const baseVariance = 0.02;
             const varianceGrowth = 0.015;
             
@@ -877,7 +889,7 @@
                 window.chartInstance.update('none');
                 
                 // Update insights with new simulated values (safe fallbacks to prevent NaN)
-                const finalIndex = CONFIG.constraints.totalDataPoints - 1; // Index 12 for 13 data points
+                const finalIndex = CONFIG.time.totalDataPoints - 1; // Index 12 for 13 data points
                 const newMostLikely = adjustedMostLikely[finalIndex] || CONFIG.sigmoid.finalFFE;
                 const newOptimistic = adjustedOptimistic[finalIndex] || (CONFIG.sigmoid.finalFFE * 1.2);
                 const newPessimistic = adjustedPessimistic[finalIndex] || (CONFIG.sigmoid.finalFFE * 0.8);
@@ -974,7 +986,7 @@
             const curve = [];
             
             // Generate 13 data points from day 35 to day 0 (every ~3 days)
-            const dayPoints = [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            const dayPoints = CONFIG.time.dayPoints;
             
             for (let i = 0; i < dayPoints.length; i++) {
                 const daysOut = dayPoints[i];
@@ -1000,7 +1012,7 @@
         // Generate clean projection system: Most Likely + Upper/Lower bounds
         function generateProjectionCurves(baseline, todayIndex = 8) {
             const todayValue = baseline[todayIndex];
-            const dayPoints = [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            const dayPoints = CONFIG.time.dayPoints;
             
             // STEP 1: Generate Most Likely scenario (baseline sigmoid with monotonicity)
             const mostLikely = baseline.map((value, index) => {
