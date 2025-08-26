@@ -27,13 +27,13 @@ const ChartConfig = {
                     color: 'rgb(212, 212, 212)'
                 },
                 beginAtZero: true,
-                max: 35000,
+                max: 5000,
                 grid: {
                     color: 'rgba(138, 138, 138, 0.3)',
                     lineWidth: 1
                 },
                 ticks: {
-                    stepSize: 5000,
+                    stepSize: 1000,
                     color: 'rgb(138, 138, 138)',
                     font: { size: 12 },
                     callback: function(value) {

@@ -164,7 +164,7 @@
                 const todayIndex = 8; // Today is at "11 days" (index 8)
                 
                 // Generate sigmoid-based booking curve (3k final FFE)
-                const baseline = generateSigmoidBookingCurve(3000, 15, 0.4);
+                const baseline = generateSigmoidBookingCurve(3000, 10, 0.4);
                 const uncertaintyBands = generateUncertaintyBands(baseline);
                 const confidenceUpper = uncertaintyBands.upper;
                 const confidenceLower = uncertaintyBands.lower;
@@ -334,7 +334,7 @@
                                 backgroundColor: 'rgba(66, 176, 213, 0.25)', // Increased opacity for visibility
                                 borderWidth: 2,
                                 pointRadius: 0,
-                                fill: '-2', // Fill to simulated optimistic
+                                fill: 7, // Fill to Simulated Optimistic (dataset index 7)
                                 tension: 0.3,
                                 borderDash: [4, 4],
                                 spanGaps: false
@@ -682,11 +682,11 @@
             const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
             const pessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
             
-            const optimisticFinal = optimisticDataset ? optimisticDataset.data[12] : 26500;
-            const mostLikelyFinal = mostLikelyDataset ? mostLikelyDataset.data[12] : 23200;
-            const pessimisticFinal = pessimisticDataset ? pessimisticDataset.data[12] : 19000;
+            const optimisticFinal = optimisticDataset ? optimisticDataset.data[12] : 3200;
+            const mostLikelyFinal = mostLikelyDataset ? mostLikelyDataset.data[12] : 3000;
+            const pessimisticFinal = pessimisticDataset ? pessimisticDataset.data[12] : 2800;
             
-            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
+            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 3200;
             const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
             const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
             const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
