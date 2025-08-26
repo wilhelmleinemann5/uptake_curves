@@ -163,8 +163,15 @@
                 const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
                 const todayIndex = 8; // Today is at "11 days" (index 8)
                 
+                // CENTRALIZED SIGMOID PARAMETERS - Single source of truth
+                const SIGMOID_PARAMS = {
+                    finalFFE: 3000,
+                    inflectionDay: 12,
+                    steepness: 0.4
+                };
+                
                 // Generate sigmoid-based booking curve (3k final FFE)
-                const baseline = generateSigmoidBookingCurve(3000, 10, 0.4);
+                const baseline = generateSigmoidBookingCurve(SIGMOID_PARAMS.finalFFE, SIGMOID_PARAMS.inflectionDay, SIGMOID_PARAMS.steepness);
                 const uncertaintyBands = generateUncertaintyBands(baseline);
                 const confidenceUpper = uncertaintyBands.upper;
                 const confidenceLower = uncertaintyBands.lower;
@@ -297,15 +304,28 @@
                                 borderDash: [2, 8],
                                 spanGaps: false
                             },
-                            // SIMULATED CONE - Optimistic
+                            // SIMULATED CONE - Pessimistic (Lower bound - first for proper fill)
+                            {
+                                label: 'Simulated Pessimistic',
+                                data: simulatedPessimistic,
+                                borderColor: 'rgba(66, 176, 213, 0.8)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 0,
+                                fill: false,
+                                tension: 0.3,
+                                borderDash: [4, 4],
+                                spanGaps: false
+                            },
+                            // SIMULATED CONE - Optimistic (Upper bound with fill)
                             {
                                 label: 'Simulated Optimistic',
                                 data: simulatedOptimistic,
                                 borderColor: 'rgba(66, 176, 213, 0.8)',
-                                backgroundColor: 'rgba(66, 176, 213, 0.1)',
+                                backgroundColor: 'rgba(66, 176, 213, 0.3)', // Fill color
                                 borderWidth: 2,
                                 pointRadius: 0,
-                                fill: false,
+                                fill: '-1', // Fill to previous dataset (Pessimistic)
                                 tension: 0.3,
                                 borderDash: [4, 4],
                                 spanGaps: false
@@ -324,19 +344,6 @@
                                 fill: false,
                                 tension: 0.3,
                                 borderDash: [8, 4],
-                                spanGaps: false
-                            },
-                            // SIMULATED CONE - Pessimistic
-                            {
-                                label: 'Simulated Pessimistic',
-                                data: simulatedPessimistic,
-                                borderColor: 'rgba(66, 176, 213, 0.8)',
-                                backgroundColor: 'rgba(66, 176, 213, 0.25)', // Increased opacity for visibility
-                                borderWidth: 2,
-                                pointRadius: 0,
-                                fill: 7, // Fill to Simulated Optimistic (dataset index 7)
-                                tension: 0.3,
-                                borderDash: [4, 4],
                                 spanGaps: false
                             },
                             // FFE TARGET LINE
@@ -770,7 +777,8 @@
             console.log(`Price change: ${(priceChange * 100).toFixed(1)}%, Volume multiplier: ${volumeMultiplier.toFixed(3)}`);
             
             // CLEAN APPROACH: Generate new projections with price elasticity applied
-            const baseline = generateSigmoidBookingCurve(3000, 15, 0.4);
+            // Use the same centralized parameters as chart initialization
+            const baseline = generateSigmoidBookingCurve(3000, 12, 0.4);
             const todayIndex = 8;
             const todayValue = baseline[todayIndex];
             
@@ -818,15 +826,15 @@
                 adjustedPessimistic[i] = null;
             }
             
-            // STEP 5: Update chart datasets
+            // STEP 5: Update chart datasets (order: Pessimistic, Optimistic, Most Likely)
+            const simulatedPessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
             const simulatedOptimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Optimistic');
             const simulatedMostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
-            const simulatedPessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
             
             if (simulatedOptimisticDataset && simulatedMostLikelyDataset && simulatedPessimisticDataset) {
+                simulatedPessimisticDataset.data = adjustedPessimistic;
                 simulatedOptimisticDataset.data = adjustedOptimistic;
                 simulatedMostLikelyDataset.data = adjustedMostLikely;
-                simulatedPessimisticDataset.data = adjustedPessimistic;
                 
                 window.chartInstance.update('none');
                 
@@ -923,7 +931,7 @@
         }
 
         // Sigmoid booking curve generation function
-        function generateSigmoidBookingCurve(finalFFE = 3000, inflectionDay = 15, steepness = 0.4) {
+        function generateSigmoidBookingCurve(finalFFE = 3000, inflectionDay = 12, steepness = 0.4) {
             const curve = [];
             
             // Generate 13 data points from day 35 to day 0 (every ~3 days)
