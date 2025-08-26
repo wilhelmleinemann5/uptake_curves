@@ -784,16 +784,22 @@
                     if (value === null || index <= todayIndex) {
                         return value; // Keep original value for historical data and today
                     }
-                    // Apply elasticity while preserving sigmoid curve shape
+                    
                     const todayValue = originalData[todayIndex]; // Current FFE at today
                     const originalFinalValue = originalData[originalData.length - 1]; // Original final value
                     
                     // Calculate new final value with elasticity
                     const newFinalValue = Math.round(originalFinalValue * volumeMultiplier);
                     
+                    // MONOTONICITY CONSTRAINT: Ensure newFinalValue >= todayValue
+                    const constrainedFinalValue = Math.max(newFinalValue, todayValue);
+                    
                     // Preserve sigmoid shape by scaling proportionally
                     const sigmoidRatio = (value - todayValue) / (originalFinalValue - todayValue);
-                    return Math.round(todayValue + (newFinalValue - todayValue) * sigmoidRatio);
+                    const newValue = Math.round(todayValue + (constrainedFinalValue - todayValue) * sigmoidRatio);
+                    
+                    // MONOTONICITY CONSTRAINT: Ensure all future points >= todayValue
+                    return Math.max(newValue, todayValue);
                 });
             }
             
