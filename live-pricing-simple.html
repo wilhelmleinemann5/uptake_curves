@@ -66,7 +66,7 @@
                 <span style="margin-left: 4px; color: var(--mds-text-secondary); font-size: 12px;">±%</span>
             </div>
             <div style="background: var(--mds-bg-tertiary); padding: 6px 12px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
-                <span id="thresholdDisplay" style="font-size: 12px; color: var(--mds-text-secondary);">Upper: 26,000 | Lower: 24,000</span>
+                <span id="thresholdDisplay" style="font-size: 12px; color: var(--mds-text-secondary);">Upper: 3,328 | Lower: 3,072</span>
             </div>
             <div style="background: var(--mds-bg-tertiary); padding: 6px 12px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
                 <span id="guardrailStatus" style="font-size: 13px; font-weight: 600;">✅ Within Guardrails</span>
@@ -1016,6 +1016,8 @@
             setTimeout(() => {
                 if (window.chartInstance) {
                     updatePricingSimulation();
+                    // Update guardrails to fix threshold display from old 25k scale to new 3k scale
+                    updateGuardrails();
                 }
             }, 500);
         });
