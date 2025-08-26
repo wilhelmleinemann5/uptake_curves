@@ -1097,26 +1097,28 @@
         // Generate projection curves for today forward (from day 11 onwards)
         function generateProjectionCurves(baseline, todayIndex = 8) {
             const todayValue = baseline[todayIndex];
-            const finalValue = baseline[baseline.length - 1];
+            const baselineFinal = baseline[baseline.length - 1];
             
-            // Create optimistic, most likely, pessimistic projections
+            // Generate sigmoid-based projections with different final targets
             const projections = {
                 optimistic: baseline.map((value, index) => {
                     if (index <= todayIndex) return value;
-                    const progress = (index - todayIndex) / (baseline.length - 1 - todayIndex);
-                    const targetFinal = finalValue * 1.2; // 20% optimistic
-                    return Math.round(todayValue + (targetFinal - todayValue) * progress);
+                    // Use sigmoid shape but scale to optimistic final target
+                    const optimisticFinal = baselineFinal * 1.2;
+                    const sigmoidRatio = (baseline[index] - todayValue) / (baselineFinal - todayValue);
+                    return Math.round(todayValue + (optimisticFinal - todayValue) * sigmoidRatio);
                 }),
                 mostLikely: baseline.map((value, index) => {
                     if (index <= todayIndex) return value;
-                    const progress = (index - todayIndex) / (baseline.length - 1 - todayIndex);
-                    return Math.round(todayValue + (finalValue - todayValue) * progress);
+                    // Most likely follows the baseline sigmoid exactly
+                    return value;
                 }),
                 pessimistic: baseline.map((value, index) => {
                     if (index <= todayIndex) return value;
-                    const progress = (index - todayIndex) / (baseline.length - 1 - todayIndex);
-                    const targetFinal = finalValue * 0.8; // 20% pessimistic
-                    return Math.round(todayValue + (targetFinal - todayValue) * progress);
+                    // Use sigmoid shape but scale to pessimistic final target
+                    const pessimisticFinal = baselineFinal * 0.8;
+                    const sigmoidRatio = (baseline[index] - todayValue) / (baselineFinal - todayValue);
+                    return Math.round(todayValue + (pessimisticFinal - todayValue) * sigmoidRatio);
                 })
             };
             
