@@ -769,10 +769,12 @@
             
             console.log(`Price change: ${(priceChange * 100).toFixed(1)}%, Volume multiplier: ${volumeMultiplier.toFixed(3)}`);
             
-            // Get original projection values (from today forward)
-            const originalOptimistic = [null, null, null, null, null, null, null, null, 7000, 11000, 16500, 22000, 26500];
-            const originalMostLikely = [null, null, null, null, null, null, null, null, 7000, 10200, 14800, 19500, 23200];
-            const originalPessimistic = [null, null, null, null, null, null, null, null, 7000, 9200, 12800, 16500, 19000];
+            // Get original sigmoid-based projection values
+            const baseline = generateSigmoidBookingCurve(3000, 15, 0.4);
+            const originalProjections = generateProjectionCurves(baseline, 8);
+            const originalOptimistic = originalProjections.optimistic;
+            const originalMostLikely = originalProjections.mostLikely;
+            const originalPessimistic = originalProjections.pessimistic;
             
             // Apply elasticity only to future points (from today index 8 onwards)
             const todayIndex = 8;
@@ -782,11 +784,16 @@
                     if (value === null || index <= todayIndex) {
                         return value; // Keep original value for historical data and today
                     }
-                    // Apply elasticity to future projections
+                    // Apply elasticity while preserving sigmoid curve shape
                     const todayValue = originalData[todayIndex]; // Current FFE at today
-                    const incrementFromToday = value - todayValue;
-                    const newIncrement = incrementFromToday * volumeMultiplier;
-                    return todayValue + newIncrement;
+                    const originalFinalValue = originalData[originalData.length - 1]; // Original final value
+                    
+                    // Calculate new final value with elasticity
+                    const newFinalValue = Math.round(originalFinalValue * volumeMultiplier);
+                    
+                    // Preserve sigmoid shape by scaling proportionally
+                    const sigmoidRatio = (value - todayValue) / (originalFinalValue - todayValue);
+                    return Math.round(todayValue + (newFinalValue - todayValue) * sigmoidRatio);
                 });
             }
             
