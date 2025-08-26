@@ -137,12 +137,49 @@
     </div>
 
     <script>
-        // CENTRALIZED SIGMOID PARAMETERS - Global configuration
-        const SIGMOID_PARAMS = {
-            finalFFE: 3000,
-            inflectionDay: 12,
-            steepness: 0.3  // Updated to match user's change
+        // CENTRALIZED CONFIGURATION - Single source of truth
+        const CONFIG = {
+            // Sigmoid parameters
+            sigmoid: {
+                finalFFE: 3000,
+                inflectionDay: 12,
+                steepness: 0.3
+            },
+            // UI defaults and constraints
+            defaults: {
+                ffeTarget: 3200,
+                thresholdBuffer: 4,
+                priceChange: 0,
+                sensitivity: -1.5
+            },
+            // Chart scaling
+            chart: {
+                yAxisMax: 5000,
+                yAxisStep: 1000
+            },
+            // Data constraints
+            constraints: {
+                ffeTargetMin: 2000,
+                ffeTargetMax: 4000,
+                todayIndex: 8,
+                totalDataPoints: 13
+            }
         };
+        
+        // UTILITY FUNCTIONS - Eliminate redundant code
+        function getCurrentTargetValue() {
+            return parseInt(document.getElementById('ffeTarget').value) || CONFIG.defaults.ffeTarget;
+        }
+        
+        function getCurrentThresholdBuffer() {
+            return parseFloat(document.getElementById('thresholdBuffer').value) || CONFIG.defaults.thresholdBuffer;
+        }
+        
+        function calculateThresholds(targetValue, bufferPercent) {
+            const upperThreshold = Math.round(targetValue * (1 + bufferPercent / 100));
+            const lowerThreshold = Math.round(targetValue * (1 - bufferPercent / 100));
+            return { upperThreshold, lowerThreshold };
+        }
         
         function initChart() {
             try {
@@ -170,8 +207,8 @@
                 const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
                 const todayIndex = 8; // Today is at "11 days" (index 8)
                 
-                // Generate sigmoid-based booking curve using global SIGMOID_PARAMS
-                const baseline = generateSigmoidBookingCurve(SIGMOID_PARAMS.finalFFE, SIGMOID_PARAMS.inflectionDay, SIGMOID_PARAMS.steepness);
+                // Generate sigmoid-based booking curve using centralized config
+                const baseline = generateSigmoidBookingCurve(CONFIG.sigmoid.finalFFE, CONFIG.sigmoid.inflectionDay, CONFIG.sigmoid.steepness);
                 const uncertaintyBands = generateUncertaintyBands(baseline);
                 const confidenceUpper = uncertaintyBands.upper;
                 const confidenceLower = uncertaintyBands.lower;
@@ -188,14 +225,13 @@
                 console.log('Generated sigmoid baseline:', baseline);
                 console.log('Today value (index 8):', baseline[8], 'Final value:', baseline[12]);
                 
-                // FFE Target line (user-adjustable) - scaled to match new 3k baseline
-                const targetValue = parseInt(document.getElementById('ffeTarget').value) || 3200;
+                // FFE Target line (user-adjustable) - using centralized utilities
+                const targetValue = getCurrentTargetValue();
                 const targetLine = new Array(labels.length).fill(targetValue);
                 
-                // Target-anchored threshold lines
-                const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
-                const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
-                const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
+                // Target-anchored threshold lines using utility function
+                const thresholdBuffer = getCurrentThresholdBuffer();
+                const { upperThreshold, lowerThreshold } = calculateThresholds(targetValue, thresholdBuffer);
                 const upperThresholdLine = new Array(labels.length).fill(upperThreshold);
                 const lowerThresholdLine = new Array(labels.length).fill(lowerThreshold);
                 
@@ -559,8 +595,8 @@
         function updateTargetLine() {
             if (!window.chartInstance) return;
             
-            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
-            const targetLine = new Array(13).fill(targetValue); // 13 data points
+            const targetValue = getCurrentTargetValue();
+            const targetLine = new Array(CONFIG.constraints.totalDataPoints).fill(targetValue);
             
             // Find the target dataset (should be the last one)
             const targetDataset = window.chartInstance.data.datasets.find(d => d.label === 'FFE Target');
@@ -580,11 +616,10 @@
         function updateGuardrails() {
             if (!window.chartInstance) return;
             
-            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
-            const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
+            const targetValue = getCurrentTargetValue();
+            const thresholdBuffer = getCurrentThresholdBuffer();
             
-            const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
-            const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
+            const { upperThreshold, lowerThreshold } = calculateThresholds(targetValue, thresholdBuffer);
             
             const upperThresholdLine = new Array(13).fill(upperThreshold); // 13 data points
             const lowerThresholdLine = new Array(13).fill(lowerThreshold);
@@ -613,10 +648,9 @@
         }
 
         function checkGuardrailStatus() {
-            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
-            const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
-            const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
-            const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
+            const targetValue = getCurrentTargetValue();
+            const thresholdBuffer = getCurrentThresholdBuffer();
+            const { upperThreshold, lowerThreshold } = calculateThresholds(targetValue, thresholdBuffer);
             
             // Get current most likely forecast final value
             const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
@@ -695,8 +729,7 @@
             
             const targetValue = parseInt(document.getElementById('ffeTarget').value) || 3200;
             const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
-            const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
-            const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
+            const { upperThreshold, lowerThreshold } = calculateThresholds(targetValue, thresholdBuffer);
             
             // Update forecast range display
             const forecastRange = document.getElementById('forecastRange');
@@ -777,9 +810,9 @@
             console.log(`Price change: ${(priceChange * 100).toFixed(1)}%, Volume multiplier: ${volumeMultiplier.toFixed(3)}`);
             
             // CLEAN APPROACH: Generate new projections with price elasticity applied
-            // Use the same centralized parameters as chart initialization
-            const baseline = generateSigmoidBookingCurve(SIGMOID_PARAMS.finalFFE, SIGMOID_PARAMS.inflectionDay, SIGMOID_PARAMS.steepness);
-            const todayIndex = 8;
+            // Use centralized configuration
+            const baseline = generateSigmoidBookingCurve(CONFIG.sigmoid.finalFFE, CONFIG.sigmoid.inflectionDay, CONFIG.sigmoid.steepness);
+            const todayIndex = CONFIG.constraints.todayIndex;
             const todayValue = baseline[todayIndex];
             
             // STEP 1: Apply price elasticity to Most Likely scenario
@@ -839,9 +872,10 @@
                 window.chartInstance.update('none');
                 
                 // Update insights with new simulated values (safe fallbacks to prevent NaN)
-                const newMostLikely = adjustedMostLikely[12] || 3000; // Final value
-                const newOptimistic = adjustedOptimistic[12] || 3200;
-                const newPessimistic = adjustedPessimistic[12] || 2800;
+                const finalIndex = CONFIG.constraints.totalDataPoints - 1; // Index 12 for 13 data points
+                const newMostLikely = adjustedMostLikely[finalIndex] || CONFIG.sigmoid.finalFFE;
+                const newOptimistic = adjustedOptimistic[finalIndex] || (CONFIG.sigmoid.finalFFE * 1.2);
+                const newPessimistic = adjustedPessimistic[finalIndex] || (CONFIG.sigmoid.finalFFE * 0.8);
                 
                 updateSimulationInsight(priceChange * 100, newMostLikely, newOptimistic, newPessimistic, volumeMultiplier, sensitivity);
                 
