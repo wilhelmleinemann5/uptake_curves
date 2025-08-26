@@ -137,6 +137,13 @@
     </div>
 
     <script>
+        // CENTRALIZED SIGMOID PARAMETERS - Global configuration
+        const SIGMOID_PARAMS = {
+            finalFFE: 3000,
+            inflectionDay: 12,
+            steepness: 0.3  // Updated to match user's change
+        };
+        
         function initChart() {
             try {
                 const ctx = document.getElementById('bookingChart');
@@ -163,14 +170,7 @@
                 const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
                 const todayIndex = 8; // Today is at "11 days" (index 8)
                 
-                // CENTRALIZED SIGMOID PARAMETERS - Single source of truth
-                const SIGMOID_PARAMS = {
-                    finalFFE: 3000,
-                    inflectionDay: 12,
-                    steepness: 0.4
-                };
-                
-                // Generate sigmoid-based booking curve (3k final FFE)
+                // Generate sigmoid-based booking curve using global SIGMOID_PARAMS
                 const baseline = generateSigmoidBookingCurve(SIGMOID_PARAMS.finalFFE, SIGMOID_PARAMS.inflectionDay, SIGMOID_PARAMS.steepness);
                 const uncertaintyBands = generateUncertaintyBands(baseline);
                 const confidenceUpper = uncertaintyBands.upper;
@@ -304,28 +304,28 @@
                                 borderDash: [2, 8],
                                 spanGaps: false
                             },
-                            // SIMULATED CONE - Pessimistic (Lower bound - first for proper fill)
+                            // SIMULATED CONE - Pessimistic (Lower bound)
                             {
                                 label: 'Simulated Pessimistic',
                                 data: simulatedPessimistic,
-                                borderColor: 'rgba(66, 176, 213, 0.8)',
-                                backgroundColor: 'transparent',
+                                borderColor: 'rgba(66, 176, 213, 0.6)',
+                                backgroundColor: 'rgba(66, 176, 213, 0.2)',
                                 borderWidth: 2,
                                 pointRadius: 0,
-                                fill: false,
+                                fill: 'origin', // Fill to zero line
                                 tension: 0.3,
                                 borderDash: [4, 4],
                                 spanGaps: false
                             },
-                            // SIMULATED CONE - Optimistic (Upper bound with fill)
+                            // SIMULATED CONE - Optimistic (Upper bound with fill to pessimistic)
                             {
                                 label: 'Simulated Optimistic',
                                 data: simulatedOptimistic,
                                 borderColor: 'rgba(66, 176, 213, 0.8)',
-                                backgroundColor: 'rgba(66, 176, 213, 0.3)', // Fill color
+                                backgroundColor: 'rgba(66, 176, 213, 0.15)', // Lighter fill
                                 borderWidth: 2,
                                 pointRadius: 0,
-                                fill: '-1', // Fill to previous dataset (Pessimistic)
+                                fill: '-1', // Fill to previous dataset (pessimistic)
                                 tension: 0.3,
                                 borderDash: [4, 4],
                                 spanGaps: false
@@ -778,7 +778,7 @@
             
             // CLEAN APPROACH: Generate new projections with price elasticity applied
             // Use the same centralized parameters as chart initialization
-            const baseline = generateSigmoidBookingCurve(3000, 12, 0.4);
+            const baseline = generateSigmoidBookingCurve(SIGMOID_PARAMS.finalFFE, SIGMOID_PARAMS.inflectionDay, SIGMOID_PARAMS.steepness);
             const todayIndex = 8;
             const todayValue = baseline[todayIndex];
             
@@ -931,7 +931,7 @@
         }
 
         // Sigmoid booking curve generation function
-        function generateSigmoidBookingCurve(finalFFE = 3000, inflectionDay = 12, steepness = 0.4) {
+        function generateSigmoidBookingCurve(finalFFE = 3000, inflectionDay = 12, steepness = 0.3) {
             const curve = [];
             
             // Generate 13 data points from day 35 to day 0 (every ~3 days)
