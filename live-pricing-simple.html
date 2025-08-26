@@ -229,20 +229,16 @@
         
         <!-- Guardrails Configuration -->
         <div style="display: flex; gap: 1rem; margin: 1rem 0; align-items: center; justify-content: center; flex-wrap: wrap; background: var(--mds-bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--mds-border-default);">
-            <h4 style="width: 100%; text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-primary);">⚖️ Booking Guardrails</h4>
-            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
-                <label for="upperThreshold" style="font-weight: 600; margin-right: 8px;">📈 Upper Threshold:</label>
-                <input type="number" id="upperThreshold" value="24000" min="20000" max="30000" step="500" 
-                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 80px; font-size: 14px;"
+            <h4 style="width: 100%; text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-primary);">⚖️ Target-Anchored Guardrails</h4>
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-info);">
+                <label for="thresholdBuffer" style="font-weight: 600; margin-right: 8px;">📊 Threshold Buffer:</label>
+                <input type="number" id="thresholdBuffer" value="4" min="1" max="10" step="0.5" 
+                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 60px; font-size: 14px;"
                        onchange="updateGuardrails()">
-                <span style="margin-left: 4px; color: var(--mds-text-secondary); font-size: 12px;">FFE</span>
+                <span style="margin-left: 4px; color: var(--mds-text-secondary); font-size: 12px;">±%</span>
             </div>
-            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-error);">
-                <label for="lowerThreshold" style="font-weight: 600; margin-right: 8px;">📉 Lower Threshold:</label>
-                <input type="number" id="lowerThreshold" value="22000" min="15000" max="25000" step="500" 
-                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 80px; font-size: 14px;"
-                       onchange="updateGuardrails()">
-                <span style="margin-left: 4px; color: var(--mds-text-secondary); font-size: 12px;">FFE</span>
+            <div style="background: var(--mds-bg-tertiary); padding: 6px 12px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
+                <span id="thresholdDisplay" style="font-size: 12px; color: var(--mds-text-secondary);">Upper: 26,000 | Lower: 24,000</span>
             </div>
             <div style="background: var(--mds-bg-tertiary); padding: 6px 12px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
                 <span id="guardrailStatus" style="font-size: 13px; font-weight: 600;">✅ Within Guardrails</span>
@@ -252,11 +248,55 @@
             </a>
         </div>
 
-        <div class="chart-container">
-            <h2 class="chart-title">Feb 22 Departure - Uncertainty Cone</h2>
-            <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Shaded area shows forecast uncertainty range</p>
-            <div style="position: relative; height: 400px; width: 100%;">
-                <canvas id="bookingChart"></canvas>
+        <div style="display: flex; gap: 2rem; margin: 2rem 0;">
+            <!-- Main Chart -->
+            <div class="chart-container" style="flex: 2;">
+                <h2 class="chart-title">Feb 22 Departure - Uncertainty Cone</h2>
+                <p class="chart-subtitle">Asia to North Europe • Capacity: 30,000 FFE • Booking trajectory and projections</p>
+                <div style="position: relative; height: 400px; width: 100%;">
+                    <canvas id="bookingChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Day-0 Cross-Section Panel -->
+            <div style="flex: 1; background: var(--mds-bg-secondary); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--mds-border-default);">
+                <h3 style="margin: 0 0 1rem 0; text-align: center; color: var(--mds-text-primary); font-size: 1.1rem;">📊 Final Outcome Forecast</h3>
+                <div style="text-align: center; margin-bottom: 1.5rem;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">Days to Departure: 0</div>
+                    <div style="color: var(--mds-text-primary); font-size: 1.4rem; font-weight: 700;" id="forecastRange">19.0k - 26.5k FFE</div>
+                    <div style="color: var(--maersk-light-blue); font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem;" id="mostLikelyForecast">Most Likely: 23.2k</div>
+                </div>
+                
+                <!-- Target Comparison -->
+                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">🎯 Target:</span>
+                        <span style="color: var(--maersk-success); font-weight: 600;" id="targetValueDisplay">25,000 FFE</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Gap to Target:</span>
+                        <span style="font-weight: 600;" id="targetGap">+1,800 FFE</span>
+                    </div>
+                </div>
+                
+                <!-- Guardrails Status -->
+                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="text-align: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Guardrail Status</span>
+                    </div>
+                    <div style="text-align: center;" id="guardrailStatusPanel">
+                        <span style="font-size: 1.1rem; font-weight: 600;">✅ Within Range</span>
+                    </div>
+                    <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: var(--mds-text-secondary);" id="thresholdRangeDisplay">
+                        24,000 - 26,000 FFE
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">Recommendation</div>
+                    <div style="font-size: 0.9rem; font-weight: 500;" id="quickRecommendation">Monitor trajectory</div>
+                </div>
             </div>
         </div>
 
@@ -314,9 +354,10 @@
                 const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
                 const targetLine = new Array(labels.length).fill(targetValue);
                 
-                // Guardrail threshold lines (user-adjustable)
-                const upperThreshold = parseInt(document.getElementById('upperThreshold').value) || 24000;
-                const lowerThreshold = parseInt(document.getElementById('lowerThreshold').value) || 22000;
+                // Target-anchored threshold lines
+                const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
+                const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
+                const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
                 const upperThresholdLine = new Array(labels.length).fill(upperThreshold);
                 const lowerThresholdLine = new Array(labels.length).fill(lowerThreshold);
                 
@@ -663,6 +704,9 @@
                 // Initialize guardrail status
                 checkGuardrailStatus();
                 
+                // Initialize Day-0 panel
+                updateDay0Panel();
+                
             } catch (error) {
                 console.error('Error creating chart:', error);
                 // Show error message on canvas
@@ -689,14 +733,20 @@
             
             // Update the insight card with new target analysis
             updateTargetInsight(targetValue);
+            
+            // Update guardrails since they're anchored to target
+            updateGuardrails();
         }
 
-        // Function to update guardrails when user changes thresholds
+        // Function to update guardrails when user changes threshold buffer or target
         function updateGuardrails() {
             if (!window.chartInstance) return;
             
-            const upperThreshold = parseInt(document.getElementById('upperThreshold').value) || 24000;
-            const lowerThreshold = parseInt(document.getElementById('lowerThreshold').value) || 22000;
+            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
+            const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
+            
+            const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
+            const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
             
             const upperThresholdLine = new Array(13).fill(upperThreshold); // 13 data points
             const lowerThresholdLine = new Array(13).fill(lowerThreshold);
@@ -711,13 +761,24 @@
                 window.chartInstance.update('none');
             }
             
+            // Update threshold display
+            const thresholdDisplay = document.getElementById('thresholdDisplay');
+            if (thresholdDisplay) {
+                thresholdDisplay.textContent = `Upper: ${upperThreshold.toLocaleString()} | Lower: ${lowerThreshold.toLocaleString()}`;
+            }
+            
             // Check current forecast against guardrails and update status
             checkGuardrailStatus();
+            
+            // Update Day-0 panel
+            updateDay0Panel();
         }
 
         function checkGuardrailStatus() {
-            const upperThreshold = parseInt(document.getElementById('upperThreshold').value) || 24000;
-            const lowerThreshold = parseInt(document.getElementById('lowerThreshold').value) || 22000;
+            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
+            const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
+            const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
+            const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
             
             // Get current most likely forecast final value
             const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
@@ -780,6 +841,76 @@
                 expectedVolumeImpact: `${volumeImpact}%`,
                 urgency: urgencyMultiplier
             };
+        }
+
+        function updateDay0Panel() {
+            if (!window.chartInstance) return;
+            
+            // Get forecast values from chart datasets
+            const optimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Optimistic');
+            const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
+            const pessimisticDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Pessimistic');
+            
+            const optimisticFinal = optimisticDataset ? optimisticDataset.data[12] : 26500;
+            const mostLikelyFinal = mostLikelyDataset ? mostLikelyDataset.data[12] : 23200;
+            const pessimisticFinal = pessimisticDataset ? pessimisticDataset.data[12] : 19000;
+            
+            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 25000;
+            const thresholdBuffer = parseFloat(document.getElementById('thresholdBuffer').value) || 4;
+            const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
+            const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
+            
+            // Update forecast range display
+            const forecastRange = document.getElementById('forecastRange');
+            const mostLikelyForecast = document.getElementById('mostLikelyForecast');
+            if (forecastRange && mostLikelyForecast) {
+                forecastRange.textContent = `${(pessimisticFinal/1000).toFixed(1)}k - ${(optimisticFinal/1000).toFixed(1)}k FFE`;
+                mostLikelyForecast.textContent = `Most Likely: ${(mostLikelyFinal/1000).toFixed(1)}k`;
+            }
+            
+            // Update target comparison
+            const targetValueDisplay = document.getElementById('targetValueDisplay');
+            const targetGap = document.getElementById('targetGap');
+            if (targetValueDisplay && targetGap) {
+                targetValueDisplay.textContent = `${targetValue.toLocaleString()} FFE`;
+                const gap = mostLikelyFinal - targetValue;
+                const gapSign = gap >= 0 ? '+' : '';
+                const gapColor = gap >= 0 ? 'var(--maersk-success)' : 'var(--maersk-error)';
+                targetGap.textContent = `${gapSign}${gap.toLocaleString()} FFE`;
+                targetGap.style.color = gapColor;
+            }
+            
+            // Update guardrail status in panel
+            const guardrailStatusPanel = document.getElementById('guardrailStatusPanel');
+            const thresholdRangeDisplay = document.getElementById('thresholdRangeDisplay');
+            if (guardrailStatusPanel && thresholdRangeDisplay) {
+                thresholdRangeDisplay.textContent = `${lowerThreshold.toLocaleString()} - ${upperThreshold.toLocaleString()} FFE`;
+                
+                if (mostLikelyFinal > upperThreshold) {
+                    const deviation = ((mostLikelyFinal - upperThreshold) / upperThreshold * 100).toFixed(1);
+                    guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-error); font-size: 1.1rem; font-weight: 600;">🔴 Above (+${deviation}%)</span>`;
+                } else if (mostLikelyFinal < lowerThreshold) {
+                    const deviation = ((lowerThreshold - mostLikelyFinal) / lowerThreshold * 100).toFixed(1);
+                    guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-warning); font-size: 1.1rem; font-weight: 600;">🟠 Below (-${deviation}%)</span>`;
+                } else {
+                    guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-success); font-size: 1.1rem; font-weight: 600;">✅ Within Range</span>`;
+                }
+            }
+            
+            // Update recommendation
+            const quickRecommendation = document.getElementById('quickRecommendation');
+            if (quickRecommendation) {
+                if (mostLikelyFinal > upperThreshold) {
+                    quickRecommendation.textContent = 'Consider price increase';
+                    quickRecommendation.style.color = 'var(--maersk-warning)';
+                } else if (mostLikelyFinal < lowerThreshold) {
+                    quickRecommendation.textContent = 'Consider price reduction';
+                    quickRecommendation.style.color = 'var(--maersk-warning)';
+                } else {
+                    quickRecommendation.textContent = 'Monitor trajectory';
+                    quickRecommendation.style.color = 'var(--maersk-success)';
+                }
+            }
         }
 
         // Function to update pricing simulation when user changes price
@@ -849,6 +980,9 @@
                 
                 // Check guardrails after simulation update
                 checkGuardrailStatus();
+                
+                // Update Day-0 panel
+                updateDay0Panel();
             }
         }
 
