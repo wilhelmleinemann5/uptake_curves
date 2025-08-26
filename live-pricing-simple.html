@@ -234,6 +234,11 @@
                 console.log('Generated sigmoid baseline:', baseline);
                 console.log('Today value (index 8):', baseline[8], 'Final value:', baseline[12]);
                 
+                // DEBUG: Check initial projection data
+                console.log('Initial Optimistic data:', feb22_optimistic);
+                console.log('Initial Pessimistic data:', feb22_pessimistic);
+                console.log('Initial Most Likely data:', feb22_most_likely);
+                
                 // FFE Target line (user-adjustable) - using centralized utilities
                 const targetValue = getCurrentTargetValue();
                 const targetLine = new Array(labels.length).fill(targetValue);
@@ -870,6 +875,11 @@
             const simulatedMostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
             
             if (simulatedOptimisticDataset && simulatedMostLikelyDataset && simulatedPessimisticDataset) {
+                // DEBUG: Log updated simulation data
+                console.log('Updated Optimistic data:', adjustedOptimistic);
+                console.log('Updated Pessimistic data:', adjustedPessimistic);
+                console.log('Updated Most Likely data:', adjustedMostLikely);
+                
                 simulatedPessimisticDataset.data = adjustedPessimistic;
                 simulatedOptimisticDataset.data = adjustedOptimistic;
                 simulatedMostLikelyDataset.data = adjustedMostLikely;
