@@ -145,6 +145,8 @@
                 todayIndex: 8, // Index for "11 days" (today)
                 todayValue: 11, // Days remaining today
                 get totalDataPoints() { return this.dayPoints.length; },
+                get finalIndex() { return this.totalDataPoints - 1; },
+                get todayDaysRemaining() { return this.dayPoints[this.todayIndex]; },
                 get labels() { 
                     return this.dayPoints.map(days => `${days} days`); 
                 }
@@ -222,17 +224,17 @@
                 // Generate sigmoid-based booking curve using centralized config
                 const baseline = generateSigmoidBookingCurve(CONFIG.sigmoid.finalFFE, CONFIG.sigmoid.inflectionDay, CONFIG.sigmoid.steepness);
                 
-                // Current booking data (actual bookings so far - up to today at index 8)
-                const feb22_actual = baseline.map((value, index) => index <= 8 ? value : null);
+                // Current booking data (actual bookings so far - up to today)
+                const feb22_actual = baseline.map((value, index) => index <= CONFIG.time.todayIndex ? value : null);
                 
                 // Generate projection curves from today forward
-                const projections = generateProjectionCurves(baseline, 8);
+                const projections = generateProjectionCurves(baseline, CONFIG.time.todayIndex);
                 const feb22_optimistic = projections.optimistic;
                 const feb22_most_likely = projections.mostLikely;
                 const feb22_pessimistic = projections.pessimistic;
                 
                 console.log('Generated sigmoid baseline:', baseline);
-                console.log('Today value (index 8):', baseline[8], 'Final value:', baseline[12]);
+                console.log('Today value (index ' + CONFIG.time.todayIndex + '):', baseline[CONFIG.time.todayIndex], 'Final value:', baseline[CONFIG.time.finalIndex]);
                 
                 // DEBUG: Check initial projection data
                 console.log('Initial Optimistic data:', feb22_optimistic);
@@ -902,7 +904,7 @@
                 window.chartInstance.update('none');
                 
                 // Update insights with new simulated values (safe fallbacks to prevent NaN)
-                const finalIndex = CONFIG.time.totalDataPoints - 1; // Index 12 for 13 data points
+                const finalIndex = CONFIG.time.finalIndex;
                 const newMostLikely = adjustedMostLikely[finalIndex] || CONFIG.sigmoid.finalFFE;
                 const newOptimistic = adjustedOptimistic[finalIndex] || (CONFIG.sigmoid.finalFFE * 1.2);
                 const newPessimistic = adjustedPessimistic[finalIndex] || (CONFIG.sigmoid.finalFFE * 0.8);
@@ -1016,7 +1018,7 @@
         }
         
         // Generate projection curves from "today" forward only
-        function generateProjectionCurves(baseline, todayIndex = 8) {
+        function generateProjectionCurves(baseline, todayIndex = CONFIG.time.todayIndex) {
             const todayValue = baseline[todayIndex];
             const dayPoints = CONFIG.time.dayPoints;
             
