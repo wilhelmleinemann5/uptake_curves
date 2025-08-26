@@ -620,7 +620,7 @@
             
             // Get current most likely forecast final value
             const mostLikelyDataset = window.chartInstance.data.datasets.find(d => d.label === 'Simulated Most Likely');
-            const currentForecast = mostLikelyDataset ? mostLikelyDataset.data[12] : 23200; // Final point (index 12)
+            const currentForecast = mostLikelyDataset ? mostLikelyDataset.data[12] : 3000; // Final point (index 12)
             
             const statusElement = document.getElementById('guardrailStatus');
             
@@ -1010,7 +1010,15 @@
         }
 
         // Initialize chart when page loads
-        window.addEventListener('load', initChart);
+        window.addEventListener('load', function() {
+            initChart();
+            // Initialize pricing simulation after chart loads to populate Day-0 panel
+            setTimeout(() => {
+                if (window.chartInstance) {
+                    updatePricingSimulation();
+                }
+            }, 500);
+        });
         
         // Fallback: try again after 2 seconds if first attempt fails
         setTimeout(function() {
