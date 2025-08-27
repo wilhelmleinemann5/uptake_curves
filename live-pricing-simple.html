@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live FFE Booking Monitor</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     <script src="styles/chart-config.js"></script>
     <link rel="stylesheet" href="styles/maersk-theme.css">
 </head>
@@ -20,7 +21,7 @@
             <p>Monitor current booking progress vs. baseline expectations. The uncertainty cone shows the range of possible outcomes from today forward.</p>
         </div>
         
-        <div style="display: flex; gap: 1rem; margin: 1.5rem 0; align-items: center; justify-content: center; flex-wrap: wrap;">
+        <div style="display: flex; gap: 1rem; margin: 1.5rem 0; align-items: center; justify-content: center; flex-wrap;">
             <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
                 <strong>📅 Today:</strong> January 15, 2025 (11 days to departure)
             </div>
@@ -53,10 +54,17 @@
                        style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 60px; font-size: 14px; margin-left: 8px; display: none;"
                        onchange="updatePricingSimulation()">
             </div>
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
+                <label for="vesselOpenDays" style="font-weight: 600; margin-right: 8px;">🚢 Vessel Opens:</label>
+                <input type="number" id="vesselOpenDays" value="30" min="20" max="50" step="1" 
+                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 60px; font-size: 14px;"
+                       onchange="updateMetricsChart()">
+                <span style="margin-left: 4px; color: var(--mds-text-secondary);">days before departure</span>
+            </div>
         </div>
         
         <!-- Guardrails Configuration -->
-        <div style="display: flex; gap: 1rem; margin: 1rem 0; align-items: center; justify-content: center; flex-wrap: wrap; background: var(--mds-bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--mds-border-default);">
+        <div style="display: flex; gap: 1rem; margin: 1rem 0; align-items: center; justify-content: center; flex-wrap; background: var(--mds-bg-secondary); padding: 1rem; border-radius: 8px; border: 1px solid var(--mds-border-default);">
             <h4 style="width: 100%; text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-primary);">⚖️ Target-Anchored Guardrails</h4>
             <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-info);">
                 <label for="thresholdBuffer" style="font-weight: 600; margin-right: 8px;">📊 Threshold Buffer:</label>
@@ -76,27 +84,21 @@
             </a>
         </div>
 
-        <div style="display: flex; gap: 2rem; margin: 2rem 0;">
-            <!-- Main Chart -->
-            <div class="chart-container" style="flex: 2;">
-                <h2 class="chart-title">Feb 22 Departure - Uncertainty Cone</h2>
-                <p class="chart-subtitle">APA to Europe • Capacity: 5,000 FFE • History-based booking trajectory and projections</p>
-                <div style="position: relative; height: 400px; width: 100%;">
-                    <canvas id="bookingChart"></canvas>
-                </div>
+        <!-- Final Outcome Forecast Panel - Now Horizontal Above Charts -->
+        <div style="background: var(--mds-bg-secondary); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--mds-border-default); margin: 2rem 0;">
+            <h3 style="margin: 0 0 1rem 0; text-align: center; color: var(--mds-text-primary); font-size: 1.1rem;">📊 Final Outcome Forecast</h3>
+            <div style="text-align: center; margin-bottom: 1rem; color: var(--mds-text-secondary); font-size: 0.9rem;">
+                Asia to North Europe • Capacity: 5,000 FFE • Sigmoid-based booking trajectory and projections
             </div>
-            
-            <!-- Day-0 Cross-Section Panel -->
-            <div style="flex: 1; background: var(--mds-bg-secondary); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--mds-border-default);">
-                <h3 style="margin: 0 0 1rem 0; text-align: center; color: var(--mds-text-primary); font-size: 1.1rem;">📊 Final Outcome Forecast</h3>
-                <div style="text-align: center; margin-bottom: 1.5rem;">
+            <div style="display: flex; gap: 2rem; justify-content: space-around; align-items: center; flex-wrap: wrap;">
+                <div style="text-align: center;">
                     <div style="color: var(--mds-text-secondary); font-size: 0.9rem; margin-bottom: 0.5rem;">Days to Departure: 0</div>
                     <div style="color: var(--mds-text-primary); font-size: 1.4rem; font-weight: 700;" id="forecastRange">19.0k - 26.5k FFE</div>
                     <div style="color: var(--maersk-light-blue); font-size: 1.1rem; font-weight: 600; margin-top: 0.25rem;" id="mostLikelyForecast">Most Likely: 23.2k</div>
                 </div>
                 
                 <!-- Target Comparison -->
-                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; min-width: 200px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
                         <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">🎯 Target:</span>
                         <span style="color: var(--maersk-success); font-weight: 600;" id="targetValueDisplay">25,000 FFE</span>
@@ -108,7 +110,7 @@
                 </div>
                 
                 <!-- Guardrails Status -->
-                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; min-width: 200px;">
                     <div style="text-align: center; margin-bottom: 0.5rem;">
                         <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Guardrail Status</span>
                     </div>
@@ -120,38 +122,38 @@
                     </div>
                 </div>
                 
-                <!-- Enhanced Recommendations -->
-                <div style="text-align: center;">
+                <!-- Quick Actions -->
+                <div style="text-align: center; min-width: 150px;">
                     <div style="color: var(--mds-text-secondary); font-size: 0.85rem; margin-bottom: 0.5rem;">Recommendation</div>
-                    <div style="font-size: 0.9rem; font-weight: 500; margin-bottom: 0.75rem;" id="quickRecommendation">Monitor trajectory</div>
-                    
-                    <!-- Price Change Recommendation -->
-                    <div id="priceChangeRecommendation" style="display: none; margin-bottom: 0.75rem;">
-                        <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Recommended Price Change</div>
-                        <div style="font-size: 1rem; font-weight: 600; color: var(--maersk-warning);" id="recommendedChange">-5%</div>
-                        <div style="color: var(--mds-text-secondary); font-size: 0.75rem; margin-top: 0.25rem;" id="changeRationale">To reach target forecast</div>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div id="actionButtons" style="display: none; gap: 0.75rem; margin-top: 1rem; justify-content: center;">
-                        <button id="applyRecommendation" onclick="applyRecommendedPriceChange()" 
-                                style="background: var(--maersk-light-blue); color: white; border: 1px solid var(--maersk-light-blue); padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;">
-                            Apply -5%
-                        </button>
-                        <button id="autoApplyToggle" onclick="toggleAutoApply()" 
-                                style="background: var(--maersk-light-blue); color: white; border: 1px solid var(--maersk-light-blue); padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;">
-                            <span id="autoApplyText">🤖 Auto-Apply</span>
-                        </button>
-                    </div>
+                    <div style="font-size: 0.9rem; font-weight: 500;" id="quickRecommendation">Monitor trajectory</div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="insights">
-            <div class="insight-card warning">
-                <h3>🚨 Feb 22 Departure - URGENT ACTION NEEDED</h3>
-                <p><strong>Current Status:</strong> 7,000 FFE vs 8,000 baseline (-12.5%). <strong>Forecast Range:</strong> 19,000-26,500 FFE (most likely: 23,200). <strong>Action:</strong> Immediate rate reduction (-$75/FFE) needed to reach upper range.</p>
+    <!-- Charts Container - Full Window Width -->
+    <div style="display: flex; gap: 2rem; margin: 1rem 0 2rem 0; width: 100vw; margin-left: calc(-50vw + 50%);">
+        <!-- Main FFE Chart -->
+        <div class="chart-container" style="flex: 1; min-width: 0;">
+            <h2 class="chart-title">Feb 22 Departure - FFE Uncertainty Cone</h2>
+            <div style="position: relative; height: 500px; width: 100%;">
+                <canvas id="bookingChart"></canvas>
             </div>
+        </div>
+        
+        <!-- New Metrics Chart -->
+        <div class="chart-container" style="flex: 1; min-width: 0;">
+            <h2 class="chart-title">Feb 22 Departure - Demand & Error Metrics</h2>
+            <div style="position: relative; height: 500px; width: 100%;">
+                <canvas id="metricsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="insights">
+        <div class="insight-card warning">
+            <h3>🚨 Feb 22 Departure - URGENT ACTION NEEDED</h3>
+            <p><strong>Current Status:</strong> 7,000 FFE vs 8,000 baseline (-12.5%). <strong>Forecast Range:</strong> 19,000-26,500 FFE (most likely: 23,200). <strong>Action:</strong> Immediate rate reduction (-$75/FFE) needed to reach upper range.</p>
         </div>
     </div>
 
@@ -629,21 +631,29 @@
                     }
                 });
                 
-                // Add TODAY vertical line as annotation
+                // Add vessel opening line annotation
+                const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+                const vesselOpenIndex = getVesselOpenIndex(vesselOpenDays);
+                
+                // Register the annotation plugin
+                if (typeof ChartAnnotation !== 'undefined') {
+                    Chart.register(ChartAnnotation);
+                }
+                
                 window.chartInstance.options.plugins.annotation = {
                     annotations: {
-                        todayLine: {
+                        vesselOpenLine: {
                             type: 'line',
-                            xMin: todayIndex,
-                            xMax: todayIndex,
-                            borderColor: 'rgba(255, 255, 255, 0.8)',
+                            xMin: vesselOpenIndex,
+                            xMax: vesselOpenIndex,
+                            borderColor: 'rgba(66, 176, 213, 0.8)',
                             borderWidth: 2,
-                            borderDash: [5, 5],
+                            borderDash: [8, 4],
                             label: {
                                 display: true,
-                                content: 'TODAY',
+                                content: 'VESSEL OPENS',
                                 position: 'start',
-                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                backgroundColor: 'rgba(66, 176, 213, 0.9)',
                                 color: 'rgb(20, 20, 20)',
                                 font: {
                                     size: 12,
@@ -667,6 +677,9 @@
                 // Initialize Day-0 panel
                 updateDay0Panel();
                 
+                // Initialize vessel opening line position
+                updateMetricsChart();
+                
             } catch (error) {
                 console.error('Error creating chart:', error);
                 // Show error message on canvas
@@ -675,6 +688,46 @@
                 canvas.font = '16px sans-serif';
                 canvas.fillText('Error loading chart. Please refresh page.', 20, 200);
             }
+        }
+
+        function updateMetricsChart() {
+            if (!window.metricsChartInstance) return;
+            
+            // Regenerate error data with new parameters
+            const cumulativeErrors = generateCumulativeErrors();
+            
+            // Update the vessel opening line in the FFE chart
+            if (window.chartInstance && window.chartInstance.options.plugins.annotation) {
+                const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+                const vesselOpenIndex = getVesselOpenIndex(vesselOpenDays);
+                
+                const vesselOpenAnnotation = window.chartInstance.options.plugins.annotation.annotations.vesselOpenLine;
+                if (vesselOpenAnnotation) {
+                    vesselOpenAnnotation.xMin = vesselOpenIndex;
+                    vesselOpenAnnotation.xMax = vesselOpenIndex;
+                }
+            }
+            
+            // Update the vessel opening line in the metrics chart
+            if (window.metricsChartInstance.options.plugins.annotation) {
+                const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+                const vesselOpenIndex = getVesselOpenIndexForMetrics(vesselOpenDays);
+                
+                const vesselOpenAnnotation = window.metricsChartInstance.options.plugins.annotation.annotations.vesselOpenLine;
+                if (vesselOpenAnnotation) {
+                    vesselOpenAnnotation.xMin = vesselOpenIndex;
+                    vesselOpenAnnotation.xMax = vesselOpenIndex;
+                }
+            }
+            
+            // Update the error data
+            const errorDataset = window.metricsChartInstance.data.datasets.find(d => d.label === 'Cumulative Errors');
+            if (errorDataset) {
+                errorDataset.data = cumulativeErrors;
+            }
+            
+            // Update the chart
+            window.metricsChartInstance.update('none');
         }
 
         // Function to update the target line when user changes input
@@ -696,6 +749,9 @@
             
             // Update guardrails since they're anchored to target
             updateGuardrails();
+            
+            // Update metrics chart since vessel sold out errors depend on target
+            updateMetricsChart();
         }
 
         // Function to update guardrails when user changes threshold buffer or target
@@ -1371,6 +1427,93 @@
             updateSigmoidParameters();
         }
 
+        function generateCumulativeErrors() {
+            // This function generates a cumulative error curve that combines vessel not open errors (left side)
+            // and vessel sold out errors (right side) in a pattern that's high at edges, low in center.
+            const curve = [];
+            
+            // Generate 14 data points from day 40 to day 0 (extended timeline)
+            const dayPoints = [40, 35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            
+            // Get vessel opening days parameter
+            const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+            
+            // Get FFE target to determine when vessel sold out errors start
+            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 3200;
+            
+            let cumulativeErrors = 0;
+            
+            for (let i = 0; i < dayPoints.length; i++) {
+                const daysOut = dayPoints[i];
+                
+                if (daysOut > vesselOpenDays) {
+                    // Vessel not open errors - high accumulation in early days (left edge)
+                    const dailyErrors = 30 + Math.random() * 20; // 30-50 errors per day
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                } else if (daysOut > (vesselOpenDays - 10)) {
+                    // Transition period - decreasing errors as vessel opens (approaching center)
+                    const decreaseFactor = (vesselOpenDays - daysOut) / 10; // Linear decrease
+                    const dailyErrors = (20 + Math.random() * 10) * (1 - decreaseFactor); // Decreasing daily errors
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                } else if (daysOut > 15) {
+                    // Low error period when vessel is open but not at capacity (center)
+                    const dailyErrors = 5 + Math.random() * 5; // 5-10 errors per day
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                } else if (daysOut > 8) {
+                    // Vessel sold out errors start accumulating - moderate increase (approaching right edge)
+                    const dailyErrors = 15 + Math.random() * 10; // 15-25 errors per day
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                } else {
+                    // High vessel sold out errors when close to departure and at capacity (right edge)
+                    const dailyErrors = 25 + Math.random() * 15; // 25-40 errors per day
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                }
+            }
+            
+            return curve;
+        }
+
+        function getVesselOpenIndex(vesselOpenDays) {
+            // Calculate the index in the timeline where the vessel opens
+            // For FFE chart: 13 points (35 to 0 days)
+            // For metrics chart: 14 points (40 to 0 days)
+            const totalDays = 35; // FFE chart timeline
+            const daysBeforeVesselOpen = totalDays - vesselOpenDays;
+            
+            // Convert to index in the 13-point timeline
+            // 35 days = index 0, 32 days = index 1, etc.
+            const index = Math.max(0, Math.min(12, Math.round(daysBeforeVesselOpen / 3)));
+            return index;
+        }
+        
+        function getVesselOpenIndexForMetrics(vesselOpenDays) {
+            // Calculate the index in the metrics chart timeline where the vessel opens
+            // Metrics chart: 14 points (40 to 0 days)
+            // 40 days = index 0, 35 days = index 1, 32 days = index 2, 29 days = index 3, etc.
+            
+            // For vessel opening at 30 days before departure, we want to find the closest index
+            const dayPoints = [40, 35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            
+            // Find the index where daysOut is closest to vesselOpenDays
+            let closestIndex = 0;
+            let minDifference = Math.abs(dayPoints[0] - vesselOpenDays);
+            
+            for (let i = 1; i < dayPoints.length; i++) {
+                const difference = Math.abs(dayPoints[i] - vesselOpenDays);
+                if (difference < minDifference) {
+                    minDifference = difference;
+                    closestIndex = i;
+                }
+            }
+            
+            return closestIndex;
+        }
+
         // Initialize chart when page loads
         window.addEventListener('load', function() {
             initChart();
@@ -1391,6 +1534,296 @@
                 initChart();
             }
         }, 2000);
+
+        // Initialize metrics chart when page loads
+        window.addEventListener('load', initMetricsChart);
+        
+        // Fallback: try again after 2 seconds if first attempt fails
+        setTimeout(function() {
+            if (!window.metricsChartInstance) {
+                console.log('Fallback: retrying metrics chart initialization');
+                initMetricsChart();
+            }
+        }, 2000);
+
+        function initMetricsChart() {
+            try {
+                console.log('Starting metrics chart initialization...');
+                
+                const ctx = document.getElementById('metricsChart');
+                if (!ctx) {
+                    console.error('Metrics canvas element not found');
+                    return;
+                }
+
+                console.log('Canvas element found:', ctx);
+
+                if (typeof Chart === 'undefined') {
+                    console.error('Chart.js not loaded for metrics chart, retrying...');
+                    const canvas = ctx.getContext('2d');
+                    canvas.fillStyle = 'rgb(240, 240, 240)';
+                    canvas.font = '16px sans-serif';
+                    canvas.fillText('Loading metrics chart...', 20, 200);
+                    
+                    // Retry after 1 second
+                    setTimeout(initMetricsChart, 1000);
+                    return;
+                }
+
+                console.log('Chart.js loaded, version:', Chart.version);
+                console.log('Creating metrics chart...');
+                
+                // Register plugins first
+                if (typeof ChartAnnotation !== 'undefined') {
+                    Chart.register(ChartAnnotation);
+                    console.log('ChartAnnotation plugin registered for metrics chart');
+                } else {
+                    console.log('ChartAnnotation plugin not available');
+                }
+                
+                // Data points (extended timeline to 40 days for vessel not open errors)
+                const labels = ['40 days', '35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
+                const todayIndex = 9; // Today is at "11 days" (index 9)
+                
+                console.log('Labels array:', labels);
+                
+                // Generate data for the new metrics
+                const searchesData = generateSearchesData();
+                const cumulativeErrors = generateCumulativeErrors();
+                
+                console.log('Searches data:', searchesData);
+                console.log('Cumulative errors data:', cumulativeErrors);
+
+                window.metricsChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [
+                            // Searches - Left Y-axis (volume)
+                            {
+                                label: 'Cumulative Searches',
+                                data: searchesData,
+                                borderColor: 'rgb(255, 180, 50)',
+                                backgroundColor: 'rgba(255, 180, 50, 0.1)',
+                                borderWidth: 3,
+                                pointRadius: 4,
+                                pointBackgroundColor: 'rgb(255, 180, 50)',
+                                pointBorderColor: 'rgb(33, 33, 33)',
+                                pointBorderWidth: 2,
+                                fill: true,
+                                tension: 0.3,
+                                yAxisID: 'y'
+                            },
+                            // Cumulative Errors - Bar chart (S-shaped pattern)
+                            {
+                                label: 'Cumulative Errors',
+                                data: cumulativeErrors,
+                                type: 'bar',
+                                backgroundColor: 'rgba(229, 62, 62, 0.3)',
+                                borderColor: 'rgba(229, 62, 62, 0.6)',
+                                borderWidth: 1,
+                                yAxisID: 'y1',
+                                order: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: {
+                            duration: 1000
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Days to Departure',
+                                    font: { size: 14, weight: '600' },
+                                    color: 'rgb(212, 212, 212)'
+                                },
+                                reverse: false,
+                                grid: {
+                                    color: 'rgba(138, 138, 138, 0.3)',
+                                    lineWidth: 1
+                                },
+                                ticks: {
+                                    color: 'rgb(138, 138, 138)',
+                                    font: { size: 12 }
+                                },
+                                border: {
+                                    color: 'rgb(76, 76, 76)'
+                                }
+                            },
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: {
+                                    display: true,
+                                    text: 'Cumulative Searches',
+                                    font: { size: 14, weight: '600' },
+                                    color: 'rgb(212, 212, 212)'
+                                },
+                                beginAtZero: true,
+                                max: 5000,
+                                grid: {
+                                    color: 'rgba(138, 138, 138, 0.3)',
+                                    lineWidth: 1
+                                },
+                                ticks: {
+                                    stepSize: 1000,
+                                    color: 'rgb(138, 138, 138)',
+                                    font: { size: 12 },
+                                    callback: function(value) {
+                                        return value.toLocaleString();
+                                    }
+                                },
+                                border: {
+                                    color: 'rgb(76, 76, 76)'
+                                }
+                            },
+                            y1: { // New Y-axis for bar chart
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Cumulative Errors',
+                                    font: { size: 14, weight: '600' },
+                                    color: 'rgb(212, 212, 212)'
+                                },
+                                beginAtZero: true,
+                                max: 100, // Adjust max for bar chart
+                                grid: {
+                                    color: 'rgba(138, 138, 138, 0.3)',
+                                    lineWidth: 1
+                                },
+                                ticks: {
+                                    stepSize: 20,
+                                    color: 'rgb(138, 138, 138)',
+                                    font: { size: 12 },
+                                    callback: function(value) {
+                                        return value.toLocaleString();
+                                    }
+                                },
+                                border: {
+                                    color: 'rgb(76, 76, 76)'
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: {
+                                    color: 'rgb(212, 212, 212)',
+                                    font: { size: 11, weight: '500' },
+                                    padding: 12,
+                                    usePointStyle: true,
+                                    pointStyle: 'line'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                                titleColor: 'rgb(240, 240, 240)',
+                                bodyColor: 'rgb(212, 212, 212)',
+                                borderColor: 'rgb(76, 76, 76)',
+                                borderWidth: 1,
+                                cornerRadius: 8,
+                                padding: 12,
+                                callbacks: {
+                                    title: function(tooltipItems) {
+                                        return tooltipItems[0].label;
+                                    },
+                                    label: function(context) {
+                                        const label = context.dataset.label;
+                                        const value = context.parsed.y;
+                                        
+                                        if (value === null) return null;
+                                        
+                                        return `${label}: ${value.toLocaleString()}`;
+                                    }
+                                }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        }
+                    }
+                });
+                
+                // Add vessel opening line annotation to metrics chart
+                const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+                const vesselOpenIndex = getVesselOpenIndexForMetrics(vesselOpenDays);
+                
+                window.metricsChartInstance.options.plugins.annotation = {
+                    annotations: {
+                        vesselOpenLine: {
+                            type: 'line',
+                            xMin: vesselOpenIndex,
+                            xMax: vesselOpenIndex,
+                            borderColor: 'rgba(66, 176, 213, 0.8)',
+                            borderWidth: 2,
+                            borderDash: [8, 4],
+                            label: {
+                                display: true,
+                                content: 'VESSEL OPENS',
+                                position: 'start',
+                                backgroundColor: 'rgba(66, 176, 213, 0.9)',
+                                color: 'rgb(20, 20, 20)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                };
+                
+                console.log('Metrics chart created successfully');
+                
+                // Initialize vessel opening line position
+                updateMetricsChart();
+                
+            } catch (error) {
+                console.error('Error creating metrics chart:', error);
+                // Show error message on canvas
+                if (ctx && ctx.getContext) {
+                    const canvas = ctx.getContext('2d');
+                    canvas.fillStyle = 'rgb(229, 62, 62)';
+                    canvas.font = '16px sans-serif';
+                    canvas.fillText('Error loading metrics chart. Please refresh page.', 20, 200);
+                }
+            }
+        }
+
+        // Data generation functions for the metrics chart
+        
+        function generateSearchesData() {
+            // Cumulative searches follow a sigmoid pattern but with higher volume
+            // Start low, accelerate in middle, then slow as departure approaches
+            const finalSearches = 4500; // Final cumulative searches
+            const curve = [];
+            
+            // Generate 14 data points from day 40 to day 0 (extended timeline)
+            const dayPoints = [40, 35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            
+            for (let i = 0; i < dayPoints.length; i++) {
+                const daysOut = dayPoints[i];
+                // Invert for sigmoid: we want growth as we approach day 0
+                const t = 40 - daysOut;
+                const inflectionPoint = 25; // Peak search activity around day 15
+                const steepness = 0.3;
+                
+                // Sigmoid function for cumulative searches
+                const searches = finalSearches / (1 + Math.exp(-steepness * (t - inflectionPoint)));
+                curve.push(Math.round(searches));
+            }
+            
+            return curve;
+        }
     </script>
 </body>
 </html>
+
