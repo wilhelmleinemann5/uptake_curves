@@ -826,7 +826,7 @@
                 
                 if (mostLikelyFinal > upperThreshold) {
                     // Above target - recommend price increase
-                    const recommendedPriceChange = calculateRecommendedPriceChange(mostLikelyFinal, targetValue, currentSensitivity);
+                    const recommendedPriceChange = calculateRecommendedPriceChange(targetValue, currentSensitivity);
                     
                     quickRecommendation.textContent = 'Forecast above target';
                     quickRecommendation.style.color = 'var(--maersk-warning)';
@@ -841,7 +841,7 @@
                     
                 } else if (mostLikelyFinal < lowerThreshold) {
                     // Below target - recommend price decrease
-                    const recommendedPriceChange = calculateRecommendedPriceChange(mostLikelyFinal, targetValue, currentSensitivity);
+                    const recommendedPriceChange = calculateRecommendedPriceChange(targetValue, currentSensitivity);
                     
                     quickRecommendation.textContent = 'Forecast below target';
                     quickRecommendation.style.color = 'var(--maersk-warning)';
@@ -1132,10 +1132,15 @@
             return projections;
         }
 
-        // Calculate recommended price change to reach target
-        function calculateRecommendedPriceChange(currentForecast, targetValue, sensitivity) {
-            const gap = targetValue - currentForecast;
-            const gapPercentage = gap / currentForecast;
+        // Calculate recommended price change to reach target (from original baseline)
+        function calculateRecommendedPriceChange(targetValue, sensitivity) {
+            // Always calculate from original baseline (without any price changes)
+            const originalBaseline = generateSigmoidBookingCurve(CONFIG.sigmoid.finalFFE, CONFIG.sigmoid.inflectionDay, CONFIG.sigmoid.steepness);
+            const originalProjections = generateProjectionCurves(originalBaseline, CONFIG.time.todayIndex);
+            const originalForecast = originalProjections.mostLikely[CONFIG.time.finalIndex];
+            
+            const gap = targetValue - originalForecast;
+            const gapPercentage = gap / originalForecast;
             
             // Using elasticity formula: Volume Change = Price Change ^ elasticity
             // Rearranged: Price Change = (Volume Change) ^ (1/elasticity)
