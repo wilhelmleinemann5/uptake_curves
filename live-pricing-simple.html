@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live FFE Booking Monitor</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
     <script src="styles/chart-config.js"></script>
     <link rel="stylesheet" href="styles/maersk-theme.css">
 </head>
@@ -52,6 +53,13 @@
                 <input type="number" id="customSensitivity" value="-1.5" min="-5" max="-0.1" step="0.1" 
                        style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 60px; font-size: 14px; margin-left: 8px; display: none;"
                        onchange="updatePricingSimulation()">
+            </div>
+            <div style="background: var(--mds-bg-tertiary); padding: 8px 16px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
+                <label for="vesselOpenDays" style="font-weight: 600; margin-right: 8px;">🚢 Vessel Opens:</label>
+                <input type="number" id="vesselOpenDays" value="30" min="20" max="50" step="1" 
+                       style="background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 4px 8px; width: 60px; font-size: 14px;"
+                       onchange="updateMetricsChart()">
+                <span style="margin-left: 4px; color: var(--mds-text-secondary);">days before departure</span>
             </div>
         </div>
         
@@ -515,21 +523,29 @@
                     }
                 });
                 
-                // Add TODAY vertical line as annotation
+                // Add vessel opening line annotation
+                const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+                const vesselOpenIndex = getVesselOpenIndex(vesselOpenDays);
+                
+                // Register the annotation plugin
+                if (typeof ChartAnnotation !== 'undefined') {
+                    Chart.register(ChartAnnotation);
+                }
+                
                 window.chartInstance.options.plugins.annotation = {
                     annotations: {
-                        todayLine: {
+                        vesselOpenLine: {
                             type: 'line',
-                            xMin: todayIndex,
-                            xMax: todayIndex,
-                            borderColor: 'rgba(255, 255, 255, 0.8)',
+                            xMin: vesselOpenIndex,
+                            xMax: vesselOpenIndex,
+                            borderColor: 'rgba(66, 176, 213, 0.8)',
                             borderWidth: 2,
-                            borderDash: [5, 5],
+                            borderDash: [8, 4],
                             label: {
                                 display: true,
-                                content: 'TODAY',
+                                content: 'VESSEL OPENS',
                                 position: 'start',
-                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                backgroundColor: 'rgba(66, 176, 213, 0.9)',
                                 color: 'rgb(20, 20, 20)',
                                 font: {
                                     size: 12,
@@ -551,6 +567,9 @@
                 // Initialize Day-0 panel
                 updateDay0Panel();
                 
+                // Initialize vessel opening line position
+                updateMetricsChart();
+                
             } catch (error) {
                 console.error('Error creating chart:', error);
                 // Show error message on canvas
@@ -559,6 +578,46 @@
                 canvas.font = '16px sans-serif';
                 canvas.fillText('Error loading chart. Please refresh page.', 20, 200);
             }
+        }
+
+        function updateMetricsChart() {
+            if (!window.metricsChartInstance) return;
+            
+            // Regenerate error data with new parameters
+            const cumulativeErrors = generateCumulativeErrors();
+            
+            // Update the vessel opening line in the FFE chart
+            if (window.chartInstance && window.chartInstance.options.plugins.annotation) {
+                const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+                const vesselOpenIndex = getVesselOpenIndex(vesselOpenDays);
+                
+                const vesselOpenAnnotation = window.chartInstance.options.plugins.annotation.annotations.vesselOpenLine;
+                if (vesselOpenAnnotation) {
+                    vesselOpenAnnotation.xMin = vesselOpenIndex;
+                    vesselOpenAnnotation.xMax = vesselOpenIndex;
+                }
+            }
+            
+            // Update the vessel opening line in the metrics chart
+            if (window.metricsChartInstance.options.plugins.annotation) {
+                const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+                const vesselOpenIndex = getVesselOpenIndexForMetrics(vesselOpenDays);
+                
+                const vesselOpenAnnotation = window.metricsChartInstance.options.plugins.annotation.annotations.vesselOpenLine;
+                if (vesselOpenAnnotation) {
+                    vesselOpenAnnotation.xMin = vesselOpenIndex;
+                    vesselOpenAnnotation.xMax = vesselOpenIndex;
+                }
+            }
+            
+            // Update the error data
+            const errorDataset = window.metricsChartInstance.data.datasets.find(d => d.label === 'Cumulative Errors');
+            if (errorDataset) {
+                errorDataset.data = cumulativeErrors;
+            }
+            
+            // Update the chart
+            window.metricsChartInstance.update('none');
         }
 
         // Function to update the target line when user changes input
@@ -580,6 +639,9 @@
             
             // Update guardrails since they're anchored to target
             updateGuardrails();
+            
+            // Update metrics chart since vessel sold out errors depend on target
+            updateMetricsChart();
         }
 
         // Function to update guardrails when user changes threshold buffer or target
@@ -973,6 +1035,93 @@
             return projections;
         }
 
+        function generateCumulativeErrors() {
+            // This function generates a cumulative error curve that combines vessel not open errors (left side)
+            // and vessel sold out errors (right side) in a pattern that's high at edges, low in center.
+            const curve = [];
+            
+            // Generate 14 data points from day 40 to day 0 (extended timeline)
+            const dayPoints = [40, 35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            
+            // Get vessel opening days parameter
+            const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+            
+            // Get FFE target to determine when vessel sold out errors start
+            const targetValue = parseInt(document.getElementById('ffeTarget').value) || 3200;
+            
+            let cumulativeErrors = 0;
+            
+            for (let i = 0; i < dayPoints.length; i++) {
+                const daysOut = dayPoints[i];
+                
+                if (daysOut > vesselOpenDays) {
+                    // Vessel not open errors - high accumulation in early days (left edge)
+                    const dailyErrors = 30 + Math.random() * 20; // 30-50 errors per day
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                } else if (daysOut > (vesselOpenDays - 10)) {
+                    // Transition period - decreasing errors as vessel opens (approaching center)
+                    const decreaseFactor = (vesselOpenDays - daysOut) / 10; // Linear decrease
+                    const dailyErrors = (20 + Math.random() * 10) * (1 - decreaseFactor); // Decreasing daily errors
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                } else if (daysOut > 15) {
+                    // Low error period when vessel is open but not at capacity (center)
+                    const dailyErrors = 5 + Math.random() * 5; // 5-10 errors per day
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                } else if (daysOut > 8) {
+                    // Vessel sold out errors start accumulating - moderate increase (approaching right edge)
+                    const dailyErrors = 15 + Math.random() * 10; // 15-25 errors per day
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                } else {
+                    // High vessel sold out errors when close to departure and at capacity (right edge)
+                    const dailyErrors = 25 + Math.random() * 15; // 25-40 errors per day
+                    cumulativeErrors += dailyErrors;
+                    curve.push(Math.round(cumulativeErrors));
+                }
+            }
+            
+            return curve;
+        }
+
+        function getVesselOpenIndex(vesselOpenDays) {
+            // Calculate the index in the timeline where the vessel opens
+            // For FFE chart: 13 points (35 to 0 days)
+            // For metrics chart: 14 points (40 to 0 days)
+            const totalDays = 35; // FFE chart timeline
+            const daysBeforeVesselOpen = totalDays - vesselOpenDays;
+            
+            // Convert to index in the 13-point timeline
+            // 35 days = index 0, 32 days = index 1, etc.
+            const index = Math.max(0, Math.min(12, Math.round(daysBeforeVesselOpen / 3)));
+            return index;
+        }
+        
+        function getVesselOpenIndexForMetrics(vesselOpenDays) {
+            // Calculate the index in the metrics chart timeline where the vessel opens
+            // Metrics chart: 14 points (40 to 0 days)
+            // 40 days = index 0, 35 days = index 1, 32 days = index 2, 29 days = index 3, etc.
+            
+            // For vessel opening at 30 days before departure, we want to find the closest index
+            const dayPoints = [40, 35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            
+            // Find the index where daysOut is closest to vesselOpenDays
+            let closestIndex = 0;
+            let minDifference = Math.abs(dayPoints[0] - vesselOpenDays);
+            
+            for (let i = 1; i < dayPoints.length; i++) {
+                const difference = Math.abs(dayPoints[i] - vesselOpenDays);
+                if (difference < minDifference) {
+                    minDifference = difference;
+                    closestIndex = i;
+                }
+            }
+            
+            return closestIndex;
+        }
+
         // Initialize chart when page loads
         window.addEventListener('load', initChart);
         
@@ -997,11 +1146,15 @@
 
         function initMetricsChart() {
             try {
+                console.log('Starting metrics chart initialization...');
+                
                 const ctx = document.getElementById('metricsChart');
                 if (!ctx) {
                     console.error('Metrics canvas element not found');
                     return;
                 }
+
+                console.log('Canvas element found:', ctx);
 
                 if (typeof Chart === 'undefined') {
                     console.error('Chart.js not loaded for metrics chart, retrying...');
@@ -1015,15 +1168,30 @@
                     return;
                 }
 
+                console.log('Chart.js loaded, version:', Chart.version);
                 console.log('Creating metrics chart...');
                 
-                // Data points (same timeline as FFE chart)
-                const labels = ['35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
-                const todayIndex = 8; // Today is at "11 days" (index 8)
+                // Register plugins first
+                if (typeof ChartAnnotation !== 'undefined') {
+                    Chart.register(ChartAnnotation);
+                    console.log('ChartAnnotation plugin registered for metrics chart');
+                } else {
+                    console.log('ChartAnnotation plugin not available');
+                }
+                
+                // Data points (extended timeline to 40 days for vessel not open errors)
+                const labels = ['40 days', '35 days', '32 days', '29 days', '26 days', '23 days', '20 days', '17 days', '14 days', '11 days', '8 days', '5 days', '2 days', '0 days'];
+                const todayIndex = 9; // Today is at "11 days" (index 9)
+                
+                console.log('Labels array:', labels);
                 
                 // Generate data for the new metrics
                 const searchesData = generateSearchesData();
+                const cumulativeErrors = generateCumulativeErrors();
                 
+                console.log('Searches data:', searchesData);
+                console.log('Cumulative errors data:', cumulativeErrors);
+
                 window.metricsChartInstance = new Chart(ctx, {
                     type: 'line',
                     data: {
@@ -1043,6 +1211,17 @@
                                 fill: true,
                                 tension: 0.3,
                                 yAxisID: 'y'
+                            },
+                            // Cumulative Errors - Bar chart (S-shaped pattern)
+                            {
+                                label: 'Cumulative Errors',
+                                data: cumulativeErrors,
+                                type: 'bar',
+                                backgroundColor: 'rgba(229, 62, 62, 0.3)',
+                                borderColor: 'rgba(229, 62, 62, 0.6)',
+                                borderWidth: 1,
+                                yAxisID: 'y1',
+                                order: 2
                             }
                         ]
                     },
@@ -1100,6 +1279,34 @@
                                 border: {
                                     color: 'rgb(76, 76, 76)'
                                 }
+                            },
+                            y1: { // New Y-axis for bar chart
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: {
+                                    display: true,
+                                    text: 'Cumulative Errors',
+                                    font: { size: 14, weight: '600' },
+                                    color: 'rgb(212, 212, 212)'
+                                },
+                                beginAtZero: true,
+                                max: 100, // Adjust max for bar chart
+                                grid: {
+                                    color: 'rgba(138, 138, 138, 0.3)',
+                                    lineWidth: 1
+                                },
+                                ticks: {
+                                    stepSize: 20,
+                                    color: 'rgb(138, 138, 138)',
+                                    font: { size: 12 },
+                                    callback: function(value) {
+                                        return value.toLocaleString();
+                                    }
+                                },
+                                border: {
+                                    color: 'rgb(76, 76, 76)'
+                                }
                             }
                         },
                         plugins: {
@@ -1144,15 +1351,48 @@
                     }
                 });
                 
+                // Add vessel opening line annotation to metrics chart
+                const vesselOpenDays = parseInt(document.getElementById('vesselOpenDays').value) || 30;
+                const vesselOpenIndex = getVesselOpenIndexForMetrics(vesselOpenDays);
+                
+                window.metricsChartInstance.options.plugins.annotation = {
+                    annotations: {
+                        vesselOpenLine: {
+                            type: 'line',
+                            xMin: vesselOpenIndex,
+                            xMax: vesselOpenIndex,
+                            borderColor: 'rgba(66, 176, 213, 0.8)',
+                            borderWidth: 2,
+                            borderDash: [8, 4],
+                            label: {
+                                display: true,
+                                content: 'VESSEL OPENS',
+                                position: 'start',
+                                backgroundColor: 'rgba(66, 176, 213, 0.9)',
+                                color: 'rgb(20, 20, 20)',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold'
+                                }
+                            }
+                        }
+                    }
+                };
+                
                 console.log('Metrics chart created successfully');
+                
+                // Initialize vessel opening line position
+                updateMetricsChart();
                 
             } catch (error) {
                 console.error('Error creating metrics chart:', error);
                 // Show error message on canvas
-                const canvas = ctx.getContext('2d');
-                canvas.fillStyle = 'rgb(229, 62, 62)';
-                canvas.font = '16px sans-serif';
-                canvas.fillText('Error loading metrics chart. Please refresh page.', 20, 200);
+                if (ctx && ctx.getContext) {
+                    const canvas = ctx.getContext('2d');
+                    canvas.fillStyle = 'rgb(229, 62, 62)';
+                    canvas.font = '16px sans-serif';
+                    canvas.fillText('Error loading metrics chart. Please refresh page.', 20, 200);
+                }
             }
         }
 
@@ -1164,14 +1404,14 @@
             const finalSearches = 4500; // Final cumulative searches
             const curve = [];
             
-            // Generate 13 data points from day 35 to day 0
-            const dayPoints = [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
+            // Generate 14 data points from day 40 to day 0 (extended timeline)
+            const dayPoints = [40, 35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0];
             
             for (let i = 0; i < dayPoints.length; i++) {
                 const daysOut = dayPoints[i];
                 // Invert for sigmoid: we want growth as we approach day 0
-                const t = 35 - daysOut;
-                const inflectionPoint = 20; // Peak search activity around day 15
+                const t = 40 - daysOut;
+                const inflectionPoint = 25; // Peak search activity around day 15
                 const steepness = 0.3;
                 
                 // Sigmoid function for cumulative searches
@@ -1184,3 +1424,4 @@
     </script>
 </body>
 </html>
+
