@@ -1279,7 +1279,7 @@
             }
         }
         
-        // Update sigmoid parameters and regenerate chart
+        // Update sigmoid parameters and COMPLETELY regenerate all dependent data
         function updateSigmoidParameters() {
             const finalFFE = parseInt(document.getElementById('sigmoidFinalFFE').value) || CONFIG.sigmoid.finalFFE;
             const inflectionDay = parseInt(document.getElementById('sigmoidInflectionDay').value) || CONFIG.sigmoid.inflectionDay;
@@ -1290,32 +1290,76 @@
             CONFIG.sigmoid.inflectionDay = inflectionDay;
             CONFIG.sigmoid.steepness = steepness;
             
-            // Regenerate chart with new parameters
-            if (window.chartInstance) {
-                // Update chart data with new sigmoid curve
-                const baseline = generateSigmoidBookingCurve(finalFFE, inflectionDay, steepness);
-                const todayIndex = CONFIG.time.todayIndex;
-                const feb22_actual = baseline.map((value, index) => index <= todayIndex ? value : null);
-                
-                // Update actual bookings dataset
-                const actualDataset = window.chartInstance.data.datasets.find(d => d.label === 'Feb 22 Actual Bookings');
-                if (actualDataset) {
-                    actualDataset.data = feb22_actual;
-                }
-                
-                // Update historical baseline dataset
-                const baselineDataset = window.chartInstance.data.datasets.find(d => d.label === 'Historical Baseline');
-                if (baselineDataset) {
-                    baselineDataset.data = baseline;
-                }
-                
-                window.chartInstance.update();
-                
-                // Update pricing simulation to reflect new baseline
-                updatePricingSimulation();
-            }
+            if (!window.chartInstance) return;
             
-            console.log('Sigmoid parameters updated:', { finalFFE, inflectionDay, steepness });
+            // COMPLETE RE-INITIALIZATION: Regenerate ALL dependent data structures
+            console.log('Regenerating all data with new sigmoid parameters:', { finalFFE, inflectionDay, steepness });
+            
+            // 1. Generate new baseline sigmoid curve
+            const baseline = generateSigmoidBookingCurve(finalFFE, inflectionDay, steepness);
+            const todayIndex = CONFIG.time.todayIndex;
+            
+            // 2. Generate actual bookings (baseline up to today)
+            const feb22_actual = baseline.map((value, index) => index <= todayIndex ? value : null);
+            
+            // 3. Generate projection curves from today forward
+            const projections = generateProjectionCurves(baseline, todayIndex);
+            const feb22_optimistic = projections.optimistic;
+            const feb22_most_likely = projections.mostLikely;
+            const feb22_pessimistic = projections.pessimistic;
+            
+            // 4. Create original cone (baseline projections)
+            const originalOptimistic = feb22_optimistic.slice();
+            const originalMostLikely = feb22_most_likely.slice();
+            const originalPessimistic = feb22_pessimistic.slice();
+            
+            // 5. Create simulated cone (copies of original, will be updated by pricing simulation)
+            const simulatedOptimistic = feb22_optimistic.slice();
+            const simulatedMostLikely = feb22_most_likely.slice();
+            const simulatedPessimistic = feb22_pessimistic.slice();
+            
+            // 6. Update ALL chart datasets
+            const datasets = window.chartInstance.data.datasets;
+            
+            // Historical Baseline
+            const baselineDataset = datasets.find(d => d.label === 'Historical Baseline');
+            if (baselineDataset) baselineDataset.data = baseline;
+            
+            // Feb 22 Actual Bookings
+            const actualDataset = datasets.find(d => d.label === 'Feb 22 Actual Bookings');
+            if (actualDataset) actualDataset.data = feb22_actual;
+            
+            // Original cone (ghosted)
+            const originalOptimisticDataset = datasets.find(d => d.label === 'Original Optimistic');
+            if (originalOptimisticDataset) originalOptimisticDataset.data = originalOptimistic;
+            
+            const originalMostLikelyDataset = datasets.find(d => d.label === 'Original Most Likely');
+            if (originalMostLikelyDataset) originalMostLikelyDataset.data = originalMostLikely;
+            
+            const originalPessimisticDataset = datasets.find(d => d.label === 'Original Pessimistic');
+            if (originalPessimisticDataset) originalPessimisticDataset.data = originalPessimistic;
+            
+            // Simulated cone (will be updated by pricing simulation)
+            const simulatedOptimisticDataset = datasets.find(d => d.label === 'Simulated Optimistic');
+            if (simulatedOptimisticDataset) simulatedOptimisticDataset.data = simulatedOptimistic;
+            
+            const simulatedMostLikelyDataset = datasets.find(d => d.label === 'Simulated Most Likely');
+            if (simulatedMostLikelyDataset) simulatedMostLikelyDataset.data = simulatedMostLikely;
+            
+            const simulatedPessimisticDataset = datasets.find(d => d.label === 'Simulated Pessimistic');
+            if (simulatedPessimisticDataset) simulatedPessimisticDataset.data = simulatedPessimistic;
+            
+            // 7. Update chart display
+            window.chartInstance.update();
+            
+            // 8. Regenerate pricing simulation with new baseline
+            updatePricingSimulation();
+            
+            // 9. Update Day-0 panel and recommendations
+            updateDay0Panel();
+            updateGuardrails();
+            
+            console.log('Complete re-initialization finished with new baseline final value:', baseline[CONFIG.time.finalIndex]);
         }
         
         // Reset sigmoid parameters to defaults
