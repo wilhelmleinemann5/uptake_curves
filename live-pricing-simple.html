@@ -155,6 +155,73 @@
         </div>
     </div>
 
+    <!-- Advanced Settings (Collapsible) -->
+    <div style="margin-top: 2rem; padding: 1rem; background: var(--mds-bg-secondary); border-radius: 8px; border: 1px solid var(--mds-border-default);">
+        <!-- Toggle Button -->
+        <div style="text-align: center; cursor: pointer; user-select: none;" onclick="toggleAdvancedSettings()" id="advancedToggle">
+            <span style="color: var(--mds-text-secondary); font-size: 0.9rem; font-weight: 500;">
+                ⚙️ Advanced Settings
+                <span id="advancedArrow" style="margin-left: 0.5rem; transition: transform 0.3s ease;">▼</span>
+            </span>
+        </div>
+        
+        <!-- Collapsible Content -->
+        <div id="advancedContent" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--mds-border-default);">
+            <div style="color: var(--mds-text-secondary); font-size: 0.85rem; margin-bottom: 1rem; text-align: center;">
+                Sigmoid Curve Parameters - Adjust baseline booking trajectory shape
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; max-width: 600px; margin: 0 auto;">
+                <!-- Final FFE -->
+                <div>
+                    <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">
+                        📊 Final FFE
+                    </label>
+                    <input type="number" id="sigmoidFinalFFE" value="3000" min="1000" max="10000" step="100" 
+                           onchange="updateSigmoidParameters()"
+                           style="width: 100%; padding: 0.5rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
+                        Plateau level (FFE)
+                    </div>
+                </div>
+                
+                <!-- Inflection Day -->
+                <div>
+                    <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">
+                        📈 Inflection Day
+                    </label>
+                    <input type="number" id="sigmoidInflectionDay" value="12" min="5" max="25" step="1" 
+                           onchange="updateSigmoidParameters()"
+                           style="width: 100%; padding: 0.5rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
+                        Days to departure
+                    </div>
+                </div>
+                
+                <!-- Steepness -->
+                <div>
+                    <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">
+                        📐 Steepness
+                    </label>
+                    <input type="number" id="sigmoidSteepness" value="0.3" min="0.1" max="1.0" step="0.05" 
+                           onchange="updateSigmoidParameters()"
+                           style="width: 100%; padding: 0.5rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
+                        Curve acceleration
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Reset Button -->
+            <div style="text-align: center; margin-top: 1rem;">
+                <button onclick="resetSigmoidParameters()" 
+                        style="background: var(--mds-bg-strong); color: var(--mds-text-secondary); border: 1px solid var(--mds-border-default); padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                    Reset to Defaults
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // CENTRALIZED CONFIGURATION - Single source of truth
         const CONFIG = {
@@ -1196,6 +1263,68 @@
                 
                 console.log('Auto-Apply disabled');
             }
+        }
+
+        // Advanced Settings Toggle
+        function toggleAdvancedSettings() {
+            const content = document.getElementById('advancedContent');
+            const arrow = document.getElementById('advancedArrow');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+        
+        // Update sigmoid parameters and regenerate chart
+        function updateSigmoidParameters() {
+            const finalFFE = parseInt(document.getElementById('sigmoidFinalFFE').value) || CONFIG.sigmoid.finalFFE;
+            const inflectionDay = parseInt(document.getElementById('sigmoidInflectionDay').value) || CONFIG.sigmoid.inflectionDay;
+            const steepness = parseFloat(document.getElementById('sigmoidSteepness').value) || CONFIG.sigmoid.steepness;
+            
+            // Update CONFIG
+            CONFIG.sigmoid.finalFFE = finalFFE;
+            CONFIG.sigmoid.inflectionDay = inflectionDay;
+            CONFIG.sigmoid.steepness = steepness;
+            
+            // Regenerate chart with new parameters
+            if (window.chartInstance) {
+                // Update chart data with new sigmoid curve
+                const baseline = generateSigmoidBookingCurve(finalFFE, inflectionDay, steepness);
+                const todayIndex = CONFIG.time.todayIndex;
+                const feb22_actual = baseline.map((value, index) => index <= todayIndex ? value : null);
+                
+                // Update actual bookings dataset
+                const actualDataset = window.chartInstance.data.datasets.find(d => d.label === 'Feb 22 Actual Bookings');
+                if (actualDataset) {
+                    actualDataset.data = feb22_actual;
+                }
+                
+                // Update historical baseline dataset
+                const baselineDataset = window.chartInstance.data.datasets.find(d => d.label === 'Historical Baseline');
+                if (baselineDataset) {
+                    baselineDataset.data = baseline;
+                }
+                
+                window.chartInstance.update();
+                
+                // Update pricing simulation to reflect new baseline
+                updatePricingSimulation();
+            }
+            
+            console.log('Sigmoid parameters updated:', { finalFFE, inflectionDay, steepness });
+        }
+        
+        // Reset sigmoid parameters to defaults
+        function resetSigmoidParameters() {
+            document.getElementById('sigmoidFinalFFE').value = 3000;
+            document.getElementById('sigmoidInflectionDay').value = 12;
+            document.getElementById('sigmoidSteepness').value = 0.3;
+            
+            updateSigmoidParameters();
         }
 
         // Initialize chart when page loads
