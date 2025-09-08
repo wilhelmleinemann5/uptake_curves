@@ -90,7 +90,7 @@
                     
                     <div>
                         <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Base Weekday Volume</label>
-                        <input type="number" id="baseWeekdayVolume" value="1200" min="500" max="3000" step="100" 
+                        <input type="number" id="baseWeekdayVolume" value="500" min="200" max="2000" step="50" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
@@ -111,7 +111,7 @@
                     
                     <div>
                         <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Weekend Multiplier</label>
-                        <input type="number" id="weekendMultiplier" value="0.05" min="0.01" max="0.5" step="0.01" 
+                        <input type="number" id="weekendMultiplier" value="0.20" min="0.01" max="0.8" step="0.05" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
@@ -130,14 +130,14 @@
                     
                     <div>
                         <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Fee Pass-Through (%)</label>
-                        <input type="number" id="feePassThrough" value="10" min="0" max="50" step="5" 
+                        <input type="number" id="feePassThrough" value="15" min="0" max="50" step="5" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
                     
                     <div>
                         <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Cancel Cap per Day (%)</label>
-                        <input type="number" id="cancelCap" value="5" min="1" max="20" step="1" 
+                        <input type="number" id="cancelCap" value="2" min="1" max="10" step="0.5" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
@@ -156,7 +156,7 @@
                     
                     <div>
                         <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Open Weeks Before</label>
-                        <input type="number" id="openWeeksBefore" value="7" min="1" max="12" step="1" 
+                        <input type="number" id="openWeeksBefore" value="4" min="1" max="12" step="1" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
@@ -276,15 +276,15 @@
                 channelPrice: 3090,
                 elasticity: 1.25,
                 bookingConversion: 0.10,
-                baseWeekdayVolume: 1200,
+                baseWeekdayVolume: 500,
                 rampStart: 28,
                 taperStart: 5,
-                weekendMultiplier: 0.05,
+                weekendMultiplier: 0.20,
                 cancellationFee: 250,
-                feePassThrough: 10,
-                cancelCap: 5,
+                feePassThrough: 15,
+                cancelCap: 2,
                 noCancelInside: 5,
-                openWeeksBefore: 7
+                openWeeksBefore: 4
             }
         };
 
