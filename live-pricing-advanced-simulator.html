@@ -388,9 +388,12 @@
                     }
                 }
 
-                // Apply cancellations
+                // Apply cancellations to cumulative state
                 cumFFE = cumFFEPreCxl - cxlFFE;
-                cumRev = cumRevPreCxl + cxlRev;
+                // Revenue calculation: keep booking revenue, add cancellation fee revenue
+                // Don't double-count the original booking revenue for cancelled FFE
+                const cancelledBookingRevenue = cxlFFE > 0 ? (cxlFFE / Math.max(cumFFEPreCxl, 1e-9)) * cumRevPreCxl : 0;
+                cumRev = (cumRevPreCxl - cancelledBookingRevenue) + cxlRev;
                 cumCxlFFE += cxlFFE;
                 cumCxlRev += cxlRev;
 
@@ -454,26 +457,14 @@
                             tension: 0.3
                         },
                         {
-                            label: 'Daily Bookings',
+                            label: 'Cumulative Searches',
                             data: [],
-                            borderColor: 'rgb(255, 180, 50)',
-                            backgroundColor: 'rgba(255, 180, 50, 0.2)',
-                            borderWidth: 2,
-                            pointRadius: 3,
-                            fill: false,
-                            tension: 0.3,
-                            yAxisID: 'y1'
-                        },
-                        {
-                            label: 'Searches',
-                            data: [],
-                            borderColor: 'rgba(138, 138, 138, 0.6)',
+                            borderColor: 'rgba(138, 138, 138, 0.7)',
                             backgroundColor: 'transparent',
-                            borderWidth: 1,
+                            borderWidth: 2,
                             pointRadius: 2,
                             fill: false,
                             tension: 0.3,
-                            yAxisID: 'y1',
                             borderDash: [5, 5]
                         },
                         {
@@ -500,7 +491,7 @@
                                 font: { size: 14, weight: '600' },
                                 color: 'rgb(212, 212, 212)'
                             },
-                            reverse: true, // Show countdown to departure
+                            reverse: false, // 49 DTD on left, 0 DTD on right
                             grid: {
                                 color: 'rgba(138, 138, 138, 0.3)'
                             },
@@ -525,24 +516,6 @@
                                 font: { size: 12 }
                             }
                         },
-                        y1: {
-                            type: 'linear',
-                            display: true,
-                            position: 'right',
-                            title: {
-                                display: true,
-                                text: 'Daily Volume',
-                                font: { size: 12, weight: '600' },
-                                color: 'rgb(180, 180, 180)'
-                            },
-                            grid: {
-                                drawOnChartArea: false,
-                            },
-                            ticks: {
-                                color: 'rgb(138, 138, 138)',
-                                font: { size: 10 }
-                            }
-                        }
                     },
                     plugins: {
                         legend: {
@@ -584,16 +557,21 @@
             // Prepare chart data
             const labels = simulationData.map(d => d.daysToDepature);
             const cumulativeFFE = simulationData.map(d => d.cumulativeFFE);
-            const dailyBookings = simulationData.map(d => d.bookedFFE);
-            const searches = simulationData.map(d => d.searches);
+            
+            // Calculate cumulative searches
+            let cumulativeSearches = 0;
+            const cumulativeSearchesData = simulationData.map(d => {
+                cumulativeSearches += d.searches;
+                return cumulativeSearches;
+            });
+            
             const capacity = simulationData.map(d => getParameterValue('capacity'));
 
             // Update chart
             window.chartInstance.data.labels = labels;
             window.chartInstance.data.datasets[0].data = cumulativeFFE;
-            window.chartInstance.data.datasets[1].data = dailyBookings;
-            window.chartInstance.data.datasets[2].data = searches;
-            window.chartInstance.data.datasets[3].data = capacity;
+            window.chartInstance.data.datasets[1].data = cumulativeSearchesData;
+            window.chartInstance.data.datasets[2].data = capacity;
             window.chartInstance.update();
 
             // Update metrics panel
@@ -612,8 +590,9 @@
             const finalBooking = finalRecord.cumulativeFFE;
             const capacityUtil = (finalBooking / capacity * 100).toFixed(1);
             const totalRevenue = finalRecord.cumulativeRevenue;
-            const bookingRevenue = totalRevenue - finalRecord.cumulativeCancellationsRevenue;
             const cancellationRevenue = finalRecord.cumulativeCancellationsRevenue;
+            // Calculate booking revenue as total minus cancellation fees
+            const bookingRevenue = totalRevenue - cancellationRevenue;
             const totalCancellations = finalRecord.cumulativeCancellationsFFE;
             const cancelRate = ((totalCancellations / Math.max(finalBooking + totalCancellations, 1)) * 100).toFixed(1);
             
