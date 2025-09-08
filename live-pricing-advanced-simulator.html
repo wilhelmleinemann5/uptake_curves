@@ -55,6 +55,17 @@
                        style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
                        onchange="runSimulation()">
             </div>
+            
+            <!-- Booking Conversion -->
+            <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
+                <label for="bookingConversion" style="display: block; font-weight: 600; margin-bottom: 4px;">🎯 Booking Conversion:</label>
+                <input type="number" id="bookingConversion" value="0.10" min="0.01" max="0.50" step="0.01" 
+                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
+                       onchange="runSimulation()">
+                <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
+                    FFE per offer (base rate)
+                </div>
+            </div>
         </div>
         
         <!-- Advanced Parameters (Collapsible) -->
@@ -261,6 +272,7 @@
                 marketPrice: 3000,
                 channelMarkup: 3,
                 elasticity: 1.25,
+                bookingConversion: 0.10,
                 baseWeekdayVolume: 1200,
                 rampStart: 28,
                 taperStart: 5,
@@ -294,6 +306,7 @@
             const marketPrice = getParameterValue('marketPrice');
             const channelMarkup = getParameterValue('channelMarkup');
             const elasticity = getParameterValue('elasticity');
+            const bookingConversion = getParameterValue('bookingConversion');
             const baseWeekdayVolume = getParameterValue('baseWeekdayVolume');
             const rampStart = getParameterValue('rampStart');
             const taperStart = getParameterValue('taperStart');
@@ -358,7 +371,7 @@
                 } else {
                     // Make offers & book
                     offers = Math.round(SIMULATOR_CONFIG.offersPerSearch * searches);
-                    adjFFEPerOffer = SIMULATOR_CONFIG.baseFFEPerOffer * Math.pow(pricingRatio, -elasticity);
+                    adjFFEPerOffer = bookingConversion * Math.pow(pricingRatio, -elasticity);
                     const expectedFFE = offers * Math.max(adjFFEPerOffer, 0.0);
                     bookedFFE = Math.min(expectedFFE, remainingCapacity);
                     revenue = (mp * pricingRatio) * bookedFFE;
@@ -411,7 +424,7 @@
                     dowMultiplier: dowMult,
                     searches: searches,
                     offers: offers,
-                    baseFFEPerOffer: SIMULATOR_CONFIG.baseFFEPerOffer,
+                    baseFFEPerOffer: bookingConversion,
                     adjFFEPerOffer: adjFFEPerOffer,
                     bookedFFE: bookedFFE,
                     revenueBookings: revenue,
@@ -465,7 +478,8 @@
                             pointRadius: 2,
                             fill: false,
                             tension: 0.3,
-                            borderDash: [5, 5]
+                            borderDash: [5, 5],
+                            yAxisID: 'y1'
                         },
                         {
                             label: 'Capacity',
@@ -516,6 +530,24 @@
                                 font: { size: 12 }
                             }
                         },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Cumulative Searches',
+                                font: { size: 12, weight: '600' },
+                                color: 'rgb(180, 180, 180)'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            ticks: {
+                                color: 'rgb(138, 138, 138)',
+                                font: { size: 10 }
+                            }
+                        }
                     },
                     plugins: {
                         legend: {
