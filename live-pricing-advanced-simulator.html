@@ -62,7 +62,7 @@
             <!-- Booking Conversion -->
             <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
                 <label for="bookingConversion" style="display: block; font-weight: 600; margin-bottom: 4px;">🎯 Booking Conversion:</label>
-                <input type="number" id="bookingConversion" value="0.10" min="0.01" max="0.50" step="0.01" 
+                <input type="number" id="bookingConversion" value="0.03" min="0.01" max="0.50" step="0.01" 
                        style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
                        onchange="runSimulation()">
                 <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
@@ -275,7 +275,7 @@
                 marketPrice: 3000,
                 channelPrice: 3090,
                 elasticity: 1.25,
-                bookingConversion: 0.10,
+                bookingConversion: 0.03,
                 baseWeekdayVolume: 500,
                 rampStart: 28,
                 taperStart: 5,
