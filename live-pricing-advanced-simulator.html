@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced FFE Booking Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="styles/chart-config.js"></script>
+    <link rel="stylesheet" href="styles/maersk-theme.css">
+</head>
+<body>
+    <header class="header">
+        <h1>🚢 Advanced Booking Simulator</h1>
+        <p>Sophisticated Multi-Channel FFE Booking Model with Cancellations & Capacity</p>
+    </header>
+
+    <div class="container">
+        <div class="demo-note">
+            <h3>⚡ Advanced Simulator - Jun 30 Departure</h3>
+            <p>Experience a realistic booking system with search patterns, pricing ratios, cancellation economics, and capacity constraints. Adjust parameters to see how different strategies affect the uptake curve.</p>
+        </div>
+        
+        <!-- Core Parameters Panel -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1.5rem 0; background: var(--mds-bg-secondary); padding: 1rem; border-radius: 8px;">
+            <h4 style="grid-column: 1 / -1; text-align: center; margin: 0 0 1rem 0; color: var(--mds-text-primary);">🎛️ Core Simulation Parameters</h4>
+            
+            <!-- Capacity -->
+            <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-blue);">
+                <label for="capacity" style="display: block; font-weight: 600; margin-bottom: 4px;">🚢 Capacity (FFE):</label>
+                <input type="number" id="capacity" value="200" min="50" max="500" step="10" 
+                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
+                       onchange="runSimulation()">
+            </div>
+            
+            <!-- Market Price -->
+            <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-warning);">
+                <label for="marketPrice" style="display: block; font-weight: 600; margin-bottom: 4px;">💰 Market Price ($):</label>
+                <input type="number" id="marketPrice" value="3000" min="2000" max="5000" step="50" 
+                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
+                       onchange="runSimulation()">
+            </div>
+            
+            <!-- Channel Markup -->
+            <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-info);">
+                <label for="channelMarkup" style="display: block; font-weight: 600; margin-bottom: 4px;">📊 Channel Markup (%):</label>
+                <input type="number" id="channelMarkup" value="3" min="0" max="20" step="0.5" 
+                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
+                       onchange="runSimulation()">
+            </div>
+            
+            <!-- Elasticity -->
+            <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
+                <label for="elasticity" style="display: block; font-weight: 600; margin-bottom: 4px;">📈 Price Elasticity:</label>
+                <input type="number" id="elasticity" value="1.25" min="0.5" max="3.0" step="0.1" 
+                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
+                       onchange="runSimulation()">
+            </div>
+        </div>
+        
+        <!-- Advanced Parameters (Collapsible) -->
+        <div style="margin: 1rem 0; padding: 1rem; background: var(--mds-bg-secondary); border-radius: 8px; border: 1px solid var(--mds-border-default);">
+            <div style="text-align: center; cursor: pointer; user-select: none;" onclick="toggleAdvancedParams()" id="advancedToggle">
+                <span style="color: var(--mds-text-secondary); font-size: 0.9rem; font-weight: 500;">
+                    ⚙️ Advanced Parameters
+                    <span id="advancedArrow" style="margin-left: 0.5rem; transition: transform 0.3s ease;">▼</span>
+                </span>
+            </div>
+            
+            <div id="advancedContent" style="display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--mds-border-default);">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    
+                    <!-- Demand Curve Parameters -->
+                    <div style="grid-column: 1 / -1; color: var(--mds-text-secondary); font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;">
+                        📊 Demand Curve Parameters
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Base Weekday Volume</label>
+                        <input type="number" id="baseWeekdayVolume" value="1200" min="500" max="3000" step="100" 
+                               onchange="runSimulation()"
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Ramp Start (DTD)</label>
+                        <input type="number" id="rampStart" value="28" min="20" max="40" step="1" 
+                               onchange="runSimulation()"
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Taper Start (DTD)</label>
+                        <input type="number" id="taperStart" value="5" min="2" max="10" step="1" 
+                               onchange="runSimulation()"
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Weekend Multiplier</label>
+                        <input type="number" id="weekendMultiplier" value="0.05" min="0.01" max="0.5" step="0.01" 
+                               onchange="runSimulation()"
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    </div>
+                    
+                    <!-- Cancellation Parameters -->
+                    <div style="grid-column: 1 / -1; color: var(--mds-text-secondary); font-size: 0.9rem; font-weight: 600; margin: 1rem 0 0.5rem 0;">
+                        🔄 Cancellation Economics
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Cancellation Fee ($)</label>
+                        <input type="number" id="cancellationFee" value="250" min="0" max="500" step="25" 
+                               onchange="runSimulation()"
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Fee Pass-Through (%)</label>
+                        <input type="number" id="feePassThrough" value="10" min="0" max="50" step="5" 
+                               onchange="runSimulation()"
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Cancel Cap per Day (%)</label>
+                        <input type="number" id="cancelCap" value="5" min="1" max="20" step="1" 
+                               onchange="runSimulation()"
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">No Cancel Inside (DTD)</label>
+                        <input type="number" id="noCancelInside" value="5" min="0" max="10" step="1" 
+                               onchange="runSimulation()"
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    </div>
+                    
+                    <!-- Opening Policy -->
+                    <div style="grid-column: 1 / -1; color: var(--mds-text-secondary); font-size: 0.9rem; font-weight: 600; margin: 1rem 0 0.5rem 0;">
+                        📅 Opening Policy
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Open Weeks Before</label>
+                        <input type="number" id="openWeeksBefore" value="7" min="1" max="12" step="1" 
+                               onchange="runSimulation()"
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                    </div>
+                </div>
+                
+                <!-- Reset Button -->
+                <div style="text-align: center; margin-top: 1rem;">
+                    <button onclick="resetParameters()" 
+                            style="background: var(--mds-bg-strong); color: var(--mds-text-secondary); border: 1px solid var(--mds-border-default); padding: 0.4rem 0.8rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer;">
+                        Reset to Defaults
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 2rem; margin: 2rem 0;">
+            <!-- Main Chart -->
+            <div class="chart-container" style="flex: 2;">
+                <h2 class="chart-title">Advanced Booking Simulation - Uptake Curve</h2>
+                <p class="chart-subtitle">Multi-Channel Model • Capacity Constraints • Cancellation Economics</p>
+                <div style="position: relative; height: 400px; width: 100%;">
+                    <canvas id="bookingChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Metrics Panel -->
+            <div style="flex: 1; background: var(--mds-bg-secondary); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--mds-border-default);">
+                <h3 style="margin: 0 0 1rem 0; text-align: center; color: var(--mds-text-primary); font-size: 1.1rem;">📊 Simulation Results</h3>
+                
+                <!-- Final Outcome -->
+                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="text-align: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Final Booking</span>
+                    </div>
+                    <div style="text-align: center; color: var(--maersk-blue); font-size: 1.4rem; font-weight: 700;" id="finalBooking">
+                        0 FFE
+                    </div>
+                    <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: var(--mds-text-secondary);" id="capacityUtilization">
+                        0% Capacity Utilized
+                    </div>
+                </div>
+                
+                <!-- Revenue Metrics -->
+                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Total Revenue:</span>
+                        <span style="color: var(--maersk-success); font-weight: 600;" id="totalRevenue">$0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Booking Revenue:</span>
+                        <span style="font-weight: 500;" id="bookingRevenue">$0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Cancellation Fees:</span>
+                        <span style="font-weight: 500;" id="cancellationRevenue">$0</span>
+                    </div>
+                </div>
+                
+                <!-- Cancellation Metrics -->
+                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Cancellations:</span>
+                        <span style="color: var(--maersk-warning); font-weight: 600;" id="totalCancellations">0 FFE</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Cancel Rate:</span>
+                        <span style="font-weight: 500;" id="cancellationRate">0%</span>
+                    </div>
+                </div>
+                
+                <!-- Pricing Metrics -->
+                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Avg Pricing Ratio:</span>
+                        <span style="font-weight: 600;" id="avgPricingRatio">1.00x</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Revenue per FFE:</span>
+                        <span style="font-weight: 500;" id="revenuePerFFE">$0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Educational Insights -->
+        <div class="insights">
+            <div class="insight-card neutral" id="insightCard">
+                <h3>🎓 Educational Insights</h3>
+                <p>Run the simulation to see how different parameters affect booking patterns, revenue, and cancellation behavior. This advanced model demonstrates the complex interactions between pricing, capacity, and customer behavior.</p>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="live-pricing-simple.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-right: 1rem;">
+                📊 Simple Simulator
+            </a>
+            <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
+                📈 Historical Analysis
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // ADVANCED SIMULATOR CONFIGURATION
+        const SIMULATOR_CONFIG = {
+            // Fixed simulation parameters
+            departureDate: "2025-06-30",
+            horizonDays: 49,
+            baseFFEPerOffer: 0.10,
+            offersPerSearch: 1.0,
+            
+            // Default parameter values
+            defaults: {
+                capacity: 200,
+                marketPrice: 3000,
+                channelMarkup: 3,
+                elasticity: 1.25,
+                baseWeekdayVolume: 1200,
+                rampStart: 28,
+                taperStart: 5,
+                weekendMultiplier: 0.05,
+                cancellationFee: 250,
+                feePassThrough: 10,
+                cancelCap: 5,
+                noCancelInside: 5,
+                openWeeksBefore: 7
+            }
+        };
+
+        // UTILITY FUNCTIONS
+        function getParameterValue(id) {
+            const element = document.getElementById(id);
+            return element ? parseFloat(element.value) : SIMULATOR_CONFIG.defaults[id.replace(/([A-Z])/g, (match, letter) => letter.toLowerCase())];
+        }
+
+        // DTD Bell Curve - JavaScript implementation of your Python function
+        function dtdBellCurve(dtd, baseWeekdayVolume = 1000, kRamp = 0.20, kTaper = 0.35, rampStart = 28, taperStart = 5) {
+            const D = Math.max(parseInt(dtd), 0);
+            const s1 = 1.0 / (1.0 + Math.exp(-kRamp * (rampStart - D)));   // ramps UP after ~28
+            const s2 = 1.0 / (1.0 + Math.exp(-kTaper * (D - taperStart))); // tapers DOWN inside ~5
+            return baseWeekdayVolume * s1 * s2;
+        }
+
+        // Main simulation function - JavaScript implementation of your Python simulator
+        function simulateDeparture() {
+            // Get parameters from UI
+            const capacity = getParameterValue('capacity');
+            const marketPrice = getParameterValue('marketPrice');
+            const channelMarkup = getParameterValue('channelMarkup');
+            const elasticity = getParameterValue('elasticity');
+            const baseWeekdayVolume = getParameterValue('baseWeekdayVolume');
+            const rampStart = getParameterValue('rampStart');
+            const taperStart = getParameterValue('taperStart');
+            const weekendMultiplier = getParameterValue('weekendMultiplier');
+            const cancellationFee = getParameterValue('cancellationFee');
+            const feePassThrough = getParameterValue('feePassThrough') / 100;
+            const cancelCap = getParameterValue('cancelCap') / 100;
+            const noCancelInside = getParameterValue('noCancelInside');
+            const openWeeksBefore = getParameterValue('openWeeksBefore');
+
+            // Generate date range (49 days to departure)
+            const departureDate = new Date(SIMULATOR_CONFIG.departureDate);
+            const startDate = new Date(departureDate);
+            startDate.setDate(startDate.getDate() - SIMULATOR_CONFIG.horizonDays);
+            
+            const records = [];
+            let cumFFE = 0.0;
+            let cumRev = 0.0;
+            let cumCxlFFE = 0.0;
+            let cumCxlRev = 0.0;
+
+            // Opening policy check
+            const openingDate = new Date(departureDate);
+            openingDate.setDate(openingDate.getDate() - (openWeeksBefore * 7));
+
+            for (let i = 0; i <= SIMULATOR_CONFIG.horizonDays; i++) {
+                const currentDate = new Date(startDate);
+                currentDate.setDate(currentDate.getDate() + i);
+                
+                const dtd = Math.floor((departureDate - currentDate) / (1000 * 60 * 60 * 24));
+                const dow = currentDate.getDay(); // 0 = Sunday, 6 = Saturday
+                const isWeekend = dow === 0 || dow === 6;
+                const dowMult = isWeekend ? weekendMultiplier : 1.0;
+
+                // Opening state
+                const isOpen = currentDate >= openingDate;
+
+                // Prices + cancellation fee pass-through
+                const mp = marketPrice;
+                const cpRaw = marketPrice * (1 + channelMarkup / 100);
+                const cpEff = cpRaw + (feePassThrough * cancellationFee);
+                const pricingRatio = cpEff / mp;
+
+                // Demand -> searches
+                const weekdayMean = dtdBellCurve(dtd, baseWeekdayVolume, 0.18, 0.35, rampStart, taperStart);
+                const meanSearches = Math.max(0.0, weekdayMean * dowMult);
+                const searches = Math.round(meanSearches);
+
+                // Capacity at start of day
+                const remainingCapacity = Math.max(capacity - cumFFE, 0.0);
+
+                let rejNotOpen = 0, rejSoldOut = 0;
+                let offers = 0;
+                let bookedFFE = 0.0;
+                let revenue = 0.0;
+                let adjFFEPerOffer = 0.0;
+
+                if (!isOpen) {
+                    rejNotOpen = searches;
+                } else if (remainingCapacity <= 0.0) {
+                    rejSoldOut = searches;
+                } else {
+                    // Make offers & book
+                    offers = Math.round(SIMULATOR_CONFIG.offersPerSearch * searches);
+                    adjFFEPerOffer = SIMULATOR_CONFIG.baseFFEPerOffer * Math.pow(pricingRatio, -elasticity);
+                    const expectedFFE = offers * Math.max(adjFFEPerOffer, 0.0);
+                    bookedFFE = Math.min(expectedFFE, remainingCapacity);
+                    revenue = (mp * pricingRatio) * bookedFFE;
+                }
+
+                // Update cumulative BEFORE considering cancellations
+                const cumFFEPreCxl = cumFFE + bookedFFE;
+                const cumRevPreCxl = cumRev + revenue;
+
+                // Cancellations
+                let cxlFFE = 0.0;
+                let cxlRev = 0.0;
+                let cancellationValue = 0.0;
+
+                if (dtd >= noCancelInside && cumFFEPreCxl > 0) {
+                    const bookedPrice = cumRevPreCxl / Math.max(cumFFEPreCxl, 1e-9);
+                    const refPrice = Math.min(mp, cpRaw);
+                    cancellationValue = bookedPrice - refPrice - cancellationFee;
+
+                    if (cancellationValue > 0) {
+                        const scale = Math.max(cancellationFee, 1e-9);
+                        const baseRate = 1.0 - Math.exp(-cancellationValue / scale);
+                        const cxlRate = Math.min(cancelCap, baseRate * cancelCap);
+                        
+                        cxlFFE = Math.min(cumFFEPreCxl * cxlRate, cumFFEPreCxl);
+                        cxlRev = cxlFFE * cancellationFee;
+                    }
+                }
+
+                // Apply cancellations
+                cumFFE = cumFFEPreCxl - cxlFFE;
+                cumRev = cumRevPreCxl + cxlRev;
+                cumCxlFFE += cxlFFE;
+                cumCxlRev += cxlRev;
+
+                records.push({
+                    date: new Date(currentDate),
+                    daysToDepature: dtd,
+                    dow: dow,
+                    isWeekend: isWeekend,
+                    isOpen: isOpen,
+                    marketPrice: mp,
+                    channelPriceRaw: cpRaw,
+                    channelPriceEff: cpEff,
+                    pricingRatio: pricingRatio,
+                    weekdayMeanSearches: weekdayMean,
+                    dowMultiplier: dowMult,
+                    searches: searches,
+                    offers: offers,
+                    baseFFEPerOffer: SIMULATOR_CONFIG.baseFFEPerOffer,
+                    adjFFEPerOffer: adjFFEPerOffer,
+                    bookedFFE: bookedFFE,
+                    revenueBookings: revenue,
+                    cancellationsFFE: cxlFFE,
+                    cancellationValue: cancellationValue,
+                    revenueCancellations: cxlRev,
+                    cumulativeFFE: cumFFE,
+                    cumulativeRevenue: cumRev,
+                    cumulativeCancellationsFFE: cumCxlFFE,
+                    cumulativeCancellationsRevenue: cumCxlRev,
+                    remainingCapacityEnd: Math.max(capacity - cumFFE, 0.0),
+                    offerRejectionsNotOpen: rejNotOpen,
+                    offerRejectionsSoldOut: rejSoldOut
+                });
+            }
+
+            return records;
+        }
+
+        // Chart initialization and update
+        function initChart() {
+            const ctx = document.getElementById('bookingChart');
+            if (!ctx) return;
+
+            if (window.chartInstance) {
+                window.chartInstance.destroy();
+            }
+
+            window.chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Cumulative FFE Booked',
+                            data: [],
+                            borderColor: 'rgb(66, 176, 213)',
+                            backgroundColor: 'rgba(66, 176, 213, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 4,
+                            pointBackgroundColor: 'rgb(66, 176, 213)',
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Daily Bookings',
+                            data: [],
+                            borderColor: 'rgb(255, 180, 50)',
+                            backgroundColor: 'rgba(255, 180, 50, 0.2)',
+                            borderWidth: 2,
+                            pointRadius: 3,
+                            fill: false,
+                            tension: 0.3,
+                            yAxisID: 'y1'
+                        },
+                        {
+                            label: 'Searches',
+                            data: [],
+                            borderColor: 'rgba(138, 138, 138, 0.6)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 1,
+                            pointRadius: 2,
+                            fill: false,
+                            tension: 0.3,
+                            yAxisID: 'y1',
+                            borderDash: [5, 5]
+                        },
+                        {
+                            label: 'Capacity',
+                            data: [],
+                            borderColor: 'rgb(229, 62, 62)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0,
+                            borderDash: [10, 5]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Days to Departure',
+                                font: { size: 14, weight: '600' },
+                                color: 'rgb(212, 212, 212)'
+                            },
+                            reverse: true, // Show countdown to departure
+                            grid: {
+                                color: 'rgba(138, 138, 138, 0.3)'
+                            },
+                            ticks: {
+                                color: 'rgb(138, 138, 138)',
+                                font: { size: 12 }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Cumulative FFE',
+                                font: { size: 14, weight: '600' },
+                                color: 'rgb(212, 212, 212)'
+                            },
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(138, 138, 138, 0.3)'
+                            },
+                            ticks: {
+                                color: 'rgb(138, 138, 138)',
+                                font: { size: 12 }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: 'Daily Volume',
+                                font: { size: 12, weight: '600' },
+                                color: 'rgb(180, 180, 180)'
+                            },
+                            grid: {
+                                drawOnChartArea: false,
+                            },
+                            ticks: {
+                                color: 'rgb(138, 138, 138)',
+                                font: { size: 10 }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgb(212, 212, 212)',
+                                font: { size: 11, weight: '500' },
+                                padding: 12,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                            titleColor: 'rgb(240, 240, 240)',
+                            bodyColor: 'rgb(212, 212, 212)',
+                            borderColor: 'rgb(76, 76, 76)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        }
+
+        // Run simulation and update chart
+        function runSimulation() {
+            const simulationData = simulateDeparture();
+            
+            if (!window.chartInstance) {
+                initChart();
+            }
+
+            // Prepare chart data
+            const labels = simulationData.map(d => d.daysToDepature);
+            const cumulativeFFE = simulationData.map(d => d.cumulativeFFE);
+            const dailyBookings = simulationData.map(d => d.bookedFFE);
+            const searches = simulationData.map(d => d.searches);
+            const capacity = simulationData.map(d => getParameterValue('capacity'));
+
+            // Update chart
+            window.chartInstance.data.labels = labels;
+            window.chartInstance.data.datasets[0].data = cumulativeFFE;
+            window.chartInstance.data.datasets[1].data = dailyBookings;
+            window.chartInstance.data.datasets[2].data = searches;
+            window.chartInstance.data.datasets[3].data = capacity;
+            window.chartInstance.update();
+
+            // Update metrics panel
+            updateMetricsPanel(simulationData);
+
+            // Update insights
+            updateEducationalInsights(simulationData);
+        }
+
+        // Update metrics panel
+        function updateMetricsPanel(data) {
+            const finalRecord = data[data.length - 1];
+            const capacity = getParameterValue('capacity');
+            
+            // Calculate metrics
+            const finalBooking = finalRecord.cumulativeFFE;
+            const capacityUtil = (finalBooking / capacity * 100).toFixed(1);
+            const totalRevenue = finalRecord.cumulativeRevenue;
+            const bookingRevenue = totalRevenue - finalRecord.cumulativeCancellationsRevenue;
+            const cancellationRevenue = finalRecord.cumulativeCancellationsRevenue;
+            const totalCancellations = finalRecord.cumulativeCancellationsFFE;
+            const cancelRate = ((totalCancellations / Math.max(finalBooking + totalCancellations, 1)) * 100).toFixed(1);
+            
+            // Calculate average pricing ratio (weighted by bookings)
+            let totalWeightedRatio = 0;
+            let totalBookings = 0;
+            data.forEach(d => {
+                if (d.bookedFFE > 0) {
+                    totalWeightedRatio += d.pricingRatio * d.bookedFFE;
+                    totalBookings += d.bookedFFE;
+                }
+            });
+            const avgPricingRatio = totalBookings > 0 ? (totalWeightedRatio / totalBookings).toFixed(2) : "1.00";
+            const revenuePerFFE = finalBooking > 0 ? (totalRevenue / finalBooking).toFixed(0) : "0";
+
+            // Update UI
+            document.getElementById('finalBooking').textContent = `${Math.round(finalBooking)} FFE`;
+            document.getElementById('capacityUtilization').textContent = `${capacityUtil}% Capacity Utilized`;
+            document.getElementById('totalRevenue').textContent = `$${Math.round(totalRevenue).toLocaleString()}`;
+            document.getElementById('bookingRevenue').textContent = `$${Math.round(bookingRevenue).toLocaleString()}`;
+            document.getElementById('cancellationRevenue').textContent = `$${Math.round(cancellationRevenue).toLocaleString()}`;
+            document.getElementById('totalCancellations').textContent = `${Math.round(totalCancellations)} FFE`;
+            document.getElementById('cancellationRate').textContent = `${cancelRate}%`;
+            document.getElementById('avgPricingRatio').textContent = `${avgPricingRatio}x`;
+            document.getElementById('revenuePerFFE').textContent = `$${revenuePerFFE}`;
+        }
+
+        // Update educational insights
+        function updateEducationalInsights(data) {
+            const finalRecord = data[data.length - 1];
+            const capacity = getParameterValue('capacity');
+            const finalBooking = finalRecord.cumulativeFFE;
+            const capacityUtil = (finalBooking / capacity * 100);
+            const totalCancellations = finalRecord.cumulativeCancellationsFFE;
+            const avgPricingRatio = parseFloat(document.getElementById('avgPricingRatio').textContent.replace('x', ''));
+
+            let insight = "";
+            let cardClass = "neutral";
+
+            if (capacityUtil >= 95) {
+                insight = "🎯 <strong>Optimal Performance:</strong> Near full capacity utilization with strong demand curve execution. The bell-shaped search pattern and pricing strategy worked effectively.";
+                cardClass = "success";
+            } else if (capacityUtil >= 70) {
+                insight = "📈 <strong>Good Performance:</strong> Solid capacity utilization. Consider adjusting pricing ratio or opening policy to capture remaining demand.";
+                cardClass = "neutral";
+            } else if (capacityUtil >= 40) {
+                insight = "⚠️ <strong>Moderate Performance:</strong> Room for improvement. Try reducing channel markup, extending opening window, or adjusting demand curve parameters.";
+                cardClass = "warning";
+            } else {
+                insight = "🔴 <strong>Low Performance:</strong> Significant capacity underutilization. Consider major strategy adjustments: lower pricing, earlier opening, or higher base demand.";
+                cardClass = "warning";
+            }
+
+            if (totalCancellations > finalBooking * 0.1) {
+                insight += ` High cancellation rate (${(totalCancellations/(finalBooking + totalCancellations)*100).toFixed(0)}%) suggests pricing misalignment or aggressive cancellation policies.`;
+            }
+
+            if (avgPricingRatio > 1.1) {
+                insight += ` High pricing ratio (${avgPricingRatio}x) may be limiting demand conversion.`;
+            }
+
+            const insightCard = document.getElementById('insightCard');
+            insightCard.className = `insight-card ${cardClass}`;
+            insightCard.innerHTML = `<h3>🎓 Educational Insights</h3><p>${insight}</p>`;
+        }
+
+        // UI Controls
+        function toggleAdvancedParams() {
+            const content = document.getElementById('advancedContent');
+            const arrow = document.getElementById('advancedArrow');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                arrow.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                arrow.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function resetParameters() {
+            Object.keys(SIMULATOR_CONFIG.defaults).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = SIMULATOR_CONFIG.defaults[key];
+                }
+            });
+            runSimulation();
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', function() {
+            initChart();
+            runSimulation();
+        });
+
+        // Mark todo as complete
+        console.log("✅ Advanced simulator implementation complete");
+    </script>
+</body>
+</html>
