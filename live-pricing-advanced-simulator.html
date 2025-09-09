@@ -223,6 +223,29 @@
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
+
+                    <!-- Market Volatility -->
+                    <div style="grid-column: 1 / -1; color: var(--mds-text-secondary); font-size: 0.9rem; font-weight: 600; margin: 1rem 0 0.5rem 0;">
+                        📊 Market Volatility
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Market Price Volatility (%)</label>
+                        <input type="number" id="marketPriceVolatility" value="3" min="0" max="15" step="0.5" 
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                        <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
+                            Random price change per turn
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Search Volume Volatility (%)</label>
+                        <input type="number" id="searchVolatility" value="10" min="0" max="30" step="1" 
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                        <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
+                            Random search variation
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Reset Button -->
@@ -372,7 +395,9 @@
                 feePassThrough: 15,
                 cancelCap: 5,
                 noCancelInside: 5,
-                openWeeksBefore: 4
+                openWeeksBefore: 4,
+                marketPriceVolatility: 3,
+                searchVolatility: 10
             }
         };
 
@@ -387,7 +412,9 @@
             cumulativeFFE: 0,
             cumulativeRevenue: 0,
             cumulativeCancellations: 0,
-            turnHistory: []
+            turnHistory: [],
+            currentMarketPrice: 3000, // Track volatile market price
+            randomSeed: Math.floor(Math.random() * 10000)
         };
 
         // UTILITY FUNCTIONS
@@ -419,11 +446,49 @@
             }
         }
 
+        // Simple random number generator (seeded)
+        function seededRandom() {
+            TURN_STATE.randomSeed = (TURN_STATE.randomSeed * 9301 + 49297) % 233280;
+            return TURN_STATE.randomSeed / 233280;
+        }
+
+        // Generate random price change based on volatility
+        function applyMarketPriceVolatility() {
+            const volatility = getParameterValue('marketPriceVolatility') / 100;
+            if (volatility <= 0) return;
+
+            // Generate random change: -volatility to +volatility
+            const randomChange = (seededRandom() - 0.5) * 2 * volatility;
+            const newPrice = TURN_STATE.currentMarketPrice * (1 + randomChange);
+            
+            // Update both state and UI
+            TURN_STATE.currentMarketPrice = Math.round(newPrice);
+            document.getElementById('marketPrice').value = TURN_STATE.currentMarketPrice;
+            
+            // Update markup display since market price changed
+            updateChannelMarkupDisplay();
+        }
+
+        // Apply search volatility to base search volume
+        function applySearchVolatility(baseSearches) {
+            const volatility = getParameterValue('searchVolatility') / 100;
+            if (volatility <= 0) return baseSearches;
+
+            // Generate random multiplier: 1 ± volatility
+            const randomMultiplier = 1 + (seededRandom() - 0.5) * 2 * volatility;
+            return Math.max(0, Math.round(baseSearches * randomMultiplier));
+        }
+
         // TURN-BASED SIMULATION FUNCTIONS
         function simulateTurn() {
             if (TURN_STATE.currentTurn > TURN_STATE.maxTurns) {
                 alert('Simulation complete! Use Reset to start over.');
                 return;
+            }
+
+            // Apply market volatility at start of turn (except first turn)
+            if (TURN_STATE.currentTurn > 1) {
+                applyMarketPriceVolatility();
             }
 
             // Calculate day range for this turn
@@ -475,7 +540,7 @@
         function simulateTurnDays(startDTD, endDTD) {
             // Get current parameters
             const capacity = getParameterValue('capacity');
-            const marketPrice = getParameterValue('marketPrice');
+            const marketPrice = TURN_STATE.currentMarketPrice; // Use volatile market price
             const channelPrice = getParameterValue('channelPrice');
             const elasticity = getParameterValue('elasticity');
             const bookingConversion = getParameterValue('bookingConversion');
@@ -515,10 +580,10 @@
                 const cpEff = cpRaw + (feePassThrough * cancellationFee);
                 const pricingRatio = cpEff / mp;
 
-                // Demand -> searches
+                // Demand -> searches (with volatility)
                 const weekdayMean = dtdBellCurve(dtd, baseWeekdayVolume, 0.18, 0.35, rampStart, taperStart);
                 const meanSearches = Math.max(0.0, weekdayMean * dowMult);
-                const searches = Math.round(meanSearches);
+                const searches = applySearchVolatility(Math.round(meanSearches));
 
                 // Capacity at start of day
                 const remainingCapacity = Math.max(capacity - cumFFE, 0.0);
@@ -636,6 +701,8 @@
             TURN_STATE.cumulativeRevenue = 0;
             TURN_STATE.cumulativeCancellations = 0;
             TURN_STATE.turnHistory = [];
+            TURN_STATE.currentMarketPrice = getParameterValue('marketPrice'); // Reset to base market price
+            TURN_STATE.randomSeed = Math.floor(Math.random() * 10000); // New random seed
 
             // Reset UI
             updateTurnUI();
