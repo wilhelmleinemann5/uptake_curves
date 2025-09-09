@@ -906,11 +906,9 @@
 
         // Generate forecast for remaining turns
         function generateForecast() {
-            if (TURN_STATE.currentTurn > TURN_STATE.maxTurns) return null;
-
             // Get current parameters
             const capacity = getParameterValue('capacity');
-            const marketPrice = getParameterValue('marketPrice');
+            const marketPrice = TURN_STATE.currentMarketPrice || getParameterValue('marketPrice');
             const channelPrice = getParameterValue('channelPrice');
             const elasticity = getCurrentElasticity();
             const bookingConversion = getParameterValue('bookingConversion');
@@ -923,14 +921,21 @@
             const cancelCap = getParameterValue('cancelCap') / 100;
             const noCancelInside = getParameterValue('noCancelInside');
 
-            // Calculate remaining days to simulate
+            // Calculate starting point for forecast
             const currentDTD = SIMULATOR_CONFIG.horizonDays - ((TURN_STATE.currentTurn - 1) * TURN_STATE.daysPerTurn);
             
-            // Generate baseline forecast
+            // Generate baseline forecast from current turn forward
             const forecastData = [];
             let cumFFE = TURN_STATE.cumulativeFFE;
             let cumRev = TURN_STATE.cumulativeRevenue;
             let cumCxlFFE = TURN_STATE.cumulativeCancellations;
+
+            console.log('DEBUG generateForecast start:', {
+                currentTurn: TURN_STATE.currentTurn,
+                currentDTD,
+                startingCumFFE: cumFFE,
+                vesselOpened: TURN_STATE.vesselOpened
+            });
 
             for (let dtd = currentDTD; dtd >= 0; dtd--) {
                 const currentDate = new Date(new Date(SIMULATOR_CONFIG.departureDate).getTime() - dtd * 24 * 60 * 60 * 1000);
