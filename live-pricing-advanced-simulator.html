@@ -234,6 +234,15 @@
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
 
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Expected Open Date (DTD)</label>
+                        <input type="number" id="expectedOpenDTD" value="28" min="5" max="45" step="1" 
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                        <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
+                            For forecast calculations only
+                        </div>
+                    </div>
+
                     <!-- Market Volatility -->
                     <div style="grid-column: 1 / -1; color: var(--mds-text-secondary); font-size: 0.9rem; font-weight: 600; margin: 1rem 0 0.5rem 0;">
                         📊 Market Volatility
@@ -428,6 +437,7 @@
                 cancelCap: 5,
                 noCancelInside: 5,
                 openWeeksBefore: 4,
+                expectedOpenDTD: 28,
                 marketPriceVolatility: 3,
                 searchVolatility: 10
             }
@@ -920,6 +930,7 @@
             const feePassThrough = getParameterValue('feePassThrough') / 100;
             const cancelCap = getParameterValue('cancelCap') / 100;
             const noCancelInside = getParameterValue('noCancelInside');
+            const expectedOpenDTD = getParameterValue('expectedOpenDTD');
 
             // Calculate starting point for forecast
             const currentDTD = SIMULATOR_CONFIG.horizonDays - ((TURN_STATE.currentTurn - 1) * TURN_STATE.daysPerTurn);
@@ -943,8 +954,8 @@
                 const isWeekend = dow === 0 || dow === 6;
                 const dowMult = isWeekend ? weekendMultiplier : 1.0;
 
-                // Use current vessel state
-                const isOpen = TURN_STATE.vesselOpened;
+                // Use current vessel state OR expected opening for forecast
+                const isOpen = TURN_STATE.vesselOpened || (dtd <= expectedOpenDTD);
 
                 // Pricing
                 const mp = marketPrice;
