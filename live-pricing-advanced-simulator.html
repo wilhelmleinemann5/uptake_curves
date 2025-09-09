@@ -20,16 +20,49 @@
             <p>Experience a realistic booking system with search patterns, pricing ratios, cancellation economics, and capacity constraints. Adjust parameters to see how different strategies affect the uptake curve.</p>
         </div>
         
+        <!-- Turn-Based Simulation Controls -->
+        <div style="background: var(--mds-bg-secondary); padding: 1rem; border-radius: 8px; margin: 1.5rem 0; border: 2px solid var(--maersk-blue);">
+            <h4 style="text-align: center; margin: 0 0 1rem 0; color: var(--mds-text-primary);">🎮 Turn-Based Simulator</h4>
+            
+            <!-- Turn Status -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding: 0.8rem; background: var(--mds-bg-tertiary); border-radius: 6px;">
+                <div>
+                    <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Current Turn:</span>
+                    <span style="color: var(--maersk-blue); font-weight: 700; font-size: 1.2rem; margin-left: 0.5rem;" id="currentTurn">1</span>
+                    <span style="color: var(--mds-text-secondary); font-size: 0.9rem; margin-left: 0.5rem;">of 7</span>
+                </div>
+                <div>
+                    <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Days Remaining:</span>
+                    <span style="color: var(--maersk-warning); font-weight: 700; font-size: 1.2rem; margin-left: 0.5rem;" id="daysRemaining">49-43</span>
+                </div>
+                <div>
+                    <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Vessel Status:</span>
+                    <span style="font-weight: 600; margin-left: 0.5rem;" id="vesselStatus">🔒 Closed</span>
+                </div>
+            </div>
+
+            <!-- Turn Controls -->
+            <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-bottom: 1rem;">
+                <button id="simulateTurnBtn" onclick="simulateTurn()" 
+                        style="background: var(--maersk-blue); color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                    🎯 Simulate Turn
+                </button>
+                <button onclick="resetSimulation()" 
+                        style="background: var(--mds-bg-strong); color: var(--mds-text-secondary); border: 1px solid var(--mds-border-default); padding: 0.8rem 1.5rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">
+                    🔄 Reset Simulation
+                </button>
+            </div>
+        </div>
+
         <!-- Core Parameters Panel -->
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1.5rem 0; background: var(--mds-bg-secondary); padding: 1rem; border-radius: 8px;">
-            <h4 style="grid-column: 1 / -1; text-align: center; margin: 0 0 1rem 0; color: var(--mds-text-primary);">🎛️ Core Simulation Parameters</h4>
+            <h4 style="grid-column: 1 / -1; text-align: center; margin: 0 0 1rem 0; color: var(--mds-text-primary);">🎛️ Decision Parameters (Adjust Each Turn)</h4>
             
             <!-- Capacity -->
             <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-blue);">
                 <label for="capacity" style="display: block; font-weight: 600; margin-bottom: 4px;">🚢 Capacity (FFE):</label>
                 <input type="number" id="capacity" value="200" min="50" max="500" step="10" 
-                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
-                       onchange="runSimulation()">
+                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;">
             </div>
             
             <!-- Market Price -->
@@ -37,7 +70,7 @@
                 <label for="marketPrice" style="display: block; font-weight: 600; margin-bottom: 4px;">💰 Market Price ($):</label>
                 <input type="number" id="marketPrice" value="3000" min="2000" max="5000" step="50" 
                        style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
-                       onchange="runSimulation()" oninput="updateChannelMarkupDisplay()">
+                       oninput="updateChannelMarkupDisplay()">
             </div>
             
             <!-- Channel Price -->
@@ -45,7 +78,7 @@
                 <label for="channelPrice" style="display: block; font-weight: 600; margin-bottom: 4px;">📊 Channel Price ($):</label>
                 <input type="number" id="channelPrice" value="3090" min="2000" max="6000" step="10" 
                        style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
-                       onchange="runSimulation()" oninput="updateChannelMarkupDisplay()">
+                       oninput="updateChannelMarkupDisplay()">
                 <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;" id="channelMarkupDisplay">
                     Markup: 3.0%
                 </div>
@@ -55,18 +88,28 @@
             <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
                 <label for="elasticity" style="display: block; font-weight: 600; margin-bottom: 4px;">📈 Price Elasticity:</label>
                 <input type="number" id="elasticity" value="1.25" min="0.5" max="3.0" step="0.1" 
-                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
-                       onchange="runSimulation()">
+                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;">
             </div>
             
             <!-- Booking Conversion -->
             <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-light-blue);">
                 <label for="bookingConversion" style="display: block; font-weight: 600; margin-bottom: 4px;">🎯 Booking Conversion:</label>
                 <input type="number" id="bookingConversion" value="0.03" min="0.01" max="0.50" step="0.01" 
-                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
-                       onchange="runSimulation()">
+                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;">
                 <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
                     FFE per offer (base rate)
+                </div>
+            </div>
+
+            <!-- Vessel Opening Decision -->
+            <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px;">🚢 Vessel Opening:</label>
+                <button id="openVesselBtn" onclick="openVessel()" 
+                        style="width: 100%; background: var(--maersk-success); color: white; border: none; padding: 8px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer;">
+                    🔓 Open Vessel for Booking
+                </button>
+                <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;" id="openingHelp">
+                    One-time decision - cannot close after opening
                 </div>
             </div>
         </div>
@@ -313,6 +356,20 @@
             }
         };
 
+        // TURN-BASED SIMULATION STATE
+        const TURN_STATE = {
+            currentTurn: 1,
+            maxTurns: 7,
+            daysPerTurn: 7,
+            vesselOpened: false,
+            vesselOpenedOnTurn: null,
+            simulationData: [],
+            cumulativeFFE: 0,
+            cumulativeRevenue: 0,
+            cumulativeCancellations: 0,
+            turnHistory: []
+        };
+
         // UTILITY FUNCTIONS
         function getParameterValue(id) {
             const element = document.getElementById(id);
@@ -340,6 +397,316 @@
                     markupDisplay.style.color = 'var(--maersk-error)'; // Red for high markup
                 }
             }
+        }
+
+        // TURN-BASED SIMULATION FUNCTIONS
+        function simulateTurn() {
+            if (TURN_STATE.currentTurn > TURN_STATE.maxTurns) {
+                alert('Simulation complete! Use Reset to start over.');
+                return;
+            }
+
+            // Calculate day range for this turn
+            const startDTD = SIMULATOR_CONFIG.horizonDays - ((TURN_STATE.currentTurn - 1) * TURN_STATE.daysPerTurn);
+            const endDTD = Math.max(0, startDTD - TURN_STATE.daysPerTurn + 1);
+
+            // Record current decision state
+            const turnDecision = {
+                turn: TURN_STATE.currentTurn,
+                dayRange: `${startDTD}-${endDTD}`,
+                marketPrice: getParameterValue('marketPrice'),
+                channelPrice: getParameterValue('channelPrice'),
+                bookingConversion: getParameterValue('bookingConversion'),
+                elasticity: getParameterValue('elasticity'),
+                vesselOpened: TURN_STATE.vesselOpened,
+                openedThisTurn: false
+            };
+
+            // Run simulation for this turn's days
+            const turnData = simulateTurnDays(startDTD, endDTD);
+            
+            // Update cumulative state
+            if (turnData.length > 0) {
+                const lastDay = turnData[turnData.length - 1];
+                TURN_STATE.cumulativeFFE = lastDay.cumulativeFFE;
+                TURN_STATE.cumulativeRevenue = lastDay.cumulativeRevenue;
+                TURN_STATE.cumulativeCancellations = lastDay.cumulativeCancellationsFFE;
+            }
+
+            // Add turn data to simulation history
+            TURN_STATE.simulationData = TURN_STATE.simulationData.concat(turnData);
+            TURN_STATE.turnHistory.push(turnDecision);
+
+            // Advance turn
+            TURN_STATE.currentTurn++;
+
+            // Update UI
+            updateTurnUI();
+            updateChartsWithTurnData();
+
+            // Check if simulation is complete
+            if (TURN_STATE.currentTurn > TURN_STATE.maxTurns) {
+                document.getElementById('simulateTurnBtn').textContent = '🎉 Simulation Complete!';
+                document.getElementById('simulateTurnBtn').disabled = true;
+                document.getElementById('simulateTurnBtn').style.background = 'var(--maersk-success)';
+            }
+        }
+
+        function simulateTurnDays(startDTD, endDTD) {
+            // Get current parameters
+            const capacity = getParameterValue('capacity');
+            const marketPrice = getParameterValue('marketPrice');
+            const channelPrice = getParameterValue('channelPrice');
+            const elasticity = getParameterValue('elasticity');
+            const bookingConversion = getParameterValue('bookingConversion');
+            const baseWeekdayVolume = getParameterValue('baseWeekdayVolume');
+            const rampStart = getParameterValue('rampStart');
+            const taperStart = getParameterValue('taperStart');
+            const weekendMultiplier = getParameterValue('weekendMultiplier');
+            const cancellationFee = getParameterValue('cancellationFee');
+            const feePassThrough = getParameterValue('feePassThrough') / 100;
+            const cancelCap = getParameterValue('cancelCap') / 100;
+            const noCancelInside = getParameterValue('noCancelInside');
+
+            // Generate date range for this turn
+            const departureDate = new Date(SIMULATOR_CONFIG.departureDate);
+            const records = [];
+            
+            // Start with cumulative state from previous turns
+            let cumFFE = TURN_STATE.cumulativeFFE;
+            let cumRev = TURN_STATE.cumulativeRevenue;
+            let cumCxlFFE = TURN_STATE.cumulativeCancellations;
+            let cumCxlRev = 0; // Calculate from data if needed
+
+            for (let dtd = startDTD; dtd >= endDTD; dtd--) {
+                const currentDate = new Date(departureDate);
+                currentDate.setDate(currentDate.getDate() - dtd);
+                
+                const dow = currentDate.getDay();
+                const isWeekend = dow === 0 || dow === 6;
+                const dowMult = isWeekend ? weekendMultiplier : 1.0;
+
+                // Vessel opening logic - use turn-based state
+                const isOpen = TURN_STATE.vesselOpened;
+
+                // Prices + cancellation fee pass-through
+                const mp = marketPrice;
+                const cpRaw = channelPrice;
+                const cpEff = cpRaw + (feePassThrough * cancellationFee);
+                const pricingRatio = cpEff / mp;
+
+                // Demand -> searches
+                const weekdayMean = dtdBellCurve(dtd, baseWeekdayVolume, 0.18, 0.35, rampStart, taperStart);
+                const meanSearches = Math.max(0.0, weekdayMean * dowMult);
+                const searches = Math.round(meanSearches);
+
+                // Capacity at start of day
+                const remainingCapacity = Math.max(capacity - cumFFE, 0.0);
+
+                let rejNotOpen = 0, rejSoldOut = 0;
+                let offers = 0;
+                let bookedFFE = 0.0;
+                let revenue = 0.0;
+                let adjFFEPerOffer = 0.0;
+
+                if (!isOpen) {
+                    rejNotOpen = searches;
+                } else if (remainingCapacity <= 0.0) {
+                    rejSoldOut = searches;
+                } else {
+                    // Make offers & book
+                    offers = Math.round(SIMULATOR_CONFIG.offersPerSearch * searches);
+                    adjFFEPerOffer = bookingConversion * Math.pow(pricingRatio, -elasticity);
+                    const expectedFFE = offers * Math.max(adjFFEPerOffer, 0.0);
+                    bookedFFE = Math.min(expectedFFE, remainingCapacity);
+                    revenue = (mp * pricingRatio) * bookedFFE;
+                }
+
+                // Update cumulative BEFORE considering cancellations
+                const cumFFEPreCxl = cumFFE + bookedFFE;
+                const cumRevPreCxl = cumRev + revenue;
+
+                // Simplified cancellation logic for turn-based simulation
+                let cxlFFE = 0.0;
+                let cxlRev = 0.0;
+                let cancellationValue = 0.0;
+
+                if (dtd >= noCancelInside && cumFFEPreCxl > 0) {
+                    const bookedPrice = cumRevPreCxl / Math.max(cumFFEPreCxl, 1e-9);
+                    const refPrice = Math.min(mp, cpRaw);
+                    cancellationValue = bookedPrice - refPrice - cancellationFee;
+
+                    if (cancellationValue > 0) {
+                        const scale = Math.max(cancellationFee, 1e-9);
+                        const baseRate = 1.0 - Math.exp(-cancellationValue / scale);
+                        const cxlRate = Math.min(cancelCap, baseRate * cancelCap);
+                        
+                        cxlFFE = Math.min(cumFFEPreCxl * cxlRate, cumFFEPreCxl);
+                        cxlRev = cxlFFE * cancellationFee;
+                    }
+                }
+
+                // Apply cancellations
+                const cancelledBookingRevenue = cxlFFE > 0 ? (cxlFFE / Math.max(cumFFEPreCxl, 1e-9)) * cumRevPreCxl : 0;
+                cumFFE = cumFFEPreCxl - cxlFFE;
+                cumRev = (cumRevPreCxl - cancelledBookingRevenue) + cxlRev;
+                cumCxlFFE += cxlFFE;
+                cumCxlRev += cxlRev;
+
+                records.push({
+                    date: new Date(currentDate),
+                    daysToDepature: dtd,
+                    dow: dow,
+                    isWeekend: isWeekend,
+                    isOpen: isOpen,
+                    marketPrice: mp,
+                    channelPriceRaw: cpRaw,
+                    channelPriceEff: cpEff,
+                    pricingRatio: pricingRatio,
+                    weekdayMeanSearches: weekdayMean,
+                    dowMultiplier: dowMult,
+                    searches: searches,
+                    offers: offers,
+                    baseFFEPerOffer: bookingConversion,
+                    adjFFEPerOffer: adjFFEPerOffer,
+                    bookedFFE: bookedFFE,
+                    revenueBookings: revenue,
+                    cancellationsFFE: cxlFFE,
+                    cancellationValue: cancellationValue,
+                    revenueCancellations: cxlRev,
+                    cumulativeFFE: cumFFE,
+                    cumulativeRevenue: cumRev,
+                    cumulativeCancellationsFFE: cumCxlFFE,
+                    cumulativeCancellationsRevenue: cumCxlRev,
+                    remainingCapacityEnd: Math.max(capacity - cumFFE, 0.0),
+                    offerRejectionsNotOpen: rejNotOpen,
+                    offerRejectionsSoldOut: rejSoldOut
+                });
+            }
+
+            return records;
+        }
+
+        function openVessel() {
+            if (TURN_STATE.vesselOpened) {
+                alert('Vessel is already open!');
+                return;
+            }
+
+            TURN_STATE.vesselOpened = true;
+            TURN_STATE.vesselOpenedOnTurn = TURN_STATE.currentTurn;
+
+            // Update UI
+            document.getElementById('openVesselBtn').textContent = '✅ Vessel Opened';
+            document.getElementById('openVesselBtn').disabled = true;
+            document.getElementById('openVesselBtn').style.background = 'var(--mds-bg-strong)';
+            document.getElementById('openVesselBtn').style.cursor = 'not-allowed';
+            document.getElementById('openingHelp').textContent = `Opened on Turn ${TURN_STATE.currentTurn}`;
+            document.getElementById('vesselStatus').innerHTML = '🔓 Open';
+            document.getElementById('vesselStatus').style.color = 'var(--maersk-success)';
+        }
+
+        function resetSimulation() {
+            // Reset turn state
+            TURN_STATE.currentTurn = 1;
+            TURN_STATE.vesselOpened = false;
+            TURN_STATE.vesselOpenedOnTurn = null;
+            TURN_STATE.simulationData = [];
+            TURN_STATE.cumulativeFFE = 0;
+            TURN_STATE.cumulativeRevenue = 0;
+            TURN_STATE.cumulativeCancellations = 0;
+            TURN_STATE.turnHistory = [];
+
+            // Reset UI
+            updateTurnUI();
+            
+            // Reset vessel opening button
+            document.getElementById('openVesselBtn').textContent = '🔓 Open Vessel for Booking';
+            document.getElementById('openVesselBtn').disabled = false;
+            document.getElementById('openVesselBtn').style.background = 'var(--maersk-success)';
+            document.getElementById('openVesselBtn').style.cursor = 'pointer';
+            document.getElementById('openingHelp').textContent = 'One-time decision - cannot close after opening';
+            document.getElementById('vesselStatus').innerHTML = '🔒 Closed';
+            document.getElementById('vesselStatus').style.color = 'var(--mds-text-secondary)';
+
+            // Reset simulate button
+            document.getElementById('simulateTurnBtn').textContent = '🎯 Simulate Turn';
+            document.getElementById('simulateTurnBtn').disabled = false;
+            document.getElementById('simulateTurnBtn').style.background = 'var(--maersk-blue)';
+
+            // Clear charts
+            if (window.chartInstance) {
+                window.chartInstance.data.datasets.forEach(dataset => {
+                    dataset.data = [];
+                });
+                window.chartInstance.update();
+            }
+
+            // Clear mini charts
+            [window.searchesChart, window.pricingChart, window.capacityChart, window.conversionChart, window.cancellationChart].forEach(chart => {
+                if (chart) {
+                    chart.data.datasets.forEach(dataset => {
+                        dataset.data = [];
+                    });
+                    chart.update();
+                }
+            });
+
+            // Reset metrics
+            document.getElementById('finalBooking').textContent = '0 FFE';
+            document.getElementById('capacityUtilization').textContent = '0% Capacity Utilized';
+            document.getElementById('totalRevenue').textContent = '$0';
+            document.getElementById('avgPricingRatio').textContent = '1.00x';
+            document.getElementById('revenuePerFFE').textContent = '$0';
+        }
+
+        function updateTurnUI() {
+            document.getElementById('currentTurn').textContent = TURN_STATE.currentTurn;
+            
+            if (TURN_STATE.currentTurn <= TURN_STATE.maxTurns) {
+                const startDTD = SIMULATOR_CONFIG.horizonDays - ((TURN_STATE.currentTurn - 1) * TURN_STATE.daysPerTurn);
+                const endDTD = Math.max(0, startDTD - TURN_STATE.daysPerTurn + 1);
+                document.getElementById('daysRemaining').textContent = `${startDTD}-${endDTD}`;
+            } else {
+                document.getElementById('daysRemaining').textContent = 'Complete';
+            }
+        }
+
+        function updateChartsWithTurnData() {
+            if (TURN_STATE.simulationData.length === 0) return;
+
+            // Update main chart
+            updateChannelMarkupDisplay();
+            
+            const labels = TURN_STATE.simulationData.map(d => d.daysToDepature);
+            const cumulativeFFE = TURN_STATE.simulationData.map(d => d.cumulativeFFE);
+            
+            // Calculate cumulative searches
+            let cumulativeSearches = 0;
+            const cumulativeSearchesData = TURN_STATE.simulationData.map(d => {
+                cumulativeSearches += d.searches;
+                return cumulativeSearches;
+            });
+            
+            const capacity = TURN_STATE.simulationData.map(d => getParameterValue('capacity'));
+
+            // Update main chart
+            if (window.chartInstance) {
+                window.chartInstance.data.labels = labels;
+                window.chartInstance.data.datasets[0].data = cumulativeFFE;
+                window.chartInstance.data.datasets[1].data = cumulativeSearchesData;
+                window.chartInstance.data.datasets[2].data = capacity;
+                window.chartInstance.update();
+            }
+
+            // Update mini-charts
+            updateMiniCharts(TURN_STATE.simulationData);
+
+            // Update metrics panel
+            updateMetricsPanel(TURN_STATE.simulationData);
+
+            // Update insights
+            updateEducationalInsights(TURN_STATE.simulationData);
         }
 
         // DTD Bell Curve - JavaScript implementation of your Python function
@@ -948,50 +1315,6 @@
             }
         }
 
-        // Run simulation and update chart
-        function runSimulation() {
-            // Update markup display first
-            updateChannelMarkupDisplay();
-            
-            const simulationData = simulateDeparture();
-            
-            if (!window.chartInstance) {
-                initChart();
-            }
-            
-            if (!window.searchesChart) {
-                initMiniCharts();
-            }
-
-            // Prepare chart data
-            const labels = simulationData.map(d => d.daysToDepature);
-            const cumulativeFFE = simulationData.map(d => d.cumulativeFFE);
-            
-            // Calculate cumulative searches
-            let cumulativeSearches = 0;
-            const cumulativeSearchesData = simulationData.map(d => {
-                cumulativeSearches += d.searches;
-                return cumulativeSearches;
-            });
-            
-            const capacity = simulationData.map(d => getParameterValue('capacity'));
-
-            // Update main chart
-            window.chartInstance.data.labels = labels;
-            window.chartInstance.data.datasets[0].data = cumulativeFFE;
-            window.chartInstance.data.datasets[1].data = cumulativeSearchesData;
-            window.chartInstance.data.datasets[2].data = capacity;
-            window.chartInstance.update();
-
-            // Update mini-charts
-            updateMiniCharts(simulationData);
-
-            // Update metrics panel
-            updateMetricsPanel(simulationData);
-
-            // Update insights
-            updateEducationalInsights(simulationData);
-        }
 
         // Update mini-charts with simulation data
         function updateMiniCharts(data) {
@@ -1181,7 +1504,8 @@
         window.addEventListener('load', function() {
             initChart();
             initMiniCharts();
-            runSimulation();
+            updateTurnUI();
+            updateChannelMarkupDisplay();
         });
 
         // Mark todo as complete
