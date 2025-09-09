@@ -41,6 +41,28 @@
                 </div>
             </div>
 
+            <!-- Forecasting Preview -->
+            <div style="margin-bottom: 1rem; padding: 1rem; background: var(--mds-bg-tertiary); border-radius: 6px; border: 1px solid var(--mds-border-default);">
+                <h5 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">🔮 Turn Forecast Preview</h5>
+                <div style="position: relative; height: 150px; width: 100%; margin-bottom: 0.5rem;">
+                    <canvas id="forecastChart"></canvas>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--mds-text-secondary);">
+                    <div>
+                        <span>Projected Final:</span>
+                        <span id="projectedFinal" style="color: var(--maersk-blue); font-weight: 600; margin-left: 0.25rem;">-- FFE</span>
+                    </div>
+                    <div>
+                        <span>Range:</span>
+                        <span id="projectedRange" style="color: var(--mds-text-primary); font-weight: 500; margin-left: 0.25rem;">-- to -- FFE</span>
+                    </div>
+                    <div>
+                        <span>Capacity:</span>
+                        <span id="capacityUtilForecast" style="color: var(--maersk-warning); font-weight: 600; margin-left: 0.25rem;">--%</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Turn Controls -->
             <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-bottom: 1rem;">
                 <button id="simulateTurnBtn" onclick="simulateTurn()" 
@@ -50,6 +72,10 @@
                 <button onclick="resetSimulation()" 
                         style="background: var(--mds-bg-strong); color: var(--mds-text-secondary); border: 1px solid var(--mds-border-default); padding: 0.8rem 1.5rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">
                     🔄 Reset Simulation
+                </button>
+                <button onclick="updateForecast()" 
+                        style="background: var(--maersk-light-blue); color: white; border: none; padding: 0.6rem 1.2rem; border-radius: 6px; font-size: 0.85rem; cursor: pointer;">
+                    🔮 Update Forecast
                 </button>
             </div>
         </div>
@@ -642,8 +668,8 @@
                 window.chartInstance.update();
             }
 
-            // Clear mini charts
-            [window.searchesChart, window.pricingChart, window.capacityChart, window.conversionChart, window.cancellationChart].forEach(chart => {
+            // Clear mini charts and forecast chart
+            [window.searchesChart, window.pricingChart, window.capacityChart, window.conversionChart, window.cancellationChart, window.forecastChart].forEach(chart => {
                 if (chart) {
                     chart.data.datasets.forEach(dataset => {
                         dataset.data = [];
@@ -707,6 +733,182 @@
 
             // Update insights
             updateEducationalInsights(TURN_STATE.simulationData);
+
+            // Update forecast for next turn
+            updateForecast();
+        }
+
+        // Generate forecast for remaining turns
+        function generateForecast() {
+            if (TURN_STATE.currentTurn > TURN_STATE.maxTurns) return null;
+
+            // Get current parameters
+            const capacity = getParameterValue('capacity');
+            const marketPrice = getParameterValue('marketPrice');
+            const channelPrice = getParameterValue('channelPrice');
+            const elasticity = getParameterValue('elasticity');
+            const bookingConversion = getParameterValue('bookingConversion');
+            const baseWeekdayVolume = getParameterValue('baseWeekdayVolume');
+            const rampStart = getParameterValue('rampStart');
+            const taperStart = getParameterValue('taperStart');
+            const weekendMultiplier = getParameterValue('weekendMultiplier');
+            const cancellationFee = getParameterValue('cancellationFee');
+            const feePassThrough = getParameterValue('feePassThrough') / 100;
+            const cancelCap = getParameterValue('cancelCap') / 100;
+            const noCancelInside = getParameterValue('noCancelInside');
+
+            // Calculate remaining days to simulate
+            const currentDTD = SIMULATOR_CONFIG.horizonDays - ((TURN_STATE.currentTurn - 1) * TURN_STATE.daysPerTurn);
+            
+            // Generate baseline forecast
+            const forecastData = [];
+            let cumFFE = TURN_STATE.cumulativeFFE;
+            let cumRev = TURN_STATE.cumulativeRevenue;
+            let cumCxlFFE = TURN_STATE.cumulativeCancellations;
+
+            for (let dtd = currentDTD; dtd >= 0; dtd--) {
+                const currentDate = new Date(new Date(SIMULATOR_CONFIG.departureDate).getTime() - dtd * 24 * 60 * 60 * 1000);
+                const dow = currentDate.getDay();
+                const isWeekend = dow === 0 || dow === 6;
+                const dowMult = isWeekend ? weekendMultiplier : 1.0;
+
+                // Use current vessel state
+                const isOpen = TURN_STATE.vesselOpened;
+
+                // Pricing
+                const mp = marketPrice;
+                const cpRaw = channelPrice;
+                const cpEff = cpRaw + (feePassThrough * cancellationFee);
+                const pricingRatio = cpEff / mp;
+
+                // Demand
+                const weekdayMean = dtdBellCurve(dtd, baseWeekdayVolume, 0.18, 0.35, rampStart, taperStart);
+                const meanSearches = Math.max(0.0, weekdayMean * dowMult);
+                const searches = Math.round(meanSearches);
+
+                // Capacity
+                const remainingCapacity = Math.max(capacity - cumFFE, 0.0);
+
+                let bookedFFE = 0.0;
+                let revenue = 0.0;
+
+                if (isOpen && remainingCapacity > 0.0) {
+                    const offers = Math.round(SIMULATOR_CONFIG.offersPerSearch * searches);
+                    const adjFFEPerOffer = bookingConversion * Math.pow(pricingRatio, -elasticity);
+                    const expectedFFE = offers * Math.max(adjFFEPerOffer, 0.0);
+                    bookedFFE = Math.min(expectedFFE, remainingCapacity);
+                    revenue = (mp * pricingRatio) * bookedFFE;
+                }
+
+                // Simplified cancellation
+                const cumFFEPreCxl = cumFFE + bookedFFE;
+                let cxlFFE = 0.0;
+                if (dtd >= noCancelInside && cumFFEPreCxl > 0) {
+                    const bookedPrice = (cumRev + revenue) / Math.max(cumFFEPreCxl, 1e-9);
+                    const refPrice = Math.min(mp, cpRaw);
+                    const cancellationValue = bookedPrice - refPrice - cancellationFee;
+                    if (cancellationValue > 0) {
+                        const scale = Math.max(cancellationFee, 1e-9);
+                        const baseRate = 1.0 - Math.exp(-cancellationValue / scale);
+                        const cxlRate = Math.min(cancelCap, baseRate * cancelCap);
+                        cxlFFE = Math.min(cumFFEPreCxl * cxlRate, cumFFEPreCxl);
+                    }
+                }
+
+                cumFFE = cumFFEPreCxl - cxlFFE;
+                cumRev += revenue + (cxlFFE * cancellationFee);
+                cumCxlFFE += cxlFFE;
+
+                forecastData.push({
+                    dtd: dtd,
+                    cumulativeFFE: cumFFE,
+                    searches: searches,
+                    bookedFFE: bookedFFE
+                });
+            }
+
+            // Generate uncertainty bands
+            const baseVariance = 0.05; // 5% base uncertainty
+            const varianceGrowth = 0.02; // 2% additional per turn ahead
+            
+            const optimisticData = [];
+            const pessimisticData = [];
+            
+            forecastData.forEach((point, index) => {
+                const turnsAhead = Math.floor((currentDTD - point.dtd) / TURN_STATE.daysPerTurn) + 1;
+                const uncertaintyFactor = baseVariance + varianceGrowth * turnsAhead;
+                
+                const optimisticValue = Math.min(capacity, point.cumulativeFFE * (1 + uncertaintyFactor));
+                const pessimisticValue = Math.max(0, point.cumulativeFFE * (1 - uncertaintyFactor));
+                
+                optimisticData.push(optimisticValue);
+                pessimisticData.push(pessimisticValue);
+            });
+
+            return {
+                labels: forecastData.map(d => d.dtd),
+                mostLikely: forecastData.map(d => d.cumulativeFFE),
+                optimistic: optimisticData,
+                pessimistic: pessimisticData,
+                finalForecast: {
+                    mostLikely: forecastData[forecastData.length - 1]?.cumulativeFFE || 0,
+                    optimistic: optimisticData[optimisticData.length - 1] || 0,
+                    pessimistic: pessimisticData[pessimisticData.length - 1] || 0
+                }
+            };
+        }
+
+        // Update forecast display
+        function updateForecast() {
+            const forecast = generateForecast();
+            if (!forecast || !window.forecastChart) return;
+
+            // Combine actual progress with forecast
+            const actualLabels = TURN_STATE.simulationData.map(d => d.daysToDepature);
+            const actualData = TURN_STATE.simulationData.map(d => d.cumulativeFFE);
+            
+            // Full timeline
+            const allLabels = [...actualLabels, ...forecast.labels.filter(l => !actualLabels.includes(l))].sort((a, b) => b - a);
+            
+            // Prepare data arrays
+            const actualProgress = allLabels.map(dtd => {
+                const actual = TURN_STATE.simulationData.find(d => d.daysToDepature === dtd);
+                return actual ? actual.cumulativeFFE : null;
+            });
+            
+            const mostLikelyForecast = allLabels.map(dtd => {
+                const forecastIndex = forecast.labels.indexOf(dtd);
+                return forecastIndex >= 0 ? forecast.mostLikely[forecastIndex] : null;
+            });
+            
+            const optimisticForecast = allLabels.map(dtd => {
+                const forecastIndex = forecast.labels.indexOf(dtd);
+                return forecastIndex >= 0 ? forecast.optimistic[forecastIndex] : null;
+            });
+            
+            const pessimisticForecast = allLabels.map(dtd => {
+                const forecastIndex = forecast.labels.indexOf(dtd);
+                return forecastIndex >= 0 ? forecast.pessimistic[forecastIndex] : null;
+            });
+            
+            const capacity = allLabels.map(() => getParameterValue('capacity'));
+
+            // Update chart
+            window.forecastChart.data.labels = allLabels;
+            window.forecastChart.data.datasets[0].data = actualProgress;
+            window.forecastChart.data.datasets[1].data = pessimisticForecast;
+            window.forecastChart.data.datasets[2].data = optimisticForecast;
+            window.forecastChart.data.datasets[3].data = mostLikelyForecast;
+            window.forecastChart.data.datasets[4].data = capacity;
+            window.forecastChart.update('none');
+
+            // Update forecast metrics
+            const capacityValue = getParameterValue('capacity');
+            document.getElementById('projectedFinal').textContent = `${Math.round(forecast.finalForecast.mostLikely)} FFE`;
+            document.getElementById('projectedRange').textContent = 
+                `${Math.round(forecast.finalForecast.pessimistic)} to ${Math.round(forecast.finalForecast.optimistic)} FFE`;
+            document.getElementById('capacityUtilForecast').textContent = 
+                `${Math.round((forecast.finalForecast.mostLikely / capacityValue) * 100)}%`;
         }
 
         // DTD Bell Curve - JavaScript implementation of your Python function
@@ -992,6 +1194,119 @@
                         intersect: false,
                         mode: 'index'
                     }
+                }
+            });
+        }
+
+        // Initialize forecast chart
+        function initForecastChart() {
+            const forecastCtx = document.getElementById('forecastChart');
+            if (!forecastCtx) return;
+
+            window.forecastChart = new Chart(forecastCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [
+                        {
+                            label: 'Actual Progress',
+                            data: [],
+                            borderColor: 'rgb(66, 176, 213)',
+                            backgroundColor: 'rgba(66, 176, 213, 0.2)',
+                            borderWidth: 3,
+                            pointRadius: 3,
+                            fill: false,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Pessimistic Forecast',
+                            data: [],
+                            borderColor: 'rgba(229, 62, 62, 0.6)',
+                            backgroundColor: 'rgba(229, 62, 62, 0.1)',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: 'origin',
+                            tension: 0.3,
+                            borderDash: [3, 3]
+                        },
+                        {
+                            label: 'Optimistic Forecast',
+                            data: [],
+                            borderColor: 'rgba(0, 170, 136, 0.6)',
+                            backgroundColor: 'rgba(0, 170, 136, 0.1)',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: '-1',
+                            tension: 0.3,
+                            borderDash: [3, 3]
+                        },
+                        {
+                            label: 'Most Likely Forecast',
+                            data: [],
+                            borderColor: 'rgba(66, 176, 213, 0.8)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            pointRadius: 2,
+                            fill: false,
+                            tension: 0.3,
+                            borderDash: [6, 3]
+                        },
+                        {
+                            label: 'Capacity',
+                            data: [],
+                            borderColor: 'rgb(229, 62, 62)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0,
+                            borderDash: [8, 4]
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            display: true,
+                            reverse: false,
+                            grid: { color: 'rgba(138, 138, 138, 0.2)' },
+                            ticks: { 
+                                color: 'rgb(138, 138, 138)', 
+                                font: { size: 9 },
+                                maxTicksLimit: 8
+                            },
+                            title: { display: true, text: 'DTD', color: 'rgb(180, 180, 180)', font: { size: 9 } }
+                        },
+                        y: {
+                            display: true,
+                            beginAtZero: true,
+                            grid: { color: 'rgba(138, 138, 138, 0.2)' },
+                            ticks: { 
+                                color: 'rgb(138, 138, 138)', 
+                                font: { size: 9 }
+                            },
+                            title: { display: true, text: 'FFE', color: 'rgb(180, 180, 180)', font: { size: 9 } }
+                        }
+                    },
+                    plugins: {
+                        legend: { 
+                            display: false // Hide legend for compact view
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                            titleColor: 'rgb(240, 240, 240)',
+                            bodyColor: 'rgb(212, 212, 212)',
+                            borderColor: 'rgb(76, 76, 76)',
+                            borderWidth: 1,
+                            cornerRadius: 6,
+                            padding: 6,
+                            titleFont: { size: 10 },
+                            bodyFont: { size: 9 }
+                        }
+                    },
+                    interaction: { intersect: false, mode: 'index' }
                 }
             });
         }
@@ -1505,8 +1820,10 @@
         window.addEventListener('load', function() {
             initChart();
             initMiniCharts();
+            initForecastChart();
             updateTurnUI();
             updateChannelMarkupDisplay();
+            updateForecast(); // Show initial forecast
         });
 
         // Mark todo as complete
