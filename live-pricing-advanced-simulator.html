@@ -681,34 +681,43 @@
                 interaction: { intersect: false, mode: 'index' }
             };
 
-            // 1. Searches & Rejections Chart (Stacked)
+            // 1. Searches & Rejections Chart (Cumulative Stacked Areas)
             const searchesCtx = document.getElementById('searchesChart');
             if (searchesCtx) {
                 window.searchesChart = new Chart(searchesCtx, {
-                    type: 'bar',
+                    type: 'line',
                     data: {
                         labels: [],
                         datasets: [
                             {
-                                label: 'Successful Offers',
+                                label: 'Cumulative Successful Offers',
                                 data: [],
-                                backgroundColor: 'rgba(0, 170, 136, 0.8)',
+                                backgroundColor: 'rgba(0, 170, 136, 0.7)',
                                 borderColor: 'rgb(0, 170, 136)',
-                                borderWidth: 1
+                                borderWidth: 2,
+                                pointRadius: 1,
+                                fill: 'origin',
+                                tension: 0.3
                             },
                             {
-                                label: 'Rejected (Not Open)',
+                                label: 'Cumulative Rejected (Not Open)',
                                 data: [],
-                                backgroundColor: 'rgba(255, 165, 0, 0.8)',
+                                backgroundColor: 'rgba(255, 165, 0, 0.7)',
                                 borderColor: 'rgb(255, 165, 0)',
-                                borderWidth: 1
+                                borderWidth: 2,
+                                pointRadius: 1,
+                                fill: '-1',
+                                tension: 0.3
                             },
                             {
-                                label: 'Rejected (Sold Out)',
+                                label: 'Cumulative Rejected (Sold Out)',
                                 data: [],
-                                backgroundColor: 'rgba(229, 62, 62, 0.8)',
+                                backgroundColor: 'rgba(229, 62, 62, 0.7)',
                                 borderColor: 'rgb(229, 62, 62)',
-                                borderWidth: 1
+                                borderWidth: 2,
+                                pointRadius: 1,
+                                fill: '-1',
+                                tension: 0.3
                             }
                         ]
                     },
@@ -718,13 +727,23 @@
                             ...miniChartOptions.scales,
                             y: {
                                 ...miniChartOptions.scales.y,
-                                stacked: true,
-                                title: { display: true, text: 'Volume', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                                title: { display: true, text: 'Cumulative Volume', color: 'rgb(180, 180, 180)', font: { size: 10 } }
                             },
                             x: {
                                 ...miniChartOptions.scales.x,
-                                stacked: true,
                                 title: { display: true, text: 'DTD', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            }
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            ...miniChartOptions.plugins,
+                            tooltip: {
+                                ...miniChartOptions.plugins.tooltip,
+                                mode: 'index',
+                                intersect: false
                             }
                         }
                     }
@@ -977,16 +996,31 @@
         function updateMiniCharts(data) {
             const labels = data.map(d => d.daysToDepature);
 
-            // 1. Update Searches & Rejections Chart
+            // 1. Update Searches & Rejections Chart (Cumulative)
             if (window.searchesChart) {
-                const successfulOffers = data.map(d => d.offers - d.offerRejectionsNotOpen - d.offerRejectionsSoldOut);
-                const rejectedNotOpen = data.map(d => d.offerRejectionsNotOpen);
-                const rejectedSoldOut = data.map(d => d.offerRejectionsSoldOut);
+                let cumulativeSuccessful = 0;
+                let cumulativeRejectedNotOpen = 0;
+                let cumulativeRejectedSoldOut = 0;
+
+                const cumulativeSuccessfulData = data.map(d => {
+                    cumulativeSuccessful += (d.offers - d.offerRejectionsNotOpen - d.offerRejectionsSoldOut);
+                    return cumulativeSuccessful;
+                });
+
+                const cumulativeRejectedNotOpenData = data.map(d => {
+                    cumulativeRejectedNotOpen += d.offerRejectionsNotOpen;
+                    return cumulativeSuccessful + cumulativeRejectedNotOpen;
+                });
+
+                const cumulativeRejectedSoldOutData = data.map(d => {
+                    cumulativeRejectedSoldOut += d.offerRejectionsSoldOut;
+                    return cumulativeSuccessful + cumulativeRejectedNotOpen + cumulativeRejectedSoldOut;
+                });
 
                 window.searchesChart.data.labels = labels;
-                window.searchesChart.data.datasets[0].data = successfulOffers;
-                window.searchesChart.data.datasets[1].data = rejectedNotOpen;
-                window.searchesChart.data.datasets[2].data = rejectedSoldOut;
+                window.searchesChart.data.datasets[0].data = cumulativeSuccessfulData;
+                window.searchesChart.data.datasets[1].data = cumulativeRejectedNotOpenData;
+                window.searchesChart.data.datasets[2].data = cumulativeRejectedSoldOutData;
                 window.searchesChart.update('none');
             }
 
