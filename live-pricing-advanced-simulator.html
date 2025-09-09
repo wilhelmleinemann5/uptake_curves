@@ -200,7 +200,7 @@
                     
                     <div>
                         <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Cancel Cap per Day (%)</label>
-                        <input type="number" id="cancelCap" value="2" min="1" max="10" step="0.5" 
+                        <input type="number" id="cancelCap" value="5" min="1" max="10" step="0.5" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
@@ -370,7 +370,7 @@
                 weekendMultiplier: 0.20,
                 cancellationFee: 250,
                 feePassThrough: 15,
-                cancelCap: 2,
+                cancelCap: 5,
                 noCancelInside: 5,
                 openWeeksBefore: 4
             }
@@ -1657,6 +1657,17 @@
 
         // Update metrics panel
         function updateMetricsPanel(data) {
+            if (!data || data.length === 0) {
+                // Reset to default values if no data
+                document.getElementById('finalBooking').textContent = '0 FFE';
+                document.getElementById('capacityUtilization').textContent = '0% Capacity Utilized';
+                document.getElementById('totalRevenue').textContent = '$0';
+                document.getElementById('totalCancellations').textContent = '0 FFE';
+                document.getElementById('avgPricingRatio').textContent = '1.00x';
+                document.getElementById('revenuePerFFE').textContent = '$0';
+                return;
+            }
+            
             const finalRecord = data[data.length - 1];
             const capacity = getParameterValue('capacity');
             
@@ -1682,16 +1693,22 @@
             const avgPricingRatio = totalBookings > 0 ? (totalWeightedRatio / totalBookings).toFixed(2) : "1.00";
             const revenuePerFFE = finalBooking > 0 ? (totalRevenue / finalBooking).toFixed(0) : "0";
 
-            // Update UI
+            // Update UI (only elements that exist in compact layout)
             document.getElementById('finalBooking').textContent = `${Math.round(finalBooking)} FFE`;
             document.getElementById('capacityUtilization').textContent = `${capacityUtil}% Capacity Utilized`;
             document.getElementById('totalRevenue').textContent = `$${Math.round(totalRevenue).toLocaleString()}`;
-            document.getElementById('bookingRevenue').textContent = `$${Math.round(bookingRevenue).toLocaleString()}`;
-            document.getElementById('cancellationRevenue').textContent = `$${Math.round(cancellationRevenue).toLocaleString()}`;
             document.getElementById('totalCancellations').textContent = `${Math.round(totalCancellations)} FFE`;
-            document.getElementById('cancellationRate').textContent = `${cancelRate}%`;
             document.getElementById('avgPricingRatio').textContent = `${avgPricingRatio}x`;
             document.getElementById('revenuePerFFE').textContent = `$${revenuePerFFE}`;
+            
+            // Update additional elements if they exist (for backwards compatibility)
+            const bookingRevenueEl = document.getElementById('bookingRevenue');
+            const cancellationRevenueEl = document.getElementById('cancellationRevenue');
+            const cancelRateEl = document.getElementById('cancellationRate');
+            
+            if (bookingRevenueEl) bookingRevenueEl.textContent = `$${Math.round(bookingRevenue).toLocaleString()}`;
+            if (cancellationRevenueEl) cancellationRevenueEl.textContent = `$${Math.round(cancellationRevenue).toLocaleString()}`;
+            if (cancelRateEl) cancelRateEl.textContent = `${cancelRate}%`;
         }
 
         // Update educational insights
