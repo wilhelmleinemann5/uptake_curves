@@ -172,70 +172,95 @@
             </div>
         </div>
 
-        <div style="display: flex; gap: 2rem; margin: 2rem 0;">
-            <!-- Main Chart -->
-            <div class="chart-container" style="flex: 2;">
-                <h2 class="chart-title">Advanced Booking Simulation - Uptake Curve</h2>
-                <p class="chart-subtitle">Multi-Channel Model • Capacity Constraints • Cancellation Economics</p>
-                <div style="position: relative; height: 400px; width: 100%;">
-                    <canvas id="bookingChart"></canvas>
-                </div>
+        <!-- Main Chart -->
+        <div class="chart-container" style="margin: 2rem 0;">
+            <h2 class="chart-title">Advanced Booking Simulation - Uptake Curve</h2>
+            <p class="chart-subtitle">Multi-Channel Model • Capacity Constraints • Cancellation Economics</p>
+            <div style="position: relative; height: 400px; width: 100%;">
+                <canvas id="bookingChart"></canvas>
             </div>
-            
-            <!-- Metrics Panel -->
-            <div style="flex: 1; background: var(--mds-bg-secondary); border-radius: 12px; padding: 1.5rem; border: 1px solid var(--mds-border-default);">
-                <h3 style="margin: 0 0 1rem 0; text-align: center; color: var(--mds-text-primary); font-size: 1.1rem;">📊 Simulation Results</h3>
+        </div>
+
+        <!-- Mini-Charts Dashboard -->
+        <div style="margin: 2rem 0;">
+            <h3 style="text-align: center; color: var(--mds-text-primary); margin-bottom: 1.5rem;">📊 System Analytics Dashboard</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
                 
-                <!-- Final Outcome -->
-                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-                    <div style="text-align: center; margin-bottom: 0.5rem;">
-                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Final Booking</span>
-                    </div>
-                    <div style="text-align: center; color: var(--maersk-blue); font-size: 1.4rem; font-weight: 700;" id="finalBooking">
-                        0 FFE
-                    </div>
-                    <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: var(--mds-text-secondary);" id="capacityUtilization">
-                        0% Capacity Utilized
+                <!-- Searches & Rejections -->
+                <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1rem; border: 1px solid var(--mds-border-default);">
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">🔍 Searches & Offer Rejections</h4>
+                    <div style="position: relative; height: 200px; width: 100%;">
+                        <canvas id="searchesChart"></canvas>
                     </div>
                 </div>
-                
-                <!-- Revenue Metrics -->
-                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Total Revenue:</span>
-                        <span style="color: var(--maersk-success); font-weight: 600;" id="totalRevenue">$0</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Booking Revenue:</span>
-                        <span style="font-weight: 500;" id="bookingRevenue">$0</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Cancellation Fees:</span>
-                        <span style="font-weight: 500;" id="cancellationRevenue">$0</span>
+
+                <!-- Market vs Channel Price -->
+                <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1rem; border: 1px solid var(--mds-border-default);">
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">💰 Market vs Channel Pricing</h4>
+                    <div style="position: relative; height: 200px; width: 100%;">
+                        <canvas id="pricingChart"></canvas>
                     </div>
                 </div>
-                
-                <!-- Cancellation Metrics -->
-                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Cancellations:</span>
-                        <span style="color: var(--maersk-warning); font-weight: 600;" id="totalCancellations">0 FFE</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Cancel Rate:</span>
-                        <span style="font-weight: 500;" id="cancellationRate">0%</span>
+
+                <!-- Remaining Capacity -->
+                <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1rem; border: 1px solid var(--mds-border-default);">
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">🚢 Remaining Capacity</h4>
+                    <div style="position: relative; height: 200px; width: 100%;">
+                        <canvas id="capacityChart"></canvas>
                     </div>
                 </div>
-                
-                <!-- Pricing Metrics -->
-                <div style="background: var(--mds-bg-tertiary); border-radius: 8px; padding: 1rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Avg Pricing Ratio:</span>
-                        <span style="font-weight: 600;" id="avgPricingRatio">1.00x</span>
+
+                <!-- Booking Conversion -->
+                <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1rem; border: 1px solid var(--mds-border-default);">
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">🎯 Booking Conversion Rate</h4>
+                    <div style="position: relative; height: 200px; width: 100%;">
+                        <canvas id="conversionChart"></canvas>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="color: var(--mds-text-secondary); font-size: 0.9rem;">Revenue per FFE:</span>
-                        <span style="font-weight: 500;" id="revenuePerFFE">$0</span>
+                </div>
+
+                <!-- Cancellations & Revenue -->
+                <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1rem; border: 1px solid var(--mds-border-default);">
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">🔄 Cancellations & Revenue</h4>
+                    <div style="position: relative; height: 200px; width: 100%;">
+                        <canvas id="cancellationChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Summary Metrics Panel -->
+                <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1rem; border: 1px solid var(--mds-border-default);">
+                    <h4 style="margin: 0 0 1rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">📈 Key Metrics</h4>
+                    
+                    <!-- Final Outcome -->
+                    <div style="background: var(--mds-bg-tertiary); border-radius: 6px; padding: 0.8rem; margin-bottom: 0.8rem;">
+                        <div style="text-align: center; margin-bottom: 0.3rem;">
+                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">Final Booking</span>
+                        </div>
+                        <div style="text-align: center; color: var(--maersk-blue); font-size: 1.2rem; font-weight: 700;" id="finalBooking">
+                            0 FFE
+                        </div>
+                        <div style="text-align: center; margin-top: 0.3rem; font-size: 0.7rem; color: var(--mds-text-secondary);" id="capacityUtilization">
+                            0% Capacity Utilized
+                        </div>
+                    </div>
+                    
+                    <!-- Compact Metrics -->
+                    <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.8rem;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--mds-text-secondary);">Total Revenue:</span>
+                            <span style="color: var(--maersk-success); font-weight: 600;" id="totalRevenue">$0</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--mds-text-secondary);">Cancellations:</span>
+                            <span style="color: var(--maersk-warning); font-weight: 500;" id="totalCancellations">0 FFE</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--mds-text-secondary);">Avg Pricing Ratio:</span>
+                            <span style="font-weight: 600;" id="avgPricingRatio">1.00x</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--mds-text-secondary);">Revenue per FFE:</span>
+                            <span style="font-weight: 500;" id="revenuePerFFE">$0</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -604,6 +629,305 @@
             });
         }
 
+        // Initialize mini-charts
+        function initMiniCharts() {
+            // Common chart options for mini-charts
+            const miniChartOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        display: true,
+                        grid: { color: 'rgba(138, 138, 138, 0.2)' },
+                        ticks: { 
+                            color: 'rgb(138, 138, 138)', 
+                            font: { size: 10 },
+                            maxTicksLimit: 8
+                        }
+                    },
+                    y: {
+                        display: true,
+                        beginAtZero: true,
+                        grid: { color: 'rgba(138, 138, 138, 0.2)' },
+                        ticks: { 
+                            color: 'rgb(138, 138, 138)', 
+                            font: { size: 10 }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { 
+                        display: true,
+                        position: 'bottom',
+                        labels: {
+                            color: 'rgb(212, 212, 212)',
+                            font: { size: 9 },
+                            padding: 8,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                        titleColor: 'rgb(240, 240, 240)',
+                        bodyColor: 'rgb(212, 212, 212)',
+                        borderColor: 'rgb(76, 76, 76)',
+                        borderWidth: 1,
+                        cornerRadius: 6,
+                        padding: 8,
+                        titleFont: { size: 11 },
+                        bodyFont: { size: 10 }
+                    }
+                },
+                interaction: { intersect: false, mode: 'index' }
+            };
+
+            // 1. Searches & Rejections Chart (Stacked)
+            const searchesCtx = document.getElementById('searchesChart');
+            if (searchesCtx) {
+                window.searchesChart = new Chart(searchesCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Successful Offers',
+                                data: [],
+                                backgroundColor: 'rgba(0, 170, 136, 0.8)',
+                                borderColor: 'rgb(0, 170, 136)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Rejected (Not Open)',
+                                data: [],
+                                backgroundColor: 'rgba(255, 165, 0, 0.8)',
+                                borderColor: 'rgb(255, 165, 0)',
+                                borderWidth: 1
+                            },
+                            {
+                                label: 'Rejected (Sold Out)',
+                                data: [],
+                                backgroundColor: 'rgba(229, 62, 62, 0.8)',
+                                borderColor: 'rgb(229, 62, 62)',
+                                borderWidth: 1
+                            }
+                        ]
+                    },
+                    options: {
+                        ...miniChartOptions,
+                        scales: {
+                            ...miniChartOptions.scales,
+                            y: {
+                                ...miniChartOptions.scales.y,
+                                stacked: true,
+                                title: { display: true, text: 'Volume', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            },
+                            x: {
+                                ...miniChartOptions.scales.x,
+                                stacked: true,
+                                title: { display: true, text: 'DTD', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2. Market vs Channel Pricing Chart
+            const pricingCtx = document.getElementById('pricingChart');
+            if (pricingCtx) {
+                window.pricingChart = new Chart(pricingCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Market Price',
+                                data: [],
+                                borderColor: 'rgb(255, 180, 50)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Channel Price (Raw)',
+                                data: [],
+                                borderColor: 'rgb(66, 176, 213)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                tension: 0.1
+                            },
+                            {
+                                label: 'Channel Price (w/ Fees)',
+                                data: [],
+                                borderColor: 'rgb(138, 43, 226)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                tension: 0.1,
+                                borderDash: [4, 4]
+                            }
+                        ]
+                    },
+                    options: {
+                        ...miniChartOptions,
+                        scales: {
+                            ...miniChartOptions.scales,
+                            y: {
+                                ...miniChartOptions.scales.y,
+                                title: { display: true, text: 'Price ($)', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            },
+                            x: {
+                                ...miniChartOptions.scales.x,
+                                title: { display: true, text: 'DTD', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 3. Remaining Capacity Chart
+            const capacityCtx = document.getElementById('capacityChart');
+            if (capacityCtx) {
+                window.capacityChart = new Chart(capacityCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Remaining Capacity',
+                                data: [],
+                                borderColor: 'rgb(229, 62, 62)',
+                                backgroundColor: 'rgba(229, 62, 62, 0.1)',
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                fill: true,
+                                tension: 0.3
+                            }
+                        ]
+                    },
+                    options: {
+                        ...miniChartOptions,
+                        scales: {
+                            ...miniChartOptions.scales,
+                            y: {
+                                ...miniChartOptions.scales.y,
+                                title: { display: true, text: 'FFE', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            },
+                            x: {
+                                ...miniChartOptions.scales.x,
+                                title: { display: true, text: 'DTD', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 4. Booking Conversion Chart
+            const conversionCtx = document.getElementById('conversionChart');
+            if (conversionCtx) {
+                window.conversionChart = new Chart(conversionCtx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Base Conversion Rate',
+                                data: [],
+                                borderColor: 'rgba(138, 138, 138, 0.6)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 1,
+                                pointRadius: 1,
+                                tension: 0.1,
+                                borderDash: [3, 3]
+                            },
+                            {
+                                label: 'Adjusted Conversion Rate',
+                                data: [],
+                                borderColor: 'rgb(0, 170, 136)',
+                                backgroundColor: 'rgba(0, 170, 136, 0.1)',
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                fill: true,
+                                tension: 0.3
+                            }
+                        ]
+                    },
+                    options: {
+                        ...miniChartOptions,
+                        scales: {
+                            ...miniChartOptions.scales,
+                            y: {
+                                ...miniChartOptions.scales.y,
+                                title: { display: true, text: 'Rate', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            },
+                            x: {
+                                ...miniChartOptions.scales.x,
+                                title: { display: true, text: 'DTD', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 5. Cancellations & Revenue Chart
+            const cancellationCtx = document.getElementById('cancellationChart');
+            if (cancellationCtx) {
+                window.cancellationChart = new Chart(cancellationCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: [],
+                        datasets: [
+                            {
+                                label: 'Daily Cancellations (FFE)',
+                                data: [],
+                                backgroundColor: 'rgba(255, 165, 0, 0.7)',
+                                borderColor: 'rgb(255, 165, 0)',
+                                borderWidth: 1,
+                                yAxisID: 'y'
+                            },
+                            {
+                                label: 'Cancellation Revenue ($)',
+                                data: [],
+                                type: 'line',
+                                borderColor: 'rgb(0, 170, 136)',
+                                backgroundColor: 'transparent',
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                tension: 0.3,
+                                yAxisID: 'y1'
+                            }
+                        ]
+                    },
+                    options: {
+                        ...miniChartOptions,
+                        scales: {
+                            x: {
+                                ...miniChartOptions.scales.x,
+                                title: { display: true, text: 'DTD', color: 'rgb(180, 180, 180)', font: { size: 10 } }
+                            },
+                            y: {
+                                ...miniChartOptions.scales.y,
+                                title: { display: true, text: 'FFE', color: 'rgb(180, 180, 180)', font: { size: 10 } },
+                                position: 'left'
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: { display: true, text: 'Revenue ($)', color: 'rgb(180, 180, 180)', font: { size: 10 } },
+                                grid: { drawOnChartArea: false },
+                                ticks: { 
+                                    color: 'rgb(138, 138, 138)', 
+                                    font: { size: 10 }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
         // Run simulation and update chart
         function runSimulation() {
             // Update markup display first
@@ -613,6 +937,10 @@
             
             if (!window.chartInstance) {
                 initChart();
+            }
+            
+            if (!window.searchesChart) {
+                initMiniCharts();
             }
 
             // Prepare chart data
@@ -628,18 +956,83 @@
             
             const capacity = simulationData.map(d => getParameterValue('capacity'));
 
-            // Update chart
+            // Update main chart
             window.chartInstance.data.labels = labels;
             window.chartInstance.data.datasets[0].data = cumulativeFFE;
             window.chartInstance.data.datasets[1].data = cumulativeSearchesData;
             window.chartInstance.data.datasets[2].data = capacity;
             window.chartInstance.update();
 
+            // Update mini-charts
+            updateMiniCharts(simulationData);
+
             // Update metrics panel
             updateMetricsPanel(simulationData);
 
             // Update insights
             updateEducationalInsights(simulationData);
+        }
+
+        // Update mini-charts with simulation data
+        function updateMiniCharts(data) {
+            const labels = data.map(d => d.daysToDepature);
+
+            // 1. Update Searches & Rejections Chart
+            if (window.searchesChart) {
+                const successfulOffers = data.map(d => d.offers - d.offerRejectionsNotOpen - d.offerRejectionsSoldOut);
+                const rejectedNotOpen = data.map(d => d.offerRejectionsNotOpen);
+                const rejectedSoldOut = data.map(d => d.offerRejectionsSoldOut);
+
+                window.searchesChart.data.labels = labels;
+                window.searchesChart.data.datasets[0].data = successfulOffers;
+                window.searchesChart.data.datasets[1].data = rejectedNotOpen;
+                window.searchesChart.data.datasets[2].data = rejectedSoldOut;
+                window.searchesChart.update('none');
+            }
+
+            // 2. Update Market vs Channel Pricing Chart
+            if (window.pricingChart) {
+                const marketPrices = data.map(d => d.marketPrice);
+                const channelPricesRaw = data.map(d => d.channelPriceRaw);
+                const channelPricesEff = data.map(d => d.channelPriceEff);
+
+                window.pricingChart.data.labels = labels;
+                window.pricingChart.data.datasets[0].data = marketPrices;
+                window.pricingChart.data.datasets[1].data = channelPricesRaw;
+                window.pricingChart.data.datasets[2].data = channelPricesEff;
+                window.pricingChart.update('none');
+            }
+
+            // 3. Update Remaining Capacity Chart
+            if (window.capacityChart) {
+                const remainingCapacity = data.map(d => d.remainingCapacityEnd);
+
+                window.capacityChart.data.labels = labels;
+                window.capacityChart.data.datasets[0].data = remainingCapacity;
+                window.capacityChart.update('none');
+            }
+
+            // 4. Update Booking Conversion Chart
+            if (window.conversionChart) {
+                const baseConversion = data.map(d => d.baseFFEPerOffer);
+                const adjustedConversion = data.map(d => d.adjFFEPerOffer);
+
+                window.conversionChart.data.labels = labels;
+                window.conversionChart.data.datasets[0].data = baseConversion;
+                window.conversionChart.data.datasets[1].data = adjustedConversion;
+                window.conversionChart.update('none');
+            }
+
+            // 5. Update Cancellations & Revenue Chart
+            if (window.cancellationChart) {
+                const dailyCancellations = data.map(d => d.cancellationsFFE);
+                const cancellationRevenue = data.map(d => d.revenueCancellations);
+
+                window.cancellationChart.data.labels = labels;
+                window.cancellationChart.data.datasets[0].data = dailyCancellations;
+                window.cancellationChart.data.datasets[1].data = cancellationRevenue;
+                window.cancellationChart.update('none');
+            }
         }
 
         // Update metrics panel
@@ -747,6 +1140,7 @@
         // Initialize on page load
         window.addEventListener('load', function() {
             initChart();
+            initMiniCharts();
             runSimulation();
         });
 
