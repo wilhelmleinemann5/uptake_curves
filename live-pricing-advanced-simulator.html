@@ -1504,20 +1504,23 @@
             const cancellationCtx = document.getElementById('cancellationChart');
             if (cancellationCtx) {
                 window.cancellationChart = new Chart(cancellationCtx, {
-                    type: 'bar',
+                    type: 'line',
                     data: {
                         labels: [],
                         datasets: [
                             {
-                                label: 'Daily Cancellations (FFE)',
+                                label: 'Cumulative Cancellations (FFE)',
                                 data: [],
                                 backgroundColor: 'rgba(255, 165, 0, 0.7)',
                                 borderColor: 'rgb(255, 165, 0)',
-                                borderWidth: 1,
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                fill: true,
+                                tension: 0.3,
                                 yAxisID: 'y'
                             },
                             {
-                                label: 'Cancellation Revenue ($)',
+                                label: 'Cumulative Cancellation Revenue ($)',
                                 data: [],
                                 type: 'line',
                                 borderColor: 'rgb(0, 170, 136)',
@@ -1631,12 +1634,23 @@
 
             // 5. Update Cancellations & Revenue Chart
             if (window.cancellationChart) {
-                const dailyCancellations = data.map(d => d.cancellationsFFE);
-                const cancellationRevenue = data.map(d => d.revenueCancellations);
+                // Calculate cumulative cancellations
+                let cumulativeCancellations = 0;
+                const cumulativeCancellationsData = data.map(d => {
+                    cumulativeCancellations += d.cancellationsFFE;
+                    return cumulativeCancellations;
+                });
+
+                // Calculate cumulative cancellation revenue
+                let cumulativeCancellationRevenue = 0;
+                const cumulativeCancellationRevenueData = data.map(d => {
+                    cumulativeCancellationRevenue += d.revenueCancellations;
+                    return cumulativeCancellationRevenue;
+                });
 
                 window.cancellationChart.data.labels = labels;
-                window.cancellationChart.data.datasets[0].data = dailyCancellations;
-                window.cancellationChart.data.datasets[1].data = cancellationRevenue;
+                window.cancellationChart.data.datasets[0].data = cumulativeCancellationsData;
+                window.cancellationChart.data.datasets[1].data = cumulativeCancellationRevenueData;
                 window.cancellationChart.update('none');
             }
         }
