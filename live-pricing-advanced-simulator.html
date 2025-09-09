@@ -681,7 +681,7 @@
                 interaction: { intersect: false, mode: 'index' }
             };
 
-            // 1. Searches & Rejections Chart (Cumulative Stacked Areas)
+            // 1. Searches & Rejections Chart (Cumulative with Stacked Rejection Areas)
             const searchesCtx = document.getElementById('searchesChart');
             if (searchesCtx) {
                 window.searchesChart = new Chart(searchesCtx, {
@@ -690,23 +690,13 @@
                         labels: [],
                         datasets: [
                             {
-                                label: 'Cumulative Successful Offers',
-                                data: [],
-                                backgroundColor: 'rgba(0, 170, 136, 0.7)',
-                                borderColor: 'rgb(0, 170, 136)',
-                                borderWidth: 2,
-                                pointRadius: 1,
-                                fill: 'origin',
-                                tension: 0.3
-                            },
-                            {
                                 label: 'Cumulative Rejected (Not Open)',
                                 data: [],
                                 backgroundColor: 'rgba(255, 165, 0, 0.7)',
                                 borderColor: 'rgb(255, 165, 0)',
-                                borderWidth: 2,
+                                borderWidth: 1,
                                 pointRadius: 1,
-                                fill: '-1',
+                                fill: 'origin',
                                 tension: 0.3
                             },
                             {
@@ -714,10 +704,21 @@
                                 data: [],
                                 backgroundColor: 'rgba(229, 62, 62, 0.7)',
                                 borderColor: 'rgb(229, 62, 62)',
-                                borderWidth: 2,
+                                borderWidth: 1,
                                 pointRadius: 1,
                                 fill: '-1',
                                 tension: 0.3
+                            },
+                            {
+                                label: 'Cumulative Searches',
+                                data: [],
+                                backgroundColor: 'transparent',
+                                borderColor: 'rgba(138, 138, 138, 0.8)',
+                                borderWidth: 2,
+                                pointRadius: 2,
+                                fill: false,
+                                tension: 0.3,
+                                borderDash: [4, 4]
                             }
                         ]
                     },
@@ -998,29 +999,32 @@
 
             // 1. Update Searches & Rejections Chart (Cumulative)
             if (window.searchesChart) {
-                let cumulativeSuccessful = 0;
                 let cumulativeRejectedNotOpen = 0;
                 let cumulativeRejectedSoldOut = 0;
+                let cumulativeSearches = 0;
 
-                const cumulativeSuccessfulData = data.map(d => {
-                    cumulativeSuccessful += (d.offers - d.offerRejectionsNotOpen - d.offerRejectionsSoldOut);
-                    return cumulativeSuccessful;
-                });
-
-                const cumulativeRejectedNotOpenData = data.map(d => {
+                // Calculate cumulative rejections (not open) - bottom layer
+                const cumulativeNotOpenData = data.map(d => {
                     cumulativeRejectedNotOpen += d.offerRejectionsNotOpen;
-                    return cumulativeSuccessful + cumulativeRejectedNotOpen;
+                    return cumulativeRejectedNotOpen;
                 });
 
-                const cumulativeRejectedSoldOutData = data.map(d => {
+                // Calculate cumulative rejections (sold out) - stacked on top of not open
+                const cumulativeSoldOutData = data.map(d => {
                     cumulativeRejectedSoldOut += d.offerRejectionsSoldOut;
-                    return cumulativeSuccessful + cumulativeRejectedNotOpen + cumulativeRejectedSoldOut;
+                    return cumulativeRejectedNotOpen + cumulativeRejectedSoldOut;
+                });
+
+                // Calculate cumulative searches (total line) - same as main chart
+                const cumulativeSearchesData = data.map(d => {
+                    cumulativeSearches += d.searches;
+                    return cumulativeSearches;
                 });
 
                 window.searchesChart.data.labels = labels;
-                window.searchesChart.data.datasets[0].data = cumulativeSuccessfulData;
-                window.searchesChart.data.datasets[1].data = cumulativeRejectedNotOpenData;
-                window.searchesChart.data.datasets[2].data = cumulativeRejectedSoldOutData;
+                window.searchesChart.data.datasets[0].data = cumulativeNotOpenData;
+                window.searchesChart.data.datasets[1].data = cumulativeSoldOutData;
+                window.searchesChart.data.datasets[2].data = cumulativeSearchesData;
                 window.searchesChart.update('none');
             }
 
