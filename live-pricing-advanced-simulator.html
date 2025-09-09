@@ -41,24 +41,20 @@
                 </div>
             </div>
 
-            <!-- Forecasting Preview -->
-            <div style="margin-bottom: 1rem; padding: 1rem; background: var(--mds-bg-tertiary); border-radius: 6px; border: 1px solid var(--mds-border-default);">
-                <h5 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">🔮 Turn Forecast Preview</h5>
-                <div style="position: relative; height: 150px; width: 100%; margin-bottom: 0.5rem;">
-                    <canvas id="forecastChart"></canvas>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: var(--mds-text-secondary);">
+            <!-- Forecast Summary -->
+            <div style="margin-bottom: 1rem; padding: 0.8rem; background: var(--mds-bg-tertiary); border-radius: 6px; border: 1px solid var(--mds-border-default);">
+                <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;">
                     <div>
-                        <span>Projected Final:</span>
-                        <span id="projectedFinal" style="color: var(--maersk-blue); font-weight: 600; margin-left: 0.25rem;">-- FFE</span>
+                        <span style="color: var(--mds-text-secondary);">🔮 Projected Final:</span>
+                        <span id="projectedFinal" style="color: var(--maersk-blue); font-weight: 600; margin-left: 0.5rem;">-- FFE</span>
                     </div>
                     <div>
-                        <span>Range:</span>
-                        <span id="projectedRange" style="color: var(--mds-text-primary); font-weight: 500; margin-left: 0.25rem;">-- to -- FFE</span>
+                        <span style="color: var(--mds-text-secondary);">Range:</span>
+                        <span id="projectedRange" style="color: var(--mds-text-primary); font-weight: 500; margin-left: 0.5rem;">-- to -- FFE</span>
                     </div>
                     <div>
-                        <span>Capacity:</span>
-                        <span id="capacityUtilForecast" style="color: var(--maersk-warning); font-weight: 600; margin-left: 0.25rem;">--%</span>
+                        <span style="color: var(--mds-text-secondary);">Capacity:</span>
+                        <span id="capacityUtilForecast" style="color: var(--maersk-warning); font-weight: 600; margin-left: 0.5rem;">--%</span>
                     </div>
                 </div>
             </div>
@@ -668,8 +664,8 @@
                 window.chartInstance.update();
             }
 
-            // Clear mini charts and forecast chart
-            [window.searchesChart, window.pricingChart, window.capacityChart, window.conversionChart, window.cancellationChart, window.forecastChart].forEach(chart => {
+            // Clear mini charts
+            [window.searchesChart, window.pricingChart, window.capacityChart, window.conversionChart, window.cancellationChart].forEach(chart => {
                 if (chart) {
                     chart.data.datasets.forEach(dataset => {
                         dataset.data = [];
@@ -716,12 +712,61 @@
             
             const capacity = TURN_STATE.simulationData.map(d => getParameterValue('capacity'));
 
-            // Update main chart
+            // Update main chart with forecast
             if (window.chartInstance) {
-                window.chartInstance.data.labels = labels;
-                window.chartInstance.data.datasets[0].data = cumulativeFFE;
-                window.chartInstance.data.datasets[1].data = cumulativeSearchesData;
-                window.chartInstance.data.datasets[2].data = capacity;
+                const forecast = generateForecast();
+                
+                if (forecast) {
+                    // Combine actual and forecast data
+                    const allLabels = [...labels, ...forecast.labels.filter(l => !labels.includes(l))].sort((a, b) => b - a);
+                    
+                    // Extend actual data with nulls for forecast period
+                    const extendedActualFFE = allLabels.map(dtd => {
+                        const actualIndex = labels.indexOf(dtd);
+                        return actualIndex >= 0 ? cumulativeFFE[actualIndex] : null;
+                    });
+                    
+                    const extendedActualSearches = allLabels.map(dtd => {
+                        const actualIndex = labels.indexOf(dtd);
+                        return actualIndex >= 0 ? cumulativeSearchesData[actualIndex] : null;
+                    });
+                    
+                    // Forecast data (null for actual period)
+                    const forecastMostLikely = allLabels.map(dtd => {
+                        const forecastIndex = forecast.labels.indexOf(dtd);
+                        return forecastIndex >= 0 && !labels.includes(dtd) ? forecast.mostLikely[forecastIndex] : null;
+                    });
+                    
+                    const forecastOptimistic = allLabels.map(dtd => {
+                        const forecastIndex = forecast.labels.indexOf(dtd);
+                        return forecastIndex >= 0 && !labels.includes(dtd) ? forecast.optimistic[forecastIndex] : null;
+                    });
+                    
+                    const forecastPessimistic = allLabels.map(dtd => {
+                        const forecastIndex = forecast.labels.indexOf(dtd);
+                        return forecastIndex >= 0 && !labels.includes(dtd) ? forecast.pessimistic[forecastIndex] : null;
+                    });
+                    
+                    const extendedCapacity = allLabels.map(() => getParameterValue('capacity'));
+                    
+                    window.chartInstance.data.labels = allLabels;
+                    window.chartInstance.data.datasets[0].data = extendedActualFFE;
+                    window.chartInstance.data.datasets[1].data = extendedActualSearches;
+                    window.chartInstance.data.datasets[2].data = extendedCapacity;
+                    window.chartInstance.data.datasets[3].data = forecastPessimistic;
+                    window.chartInstance.data.datasets[4].data = forecastOptimistic;
+                    window.chartInstance.data.datasets[5].data = forecastMostLikely;
+                } else {
+                    // No forecast available - just show actual data
+                    window.chartInstance.data.labels = labels;
+                    window.chartInstance.data.datasets[0].data = cumulativeFFE;
+                    window.chartInstance.data.datasets[1].data = cumulativeSearchesData;
+                    window.chartInstance.data.datasets[2].data = capacity;
+                    window.chartInstance.data.datasets[3].data = [];
+                    window.chartInstance.data.datasets[4].data = [];
+                    window.chartInstance.data.datasets[5].data = [];
+                }
+                
                 window.chartInstance.update();
             }
 
@@ -861,54 +906,17 @@
         // Update forecast display
         function updateForecast() {
             const forecast = generateForecast();
-            if (!forecast || !window.forecastChart) return;
+            if (!forecast) return;
 
-            // Combine actual progress with forecast
-            const actualLabels = TURN_STATE.simulationData.map(d => d.daysToDepature);
-            const actualData = TURN_STATE.simulationData.map(d => d.cumulativeFFE);
-            
-            // Full timeline
-            const allLabels = [...actualLabels, ...forecast.labels.filter(l => !actualLabels.includes(l))].sort((a, b) => b - a);
-            
-            // Prepare data arrays
-            const actualProgress = allLabels.map(dtd => {
-                const actual = TURN_STATE.simulationData.find(d => d.daysToDepature === dtd);
-                return actual ? actual.cumulativeFFE : null;
-            });
-            
-            const mostLikelyForecast = allLabels.map(dtd => {
-                const forecastIndex = forecast.labels.indexOf(dtd);
-                return forecastIndex >= 0 ? forecast.mostLikely[forecastIndex] : null;
-            });
-            
-            const optimisticForecast = allLabels.map(dtd => {
-                const forecastIndex = forecast.labels.indexOf(dtd);
-                return forecastIndex >= 0 ? forecast.optimistic[forecastIndex] : null;
-            });
-            
-            const pessimisticForecast = allLabels.map(dtd => {
-                const forecastIndex = forecast.labels.indexOf(dtd);
-                return forecastIndex >= 0 ? forecast.pessimistic[forecastIndex] : null;
-            });
-            
-            const capacity = allLabels.map(() => getParameterValue('capacity'));
-
-            // Update chart
-            window.forecastChart.data.labels = allLabels;
-            window.forecastChart.data.datasets[0].data = actualProgress;
-            window.forecastChart.data.datasets[1].data = pessimisticForecast;
-            window.forecastChart.data.datasets[2].data = optimisticForecast;
-            window.forecastChart.data.datasets[3].data = mostLikelyForecast;
-            window.forecastChart.data.datasets[4].data = capacity;
-            window.forecastChart.update('none');
-
-            // Update forecast metrics
+            // Update forecast metrics in the summary bar
             const capacityValue = getParameterValue('capacity');
             document.getElementById('projectedFinal').textContent = `${Math.round(forecast.finalForecast.mostLikely)} FFE`;
             document.getElementById('projectedRange').textContent = 
                 `${Math.round(forecast.finalForecast.pessimistic)} to ${Math.round(forecast.finalForecast.optimistic)} FFE`;
             document.getElementById('capacityUtilForecast').textContent = 
                 `${Math.round((forecast.finalForecast.mostLikely / capacityValue) * 100)}%`;
+            
+            // The forecast visualization is now integrated into the main chart via updateChartsWithTurnData()
         }
 
         // DTD Bell Curve - JavaScript implementation of your Python function
@@ -1111,6 +1119,39 @@
                             fill: false,
                             tension: 0,
                             borderDash: [10, 5]
+                        },
+                        {
+                            label: 'Forecast - Pessimistic',
+                            data: [],
+                            borderColor: 'rgba(229, 62, 62, 0.5)',
+                            backgroundColor: 'rgba(229, 62, 62, 0.1)',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: false,
+                            tension: 0.3,
+                            borderDash: [3, 3]
+                        },
+                        {
+                            label: 'Forecast - Optimistic',
+                            data: [],
+                            borderColor: 'rgba(0, 170, 136, 0.5)',
+                            backgroundColor: 'rgba(0, 170, 136, 0.1)',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            fill: '-1',
+                            tension: 0.3,
+                            borderDash: [3, 3]
+                        },
+                        {
+                            label: 'Forecast - Most Likely',
+                            data: [],
+                            borderColor: 'rgba(66, 176, 213, 0.6)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            pointRadius: 2,
+                            fill: false,
+                            tension: 0.3,
+                            borderDash: [6, 3]
                         }
                     ]
                 },
@@ -1198,118 +1239,6 @@
             });
         }
 
-        // Initialize forecast chart
-        function initForecastChart() {
-            const forecastCtx = document.getElementById('forecastChart');
-            if (!forecastCtx) return;
-
-            window.forecastChart = new Chart(forecastCtx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [
-                        {
-                            label: 'Actual Progress',
-                            data: [],
-                            borderColor: 'rgb(66, 176, 213)',
-                            backgroundColor: 'rgba(66, 176, 213, 0.2)',
-                            borderWidth: 3,
-                            pointRadius: 3,
-                            fill: false,
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Pessimistic Forecast',
-                            data: [],
-                            borderColor: 'rgba(229, 62, 62, 0.6)',
-                            backgroundColor: 'rgba(229, 62, 62, 0.1)',
-                            borderWidth: 1,
-                            pointRadius: 0,
-                            fill: 'origin',
-                            tension: 0.3,
-                            borderDash: [3, 3]
-                        },
-                        {
-                            label: 'Optimistic Forecast',
-                            data: [],
-                            borderColor: 'rgba(0, 170, 136, 0.6)',
-                            backgroundColor: 'rgba(0, 170, 136, 0.1)',
-                            borderWidth: 1,
-                            pointRadius: 0,
-                            fill: '-1',
-                            tension: 0.3,
-                            borderDash: [3, 3]
-                        },
-                        {
-                            label: 'Most Likely Forecast',
-                            data: [],
-                            borderColor: 'rgba(66, 176, 213, 0.8)',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            pointRadius: 2,
-                            fill: false,
-                            tension: 0.3,
-                            borderDash: [6, 3]
-                        },
-                        {
-                            label: 'Capacity',
-                            data: [],
-                            borderColor: 'rgb(229, 62, 62)',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            fill: false,
-                            tension: 0,
-                            borderDash: [8, 4]
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: {
-                            display: true,
-                            reverse: false,
-                            grid: { color: 'rgba(138, 138, 138, 0.2)' },
-                            ticks: { 
-                                color: 'rgb(138, 138, 138)', 
-                                font: { size: 9 },
-                                maxTicksLimit: 8
-                            },
-                            title: { display: true, text: 'DTD', color: 'rgb(180, 180, 180)', font: { size: 9 } }
-                        },
-                        y: {
-                            display: true,
-                            beginAtZero: true,
-                            grid: { color: 'rgba(138, 138, 138, 0.2)' },
-                            ticks: { 
-                                color: 'rgb(138, 138, 138)', 
-                                font: { size: 9 }
-                            },
-                            title: { display: true, text: 'FFE', color: 'rgb(180, 180, 180)', font: { size: 9 } }
-                        }
-                    },
-                    plugins: {
-                        legend: { 
-                            display: false // Hide legend for compact view
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(33, 33, 33, 0.95)',
-                            titleColor: 'rgb(240, 240, 240)',
-                            bodyColor: 'rgb(212, 212, 212)',
-                            borderColor: 'rgb(76, 76, 76)',
-                            borderWidth: 1,
-                            cornerRadius: 6,
-                            padding: 6,
-                            titleFont: { size: 10 },
-                            bodyFont: { size: 9 }
-                        }
-                    },
-                    interaction: { intersect: false, mode: 'index' }
-                }
-            });
-        }
 
         // Initialize mini-charts
         function initMiniCharts() {
@@ -1820,7 +1749,6 @@
         window.addEventListener('load', function() {
             initChart();
             initMiniCharts();
-            initForecastChart();
             updateTurnUI();
             updateChannelMarkupDisplay();
             updateForecast(); // Show initial forecast
