@@ -1003,22 +1003,24 @@
                 let cumulativeRejectedSoldOut = 0;
                 let cumulativeSearches = 0;
 
-                // Calculate cumulative rejections (not open) - bottom layer
-                const cumulativeNotOpenData = data.map(d => {
-                    cumulativeRejectedNotOpen += d.offerRejectionsNotOpen;
-                    return cumulativeRejectedNotOpen;
-                });
+                // Calculate cumulative rejections with proper logic
+                const cumulativeNotOpenData = [];
+                const cumulativeSoldOutData = [];
+                const cumulativeSearchesData = [];
 
-                // Calculate cumulative rejections (sold out) - stacked on top of not open
-                const cumulativeSoldOutData = data.map(d => {
-                    cumulativeRejectedSoldOut += d.offerRejectionsSoldOut;
-                    return cumulativeRejectedNotOpen + cumulativeRejectedSoldOut;
-                });
-
-                // Calculate cumulative searches (total line) - same as main chart
-                const cumulativeSearchesData = data.map(d => {
+                data.forEach(d => {
+                    // Always accumulate total searches
                     cumulativeSearches += d.searches;
-                    return cumulativeSearches;
+                    cumulativeSearchesData.push(cumulativeSearches);
+
+                    // Only accumulate rejections that actually happened
+                    // (the simulation already has the correct logic)
+                    cumulativeRejectedNotOpen += d.offerRejectionsNotOpen;
+                    cumulativeRejectedSoldOut += d.offerRejectionsSoldOut;
+
+                    // Store cumulative values for chart
+                    cumulativeNotOpenData.push(cumulativeRejectedNotOpen);
+                    cumulativeSoldOutData.push(cumulativeRejectedNotOpen + cumulativeRejectedSoldOut);
                 });
 
                 window.searchesChart.data.labels = labels;
