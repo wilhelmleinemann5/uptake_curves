@@ -1011,7 +1011,7 @@
                 pessimisticData.push(pessimisticValue);
             });
 
-            return {
+            const result = {
                 labels: forecastData.map(d => d.dtd),
                 mostLikely: forecastData.map(d => d.cumulativeFFE),
                 optimistic: optimisticData,
@@ -1022,6 +1022,15 @@
                     pessimistic: pessimisticData[pessimisticData.length - 1] || 0
                 }
             };
+            
+            console.log('DEBUG generateForecast result:', {
+                forecastDataLength: forecastData.length,
+                finalForecast: result.finalForecast,
+                currentTurn: TURN_STATE.currentTurn,
+                cumulativeFFE: TURN_STATE.cumulativeFFE
+            });
+            
+            return result;
         }
 
         // Update forecast display
@@ -1051,15 +1060,29 @@
             const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
             const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
             
-            // Update forecast display
+            // Safety checks for forecast data
+            const finalMostLikely = forecast.finalForecast?.mostLikely || 0;
+            const finalOptimistic = forecast.finalForecast?.optimistic || 0;
+            const finalPessimistic = forecast.finalForecast?.pessimistic || 0;
+            
+            console.log('DEBUG forecast panel:', {
+                finalMostLikely,
+                finalOptimistic, 
+                finalPessimistic,
+                targetValue,
+                upperThreshold,
+                lowerThreshold
+            });
+            
+            // Update forecast display with safety checks
             document.getElementById('forecastRange').textContent = 
-                `${Math.round(forecast.finalForecast.pessimistic)} - ${Math.round(forecast.finalForecast.optimistic)} FFE`;
+                `${Math.round(finalPessimistic)} - ${Math.round(finalOptimistic)} FFE`;
             document.getElementById('mostLikelyForecast').textContent = 
-                `Most Likely: ${Math.round(forecast.finalForecast.mostLikely)}`;
+                `Most Likely: ${Math.round(finalMostLikely)}`;
             
             // Update target comparison
             document.getElementById('targetValueDisplay').textContent = `${targetValue} FFE`;
-            const gap = forecast.finalForecast.mostLikely - targetValue;
+            const gap = finalMostLikely - targetValue;
             const gapSign = gap >= 0 ? '+' : '';
             const gapColor = gap >= 0 ? 'var(--maersk-success)' : 'var(--maersk-error)';
             document.getElementById('targetGap').textContent = `${gapSign}${Math.round(gap)} FFE`;
@@ -1114,21 +1137,45 @@
         // Calculate recommended channel price to reach target
         function calculateRecommendedChannelPrice(targetValue, direction) {
             const currentChannelPrice = getParameterValue('channelPrice');
-            const marketPrice = TURN_STATE.currentMarketPrice;
+            const marketPrice = TURN_STATE.currentMarketPrice || getParameterValue('marketPrice');
             const elasticity = getCurrentElasticity();
             
             // Simple price adjustment based on gap and elasticity
             const forecast = generateForecast();
-            if (!forecast) return currentChannelPrice;
+            if (!forecast || !forecast.finalForecast) return currentChannelPrice;
             
-            const gap = targetValue - forecast.finalForecast.mostLikely;
-            const gapPercentage = gap / forecast.finalForecast.mostLikely;
+            const currentForecast = forecast.finalForecast.mostLikely || 0;
+            if (currentForecast <= 0) return currentChannelPrice;
             
-            // Use elasticity to estimate required price change
-            const requiredPriceChange = Math.pow(1 + gapPercentage, 1 / elasticity) - 1;
-            const adjustedChannelPrice = currentChannelPrice * (1 + requiredPriceChange);
+            const gap = targetValue - currentForecast;
+            const gapPercentage = gap / Math.max(currentForecast, 1); // Prevent division by zero
             
-            return Math.round(adjustedChannelPrice);
+            // Limit gap percentage to reasonable bounds
+            const boundedGapPercentage = Math.max(-0.5, Math.min(0.5, gapPercentage));
+            
+            // Use elasticity to estimate required price change (with safety bounds)
+            const elasticityFactor = Math.max(0.1, Math.min(5.0, elasticity)); // Bound elasticity
+            const requiredPriceChange = Math.pow(1 + boundedGapPercentage, 1 / elasticityFactor) - 1;
+            
+            // Apply price change with reasonable bounds
+            const boundedPriceChange = Math.max(-0.3, Math.min(0.3, requiredPriceChange)); // Max ±30%
+            const adjustedChannelPrice = currentChannelPrice * (1 + boundedPriceChange);
+            
+            // Ensure result is reasonable
+            const minPrice = marketPrice * 0.7; // At least 70% of market price
+            const maxPrice = marketPrice * 2.0; // At most 200% of market price
+            const finalPrice = Math.max(minPrice, Math.min(maxPrice, adjustedChannelPrice));
+            
+            console.log('DEBUG price recommendation:', {
+                currentChannelPrice,
+                marketPrice,
+                gap,
+                gapPercentage: boundedGapPercentage,
+                requiredPriceChange: boundedPriceChange,
+                finalPrice: Math.round(finalPrice)
+            });
+            
+            return Math.round(finalPrice);
         }
 
         // Apply recommended channel price
