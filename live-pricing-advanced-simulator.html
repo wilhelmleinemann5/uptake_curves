@@ -102,11 +102,21 @@
                 </div>
             </div>
             
-            <!-- Elasticity -->
+            <!-- Price Sensitivity -->
             <div style="background: var(--mds-bg-tertiary); padding: 12px; border-radius: 6px; border-left: 3px solid var(--maersk-success);">
-                <label for="elasticity" style="display: block; font-weight: 600; margin-bottom: 4px;">📈 Price Elasticity:</label>
-                <input type="number" id="elasticity" value="1.25" min="0.5" max="3.0" step="0.1" 
-                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
+                <label for="sensitivity" style="display: block; font-weight: 600; margin-bottom: 4px;">📈 Price Sensitivity:</label>
+                <select id="sensitivity" 
+                        style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px;"
+                        onchange="toggleCustomSensitivity(); updateChartsWithTurnData()">
+                    <option value="0.5">📈 Conservative</option>
+                    <option value="1.0">🎯 Balanced</option>
+                    <option value="1.25" selected>⚡ Moderate</option>
+                    <option value="2.0">🔥 Aggressive</option>
+                    <option value="3.0">💥 Extreme</option>
+                    <option value="custom">🧮 Custom</option>
+                </select>
+                <input type="number" id="customSensitivity" value="1.25" min="0.1" max="5.0" step="0.1" 
+                       style="width: 100%; background: var(--mds-bg-primary); color: var(--mds-text-primary); border: 1px solid var(--mds-border-default); border-radius: 4px; padding: 6px; font-size: 14px; margin-top: 4px; display: none;"
                        oninput="updateChartsWithTurnData()">
             </div>
             
@@ -312,40 +322,62 @@
                     </div>
                 </div>
 
-                <!-- Summary Metrics Panel -->
+                <!-- Final Outcome Forecast Panel -->
                 <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1rem; border: 1px solid var(--mds-border-default);">
-                    <h4 style="margin: 0 0 1rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">📈 Key Metrics</h4>
+                    <h4 style="margin: 0 0 1rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">📊 Final Outcome Forecast</h4>
                     
-                    <!-- Final Outcome -->
+                    <!-- Final Forecast -->
                     <div style="background: var(--mds-bg-tertiary); border-radius: 6px; padding: 0.8rem; margin-bottom: 0.8rem;">
                         <div style="text-align: center; margin-bottom: 0.3rem;">
-                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">Final Booking</span>
+                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">Days to Departure: 0</span>
                         </div>
-                        <div style="text-align: center; color: var(--maersk-blue); font-size: 1.2rem; font-weight: 700;" id="finalBooking">
-                            0 FFE
+                        <div style="text-align: center; color: var(--mds-text-primary); font-size: 1.1rem; font-weight: 700;" id="forecastRange">-- to -- FFE</div>
+                        <div style="text-align: center; color: var(--maersk-blue); font-size: 1rem; font-weight: 600; margin-top: 0.25rem;" id="mostLikelyForecast">Most Likely: --</div>
+                    </div>
+                    
+                    <!-- Target Comparison -->
+                    <div style="background: var(--mds-bg-tertiary); border-radius: 6px; padding: 0.8rem; margin-bottom: 0.8rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">🎯 Target:</span>
+                            <span style="color: var(--maersk-success); font-weight: 600;" id="targetValueDisplay">200 FFE</span>
                         </div>
-                        <div style="text-align: center; margin-top: 0.3rem; font-size: 0.7rem; color: var(--mds-text-secondary);" id="capacityUtilization">
-                            0% Capacity Utilized
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">Gap to Target:</span>
+                            <span style="font-weight: 600;" id="targetGap">-- FFE</span>
                         </div>
                     </div>
                     
-                    <!-- Compact Metrics -->
-                    <div style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.8rem;">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--mds-text-secondary);">Total Revenue:</span>
-                            <span style="color: var(--maersk-success); font-weight: 600;" id="totalRevenue">$0</span>
+                    <!-- Guardrails Status -->
+                    <div style="background: var(--mds-bg-tertiary); border-radius: 6px; padding: 0.8rem; margin-bottom: 0.8rem;">
+                        <div style="text-align: center; margin-bottom: 0.4rem;">
+                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">Guardrail Status</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--mds-text-secondary);">Cancellations:</span>
-                            <span style="color: var(--maersk-warning); font-weight: 500;" id="totalCancellations">0 FFE</span>
+                        <div style="text-align: center;" id="guardrailStatusPanel">
+                            <span style="font-size: 1rem; font-weight: 600;">✅ Within Range</span>
                         </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--mds-text-secondary);">Avg Pricing Ratio:</span>
-                            <span style="font-weight: 600;" id="avgPricingRatio">1.00x</span>
+                        <div style="text-align: center; margin-top: 0.4rem; font-size: 0.7rem; color: var(--mds-text-secondary);" id="thresholdRangeDisplay">
+                            190 - 210 FFE
                         </div>
-                        <div style="display: flex; justify-content: space-between;">
-                            <span style="color: var(--mds-text-secondary);">Revenue per FFE:</span>
-                            <span style="font-weight: 500;" id="revenuePerFFE">$0</span>
+                    </div>
+                    
+                    <!-- Recommendation -->
+                    <div style="text-align: center;">
+                        <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.4rem;">Recommendation</div>
+                        <div style="font-size: 0.85rem; font-weight: 500; margin-bottom: 0.6rem;" id="quickRecommendation">Monitor trajectory</div>
+                        
+                        <!-- Price Change Recommendation -->
+                        <div id="priceChangeRecommendation" style="display: none; margin-bottom: 0.6rem;">
+                            <div style="color: var(--mds-text-secondary); font-size: 0.75rem; margin-bottom: 0.2rem;">Recommended Channel Price</div>
+                            <div style="font-size: 0.9rem; font-weight: 600; color: var(--maersk-warning);" id="recommendedChannelPrice">$3090</div>
+                            <div style="color: var(--mds-text-secondary); font-size: 0.7rem; margin-top: 0.2rem;" id="changeRationale">To reach target forecast</div>
+                        </div>
+                        
+                        <!-- Action Buttons -->
+                        <div id="actionButtons" style="display: none; gap: 0.6rem; margin-top: 0.8rem; justify-content: center;">
+                            <button id="applyRecommendation" onclick="applyRecommendedChannelPrice()" 
+                                    style="background: var(--maersk-light-blue); color: white; border: 1px solid var(--maersk-light-blue); padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 600;">
+                                Apply Price
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -446,6 +478,30 @@
             }
         }
 
+        // Toggle custom sensitivity input
+        function toggleCustomSensitivity() {
+            const sensitivitySelect = document.getElementById('sensitivity');
+            const customSensitivityInput = document.getElementById('customSensitivity');
+            
+            if (sensitivitySelect.value === 'custom') {
+                customSensitivityInput.style.display = 'block';
+            } else {
+                customSensitivityInput.style.display = 'none';
+            }
+        }
+
+        // Get current elasticity value from sensitivity dropdown
+        function getCurrentElasticity() {
+            const sensitivitySelect = document.getElementById('sensitivity');
+            const customSensitivityInput = document.getElementById('customSensitivity');
+            
+            if (sensitivitySelect.value === 'custom') {
+                return parseFloat(customSensitivityInput.value) || 1.25;
+            } else {
+                return parseFloat(sensitivitySelect.value) || 1.25;
+            }
+        }
+
         // Simple random number generator (seeded)
         function seededRandom() {
             TURN_STATE.randomSeed = (TURN_STATE.randomSeed * 9301 + 49297) % 233280;
@@ -542,7 +598,7 @@
             const capacity = getParameterValue('capacity');
             const marketPrice = TURN_STATE.currentMarketPrice; // Use volatile market price
             const channelPrice = getParameterValue('channelPrice');
-            const elasticity = getParameterValue('elasticity');
+            const elasticity = getCurrentElasticity();
             const bookingConversion = getParameterValue('bookingConversion');
             const baseWeekdayVolume = getParameterValue('baseWeekdayVolume');
             const rampStart = getParameterValue('rampStart');
@@ -856,7 +912,7 @@
             const capacity = getParameterValue('capacity');
             const marketPrice = getParameterValue('marketPrice');
             const channelPrice = getParameterValue('channelPrice');
-            const elasticity = getParameterValue('elasticity');
+            const elasticity = getCurrentElasticity();
             const bookingConversion = getParameterValue('bookingConversion');
             const baseWeekdayVolume = getParameterValue('baseWeekdayVolume');
             const rampStart = getParameterValue('rampStart');
@@ -981,7 +1037,117 @@
             document.getElementById('capacityUtilForecast').textContent = 
                 `${Math.round((forecast.finalForecast.mostLikely / capacityValue) * 100)}%`;
             
-            // The forecast visualization is now integrated into the main chart via updateChartsWithTurnData()
+            // Update detailed forecast panel
+            updateForecastPanel(forecast);
+        }
+
+        // Update detailed forecast panel with guardrails and recommendations
+        function updateForecastPanel(forecast) {
+            const capacity = getParameterValue('capacity');
+            const targetValue = capacity; // Use capacity as target for now
+            const thresholdBuffer = 5; // 5% buffer around target
+            
+            // Calculate thresholds
+            const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
+            const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
+            
+            // Update forecast display
+            document.getElementById('forecastRange').textContent = 
+                `${Math.round(forecast.finalForecast.pessimistic)} - ${Math.round(forecast.finalForecast.optimistic)} FFE`;
+            document.getElementById('mostLikelyForecast').textContent = 
+                `Most Likely: ${Math.round(forecast.finalForecast.mostLikely)}`;
+            
+            // Update target comparison
+            document.getElementById('targetValueDisplay').textContent = `${targetValue} FFE`;
+            const gap = forecast.finalForecast.mostLikely - targetValue;
+            const gapSign = gap >= 0 ? '+' : '';
+            const gapColor = gap >= 0 ? 'var(--maersk-success)' : 'var(--maersk-error)';
+            document.getElementById('targetGap').textContent = `${gapSign}${Math.round(gap)} FFE`;
+            document.getElementById('targetGap').style.color = gapColor;
+            
+            // Update guardrail status
+            document.getElementById('thresholdRangeDisplay').textContent = 
+                `${lowerThreshold} - ${upperThreshold} FFE`;
+            
+            const guardrailStatusPanel = document.getElementById('guardrailStatusPanel');
+            const quickRecommendation = document.getElementById('quickRecommendation');
+            const priceChangeRecommendation = document.getElementById('priceChangeRecommendation');
+            const actionButtons = document.getElementById('actionButtons');
+            
+            if (forecast.finalForecast.mostLikely > upperThreshold) {
+                const deviation = ((forecast.finalForecast.mostLikely - upperThreshold) / upperThreshold * 100).toFixed(1);
+                guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-error); font-size: 1rem; font-weight: 600;">🔴 Above (+${deviation}%)</span>`;
+                
+                quickRecommendation.textContent = 'Forecast above target';
+                quickRecommendation.style.color = 'var(--maersk-warning)';
+                
+                const recommendedPrice = calculateRecommendedChannelPrice(targetValue, 'decrease');
+                document.getElementById('recommendedChannelPrice').textContent = `$${recommendedPrice}`;
+                document.getElementById('changeRationale').textContent = `Increase price to reduce demand`;
+                priceChangeRecommendation.style.display = 'block';
+                actionButtons.style.display = 'flex';
+                
+            } else if (forecast.finalForecast.mostLikely < lowerThreshold) {
+                const deviation = ((lowerThreshold - forecast.finalForecast.mostLikely) / lowerThreshold * 100).toFixed(1);
+                guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-warning); font-size: 1rem; font-weight: 600;">🟠 Below (-${deviation}%)</span>`;
+                
+                quickRecommendation.textContent = 'Forecast below target';
+                quickRecommendation.style.color = 'var(--maersk-warning)';
+                
+                const recommendedPrice = calculateRecommendedChannelPrice(targetValue, 'increase');
+                document.getElementById('recommendedChannelPrice').textContent = `$${recommendedPrice}`;
+                document.getElementById('changeRationale').textContent = `Reduce price to stimulate demand`;
+                priceChangeRecommendation.style.display = 'block';
+                actionButtons.style.display = 'flex';
+                
+            } else {
+                guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-success); font-size: 1rem; font-weight: 600;">✅ Within Range</span>`;
+                
+                quickRecommendation.textContent = 'Forecast on target';
+                quickRecommendation.style.color = 'var(--maersk-success)';
+                
+                priceChangeRecommendation.style.display = 'none';
+                actionButtons.style.display = 'none';
+            }
+        }
+
+        // Calculate recommended channel price to reach target
+        function calculateRecommendedChannelPrice(targetValue, direction) {
+            const currentChannelPrice = getParameterValue('channelPrice');
+            const marketPrice = TURN_STATE.currentMarketPrice;
+            const elasticity = getCurrentElasticity();
+            
+            // Simple price adjustment based on gap and elasticity
+            const forecast = generateForecast();
+            if (!forecast) return currentChannelPrice;
+            
+            const gap = targetValue - forecast.finalForecast.mostLikely;
+            const gapPercentage = gap / forecast.finalForecast.mostLikely;
+            
+            // Use elasticity to estimate required price change
+            const requiredPriceChange = Math.pow(1 + gapPercentage, 1 / elasticity) - 1;
+            const adjustedChannelPrice = currentChannelPrice * (1 + requiredPriceChange);
+            
+            return Math.round(adjustedChannelPrice);
+        }
+
+        // Apply recommended channel price
+        function applyRecommendedChannelPrice() {
+            const recommendedPrice = document.getElementById('recommendedChannelPrice').textContent.replace('$', '');
+            document.getElementById('channelPrice').value = recommendedPrice;
+            updateChannelMarkupDisplay();
+            updateChartsWithTurnData();
+            
+            // Show confirmation
+            const applyButton = document.getElementById('applyRecommendation');
+            const originalText = applyButton.textContent;
+            applyButton.textContent = '✓ Applied';
+            applyButton.style.background = 'var(--maersk-success)';
+            
+            setTimeout(() => {
+                applyButton.textContent = originalText;
+                applyButton.style.background = 'var(--maersk-light-blue)';
+            }, 2000);
         }
 
         // DTD Bell Curve - JavaScript implementation of your Python function
@@ -998,7 +1164,7 @@
             const capacity = getParameterValue('capacity');
             const marketPrice = getParameterValue('marketPrice');
             const channelPrice = getParameterValue('channelPrice');
-            const elasticity = getParameterValue('elasticity');
+            const elasticity = getCurrentElasticity();
             const bookingConversion = getParameterValue('bookingConversion');
             const baseWeekdayVolume = getParameterValue('baseWeekdayVolume');
             const rampStart = getParameterValue('rampStart');
