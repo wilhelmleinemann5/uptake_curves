@@ -243,6 +243,15 @@
                         </div>
                     </div>
 
+                    <div>
+                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Target Guardrail Buffer (%)</label>
+                        <input type="number" id="guardrailBuffer" value="5" min="1" max="20" step="1" 
+                               style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
+                        <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
+                            Threshold around capacity target
+                        </div>
+                    </div>
+
                     <!-- Market Volatility -->
                     <div style="grid-column: 1 / -1; color: var(--mds-text-secondary); font-size: 0.9rem; font-weight: 600; margin: 1rem 0 0.5rem 0;">
                         📊 Market Volatility
@@ -438,6 +447,7 @@
                 noCancelInside: 5,
                 openWeeksBefore: 4,
                 expectedOpenDTD: 28,
+                guardrailBuffer: 5,
                 marketPriceVolatility: 3,
                 searchVolatility: 10
             }
@@ -1052,7 +1062,12 @@
         // Update forecast display
         function updateForecast() {
             const forecast = generateForecast();
-            if (!forecast) return;
+            if (!forecast) {
+                console.log('DEBUG: No forecast generated');
+                return;
+            }
+
+            console.log('DEBUG updateForecast called with:', forecast.finalForecast);
 
             // Update forecast metrics in the summary bar
             const capacityValue = getParameterValue('capacity');
@@ -1062,7 +1077,7 @@
             document.getElementById('capacityUtilForecast').textContent = 
                 `${Math.round((forecast.finalForecast.mostLikely / capacityValue) * 100)}%`;
             
-            // Update detailed forecast panel
+            // Update detailed forecast panel with fresh forecast data
             updateForecastPanel(forecast);
         }
 
@@ -1070,7 +1085,7 @@
         function updateForecastPanel(forecast) {
             const capacity = getParameterValue('capacity');
             const targetValue = capacity; // Use capacity as target for now
-            const thresholdBuffer = 5; // 5% buffer around target
+            const thresholdBuffer = getParameterValue('guardrailBuffer'); // User-configurable buffer
             
             // Calculate thresholds
             const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
