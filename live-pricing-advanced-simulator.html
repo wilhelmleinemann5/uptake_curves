@@ -1069,13 +1069,21 @@
 
             console.log('DEBUG updateForecast called with:', forecast.finalForecast);
 
-            // Update forecast metrics in the summary bar
+            // Update forecast metrics in the summary bar with the EXACT same values
             const capacityValue = getParameterValue('capacity');
-            document.getElementById('projectedFinal').textContent = `${Math.round(forecast.finalForecast.mostLikely)} FFE`;
-            document.getElementById('projectedRange').textContent = 
-                `${Math.round(forecast.finalForecast.pessimistic)} to ${Math.round(forecast.finalForecast.optimistic)} FFE`;
-            document.getElementById('capacityUtilForecast').textContent = 
-                `${Math.round((forecast.finalForecast.mostLikely / capacityValue) * 100)}%`;
+            const mostLikely = Math.round(forecast.finalForecast.mostLikely);
+            const optimistic = Math.round(forecast.finalForecast.optimistic);
+            const pessimistic = Math.round(forecast.finalForecast.pessimistic);
+            
+            console.log('DEBUG setting panel values:', { mostLikely, optimistic, pessimistic });
+            
+            const projectedFinalEl = document.getElementById('projectedFinal');
+            const projectedRangeEl = document.getElementById('projectedRange');
+            const capacityUtilForecastEl = document.getElementById('capacityUtilForecast');
+            
+            if (projectedFinalEl) projectedFinalEl.textContent = `${mostLikely} FFE`;
+            if (projectedRangeEl) projectedRangeEl.textContent = `${pessimistic} to ${optimistic} FFE`;
+            if (capacityUtilForecastEl) capacityUtilForecastEl.textContent = `${Math.round((mostLikely / capacityValue) * 100)}%`;
             
             // Update detailed forecast panel with fresh forecast data
             updateForecastPanel(forecast);
@@ -1091,12 +1099,12 @@
             const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
             const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
             
-            // Safety checks for forecast data
+            // Use the EXACT same values from the forecast
             const finalMostLikely = forecast.finalForecast?.mostLikely || 0;
             const finalOptimistic = forecast.finalForecast?.optimistic || 0;
             const finalPessimistic = forecast.finalForecast?.pessimistic || 0;
             
-            console.log('DEBUG forecast panel:', {
+            console.log('DEBUG forecast panel using values:', {
                 finalMostLikely,
                 finalOptimistic, 
                 finalPessimistic,
@@ -1105,7 +1113,7 @@
                 lowerThreshold
             });
             
-            // Update forecast display with safety checks
+            // Update forecast display with the EXACT same calculations as summary bar
             const forecastRangeEl = document.getElementById('forecastRange');
             const mostLikelyForecastEl = document.getElementById('mostLikelyForecast');
             const targetValueDisplayEl = document.getElementById('targetValueDisplay');
