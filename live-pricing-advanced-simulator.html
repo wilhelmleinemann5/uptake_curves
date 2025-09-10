@@ -788,7 +788,11 @@
         }
 
         function updateChartsWithTurnData() {
-            if (TURN_STATE.simulationData.length === 0) return;
+            if (TURN_STATE.simulationData.length === 0) {
+                // If no simulation data, just update forecast
+                updateForecast();
+                return;
+            }
 
             // Update main chart
             updateChannelMarkupDisplay();
