@@ -1077,9 +1077,16 @@
             
             console.log('DEBUG setting panel values:', { mostLikely, optimistic, pessimistic });
             
+            // Check which elements exist
             const projectedFinalEl = document.getElementById('projectedFinal');
             const projectedRangeEl = document.getElementById('projectedRange');
             const capacityUtilForecastEl = document.getElementById('capacityUtilForecast');
+            
+            console.log('DEBUG element check:', {
+                projectedFinalEl: !!projectedFinalEl,
+                projectedRangeEl: !!projectedRangeEl,
+                capacityUtilForecastEl: !!capacityUtilForecastEl
+            });
             
             if (projectedFinalEl) projectedFinalEl.textContent = `${mostLikely} FFE`;
             if (projectedRangeEl) projectedRangeEl.textContent = `${pessimistic} to ${optimistic} FFE`;
