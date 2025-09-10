@@ -340,63 +340,15 @@
                     </div>
                 </div>
 
-                <!-- Final Outcome Forecast Panel -->
+                <!-- Final Outcome Forecast Panel (Clean Rebuild) -->
                 <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1rem; border: 1px solid var(--mds-border-default);">
                     <h4 style="margin: 0 0 1rem 0; color: var(--mds-text-primary); font-size: 0.9rem; text-align: center;">📊 Final Outcome Forecast</h4>
                     
-                    <!-- Final Forecast -->
-                    <div style="background: var(--mds-bg-tertiary); border-radius: 6px; padding: 0.8rem; margin-bottom: 0.8rem;">
-                        <div style="text-align: center; margin-bottom: 0.3rem;">
-                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">Days to Departure: 0</span>
-                        </div>
-                        <div style="text-align: center; color: var(--mds-text-primary); font-size: 1.1rem; font-weight: 700;" id="forecastRange">-- to -- FFE</div>
-                        <div style="text-align: center; color: var(--maersk-blue); font-size: 1rem; font-weight: 600; margin-top: 0.25rem;" id="mostLikelyForecast">Most Likely: --</div>
-                    </div>
-                    
-                    <!-- Target Comparison -->
-                    <div style="background: var(--mds-bg-tertiary); border-radius: 6px; padding: 0.8rem; margin-bottom: 0.8rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
-                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">🎯 Target:</span>
-                            <span style="color: var(--maersk-success); font-weight: 600;" id="targetValueDisplay">200 FFE</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">Gap to Target:</span>
-                            <span style="font-weight: 600;" id="targetGap">-- FFE</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Guardrails Status -->
-                    <div style="background: var(--mds-bg-tertiary); border-radius: 6px; padding: 0.8rem; margin-bottom: 0.8rem;">
-                        <div style="text-align: center; margin-bottom: 0.4rem;">
-                            <span style="color: var(--mds-text-secondary); font-size: 0.8rem;">Guardrail Status</span>
-                        </div>
-                        <div style="text-align: center;" id="guardrailStatusPanel">
-                            <span style="font-size: 1rem; font-weight: 600;">✅ Within Range</span>
-                        </div>
-                        <div style="text-align: center; margin-top: 0.4rem; font-size: 0.7rem; color: var(--mds-text-secondary);" id="thresholdRangeDisplay">
-                            190 - 210 FFE
-                        </div>
-                    </div>
-                    
-                    <!-- Recommendation -->
-                    <div style="text-align: center;">
-                        <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.4rem;">Recommendation</div>
-                        <div style="font-size: 0.85rem; font-weight: 500; margin-bottom: 0.6rem;" id="quickRecommendation">Monitor trajectory</div>
-                        
-                        <!-- Price Change Recommendation -->
-                        <div id="priceChangeRecommendation" style="display: none; margin-bottom: 0.6rem;">
-                            <div style="color: var(--mds-text-secondary); font-size: 0.75rem; margin-bottom: 0.2rem;">Recommended Channel Price</div>
-                            <div style="font-size: 0.9rem; font-weight: 600; color: var(--maersk-warning);" id="recommendedChannelPrice">$3090</div>
-                            <div style="color: var(--mds-text-secondary); font-size: 0.7rem; margin-top: 0.2rem;" id="changeRationale">To reach target forecast</div>
-                        </div>
-                        
-                        <!-- Action Buttons -->
-                        <div id="actionButtons" style="display: none; gap: 0.6rem; margin-top: 0.8rem; justify-content: center;">
-                            <button id="applyRecommendation" onclick="applyRecommendedChannelPrice()" 
-                                    style="background: var(--maersk-light-blue); color: white; border: 1px solid var(--maersk-light-blue); padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.8rem; cursor: pointer; font-weight: 600;">
-                                Apply Price
-                            </button>
-                        </div>
+                    <!-- Simple Forecast Display -->
+                    <div style="background: var(--mds-bg-tertiary); border-radius: 6px; padding: 1rem; text-align: center;">
+                        <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Days to Departure: 0</div>
+                        <div style="color: var(--mds-text-primary); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;" id="cleanForecastRange">-- to -- FFE</div>
+                        <div style="color: var(--maersk-blue); font-size: 1rem; font-weight: 600;" id="cleanMostLikely">Most Likely: --</div>
                     </div>
                 </div>
             </div>
@@ -1059,220 +1011,90 @@
             return result;
         }
 
-        // Update forecast display
+        // Clean, simple forecast update
         function updateForecast() {
             const forecast = generateForecast();
-            if (!forecast) {
-                console.log('DEBUG: No forecast generated');
+            if (!forecast || !forecast.finalForecast) {
+                console.log('DEBUG: No valid forecast generated');
                 return;
             }
 
-            console.log('DEBUG updateForecast called with:', forecast.finalForecast);
+            // Get clean values
+            const mostLikely = Math.round(forecast.finalForecast.mostLikely || 0);
+            const optimistic = Math.round(forecast.finalForecast.optimistic || 0);
+            const pessimistic = Math.round(forecast.finalForecast.pessimistic || 0);
+            
+            console.log('DEBUG clean forecast update:', { mostLikely, optimistic, pessimistic });
 
-            // Update forecast metrics in the summary bar with the EXACT same values
-            const capacityValue = getParameterValue('capacity');
-            const mostLikely = Math.round(forecast.finalForecast.mostLikely);
-            const optimistic = Math.round(forecast.finalForecast.optimistic);
-            const pessimistic = Math.round(forecast.finalForecast.pessimistic);
-            
-            console.log('DEBUG setting panel values:', { mostLikely, optimistic, pessimistic });
-            
-            // Check which elements exist
+            // Update summary bar (if elements exist)
             const projectedFinalEl = document.getElementById('projectedFinal');
             const projectedRangeEl = document.getElementById('projectedRange');
             const capacityUtilForecastEl = document.getElementById('capacityUtilForecast');
             
-            console.log('DEBUG element check:', {
-                projectedFinalEl: !!projectedFinalEl,
-                projectedRangeEl: !!projectedRangeEl,
-                capacityUtilForecastEl: !!capacityUtilForecastEl
-            });
+            if (projectedFinalEl) projectedFinalEl.textContent = `${mostLikely} FFE`;
+            if (projectedRangeEl) projectedRangeEl.textContent = `${pessimistic} to ${optimistic} FFE`;
+            if (capacityUtilForecastEl) {
+                const capacity = getParameterValue('capacity');
+                capacityUtilForecastEl.textContent = `${Math.round((mostLikely / capacity) * 100)}%`;
+            }
+
+            // Update clean forecast panel
+            updateCleanForecastPanel(mostLikely, optimistic, pessimistic);
+        }
+
+        // Simple, clean forecast panel update
+        function updateCleanForecastPanel(mostLikely, optimistic, pessimistic) {
+            const cleanRangeEl = document.getElementById('cleanForecastRange');
+            const cleanMostLikelyEl = document.getElementById('cleanMostLikely');
+            
+            console.log('DEBUG updating clean panel with:', { mostLikely, optimistic, pessimistic });
+            
+            if (cleanRangeEl) {
+                cleanRangeEl.textContent = `${pessimistic} - ${optimistic} FFE`;
+                console.log('DEBUG set range to:', `${pessimistic} - ${optimistic} FFE`);
+            } else {
+                console.log('DEBUG: cleanForecastRange element not found');
+            }
+            
+            if (cleanMostLikelyEl) {
+                cleanMostLikelyEl.textContent = `Most Likely: ${mostLikely}`;
+                console.log('DEBUG set most likely to:', `Most Likely: ${mostLikely}`);
+            } else {
+                console.log('DEBUG: cleanMostLikely element not found');
+            }
+        }
+
+        // Clean, simple forecast update
+        function updateForecast() {
+            const forecast = generateForecast();
+            if (!forecast || !forecast.finalForecast) {
+                console.log('DEBUG: No valid forecast generated');
+                return;
+            }
+
+            // Get clean values
+            const mostLikely = Math.round(forecast.finalForecast.mostLikely || 0);
+            const optimistic = Math.round(forecast.finalForecast.optimistic || 0);
+            const pessimistic = Math.round(forecast.finalForecast.pessimistic || 0);
+            
+            console.log('DEBUG clean forecast update:', { mostLikely, optimistic, pessimistic });
+
+            // Update summary bar (if elements exist)
+            const projectedFinalEl = document.getElementById('projectedFinal');
+            const projectedRangeEl = document.getElementById('projectedRange');
+            const capacityUtilForecastEl = document.getElementById('capacityUtilForecast');
             
             if (projectedFinalEl) projectedFinalEl.textContent = `${mostLikely} FFE`;
             if (projectedRangeEl) projectedRangeEl.textContent = `${pessimistic} to ${optimistic} FFE`;
-            if (capacityUtilForecastEl) capacityUtilForecastEl.textContent = `${Math.round((mostLikely / capacityValue) * 100)}%`;
-            
-            // Update detailed forecast panel with fresh forecast data
-            updateForecastPanel(forecast);
+            if (capacityUtilForecastEl) {
+                const capacity = getParameterValue('capacity');
+                capacityUtilForecastEl.textContent = `${Math.round((mostLikely / capacity) * 100)}%`;
+            }
+
+            // Update clean forecast panel
+            updateCleanForecastPanel(mostLikely, optimistic, pessimistic);
         }
 
-        // Update detailed forecast panel with guardrails and recommendations
-        function updateForecastPanel(forecast) {
-            const capacity = getParameterValue('capacity');
-            const targetValue = capacity; // Use capacity as target for now
-            const thresholdBuffer = getParameterValue('guardrailBuffer'); // User-configurable buffer
-            
-            // Calculate thresholds
-            const upperThreshold = Math.round(targetValue * (1 + thresholdBuffer / 100));
-            const lowerThreshold = Math.round(targetValue * (1 - thresholdBuffer / 100));
-            
-            // Use the EXACT same values from the forecast
-            const finalMostLikely = forecast.finalForecast?.mostLikely || 0;
-            const finalOptimistic = forecast.finalForecast?.optimistic || 0;
-            const finalPessimistic = forecast.finalForecast?.pessimistic || 0;
-            
-            console.log('DEBUG forecast panel using values:', {
-                finalMostLikely,
-                finalOptimistic, 
-                finalPessimistic,
-                targetValue,
-                upperThreshold,
-                lowerThreshold
-            });
-            
-            // Update forecast display with the EXACT same calculations as summary bar
-            const forecastRangeEl = document.getElementById('forecastRange');
-            const mostLikelyForecastEl = document.getElementById('mostLikelyForecast');
-            const targetValueDisplayEl = document.getElementById('targetValueDisplay');
-            const targetGapEl = document.getElementById('targetGap');
-            
-            if (forecastRangeEl) {
-                forecastRangeEl.textContent = `${Math.round(finalPessimistic)} - ${Math.round(finalOptimistic)} FFE`;
-            }
-            if (mostLikelyForecastEl) {
-                mostLikelyForecastEl.textContent = `Most Likely: ${Math.round(finalMostLikely)}`;
-            }
-            
-            // Update target comparison
-            if (targetValueDisplayEl) {
-                targetValueDisplayEl.textContent = `${targetValue} FFE`;
-            }
-            if (targetGapEl) {
-                const gap = finalMostLikely - targetValue;
-                const gapSign = gap >= 0 ? '+' : '';
-                const gapColor = gap >= 0 ? 'var(--maersk-success)' : 'var(--maersk-error)';
-                targetGapEl.textContent = `${gapSign}${Math.round(gap)} FFE`;
-                targetGapEl.style.color = gapColor;
-            }
-            
-            // Update guardrail status with safety checks
-            const thresholdRangeDisplayEl = document.getElementById('thresholdRangeDisplay');
-            if (thresholdRangeDisplayEl) {
-                thresholdRangeDisplayEl.textContent = `${lowerThreshold} - ${upperThreshold} FFE`;
-            }
-            
-            const guardrailStatusPanel = document.getElementById('guardrailStatusPanel');
-            const quickRecommendation = document.getElementById('quickRecommendation');
-            const priceChangeRecommendation = document.getElementById('priceChangeRecommendation');
-            const actionButtons = document.getElementById('actionButtons');
-            
-            if (forecast.finalForecast.mostLikely > upperThreshold) {
-                const deviation = ((forecast.finalForecast.mostLikely - upperThreshold) / upperThreshold * 100).toFixed(1);
-                if (guardrailStatusPanel) {
-                    guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-error); font-size: 1rem; font-weight: 600;">🔴 Above (+${deviation}%)</span>`;
-                }
-                
-                if (quickRecommendation) {
-                    quickRecommendation.textContent = 'Forecast above target';
-                    quickRecommendation.style.color = 'var(--maersk-warning)';
-                }
-                
-                const recommendedPrice = calculateRecommendedChannelPrice(targetValue, 'decrease');
-                const recommendedChannelPriceEl = document.getElementById('recommendedChannelPrice');
-                const changeRationaleEl = document.getElementById('changeRationale');
-                
-                if (recommendedChannelPriceEl) recommendedChannelPriceEl.textContent = `$${recommendedPrice}`;
-                if (changeRationaleEl) changeRationaleEl.textContent = `Increase price to reduce demand`;
-                if (priceChangeRecommendation) priceChangeRecommendation.style.display = 'block';
-                if (actionButtons) actionButtons.style.display = 'flex';
-                
-            } else if (forecast.finalForecast.mostLikely < lowerThreshold) {
-                const deviation = ((lowerThreshold - forecast.finalForecast.mostLikely) / lowerThreshold * 100).toFixed(1);
-                if (guardrailStatusPanel) {
-                    guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-warning); font-size: 1rem; font-weight: 600;">🟠 Below (-${deviation}%)</span>`;
-                }
-                
-                if (quickRecommendation) {
-                    quickRecommendation.textContent = 'Forecast below target';
-                    quickRecommendation.style.color = 'var(--maersk-warning)';
-                }
-                
-                const recommendedPrice = calculateRecommendedChannelPrice(targetValue, 'increase');
-                const recommendedChannelPriceEl = document.getElementById('recommendedChannelPrice');
-                const changeRationaleEl = document.getElementById('changeRationale');
-                
-                if (recommendedChannelPriceEl) recommendedChannelPriceEl.textContent = `$${recommendedPrice}`;
-                if (changeRationaleEl) changeRationaleEl.textContent = `Reduce price to stimulate demand`;
-                if (priceChangeRecommendation) priceChangeRecommendation.style.display = 'block';
-                if (actionButtons) actionButtons.style.display = 'flex';
-                
-            } else {
-                if (guardrailStatusPanel) {
-                    guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-success); font-size: 1rem; font-weight: 600;">✅ Within Range</span>`;
-                }
-                
-                if (quickRecommendation) {
-                    quickRecommendation.textContent = 'Forecast on target';
-                    quickRecommendation.style.color = 'var(--maersk-success)';
-                }
-                
-                if (priceChangeRecommendation) priceChangeRecommendation.style.display = 'none';
-                if (actionButtons) actionButtons.style.display = 'none';
-            }
-        }
-
-        // Calculate recommended channel price to reach target
-        function calculateRecommendedChannelPrice(targetValue, direction) {
-            const currentChannelPrice = getParameterValue('channelPrice');
-            const marketPrice = TURN_STATE.currentMarketPrice || getParameterValue('marketPrice');
-            const elasticity = getCurrentElasticity();
-            
-            // Simple price adjustment based on gap and elasticity
-            const forecast = generateForecast();
-            if (!forecast || !forecast.finalForecast) return currentChannelPrice;
-            
-            const currentForecast = forecast.finalForecast.mostLikely || 0;
-            if (currentForecast <= 0) return currentChannelPrice;
-            
-            const gap = targetValue - currentForecast;
-            const gapPercentage = gap / Math.max(currentForecast, 1); // Prevent division by zero
-            
-            // Limit gap percentage to reasonable bounds
-            const boundedGapPercentage = Math.max(-0.5, Math.min(0.5, gapPercentage));
-            
-            // Use elasticity to estimate required price change (with safety bounds)
-            const elasticityFactor = Math.max(0.1, Math.min(5.0, elasticity)); // Bound elasticity
-            const requiredPriceChange = Math.pow(1 + boundedGapPercentage, 1 / elasticityFactor) - 1;
-            
-            // Apply price change with reasonable bounds
-            const boundedPriceChange = Math.max(-0.3, Math.min(0.3, requiredPriceChange)); // Max ±30%
-            const adjustedChannelPrice = currentChannelPrice * (1 + boundedPriceChange);
-            
-            // Ensure result is reasonable
-            const minPrice = marketPrice * 0.7; // At least 70% of market price
-            const maxPrice = marketPrice * 2.0; // At most 200% of market price
-            const finalPrice = Math.max(minPrice, Math.min(maxPrice, adjustedChannelPrice));
-            
-            console.log('DEBUG price recommendation:', {
-                currentChannelPrice,
-                marketPrice,
-                gap,
-                gapPercentage: boundedGapPercentage,
-                requiredPriceChange: boundedPriceChange,
-                finalPrice: Math.round(finalPrice)
-            });
-            
-            return Math.round(finalPrice);
-        }
-
-        // Apply recommended channel price
-        function applyRecommendedChannelPrice() {
-            const recommendedPrice = document.getElementById('recommendedChannelPrice').textContent.replace('$', '');
-            document.getElementById('channelPrice').value = recommendedPrice;
-            updateChannelMarkupDisplay();
-            updateChartsWithTurnData();
-            
-            // Show confirmation
-            const applyButton = document.getElementById('applyRecommendation');
-            const originalText = applyButton.textContent;
-            applyButton.textContent = '✓ Applied';
-            applyButton.style.background = 'var(--maersk-success)';
-            
-            setTimeout(() => {
-                applyButton.textContent = originalText;
-                applyButton.style.background = 'var(--maersk-light-blue)';
-            }, 2000);
-        }
 
         // DTD Bell Curve - JavaScript implementation of your Python function
         function dtdBellCurve(dtd, baseWeekdayVolume = 1000, kRamp = 0.20, kTaper = 0.35, rampStart = 28, taperStart = 5) {
