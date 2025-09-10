@@ -349,6 +349,7 @@
                         <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Days to Departure: 0</div>
                         <div style="color: var(--mds-text-primary); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;" id="cleanForecastRange">-- to -- FFE</div>
                         <div style="color: var(--maersk-blue); font-size: 1rem; font-weight: 600;" id="cleanMostLikely">Most Likely: --</div>
+                        <div style="color: var(--mds-text-warning, #b35a00); font-size: 0.9rem; font-weight: 600; margin-top: 0.5rem; display: none;" id="selloutNotice">⚠️ Forecasted sell-out at <span id="selloutDTD">--</span> DTD</div>
                     </div>
                 </div>
             </div>
@@ -972,6 +973,15 @@
                 });
             }
 
+            // Find sell-out DTD on most-likely path (first dtd where cumulative >= capacity)
+            let selloutDTD = null;
+            for (let i = 0; i < forecastData.length; i++) {
+                if (forecastData[i].cumulativeFFE >= capacity) {
+                    selloutDTD = forecastData[i].dtd;
+                    break;
+                }
+            }
+
             // Generate uncertainty bands
             const baseVariance = 0.05; // 5% base uncertainty
             const varianceGrowth = 0.02; // 2% additional per turn ahead
@@ -998,7 +1008,8 @@
                 finalForecast: {
                     mostLikely: forecastData[forecastData.length - 1]?.cumulativeFFE || 0,
                     optimistic: optimisticData[optimisticData.length - 1] || 0,
-                    pessimistic: pessimisticData[pessimisticData.length - 1] || 0
+                    pessimistic: pessimisticData[pessimisticData.length - 1] || 0,
+                    selloutDTD
                 }
             };
             
@@ -1024,8 +1035,9 @@
             const mostLikely = Math.round(forecast.finalForecast.mostLikely || 0);
             const optimistic = Math.round(forecast.finalForecast.optimistic || 0);
             const pessimistic = Math.round(forecast.finalForecast.pessimistic || 0);
+            const selloutDTD = forecast.finalForecast.selloutDTD;
             
-            console.log('DEBUG clean forecast update:', { mostLikely, optimistic, pessimistic });
+            console.log('DEBUG clean forecast update:', { mostLikely, optimistic, pessimistic, selloutDTD });
 
             // Update summary bar (if elements exist)
             const projectedFinalEl = document.getElementById('projectedFinal');
@@ -1040,13 +1052,15 @@
             }
 
             // Update clean forecast panel
-            updateCleanForecastPanel(mostLikely, optimistic, pessimistic);
+            updateCleanForecastPanel(mostLikely, optimistic, pessimistic, selloutDTD);
         }
 
         // Simple, clean forecast panel update
-        function updateCleanForecastPanel(mostLikely, optimistic, pessimistic) {
+        function updateCleanForecastPanel(mostLikely, optimistic, pessimistic, selloutDTD) {
             const cleanRangeEl = document.getElementById('cleanForecastRange');
             const cleanMostLikelyEl = document.getElementById('cleanMostLikely');
+            const selloutNoticeEl = document.getElementById('selloutNotice');
+            const selloutDTDEl = document.getElementById('selloutDTD');
             
             console.log('DEBUG updating clean panel with:', { mostLikely, optimistic, pessimistic });
             
@@ -1062,6 +1076,17 @@
                 console.log('DEBUG set most likely to:', `Most Likely: ${mostLikely}`);
             } else {
                 console.log('DEBUG: cleanMostLikely element not found');
+            }
+
+            // Show sell-out notice only when most-likely hits capacity
+            const capacity = getParameterValue('capacity');
+            if (selloutNoticeEl && selloutDTDEl) {
+                if (Math.round(mostLikely) >= Math.round(capacity) && selloutDTD !== null && selloutDTD !== undefined) {
+                    selloutDTDEl.textContent = `${selloutDTD}`;
+                    selloutNoticeEl.style.display = 'block';
+                } else {
+                    selloutNoticeEl.style.display = 'none';
+                }
             }
         }
 
