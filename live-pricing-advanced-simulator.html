@@ -2051,12 +2051,19 @@
             const revenuePerFFE = finalBooking > 0 ? (totalRevenue / finalBooking).toFixed(0) : "0";
 
             // Update UI (only elements that exist in compact layout)
-            document.getElementById('finalBooking').textContent = `${Math.round(finalBooking)} FFE`;
-            document.getElementById('capacityUtilization').textContent = `${capacityUtil}% Capacity Utilized`;
-            document.getElementById('totalRevenue').textContent = `$${Math.round(totalRevenue).toLocaleString()}`;
-            document.getElementById('totalCancellations').textContent = `${Math.round(totalCancellations)} FFE`;
-            document.getElementById('avgPricingRatio').textContent = `${avgPricingRatio}x`;
-            document.getElementById('revenuePerFFE').textContent = `$${revenuePerFFE}`;
+            const finalBookingEl = document.getElementById('finalBooking');
+            const capacityUtilizationEl = document.getElementById('capacityUtilization');
+            const totalRevenueEl = document.getElementById('totalRevenue');
+            const totalCancellationsEl = document.getElementById('totalCancellations');
+            const avgPricingRatioEl = document.getElementById('avgPricingRatio');
+            const revenuePerFFEEl = document.getElementById('revenuePerFFE');
+            
+            if (finalBookingEl) finalBookingEl.textContent = `${Math.round(finalBooking)} FFE`;
+            if (capacityUtilizationEl) capacityUtilizationEl.textContent = `${capacityUtil}% Capacity Utilized`;
+            if (totalRevenueEl) totalRevenueEl.textContent = `$${Math.round(totalRevenue).toLocaleString()}`;
+            if (totalCancellationsEl) totalCancellationsEl.textContent = `${Math.round(totalCancellations)} FFE`;
+            if (avgPricingRatioEl) avgPricingRatioEl.textContent = `${avgPricingRatio}x`;
+            if (revenuePerFFEEl) revenuePerFFEEl.textContent = `$${revenuePerFFE}`;
             
             // Update additional elements if they exist (for backwards compatibility)
             const bookingRevenueEl = document.getElementById('bookingRevenue');
