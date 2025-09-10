@@ -873,9 +873,6 @@
             // Update metrics panel
             updateMetricsPanel(TURN_STATE.simulationData);
 
-            // Update insights
-            updateEducationalInsights(TURN_STATE.simulationData);
-
             // Update forecast for next turn
             updateForecast();
         }
@@ -1901,44 +1898,6 @@
             if (cancelRateEl) cancelRateEl.textContent = `${cancelRate}%`;
         }
 
-        // Update educational insights
-        function updateEducationalInsights(data) {
-            const finalRecord = data[data.length - 1];
-            const capacity = getParameterValue('capacity');
-            const finalBooking = finalRecord.cumulativeFFE;
-            const capacityUtil = (finalBooking / capacity * 100);
-            const totalCancellations = finalRecord.cumulativeCancellationsFFE;
-            const avgPricingRatio = parseFloat(document.getElementById('avgPricingRatio').textContent.replace('x', ''));
-
-            let insight = "";
-            let cardClass = "neutral";
-
-            if (capacityUtil >= 95) {
-                insight = "🎯 <strong>Optimal Performance:</strong> Near full capacity utilization with strong demand curve execution. The bell-shaped search pattern and pricing strategy worked effectively.";
-                cardClass = "success";
-            } else if (capacityUtil >= 70) {
-                insight = "📈 <strong>Good Performance:</strong> Solid capacity utilization. Consider adjusting pricing ratio or opening policy to capture remaining demand.";
-                cardClass = "neutral";
-            } else if (capacityUtil >= 40) {
-                insight = "⚠️ <strong>Moderate Performance:</strong> Room for improvement. Try reducing channel markup, extending opening window, or adjusting demand curve parameters.";
-                cardClass = "warning";
-            } else {
-                insight = "🔴 <strong>Low Performance:</strong> Significant capacity underutilization. Consider major strategy adjustments: lower pricing, earlier opening, or higher base demand.";
-                cardClass = "warning";
-            }
-
-            if (totalCancellations > finalBooking * 0.1) {
-                insight += ` High cancellation rate (${(totalCancellations/(finalBooking + totalCancellations)*100).toFixed(0)}%) suggests pricing misalignment or aggressive cancellation policies.`;
-            }
-
-            if (avgPricingRatio > 1.1) {
-                insight += ` High pricing ratio (${avgPricingRatio}x) may be limiting demand conversion.`;
-            }
-
-            const insightCard = document.getElementById('insightCard');
-            insightCard.className = `insight-card ${cardClass}`;
-            insightCard.innerHTML = `<h3>🎓 Educational Insights</h3><p>${insight}</p>`;
-        }
 
         // UI Controls
         function toggleAdvancedParams() {
