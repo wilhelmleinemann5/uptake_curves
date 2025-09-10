@@ -1102,8 +1102,9 @@
             const mostLikely = Math.round(forecast.finalForecast.mostLikely || 0);
             const optimistic = Math.round(forecast.finalForecast.optimistic || 0);
             const pessimistic = Math.round(forecast.finalForecast.pessimistic || 0);
+            const selloutDTD = forecast.finalForecast.selloutDTD;
             
-            console.log('DEBUG clean forecast update:', { mostLikely, optimistic, pessimistic });
+            console.log('DEBUG clean forecast update:', { mostLikely, optimistic, pessimistic, selloutDTD });
 
             // Update summary bar (if elements exist)
             const projectedFinalEl = document.getElementById('projectedFinal');
@@ -1118,7 +1119,7 @@
             }
 
             // Update clean forecast panel
-            updateCleanForecastPanel(mostLikely, optimistic, pessimistic);
+            updateCleanForecastPanel(mostLikely, optimistic, pessimistic, selloutDTD);
         }
 
 
