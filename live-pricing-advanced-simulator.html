@@ -1106,22 +1106,35 @@
             });
             
             // Update forecast display with safety checks
-            document.getElementById('forecastRange').textContent = 
-                `${Math.round(finalPessimistic)} - ${Math.round(finalOptimistic)} FFE`;
-            document.getElementById('mostLikelyForecast').textContent = 
-                `Most Likely: ${Math.round(finalMostLikely)}`;
+            const forecastRangeEl = document.getElementById('forecastRange');
+            const mostLikelyForecastEl = document.getElementById('mostLikelyForecast');
+            const targetValueDisplayEl = document.getElementById('targetValueDisplay');
+            const targetGapEl = document.getElementById('targetGap');
+            
+            if (forecastRangeEl) {
+                forecastRangeEl.textContent = `${Math.round(finalPessimistic)} - ${Math.round(finalOptimistic)} FFE`;
+            }
+            if (mostLikelyForecastEl) {
+                mostLikelyForecastEl.textContent = `Most Likely: ${Math.round(finalMostLikely)}`;
+            }
             
             // Update target comparison
-            document.getElementById('targetValueDisplay').textContent = `${targetValue} FFE`;
-            const gap = finalMostLikely - targetValue;
-            const gapSign = gap >= 0 ? '+' : '';
-            const gapColor = gap >= 0 ? 'var(--maersk-success)' : 'var(--maersk-error)';
-            document.getElementById('targetGap').textContent = `${gapSign}${Math.round(gap)} FFE`;
-            document.getElementById('targetGap').style.color = gapColor;
+            if (targetValueDisplayEl) {
+                targetValueDisplayEl.textContent = `${targetValue} FFE`;
+            }
+            if (targetGapEl) {
+                const gap = finalMostLikely - targetValue;
+                const gapSign = gap >= 0 ? '+' : '';
+                const gapColor = gap >= 0 ? 'var(--maersk-success)' : 'var(--maersk-error)';
+                targetGapEl.textContent = `${gapSign}${Math.round(gap)} FFE`;
+                targetGapEl.style.color = gapColor;
+            }
             
-            // Update guardrail status
-            document.getElementById('thresholdRangeDisplay').textContent = 
-                `${lowerThreshold} - ${upperThreshold} FFE`;
+            // Update guardrail status with safety checks
+            const thresholdRangeDisplayEl = document.getElementById('thresholdRangeDisplay');
+            if (thresholdRangeDisplayEl) {
+                thresholdRangeDisplayEl.textContent = `${lowerThreshold} - ${upperThreshold} FFE`;
+            }
             
             const guardrailStatusPanel = document.getElementById('guardrailStatusPanel');
             const quickRecommendation = document.getElementById('quickRecommendation');
@@ -1130,38 +1143,56 @@
             
             if (forecast.finalForecast.mostLikely > upperThreshold) {
                 const deviation = ((forecast.finalForecast.mostLikely - upperThreshold) / upperThreshold * 100).toFixed(1);
-                guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-error); font-size: 1rem; font-weight: 600;">🔴 Above (+${deviation}%)</span>`;
+                if (guardrailStatusPanel) {
+                    guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-error); font-size: 1rem; font-weight: 600;">🔴 Above (+${deviation}%)</span>`;
+                }
                 
-                quickRecommendation.textContent = 'Forecast above target';
-                quickRecommendation.style.color = 'var(--maersk-warning)';
+                if (quickRecommendation) {
+                    quickRecommendation.textContent = 'Forecast above target';
+                    quickRecommendation.style.color = 'var(--maersk-warning)';
+                }
                 
                 const recommendedPrice = calculateRecommendedChannelPrice(targetValue, 'decrease');
-                document.getElementById('recommendedChannelPrice').textContent = `$${recommendedPrice}`;
-                document.getElementById('changeRationale').textContent = `Increase price to reduce demand`;
-                priceChangeRecommendation.style.display = 'block';
-                actionButtons.style.display = 'flex';
+                const recommendedChannelPriceEl = document.getElementById('recommendedChannelPrice');
+                const changeRationaleEl = document.getElementById('changeRationale');
+                
+                if (recommendedChannelPriceEl) recommendedChannelPriceEl.textContent = `$${recommendedPrice}`;
+                if (changeRationaleEl) changeRationaleEl.textContent = `Increase price to reduce demand`;
+                if (priceChangeRecommendation) priceChangeRecommendation.style.display = 'block';
+                if (actionButtons) actionButtons.style.display = 'flex';
                 
             } else if (forecast.finalForecast.mostLikely < lowerThreshold) {
                 const deviation = ((lowerThreshold - forecast.finalForecast.mostLikely) / lowerThreshold * 100).toFixed(1);
-                guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-warning); font-size: 1rem; font-weight: 600;">🟠 Below (-${deviation}%)</span>`;
+                if (guardrailStatusPanel) {
+                    guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-warning); font-size: 1rem; font-weight: 600;">🟠 Below (-${deviation}%)</span>`;
+                }
                 
-                quickRecommendation.textContent = 'Forecast below target';
-                quickRecommendation.style.color = 'var(--maersk-warning)';
+                if (quickRecommendation) {
+                    quickRecommendation.textContent = 'Forecast below target';
+                    quickRecommendation.style.color = 'var(--maersk-warning)';
+                }
                 
                 const recommendedPrice = calculateRecommendedChannelPrice(targetValue, 'increase');
-                document.getElementById('recommendedChannelPrice').textContent = `$${recommendedPrice}`;
-                document.getElementById('changeRationale').textContent = `Reduce price to stimulate demand`;
-                priceChangeRecommendation.style.display = 'block';
-                actionButtons.style.display = 'flex';
+                const recommendedChannelPriceEl = document.getElementById('recommendedChannelPrice');
+                const changeRationaleEl = document.getElementById('changeRationale');
+                
+                if (recommendedChannelPriceEl) recommendedChannelPriceEl.textContent = `$${recommendedPrice}`;
+                if (changeRationaleEl) changeRationaleEl.textContent = `Reduce price to stimulate demand`;
+                if (priceChangeRecommendation) priceChangeRecommendation.style.display = 'block';
+                if (actionButtons) actionButtons.style.display = 'flex';
                 
             } else {
-                guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-success); font-size: 1rem; font-weight: 600;">✅ Within Range</span>`;
+                if (guardrailStatusPanel) {
+                    guardrailStatusPanel.innerHTML = `<span style="color: var(--maersk-success); font-size: 1rem; font-weight: 600;">✅ Within Range</span>`;
+                }
                 
-                quickRecommendation.textContent = 'Forecast on target';
-                quickRecommendation.style.color = 'var(--maersk-success)';
+                if (quickRecommendation) {
+                    quickRecommendation.textContent = 'Forecast on target';
+                    quickRecommendation.style.color = 'var(--maersk-success)';
+                }
                 
-                priceChangeRecommendation.style.display = 'none';
-                actionButtons.style.display = 'none';
+                if (priceChangeRecommendation) priceChangeRecommendation.style.display = 'none';
+                if (actionButtons) actionButtons.style.display = 'none';
             }
         }
 
