@@ -257,6 +257,57 @@
             </div>
         </div>
         
+        <!-- Multi-Week Faceted View -->
+        <div class="chart-container" style="margin-top: 2rem;">
+            <h2 class="chart-title">Multi-Week Pattern Analysis</h2>
+            <p class="chart-subtitle">Compare OD pricing patterns across weeks • Click any chart to expand above • Shared scales for easy comparison</p>
+            
+            <!-- Faceted Charts Grid -->
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
+                <div class="facet-chart" data-week="2025-35">
+                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-secondary); font-size: 0.85rem;">2025-35 (Historical)</h4>
+                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-35')">
+                        <canvas id="facetChart2025-35"></canvas>
+                    </div>
+                </div>
+                
+                <div class="facet-chart" data-week="2025-36">
+                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-secondary); font-size: 0.85rem;">2025-36 (Historical)</h4>
+                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-36')">
+                        <canvas id="facetChart2025-36"></canvas>
+                    </div>
+                </div>
+                
+                <div class="facet-chart" data-week="2025-37">
+                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--maersk-light-blue); font-size: 0.85rem; font-weight: 600;">2025-37 (Current)</h4>
+                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer; border: 2px solid var(--maersk-light-blue); border-radius: 4px;" onclick="selectWeek('2025-37')">
+                        <canvas id="facetChart2025-37"></canvas>
+                    </div>
+                </div>
+                
+                <div class="facet-chart" data-week="2025-38">
+                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--maersk-warning); font-size: 0.85rem;">2025-38 (Future)</h4>
+                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-38')">
+                        <canvas id="facetChart2025-38"></canvas>
+                    </div>
+                </div>
+                
+                <div class="facet-chart" data-week="2025-39">
+                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--maersk-warning); font-size: 0.85rem;">2025-39 (Future)</h4>
+                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-39')">
+                        <canvas id="facetChart2025-39"></canvas>
+                    </div>
+                </div>
+                
+                <div class="facet-chart" data-week="2025-40">
+                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--maersk-warning); font-size: 0.85rem;">2025-40 (Future)</h4>
+                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-40')">
+                        <canvas id="facetChart2025-40"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <!-- Navigation -->
         <div style="text-align: center; margin: 2rem 0;">
             <a href="vessel-uptake-dashboard.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-right: 1rem;">
@@ -488,6 +539,7 @@
         
         let interceptTimelineChart = null;
         let odPricingChart = null;
+        let facetedCharts = {}; // Store all faceted charts
         
         function initInterceptTimelineChart() {
             const ctx = document.getElementById('interceptTimelineChart');
@@ -640,6 +692,150 @@
             });
             
             console.log('Intercept Timeline Chart initialized');
+        }
+        
+        function initFacetedCharts() {
+            // Initialize charts for 6 key weeks (2x3 grid)
+            const facetWeeks = ['2025-35', '2025-36', '2025-37', '2025-38', '2025-39', '2025-40'];
+            
+            // Calculate shared scales across all weeks
+            const sharedScales = calculateSharedScales(facetWeeks);
+            
+            facetWeeks.forEach(week => {
+                const ctx = document.getElementById(`facetChart${week}`);
+                if (!ctx) return;
+                
+                // Generate data for this specific week
+                const originalSelectedWeek = OD_PRICING_CONFIG.selected_week;
+                OD_PRICING_CONFIG.selected_week = week; // Temporarily set for data generation
+                
+                const bookingData = generateBookingData();
+                const weekData = OD_PRICING_CONFIG.weekly_intercepts[week];
+                const tradeConfig = OD_PRICING_CONFIG.trades['E1W'];
+                const alpha = weekData.intercept;
+                const bestFitResult = calculateParameterizedBestFit();
+                
+                // Restore original selected week
+                OD_PRICING_CONFIG.selected_week = originalSelectedWeek;
+                
+                // Create simplified datasets for faceted view
+                const datasets = [];
+                
+                // Booking bubbles (smaller)
+                datasets.push({
+                    label: 'Bookings',
+                    data: bookingData.map(od => ({
+                        x: od.od_rank,
+                        y: od.current_price,
+                        r: Math.sqrt(od.booked_volume) / 4, // Smaller bubbles for facets
+                        volume: od.booked_volume
+                    })),
+                    backgroundColor: 'rgba(255, 180, 50, 0.6)',
+                    borderColor: 'rgb(255, 180, 50)',
+                    borderWidth: 1,
+                    pointHoverRadius: 4
+                });
+                
+                // User-defined price line
+                const userDefinedLineData = [];
+                for (let rank = 0; rank <= 1; rank += 0.05) {
+                    userDefinedLineData.push({
+                        x: rank,
+                        y: calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank)
+                    });
+                }
+                
+                datasets.push({
+                    label: 'User-Defined',
+                    data: userDefinedLineData,
+                    borderColor: 'rgb(66, 176, 213)',
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    type: 'line'
+                });
+                
+                // Line-of-best-fit
+                datasets.push({
+                    label: 'Best-Fit',
+                    data: bestFitResult.bestFitLine.map(f => ({ x: f.rank, y: f.bestFitPrice })),
+                    borderColor: 'rgba(0, 170, 136, 0.6)',
+                    backgroundColor: 'transparent',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0,
+                    borderDash: [2, 2],
+                    type: 'line'
+                });
+                
+                facetedCharts[week] = new Chart(ctx, {
+                    type: 'bubble',
+                    data: { datasets },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        animation: { duration: 400 },
+                        scales: {
+                            x: {
+                                display: false, // Hide axis labels for cleaner look
+                                min: 0,
+                                max: 1
+                            },
+                            y: {
+                                display: false, // Hide axis labels for cleaner look
+                                min: sharedScales.yMin,
+                                max: sharedScales.yMax
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false }, // Hide legend for facets
+                            tooltip: {
+                                enabled: false // Disable tooltips for facets (click to expand)
+                            }
+                        },
+                        interaction: { intersect: false, mode: 'point' }
+                    }
+                });
+            });
+            
+            console.log('Faceted Charts initialized for weeks:', facetWeeks);
+        }
+        
+        // Calculate shared scales across all faceted weeks
+        function calculateSharedScales(weeks) {
+            let allPrices = [];
+            
+            weeks.forEach(week => {
+                const originalSelectedWeek = OD_PRICING_CONFIG.selected_week;
+                OD_PRICING_CONFIG.selected_week = week;
+                
+                const bookingData = generateBookingData();
+                const weekData = OD_PRICING_CONFIG.weekly_intercepts[week];
+                const tradeConfig = OD_PRICING_CONFIG.trades['E1W'];
+                
+                // Add booking prices
+                bookingData.forEach(od => allPrices.push(od.current_price));
+                
+                // Add user-defined line range
+                const alpha = weekData.intercept;
+                const minPrice = calculatePredictedPrice(alpha, tradeConfig.beta_slope, 0);
+                const maxPrice = calculatePredictedPrice(alpha, tradeConfig.beta_slope, 1);
+                allPrices.push(minPrice, maxPrice);
+                
+                OD_PRICING_CONFIG.selected_week = originalSelectedWeek;
+            });
+            
+            const minPrice = Math.min(...allPrices);
+            const maxPrice = Math.max(...allPrices);
+            const padding = (maxPrice - minPrice) * 0.1;
+            
+            return {
+                yMin: Math.max(1000, minPrice - padding),
+                yMax: maxPrice + padding
+            };
         }
         
         function initODPricingChart() {
@@ -1086,11 +1282,13 @@
             if (typeof Chart !== 'undefined') {
                 initInterceptTimelineChart();
                 initODPricingChart();
+                initFacetedCharts();
             } else {
                 console.log('Chart.js not loaded, retrying in 500ms...');
                 setTimeout(function() {
                     initInterceptTimelineChart();
                     initODPricingChart();
+                    initFacetedCharts();
                 }, 500);
             }
         });
