@@ -371,7 +371,7 @@
             // Create datasets: Individual trades + Vessel total + Uncertainty bands
             const datasets = [];
             
-            // Individual trade curves (actual + forecast)
+            // Individual trade curves (actual + forecast + uncertainty)
             const tradeColors = {
                 'E1W': 'rgb(0, 143, 211)',      // Maersk Blue
                 'E2W': 'rgb(66, 176, 213)',     // Light Blue  
@@ -384,62 +384,111 @@
                 const forecast = tradeForecasts[tradeCode];
                 const color = tradeColors[tradeCode];
                 
+                // Individual Trade Uncertainty Bands (Pessimistic - lower bound)
+                datasets.push({
+                    label: `${tradeCode} Pessimistic`,
+                    data: forecast.pessimistic,
+                    borderColor: color.replace('rgb', 'rgba').replace(')', ', 0.4)'),
+                    backgroundColor: 'transparent',
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: false,
+                    tension: 0.3,
+                    borderDash: [2, 4],
+                    spanGaps: false
+                });
+                
+                // Individual Trade Uncertainty Bands (Optimistic - upper bound with fill)
+                datasets.push({
+                    label: `${tradeCode} Optimistic`,
+                    data: forecast.optimistic,
+                    borderColor: color.replace('rgb', 'rgba').replace(')', ', 0.4)'),
+                    backgroundColor: color.replace('rgb', 'rgba').replace(')', ', 0.08)'),
+                    borderWidth: 1,
+                    pointRadius: 0,
+                    fill: '-1', // Fill to previous dataset (pessimistic)
+                    tension: 0.3,
+                    borderDash: [2, 4],
+                    spanGaps: false
+                });
+                
                 // Actual bookings (up to today)
                 datasets.push({
                     label: `${tradeCode} Actual`,
                     data: forecast.actual,
                     borderColor: color,
                     backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    pointRadius: 3,
+                    borderWidth: 3,
+                    pointRadius: 4,
                     pointBackgroundColor: color,
+                    pointBorderColor: 'rgb(33, 33, 33)',
+                    pointBorderWidth: 1,
                     fill: false,
                     tension: 0.3,
                     spanGaps: false
                 });
                 
-                // Forecast (from today forward)
+                // Forecast (from today forward) - connect seamlessly to actual
+                const forecastData = forecast.mostLikely.slice();
+                // Include today's point to eliminate gap
                 datasets.push({
                     label: `${tradeCode} Forecast`,
                     data: forecast.mostLikely.map((value, index) => 
-                        index > VESSEL_CONFIG.time.todayIndex ? value : null
+                        index >= VESSEL_CONFIG.time.todayIndex ? value : null
                     ),
                     borderColor: color,
                     backgroundColor: 'transparent',
-                    borderWidth: 2,
-                    pointRadius: 2,
+                    borderWidth: 3,
+                    pointRadius: 3,
                     pointBackgroundColor: color,
+                    pointBorderColor: 'rgb(33, 33, 33)',
+                    pointBorderWidth: 1,
                     fill: false,
                     tension: 0.3,
-                    borderDash: [4, 4],
+                    borderDash: [6, 4],
                     spanGaps: false
                 });
             });
             
-            // Vessel Total Uncertainty Bands
+            // Vessel Total Uncertainty Bands (more visible)
             datasets.push({
                 label: 'Vessel Pessimistic',
                 data: vesselTotal.pessimistic,
-                borderColor: 'rgba(229, 62, 62, 0.6)',
+                borderColor: 'rgba(255, 100, 100, 0.8)', // Brighter red
                 backgroundColor: 'transparent',
-                borderWidth: 1,
+                borderWidth: 2,
                 pointRadius: 0,
                 fill: false,
                 tension: 0.3,
-                borderDash: [2, 6],
+                borderDash: [8, 4],
                 spanGaps: false
             });
             
             datasets.push({
                 label: 'Vessel Optimistic',
                 data: vesselTotal.optimistic,
-                borderColor: 'rgba(0, 170, 136, 0.6)',
-                backgroundColor: 'rgba(0, 170, 136, 0.1)',
-                borderWidth: 1,
+                borderColor: 'rgba(100, 255, 150, 0.8)', // Brighter green
+                backgroundColor: 'rgba(100, 255, 150, 0.15)', // More visible fill
+                borderWidth: 2,
                 pointRadius: 0,
                 fill: '-1', // Fill to previous dataset (Pessimistic)
                 tension: 0.3,
-                borderDash: [2, 6],
+                borderDash: [8, 4],
+                spanGaps: false
+            });
+            
+            // Vessel Capacity Line (dashed horizontal)
+            const vesselCapacityLine = new Array(labels.length).fill(VESSEL_CONFIG.vesselCapacityFFE);
+            datasets.push({
+                label: 'Vessel Capacity',
+                data: vesselCapacityLine,
+                borderColor: 'rgba(255, 255, 255, 0.7)',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+                tension: 0,
+                borderDash: [12, 8],
                 spanGaps: false
             });
             
@@ -449,8 +498,8 @@
                 data: vesselTotal.mostLikely,
                 borderColor: 'rgb(255, 255, 255)',
                 backgroundColor: 'transparent',
-                borderWidth: 4,
-                pointRadius: 5,
+                borderWidth: 5,
+                pointRadius: 6,
                 pointBackgroundColor: 'rgb(255, 255, 255)',
                 pointBorderColor: 'rgb(33, 33, 33)',
                 pointBorderWidth: 2,
@@ -507,9 +556,10 @@
                                 padding: 12,
                                 usePointStyle: true,
                                 filter: function(legendItem) {
-                                    // Hide individual uncertainty bands from legend
-                                    return !legendItem.text.includes('Pessimistic') && 
-                                           !legendItem.text.includes('Optimistic');
+                                    // Hide individual trade uncertainty bands from legend (keep vessel uncertainty)
+                                    const hiddenLabels = ['E1W Pessimistic', 'E1W Optimistic', 'E2W Pessimistic', 'E2W Optimistic', 
+                                                          'W1FW Pessimistic', 'W1FW Optimistic', 'X4FS Pessimistic', 'X4FS Optimistic'];
+                                    return !hiddenLabels.includes(legendItem.text);
                                 }
                             }
                         },
@@ -567,32 +617,43 @@
             
             const { tradeForecasts, vesselTotal } = generateVesselStackedCurves();
             
-            // Update individual trade datasets
+            // Update individual trade datasets (now 4 datasets per trade: pessimistic, optimistic, actual, forecast)
             VESSEL_CONFIG.trades.forEach((trade, tradeIndex) => {
                 const tradeCode = trade.tradeCode;
                 const forecast = tradeForecasts[tradeCode];
                 
-                // Find and update actual + forecast datasets for this trade
-                const actualDatasetIndex = tradeIndex * 2; // Actual datasets
-                const forecastDatasetIndex = tradeIndex * 2 + 1; // Forecast datasets
+                // Dataset indices: each trade has 4 datasets (pessimistic, optimistic, actual, forecast)
+                const basePessimisticIndex = tradeIndex * 4;
+                const baseOptimisticIndex = tradeIndex * 4 + 1;
+                const baseActualIndex = tradeIndex * 4 + 2;
+                const baseForecastIndex = tradeIndex * 4 + 3;
                 
-                if (vesselUptakeChart.data.datasets[actualDatasetIndex]) {
-                    vesselUptakeChart.data.datasets[actualDatasetIndex].data = forecast.actual;
+                // Update uncertainty bands
+                if (vesselUptakeChart.data.datasets[basePessimisticIndex]) {
+                    vesselUptakeChart.data.datasets[basePessimisticIndex].data = forecast.pessimistic;
+                }
+                if (vesselUptakeChart.data.datasets[baseOptimisticIndex]) {
+                    vesselUptakeChart.data.datasets[baseOptimisticIndex].data = forecast.optimistic;
                 }
                 
-                if (vesselUptakeChart.data.datasets[forecastDatasetIndex]) {
-                    vesselUptakeChart.data.datasets[forecastDatasetIndex].data = 
+                // Update actual and forecast
+                if (vesselUptakeChart.data.datasets[baseActualIndex]) {
+                    vesselUptakeChart.data.datasets[baseActualIndex].data = forecast.actual;
+                }
+                if (vesselUptakeChart.data.datasets[baseForecastIndex]) {
+                    vesselUptakeChart.data.datasets[baseForecastIndex].data = 
                         forecast.mostLikely.map((value, index) => 
-                            index > VESSEL_CONFIG.time.todayIndex ? value : null
+                            index >= VESSEL_CONFIG.time.todayIndex ? value : null
                         );
                 }
             });
             
-            // Update vessel total datasets (last 3 datasets)
+            // Update vessel total datasets (last 4 datasets: pessimistic, optimistic, capacity, vessel total)
             const totalDatasets = vesselUptakeChart.data.datasets.length;
-            vesselUptakeChart.data.datasets[totalDatasets - 3].data = vesselTotal.pessimistic; // Pessimistic
-            vesselUptakeChart.data.datasets[totalDatasets - 2].data = vesselTotal.optimistic;  // Optimistic  
-            vesselUptakeChart.data.datasets[totalDatasets - 1].data = vesselTotal.mostLikely;  // Most Likely
+            vesselUptakeChart.data.datasets[totalDatasets - 4].data = vesselTotal.pessimistic; // Vessel Pessimistic
+            vesselUptakeChart.data.datasets[totalDatasets - 3].data = vesselTotal.optimistic;  // Vessel Optimistic  
+            // Capacity line doesn't need updating (static)
+            vesselUptakeChart.data.datasets[totalDatasets - 1].data = vesselTotal.mostLikely;  // Vessel Total
             
             vesselUptakeChart.update('none');
         }
@@ -619,10 +680,12 @@
             return spotCYRef + deltaOffset;
         }
 
-        // Get capacity utilization status
-        function getCapacityStatus(utilization) {
-            if (utilization >= 95) return { class: 'status-full', text: 'FULL' };
-            if (utilization >= 80) return { class: 'status-tight', text: 'TIGHT' };
+        // Get capacity utilization status (based on forecast final vs compartment FFE)
+        function getCapacityStatus(forecastFinal, compartmentFFE) {
+            const forecastUtilization = (forecastFinal / compartmentFFE) * 100;
+            if (forecastUtilization >= 100) return { class: 'status-full', text: 'OVERBOOK' };
+            if (forecastUtilization >= 95) return { class: 'status-full', text: 'FULL' };
+            if (forecastUtilization >= 80) return { class: 'status-tight', text: 'TIGHT' };
             return { class: 'status-open', text: 'OPEN' };
         }
 
@@ -667,7 +730,7 @@
                 const spotCYRef = calculateSpotCYRef(trade);
                 const deltaOffset = VESSEL_CONFIG.deltaOffsets[trade.tradeCode] || 0;
                 const nonSpotMinCY = calculateNonSpotMinCY(trade.tradeCode, spotCYRef);
-                const status = getCapacityStatus(parseFloat(utilization));
+                const status = getCapacityStatus(forecastFinal, trade.compartmentFFE); // Use forecast vs compartment
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
