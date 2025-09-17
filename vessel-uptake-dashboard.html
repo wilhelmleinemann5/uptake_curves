@@ -137,20 +137,15 @@
                     <div style="color: var(--mds-text-primary); font-size: 1.4rem; font-weight: 700;" id="forecastedUtilization">90%</div>
                 </div>
                 <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Total Remaining Expected CY</div>
+                    <div style="color: var(--maersk-success); font-size: 1.4rem; font-weight: 700;" id="totalRemainingCY">$2,500,000</div>
+                </div>
+                <div style="text-align: center;">
                     <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Vessel Status</div>
                     <div style="font-size: 1.2rem; font-weight: 700;" id="vesselStatus">
                         <div class="status-indicator status-tight">TIGHT</div>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Vessel Uptake Forecast Chart -->
-        <div class="chart-container" style="margin: 2rem 0;">
-            <h2 class="chart-title">Vessel Uptake Forecast - Stacked Trade Curves</h2>
-            <p class="chart-subtitle">Real-time forecast impact of DELTA offset adjustments • Individual trade curves stack to vessel total</p>
-            <div style="position: relative; height: 400px; width: 100%;">
-                <canvas id="vesselUptakeChart"></canvas>
             </div>
         </div>
 
@@ -170,6 +165,7 @@
                         <th>Forecast Final</th>
                         <th>Current Remaining</th>
                         <th>Forecasted Remaining</th>
+                        <th>Remaining Expected CY<br><small>(USD)</small></th>
                         <th>Spot CY Ref<br><small>(from PENNY)</small></th>
                         <th>DELTA Offset<br><small>(USD)</small></th>
                         <th>Non-Spot Min CY</th>
@@ -180,6 +176,15 @@
                     <!-- Trade rows will be populated by JavaScript -->
                 </tbody>
             </table>
+        </div>
+
+        <!-- Vessel Uptake Forecast Chart -->
+        <div class="chart-container" style="margin: 2rem 0;">
+            <h2 class="chart-title">Vessel Uptake Forecast - Stacked Trade Curves</h2>
+            <p class="chart-subtitle">Real-time forecast impact of DELTA offset adjustments • Individual trade curves stack to vessel total</p>
+            <div style="position: relative; height: 400px; width: 100%;">
+                <canvas id="vesselUptakeChart"></canvas>
+            </div>
         </div>
 
         <!-- PENNY Integration Status -->
@@ -786,6 +791,11 @@
                 const spotCYRef = calculateSpotCYRef(trade);
                 const deltaOffset = VESSEL_CONFIG.deltaOffsets[trade.tradeCode] || 0;
                 const nonSpotMinCY = calculateNonSpotMinCY(trade.tradeCode, spotCYRef);
+                
+                // Calculate remaining expected CY: (forecast final - current booked) * non-spot CY
+                const remainingFFE = forecastFinal - currentBooked;
+                const remainingExpectedCY = remainingFFE * nonSpotMinCY;
+                
                 const status = getCapacityStatus(forecastedRemaining); // Use forecasted remaining
 
                 const row = document.createElement('tr');
@@ -811,6 +821,12 @@
                     </td>
                     <td style="color: ${forecastedRemaining > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)'}; font-weight: 600;">
                         ${forecastedRemaining.toLocaleString()}
+                    </td>
+                    <td style="color: ${remainingExpectedCY > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)'}; font-weight: 700; font-size: 1.05em;">
+                        $${remainingExpectedCY.toLocaleString()}
+                        <div style="font-size: 0.7rem; color: var(--mds-text-weak);">
+                            ${remainingFFE.toLocaleString()} FFE × $${nonSpotMinCY.toLocaleString()}
+                        </div>
                     </td>
                     <td style="color: var(--mds-text-secondary); font-weight: 500;">
                         $${spotCYRef.toLocaleString()}
@@ -838,7 +854,7 @@
 
         // Update vessel overview metrics (using sigmoid-derived data)
         function updateVesselOverview() {
-            const { vesselTotal } = generateVesselStackedCurves();
+            const { vesselTotal, tradeForecasts } = generateVesselStackedCurves();
             
             const totalCapacity = VESSEL_CONFIG.trades.reduce((sum, trade) => sum + trade.compartmentFFE, 0);
             const totalBooked = vesselTotal.mostLikely[VESSEL_CONFIG.time.todayIndex]; // Current from sigmoid
@@ -847,6 +863,22 @@
             const forecastedRemaining = totalCapacity - totalForecast;
             const utilization = ((totalBooked / totalCapacity) * 100).toFixed(1);
             const forecastedUtilization = ((totalForecast / totalCapacity) * 100).toFixed(1);
+
+            // Calculate total remaining expected CY across all trades
+            let totalRemainingCY = 0;
+            VESSEL_CONFIG.trades.forEach(trade => {
+                const tradeCode = trade.tradeCode;
+                const forecast = tradeForecasts[tradeCode];
+                const currentBooked = forecast.mostLikely[VESSEL_CONFIG.time.todayIndex];
+                const forecastFinal = forecast.mostLikely[VESSEL_CONFIG.time.totalDataPoints - 1];
+                const remainingFFE = forecastFinal - currentBooked;
+                
+                const spotCYRef = calculateSpotCYRef(trade);
+                const nonSpotMinCY = calculateNonSpotMinCY(trade.tradeCode, spotCYRef);
+                const remainingExpectedCY = remainingFFE * nonSpotMinCY;
+                
+                totalRemainingCY += remainingExpectedCY;
+            });
 
             // Calculate vessel status based on forecasted remaining
             const vesselStatus = getCapacityStatus(forecastedRemaining);
@@ -858,6 +890,7 @@
             document.getElementById('forecastedRemaining').textContent = `${forecastedRemaining.toLocaleString()} FFE`;
             document.getElementById('utilization').textContent = `${utilization}%`;
             document.getElementById('forecastedUtilization').textContent = `${forecastedUtilization}%`;
+            document.getElementById('totalRemainingCY').textContent = `$${totalRemainingCY.toLocaleString()}`;
             
             // Update vessel status
             const vesselStatusElement = document.getElementById('vesselStatus');
