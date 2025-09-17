@@ -299,7 +299,7 @@
             
             // Noise parameters for booking generation
             noise: {
-                priceStdDev: 0.08,  // 8% price noise
+                priceStdDev: 0.15,  // 15% price noise (increased from 8%)
                 volumeParams: { min: 5, max: 60, concentration: 0.3 } // Volume distribution
             },
             
@@ -506,10 +506,10 @@
                 type: 'line'
             });
             
-            // Acceptable band (upper) - 1.2x parameterized line, static
+            // Acceptable band (upper) - 1.15x parameterized line, static
             const bandUpperData = [];
             bestFitResult.bestFitLine.forEach(point => {
-                bandUpperData.push({ x: point.rank, y: point.bestFitPrice * 1.2 });
+                bandUpperData.push({ x: point.rank, y: point.bestFitPrice * 1.15 });
             });
             
             datasets.push({
@@ -525,10 +525,10 @@
                 type: 'line'
             });
             
-            // Acceptable band (lower) - 0.8x parameterized line, static
+            // Acceptable band (lower) - 0.85x parameterized line, static
             const bandLowerData = [];
             bestFitResult.bestFitLine.forEach(point => {
-                bandLowerData.push({ x: point.rank, y: point.bestFitPrice * 0.8 });
+                bandLowerData.push({ x: point.rank, y: point.bestFitPrice * 0.85 });
             });
             
             datasets.push({
