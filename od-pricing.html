@@ -110,6 +110,7 @@
         </div>
 
         <!-- Control Panel -->
+        <div class="control-panel">
             <div class="control-group">
                 <div class="control-item">
                     <label>Product</label>
@@ -131,11 +132,20 @@
                 
                 <div class="control-item">
                     <label>Departure Week</label>
-                    <select id="weekSelect">
+                    <select id="weekSelect" onchange="selectWeek(this.value)">
+                        <option value="2025-29">2025-29</option>
+                        <option value="2025-30">2025-30</option>
+                        <option value="2025-31">2025-31</option>
+                        <option value="2025-32">2025-32</option>
+                        <option value="2025-33">2025-33</option>
+                        <option value="2025-34">2025-34</option>
                         <option value="2025-35">2025-35</option>
-                        <option value="2025-36" selected>2025-36</option>
-                        <option value="2025-37">2025-37</option>
+                        <option value="2025-36">2025-36</option>
+                        <option value="2025-37" selected>2025-37</option>
                         <option value="2025-38">2025-38</option>
+                        <option value="2025-39">2025-39</option>
+                        <option value="2025-40">2025-40</option>
+                        <option value="2025-41">2025-41</option>
                     </select>
                 </div>
             </div>
