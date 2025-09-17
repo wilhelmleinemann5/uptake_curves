@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vessel Uptake Dashboard - PENNY ↔ DELTA</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <link rel="stylesheet" href="styles/maersk-theme.css">
     <style>
         .uptake-table {
@@ -196,42 +197,57 @@
     </div>
 
     <script>
-        // VESSEL UPTAKE CONFIGURATION
+        // VESSEL UPTAKE CONFIGURATION WITH SIGMOID FORECASTING
         const VESSEL_CONFIG = {
             vessel: "412-W",
             serviceDirection: "Asia → Europe", 
             lastLoadPort: "CNSGH",
             vesselCapacityFFE: 5000,
             
-            // Sample trade data
+            // Time structure (35 days to departure)
+            time: {
+                dayPoints: [35, 32, 29, 26, 23, 20, 17, 14, 11, 8, 5, 2, 0],
+                todayIndex: 8, // 11 days to departure
+                get totalDataPoints() { return this.dayPoints.length; },
+                get labels() { 
+                    return this.dayPoints.map(days => `${days} days`); 
+                }
+            },
+            
+            // Trade data with sigmoid parameters (hidden from user)
             trades: [
                 {
-                    tradeCode: "E1-W",
+                    tradeCode: "E1W",
                     compartmentFFE: 2000,
                     bookedFFE: 1400,
                     refCorridors: [{ origin: "CNSGH", destination: "NLRTM" }],
-                    cost: 1200
+                    cost: 1200,
+                    // Hidden sigmoid parameters
+                    sigmoid: { finalFFE: 2000, inflectionDay: 12, steepness: 0.25, sensitivity: -1.2 }
                 },
                 {
-                    tradeCode: "E2-W", 
+                    tradeCode: "E2W", 
                     compartmentFFE: 1500,
                     bookedFFE: 900,
                     refCorridors: [{ origin: "CNYTN", destination: "DEHAM" }],
-                    cost: 1350
+                    cost: 1350,
+                    sigmoid: { finalFFE: 1500, inflectionDay: 14, steepness: 0.30, sensitivity: -1.0 }
                 },
                 {
                     tradeCode: "W1FW",
                     compartmentFFE: 1000,
                     bookedFFE: 700,
                     refCorridors: [{ origin: "CNSGH", destination: "NLRTM" }],
-                    cost: 1100
+                    cost: 1100,
+                    sigmoid: { finalFFE: 1000, inflectionDay: 10, steepness: 0.35, sensitivity: -1.5 }
                 },
                 {
                     tradeCode: "X4FS",
                     compartmentFFE: 500,
                     bookedFFE: 200,
                     refCorridors: [{ origin: "CNYTN", destination: "DEHAM" }],
-                    cost: 1250
+                    cost: 1250,
+                    sigmoid: { finalFFE: 500, inflectionDay: 16, steepness: 0.20, sensitivity: -0.8 }
                 }
             ],
             
@@ -243,13 +259,348 @@
             
             // DELTA offsets (editable by uptake manager)
             deltaOffsets: {
-                "E1-W": 0,
-                "E2-W": 50,
+                "E1W": 0,
+                "E2W": 50,
                 "W1FW": -25,
                 "X4FS": 100
             }
         };
 
+        // =================================================================
+        // SIGMOID FORECASTING ENGINE (from live-pricing-simple)
+        // =================================================================
+        
+        // Generate sigmoid booking curve for a single trade
+        function generateTradeSigmoidCurve(trade, deltaOffsetImpact = 0) {
+            const { finalFFE, inflectionDay, steepness, sensitivity } = trade.sigmoid;
+            const curve = [];
+            
+            // Apply DELTA offset impact to final FFE (higher offset = lower bookings)
+            const deltaMultiplier = Math.pow(1 + (deltaOffsetImpact / 1000), sensitivity);
+            const adjustedFinalFFE = Math.max(finalFFE * deltaMultiplier, trade.bookedFFE);
+            
+            for (let i = 0; i < VESSEL_CONFIG.time.dayPoints.length; i++) {
+                const daysOut = VESSEL_CONFIG.time.dayPoints[i];
+                const t = 35 - daysOut; // Invert for sigmoid growth
+                const inflectionPoint = 35 - inflectionDay;
+                
+                // Sigmoid function: FFE = finalFFE / (1 + e^(-steepness * (t - inflectionPoint)))
+                const ffe = adjustedFinalFFE / (1 + Math.exp(-steepness * (t - inflectionPoint)));
+                curve.push(Math.round(Math.max(ffe, 0)));
+            }
+            
+            return curve;
+        }
+        
+        // Generate uncertainty bands for a trade curve
+        function generateTradeUncertaintyBands(baseCurve, tradeCode) {
+            const todayIndex = VESSEL_CONFIG.time.todayIndex;
+            const baseVariance = 0.03; // 3% base uncertainty
+            const varianceGrowth = 0.02; // 2% additional per sqrt(days)
+            
+            const optimistic = baseCurve.map((value, index) => {
+                if (index <= todayIndex) return null; // Only forecast future
+                const daysFromToday = Math.abs(VESSEL_CONFIG.time.dayPoints[index] - VESSEL_CONFIG.time.dayPoints[todayIndex]);
+                const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
+                return Math.round(value * (1 + uncertaintyFactor));
+            });
+            
+            const pessimistic = baseCurve.map((value, index) => {
+                if (index <= todayIndex) return null; // Only forecast future
+                const daysFromToday = Math.abs(VESSEL_CONFIG.time.dayPoints[index] - VESSEL_CONFIG.time.dayPoints[todayIndex]);
+                const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
+                return Math.round(value * (1 - uncertaintyFactor));
+            });
+            
+            return { optimistic, pessimistic };
+        }
+        
+        // Generate stacked vessel total from individual trade curves
+        function generateVesselStackedCurves() {
+            const tradeForecasts = {};
+            const vesselTotal = { mostLikely: [], optimistic: [], pessimistic: [] };
+            
+            // Generate individual trade curves with DELTA offset impact
+            VESSEL_CONFIG.trades.forEach(trade => {
+                const deltaOffset = VESSEL_CONFIG.deltaOffsets[trade.tradeCode] || 0;
+                const baseCurve = generateTradeSigmoidCurve(trade, deltaOffset);
+                const uncertainty = generateTradeUncertaintyBands(baseCurve, trade.tradeCode);
+                
+                // Store individual trade forecasts
+                tradeForecasts[trade.tradeCode] = {
+                    mostLikely: baseCurve,
+                    optimistic: uncertainty.optimistic,
+                    pessimistic: uncertainty.pessimistic,
+                    actual: baseCurve.map((value, index) => index <= VESSEL_CONFIG.time.todayIndex ? value : null)
+                };
+                
+                // Add to vessel totals
+                for (let i = 0; i < VESSEL_CONFIG.time.totalDataPoints; i++) {
+                    vesselTotal.mostLikely[i] = (vesselTotal.mostLikely[i] || 0) + baseCurve[i];
+                    
+                    if (uncertainty.optimistic[i] !== null) {
+                        vesselTotal.optimistic[i] = (vesselTotal.optimistic[i] || 0) + uncertainty.optimistic[i];
+                    } else {
+                        vesselTotal.optimistic[i] = null;
+                    }
+                    
+                    if (uncertainty.pessimistic[i] !== null) {
+                        vesselTotal.pessimistic[i] = (vesselTotal.pessimistic[i] || 0) + uncertainty.pessimistic[i];
+                    } else {
+                        vesselTotal.pessimistic[i] = null;
+                    }
+                }
+            });
+            
+            return { tradeForecasts, vesselTotal };
+        }
+        
+        // =================================================================
+        // CHART INITIALIZATION AND UPDATES
+        // =================================================================
+        
+        let vesselUptakeChart = null;
+        
+        function initVesselUptakeChart() {
+            const ctx = document.getElementById('vesselUptakeChart');
+            if (!ctx) return;
+            
+            const { tradeForecasts, vesselTotal } = generateVesselStackedCurves();
+            const labels = VESSEL_CONFIG.time.labels;
+            
+            // Create datasets: Individual trades + Vessel total + Uncertainty bands
+            const datasets = [];
+            
+            // Individual trade curves (actual + forecast)
+            const tradeColors = {
+                'E1W': 'rgb(0, 143, 211)',      // Maersk Blue
+                'E2W': 'rgb(66, 176, 213)',     // Light Blue  
+                'W1FW': 'rgb(0, 170, 136)',     // Success Green
+                'X4FS': 'rgb(255, 165, 0)'      // Warning Orange
+            };
+            
+            VESSEL_CONFIG.trades.forEach(trade => {
+                const tradeCode = trade.tradeCode;
+                const forecast = tradeForecasts[tradeCode];
+                const color = tradeColors[tradeCode];
+                
+                // Actual bookings (up to today)
+                datasets.push({
+                    label: `${tradeCode} Actual`,
+                    data: forecast.actual,
+                    borderColor: color,
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointRadius: 3,
+                    pointBackgroundColor: color,
+                    fill: false,
+                    tension: 0.3,
+                    spanGaps: false
+                });
+                
+                // Forecast (from today forward)
+                datasets.push({
+                    label: `${tradeCode} Forecast`,
+                    data: forecast.mostLikely.map((value, index) => 
+                        index > VESSEL_CONFIG.time.todayIndex ? value : null
+                    ),
+                    borderColor: color,
+                    backgroundColor: 'transparent',
+                    borderWidth: 2,
+                    pointRadius: 2,
+                    pointBackgroundColor: color,
+                    fill: false,
+                    tension: 0.3,
+                    borderDash: [4, 4],
+                    spanGaps: false
+                });
+            });
+            
+            // Vessel Total Uncertainty Bands
+            datasets.push({
+                label: 'Vessel Pessimistic',
+                data: vesselTotal.pessimistic,
+                borderColor: 'rgba(229, 62, 62, 0.6)',
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                pointRadius: 0,
+                fill: false,
+                tension: 0.3,
+                borderDash: [2, 6],
+                spanGaps: false
+            });
+            
+            datasets.push({
+                label: 'Vessel Optimistic',
+                data: vesselTotal.optimistic,
+                borderColor: 'rgba(0, 170, 136, 0.6)',
+                backgroundColor: 'rgba(0, 170, 136, 0.1)',
+                borderWidth: 1,
+                pointRadius: 0,
+                fill: '-1', // Fill to previous dataset (Pessimistic)
+                tension: 0.3,
+                borderDash: [2, 6],
+                spanGaps: false
+            });
+            
+            // Vessel Total Most Likely
+            datasets.push({
+                label: 'Vessel Total',
+                data: vesselTotal.mostLikely,
+                borderColor: 'rgb(255, 255, 255)',
+                backgroundColor: 'transparent',
+                borderWidth: 4,
+                pointRadius: 5,
+                pointBackgroundColor: 'rgb(255, 255, 255)',
+                pointBorderColor: 'rgb(33, 33, 33)',
+                pointBorderWidth: 2,
+                fill: false,
+                tension: 0.3
+            });
+            
+            vesselUptakeChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 800 },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Days to Departure',
+                                font: { size: 14, weight: '600' },
+                                color: 'rgb(212, 212, 212)'
+                            },
+                            grid: { color: 'rgba(138, 138, 138, 0.3)' },
+                            ticks: { color: 'rgb(138, 138, 138)' },
+                            border: { color: 'rgb(76, 76, 76)' }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Cumulative FFE',
+                                font: { size: 14, weight: '600' },
+                                color: 'rgb(212, 212, 212)'
+                            },
+                            beginAtZero: true,
+                            max: 6000,
+                            grid: { color: 'rgba(138, 138, 138, 0.3)' },
+                            ticks: {
+                                stepSize: 1000,
+                                color: 'rgb(138, 138, 138)',
+                                callback: function(value) {
+                                    return (value / 1000).toFixed(0) + 'k';
+                                }
+                            },
+                            border: { color: 'rgb(76, 76, 76)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgb(212, 212, 212)',
+                                font: { size: 11, weight: '500' },
+                                padding: 12,
+                                usePointStyle: true,
+                                filter: function(legendItem) {
+                                    // Hide individual uncertainty bands from legend
+                                    return !legendItem.text.includes('Pessimistic') && 
+                                           !legendItem.text.includes('Optimistic');
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                            titleColor: 'rgb(240, 240, 240)',
+                            bodyColor: 'rgb(212, 212, 212)',
+                            borderColor: 'rgb(76, 76, 76)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed.y;
+                                    if (value === null) return null;
+                                    return `${context.dataset.label}: ${Math.round(value).toLocaleString()} FFE`;
+                                }
+                            }
+                        }
+                    },
+                    interaction: { intersect: false, mode: 'index' }
+                }
+            });
+            
+            // Add TODAY vertical line
+            if (vesselUptakeChart.options.plugins) {
+                vesselUptakeChart.options.plugins.annotation = {
+                    annotations: {
+                        todayLine: {
+                            type: 'line',
+                            xMin: VESSEL_CONFIG.time.todayIndex,
+                            xMax: VESSEL_CONFIG.time.todayIndex,
+                            borderColor: 'rgba(255, 255, 255, 0.8)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            label: {
+                                display: true,
+                                content: 'TODAY',
+                                position: 'start',
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                color: 'rgb(20, 20, 20)',
+                                font: { size: 12, weight: 'bold' }
+                            }
+                        }
+                    }
+                };
+            }
+            
+            console.log('Vessel Uptake Chart initialized with stacked forecasts');
+        }
+        
+        // Update chart when DELTA offsets change
+        function updateVesselUptakeChart() {
+            if (!vesselUptakeChart) return;
+            
+            const { tradeForecasts, vesselTotal } = generateVesselStackedCurves();
+            
+            // Update individual trade datasets
+            VESSEL_CONFIG.trades.forEach((trade, tradeIndex) => {
+                const tradeCode = trade.tradeCode;
+                const forecast = tradeForecasts[tradeCode];
+                
+                // Find and update actual + forecast datasets for this trade
+                const actualDatasetIndex = tradeIndex * 2; // Actual datasets
+                const forecastDatasetIndex = tradeIndex * 2 + 1; // Forecast datasets
+                
+                if (vesselUptakeChart.data.datasets[actualDatasetIndex]) {
+                    vesselUptakeChart.data.datasets[actualDatasetIndex].data = forecast.actual;
+                }
+                
+                if (vesselUptakeChart.data.datasets[forecastDatasetIndex]) {
+                    vesselUptakeChart.data.datasets[forecastDatasetIndex].data = 
+                        forecast.mostLikely.map((value, index) => 
+                            index > VESSEL_CONFIG.time.todayIndex ? value : null
+                        );
+                }
+            });
+            
+            // Update vessel total datasets (last 3 datasets)
+            const totalDatasets = vesselUptakeChart.data.datasets.length;
+            vesselUptakeChart.data.datasets[totalDatasets - 3].data = vesselTotal.pessimistic; // Pessimistic
+            vesselUptakeChart.data.datasets[totalDatasets - 2].data = vesselTotal.optimistic;  // Optimistic  
+            vesselUptakeChart.data.datasets[totalDatasets - 1].data = vesselTotal.mostLikely;  // Most Likely
+            
+            vesselUptakeChart.update('none');
+        }
+        
+        // =================================================================
+        // TABLE AND OVERVIEW UPDATES
+        // =================================================================
+        
         // Calculate spot CY reference for a trade
         function calculateSpotCYRef(trade) {
             const corridorCYs = trade.refCorridors.map(corridor => {
@@ -275,23 +626,44 @@
             return { class: 'status-open', text: 'OPEN' };
         }
 
-        // Update DELTA offset and recalculate
+        // Update DELTA offset and recalculate (with real-time chart updates)
         function updateDeltaOffset(tradeCode, newOffset) {
             VESSEL_CONFIG.deltaOffsets[tradeCode] = parseFloat(newOffset) || 0;
+            console.log(`DELTA offset updated: ${tradeCode} = ${newOffset}`);
+            
+            // Update table with new forecast data
             renderTable();
             updateVesselOverview();
+            
+            // Update chart with new forecasts
+            updateVesselUptakeChart();
         }
 
-        // Render the trades table
+        // Render the trades table (using sigmoid-derived data)
         function renderTable() {
             const tbody = document.getElementById('tradesTableBody');
             if (!tbody) return;
 
             tbody.innerHTML = '';
+            
+            // Generate current forecasts for all trades
+            const { tradeForecasts } = generateVesselStackedCurves();
 
             VESSEL_CONFIG.trades.forEach(trade => {
-                const remainingFFE = trade.compartmentFFE - trade.bookedFFE;
-                const utilization = (trade.bookedFFE / trade.compartmentFFE * 100).toFixed(1);
+                const tradeCode = trade.tradeCode;
+                const forecast = tradeForecasts[tradeCode];
+                
+                // Get current booked (today's value from sigmoid)
+                const currentBooked = forecast.mostLikely[VESSEL_CONFIG.time.todayIndex];
+                
+                // Get forecast final (end value from sigmoid)
+                const forecastFinal = forecast.mostLikely[VESSEL_CONFIG.time.totalDataPoints - 1];
+                
+                // Calculate remaining based on compartment capacity
+                const remainingFFE = trade.compartmentFFE - currentBooked;
+                const utilization = (currentBooked / trade.compartmentFFE * 100).toFixed(1);
+                
+                // Calculate CY values
                 const spotCYRef = calculateSpotCYRef(trade);
                 const deltaOffset = VESSEL_CONFIG.deltaOffsets[trade.tradeCode] || 0;
                 const nonSpotMinCY = calculateNonSpotMinCY(trade.tradeCode, spotCYRef);
@@ -301,15 +673,15 @@
                 row.innerHTML = `
                     <td style="font-weight: 600; color: var(--maersk-blue);">${trade.tradeCode}</td>
                     <td>${trade.compartmentFFE.toLocaleString()}</td>
-                    <td>${trade.bookedFFE.toLocaleString()}</td>
+                    <td style="font-weight: 600;">${currentBooked.toLocaleString()}</td>
+                    <td style="color: var(--maersk-light-blue); font-weight: 600;">
+                        ${forecastFinal.toLocaleString()}
+                        <div style="font-size: 0.7rem; color: var(--mds-text-weak);">
+                            ${((forecastFinal / trade.compartmentFFE) * 100).toFixed(1)}% of capacity
+                        </div>
+                    </td>
                     <td style="color: ${remainingFFE > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)'}; font-weight: 600;">
                         ${remainingFFE.toLocaleString()}
-                    </td>
-                    <td>
-                        <div class="capacity-bar">
-                            <div class="capacity-fill" style="width: ${Math.min(100, utilization)}%;"></div>
-                            <div class="capacity-text">${utilization}%</div>
-                        </div>
                     </td>
                     <td style="color: var(--mds-text-secondary); font-weight: 500;">
                         $${spotCYRef.toLocaleString()}
@@ -323,7 +695,8 @@
                                value="${deltaOffset}"
                                step="25"
                                onchange="updateDeltaOffset('${trade.tradeCode}', this.value)"
-                               title="DELTA offset in USD">
+                               oninput="updateDeltaOffset('${trade.tradeCode}', this.value)"
+                               title="DELTA offset in USD - affects booking forecast">
                     </td>
                     <td class="calculated-field">$${nonSpotMinCY.toLocaleString()}</td>
                     <td>
@@ -334,10 +707,12 @@
             });
         }
 
-        // Update vessel overview metrics
+        // Update vessel overview metrics (using sigmoid-derived data)
         function updateVesselOverview() {
+            const { vesselTotal } = generateVesselStackedCurves();
+            
             const totalCapacity = VESSEL_CONFIG.trades.reduce((sum, trade) => sum + trade.compartmentFFE, 0);
-            const totalBooked = VESSEL_CONFIG.trades.reduce((sum, trade) => sum + trade.bookedFFE, 0);
+            const totalBooked = vesselTotal.mostLikely[VESSEL_CONFIG.time.todayIndex]; // Current from sigmoid
             const totalRemaining = totalCapacity - totalBooked;
             const utilization = ((totalBooked / totalCapacity) * 100).toFixed(1);
 
@@ -357,9 +732,9 @@
             });
 
             renderTable();
+            updateVesselUptakeChart(); // Update chart when PENNY prices change
             
             // Update timestamp
-            const now = new Date();
             document.getElementById('lastPennyUpdate').textContent = 'Just now';
             
             setTimeout(() => {
@@ -367,17 +742,33 @@
             }, 60000);
         }
 
-        // Initialize dashboard
+        // Initialize dashboard with full sigmoid forecasting system
         function initDashboard() {
+            console.log('Initializing Vessel Uptake Dashboard with Sigmoid Forecasting...');
+            
+            // Initialize chart first
+            initVesselUptakeChart();
+            
+            // Then render table and overview (which depend on chart data)
             renderTable();
             updateVesselOverview();
             
             // Simulate PENNY updates every 2 minutes
             setInterval(simulatePennyUpdates, 120000);
+            
+            console.log('Dashboard initialization complete!');
         }
 
         // Initialize when page loads
-        window.addEventListener('load', initDashboard);
+        window.addEventListener('load', function() {
+            // Wait for Chart.js to load
+            if (typeof Chart !== 'undefined') {
+                initDashboard();
+            } else {
+                console.log('Chart.js not loaded, retrying in 500ms...');
+                setTimeout(initDashboard, 500);
+            }
+        });
     </script>
 </body>
 </html>
