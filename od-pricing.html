@@ -91,6 +91,16 @@
             color: var(--mds-text-secondary);
             font-size: 0.85rem;
         }
+        
+        .facet-chart {
+            min-width: 0; /* Prevent flex growing */
+            max-width: 100%; /* Constrain within grid */
+        }
+        
+        .facet-chart canvas {
+            max-width: 100% !important;
+            max-height: 200px !important;
+        }
     </style>
 </head>
 <body>
@@ -1212,11 +1222,8 @@
                 document.getElementById('currentPennyPrice').value = pennyPrice;
             }
             
-            // Regenerate OD chart for selected week
-            if (odPricingChart) {
-                odPricingChart.destroy();
-                initODPricingChart();
-            }
+            // Update OD chart for selected week (don't destroy/recreate)
+            updateODPricingChart();
             
             // Highlight selected week in timeline
             highlightSelectedWeek(week);
@@ -1250,7 +1257,20 @@
             }
             
             interceptTimelineChart.update('none');
+            
+            // Update faceted chart info display
+            updateFacetedChartInfo(selectedWeek, newIntercept);
+            
             console.log(`Updated timeline intercept for ${selectedWeek}: $${Math.round(newIntercept)}`);
+        }
+        
+        // Update faceted chart info display when intercept changes
+        function updateFacetedChartInfo(week, newIntercept) {
+            const facetInfo = document.getElementById(`facetInfo${week}`);
+            if (facetInfo && OD_PRICING_CONFIG.weekly_intercepts[week]) {
+                const weekData = OD_PRICING_CONFIG.weekly_intercepts[week];
+                facetInfo.textContent = `α: $${Math.round(newIntercept).toLocaleString()} | Ref: $${weekData.reference_price.toLocaleString()}`;
+            }
         }
         
         // Highlight selected week in timeline chart and faceted view
