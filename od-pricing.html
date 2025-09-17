@@ -269,119 +269,39 @@
                 }
             },
             
-            // Mock OD data for E1W trade (multiple bookings per OD)
-            od_data: [
-                // Reference corridor (lowest rank) - CNSGH to NLROT
-                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1660, booked_volume: 45 },
-                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1680, booked_volume: 32 },
-                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1700, booked_volume: 28 },
-                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1720, booked_volume: 18 },
-                
-                // CNSGH to DEHAM
-                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1720, booked_volume: 20 },
-                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1740, booked_volume: 12 },
-                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1760, booked_volume: 32 },
-                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1780, booked_volume: 18 },
-                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1820, booked_volume: 56 },
-                
-                // CNSGH to BEANT (Antwerp)
-                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.25, current_price: 1780, booked_volume: 28 },
-                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.25, current_price: 1800, booked_volume: 22 },
-                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.25, current_price: 1820, booked_volume: 15 },
-                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.25, current_price: 1850, booked_volume: 35 },
-                
-                // CNSGH to FRLEH
-                { origin: 'CNSGH', destination: 'FRLEH', od_rank: 0.32, current_price: 1820, booked_volume: 19 },
-                { origin: 'CNSGH', destination: 'FRLEH', od_rank: 0.32, current_price: 1840, booked_volume: 14 },
-                { origin: 'CNSGH', destination: 'FRLEH', od_rank: 0.32, current_price: 1880, booked_volume: 25 },
-                
-                // CNNPO (Ningbo) to NLROT
-                { origin: 'CNNPO', destination: 'NLROT', od_rank: 0.15, current_price: 1700, booked_volume: 38 },
-                { origin: 'CNNPO', destination: 'NLROT', od_rank: 0.15, current_price: 1720, booked_volume: 22 },
-                { origin: 'CNNPO', destination: 'NLROT', od_rank: 0.15, current_price: 1740, booked_volume: 16 },
-                { origin: 'CNNPO', destination: 'NLROT', od_rank: 0.15, current_price: 1760, booked_volume: 29 },
-                
-                // CNNPO to DEHAM
-                { origin: 'CNNPO', destination: 'DEHAM', od_rank: 0.22, current_price: 1750, booked_volume: 25 },
-                { origin: 'CNNPO', destination: 'DEHAM', od_rank: 0.22, current_price: 1770, booked_volume: 18 },
-                { origin: 'CNNPO', destination: 'DEHAM', od_rank: 0.22, current_price: 1800, booked_volume: 21 },
-                
-                // CNNPO to BEANT
-                { origin: 'CNNPO', destination: 'BEANT', od_rank: 0.28, current_price: 1800, booked_volume: 21 },
-                { origin: 'CNNPO', destination: 'BEANT', od_rank: 0.28, current_price: 1820, booked_volume: 16 },
-                { origin: 'CNNPO', destination: 'BEANT', od_rank: 0.28, current_price: 1850, booked_volume: 12 },
-                
-                // CNIWN (Shekou) to NLROT
-                { origin: 'CNIWN', destination: 'NLROT', od_rank: 0.20, current_price: 1730, booked_volume: 29 },
-                { origin: 'CNIWN', destination: 'NLROT', od_rank: 0.20, current_price: 1750, booked_volume: 20 },
-                { origin: 'CNIWN', destination: 'NLROT', od_rank: 0.20, current_price: 1780, booked_volume: 15 },
-                
-                // CNIWN to DEHAM
-                { origin: 'CNIWN', destination: 'DEHAM', od_rank: 0.26, current_price: 1770, booked_volume: 18 },
-                { origin: 'CNIWN', destination: 'DEHAM', od_rank: 0.26, current_price: 1800, booked_volume: 14 },
-                { origin: 'CNIWN', destination: 'DEHAM', od_rank: 0.26, current_price: 1820, booked_volume: 22 },
-                
-                // CNIWN to BEANT
-                { origin: 'CNIWN', destination: 'BEANT', od_rank: 0.35, current_price: 1850, booked_volume: 12 },
-                { origin: 'CNIWN', destination: 'BEANT', od_rank: 0.35, current_price: 1880, booked_volume: 8 },
-                { origin: 'CNIWN', destination: 'BEANT', od_rank: 0.35, current_price: 1920, booked_volume: 15 },
-                
-                // CNSGH to GBSOU (Southampton)
-                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.45, current_price: 1920, booked_volume: 8 },
-                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.45, current_price: 1950, booked_volume: 12 },
-                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.45, current_price: 1980, booked_volume: 6 },
-                
-                // CNSGH to PLGDN (Gdansk)
-                { origin: 'CNSGH', destination: 'PLGDN', od_rank: 0.52, current_price: 1980, booked_volume: 6 },
-                { origin: 'CNSGH', destination: 'PLGDN', od_rank: 0.52, current_price: 2020, booked_volume: 9 },
-                { origin: 'CNSGH', destination: 'PLGDN', od_rank: 0.52, current_price: 2050, booked_volume: 4 },
-                
-                // CNNPO to GBSOU
-                { origin: 'CNNPO', destination: 'GBSOU', od_rank: 0.48, current_price: 1950, booked_volume: 7 },
-                { origin: 'CNNPO', destination: 'GBSOU', od_rank: 0.48, current_price: 1980, booked_volume: 5 },
-                { origin: 'CNNPO', destination: 'GBSOU', od_rank: 0.48, current_price: 2010, booked_volume: 8 },
-                
-                // CNNPO to PLGDN
-                { origin: 'CNNPO', destination: 'PLGDN', od_rank: 0.55, current_price: 2010, booked_volume: 4 },
-                { origin: 'CNNPO', destination: 'PLGDN', od_rank: 0.55, current_price: 2040, booked_volume: 6 },
-                { origin: 'CNNPO', destination: 'PLGDN', od_rank: 0.55, current_price: 2080, booked_volume: 3 },
-                
-                // CNIWN to GBSOU
-                { origin: 'CNIWN', destination: 'GBSOU', od_rank: 0.58, current_price: 2050, booked_volume: 3 },
-                { origin: 'CNIWN', destination: 'GBSOU', od_rank: 0.58, current_price: 2080, booked_volume: 5 },
-                { origin: 'CNIWN', destination: 'GBSOU', od_rank: 0.58, current_price: 2120, booked_volume: 2 },
-                
-                // CNIWN to PLGDN
-                { origin: 'CNIWN', destination: 'PLGDN', od_rank: 0.65, current_price: 2120, booked_volume: 2 },
-                { origin: 'CNIWN', destination: 'PLGDN', od_rank: 0.65, current_price: 2160, booked_volume: 4 },
-                { origin: 'CNIWN', destination: 'PLGDN', od_rank: 0.65, current_price: 2200, booked_volume: 1 },
-                
-                // Premium corridors - CNSGH to NOOSL (Oslo)
-                { origin: 'CNSGH', destination: 'NOOSL', od_rank: 0.72, current_price: 2280, booked_volume: 1 },
-                { origin: 'CNSGH', destination: 'NOOSL', od_rank: 0.72, current_price: 2320, booked_volume: 3 },
-                { origin: 'CNSGH', destination: 'NOOSL', od_rank: 0.72, current_price: 2380, booked_volume: 2 },
-                
-                // CNSGH to SEGOT (Gothenburg)
-                { origin: 'CNSGH', destination: 'SEGOT', od_rank: 0.78, current_price: 2350, booked_volume: 1 },
-                { origin: 'CNSGH', destination: 'SEGOT', od_rank: 0.78, current_price: 2400, booked_volume: 2 },
-                { origin: 'CNSGH', destination: 'SEGOT', od_rank: 0.78, current_price: 2450, booked_volume: 1 },
-                
-                // CNNPO to NOOSL
-                { origin: 'CNNPO', destination: 'NOOSL', od_rank: 0.75, current_price: 2320, booked_volume: 1 },
-                { origin: 'CNNPO', destination: 'NOOSL', od_rank: 0.75, current_price: 2380, booked_volume: 2 },
-                
-                // CNNPO to SEGOT
-                { origin: 'CNNPO', destination: 'SEGOT', od_rank: 0.82, current_price: 2380, booked_volume: 1 },
-                { origin: 'CNNPO', destination: 'SEGOT', od_rank: 0.82, current_price: 2420, booked_volume: 1 },
-                
-                // CNIWN to NOOSL
-                { origin: 'CNIWN', destination: 'NOOSL', od_rank: 0.85, current_price: 2450, booked_volume: 1 },
-                { origin: 'CNIWN', destination: 'NOOSL', od_rank: 0.85, current_price: 2500, booked_volume: 1 },
-                
-                // CNIWN to SEGOT
-                { origin: 'CNIWN', destination: 'SEGOT', od_rank: 0.92, current_price: 2520, booked_volume: 1 },
-                { origin: 'CNIWN', destination: 'SEGOT', od_rank: 0.92, current_price: 2580, booked_volume: 1 }
+            // OD structure for E1W trade (ranks and corridors only)
+            od_structure: [
+                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12 }, // Reference
+                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18 },
+                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.25 },
+                { origin: 'CNSGH', destination: 'FRLEH', od_rank: 0.32 },
+                { origin: 'CNNPO', destination: 'NLROT', od_rank: 0.15 },
+                { origin: 'CNNPO', destination: 'DEHAM', od_rank: 0.22 },
+                { origin: 'CNNPO', destination: 'BEANT', od_rank: 0.28 },
+                { origin: 'CNNPO', destination: 'FRLEH', od_rank: 0.35 },
+                { origin: 'CNIWN', destination: 'NLROT', od_rank: 0.20 },
+                { origin: 'CNIWN', destination: 'DEHAM', od_rank: 0.26 },
+                { origin: 'CNIWN', destination: 'BEANT', od_rank: 0.35 },
+                { origin: 'CNIWN', destination: 'FRLEH', od_rank: 0.42 },
+                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.45 },
+                { origin: 'CNSGH', destination: 'PLGDN', od_rank: 0.52 },
+                { origin: 'CNNPO', destination: 'GBSOU', od_rank: 0.48 },
+                { origin: 'CNNPO', destination: 'PLGDN', od_rank: 0.55 },
+                { origin: 'CNIWN', destination: 'GBSOU', od_rank: 0.58 },
+                { origin: 'CNIWN', destination: 'PLGDN', od_rank: 0.65 },
+                { origin: 'CNSGH', destination: 'NOOSL', od_rank: 0.72 },
+                { origin: 'CNSGH', destination: 'SEGOT', od_rank: 0.78 },
+                { origin: 'CNNPO', destination: 'NOOSL', od_rank: 0.75 },
+                { origin: 'CNNPO', destination: 'SEGOT', od_rank: 0.82 },
+                { origin: 'CNIWN', destination: 'NOOSL', od_rank: 0.85 },
+                { origin: 'CNIWN', destination: 'SEGOT', od_rank: 0.92 }
             ],
+            
+            // Noise parameters for booking generation
+            noise: {
+                priceStdDev: 0.08,  // 8% price noise
+                volumeParams: { min: 5, max: 60, concentration: 0.3 } // Volume distribution
+            },
             
             // Historical residual bands (by rank bins)
             acceptable_bands: [
@@ -408,6 +328,65 @@
         function calculatePredictedPrice(alpha, beta, odRank) {
             // price = alpha * exp(beta * rank)
             return alpha * Math.exp(beta * odRank);
+        }
+        
+        // Generate realistic booking data from parameterized model + noise
+        function generateBookingData() {
+            const bookings = [];
+            const baseAlpha = 1580; // Base intercept for realistic prices
+            const baseBeta = 0.45;  // Same as trade slope
+            
+            // Seeded random for reproducible results
+            let seed = 12345;
+            function seededRandom() {
+                seed = (seed * 9301 + 49297) % 233280;
+                return seed / 233280;
+            }
+            
+            OD_PRICING_CONFIG.od_structure.forEach(od => {
+                // Base price from parameterized model
+                const basePrice = baseAlpha * Math.exp(baseBeta * od.od_rank);
+                
+                // Generate 3-6 booking events per OD
+                const numBookings = Math.floor(seededRandom() * 4) + 3;
+                
+                for (let i = 0; i < numBookings; i++) {
+                    // Add noise to price (log-normal to stay positive)
+                    const priceNoise = 1 + (seededRandom() - 0.5) * OD_PRICING_CONFIG.noise.priceStdDev * 2;
+                    const noisyPrice = Math.round(basePrice * priceNoise);
+                    
+                    // Generate realistic volume (higher volume for lower ranks)
+                    const volumeBase = Math.max(5, 80 * Math.exp(-od.od_rank * 2)); // Exponential decay
+                    const volumeNoise = 0.5 + seededRandom();
+                    const volume = Math.round(volumeBase * volumeNoise);
+                    
+                    bookings.push({
+                        origin: od.origin,
+                        destination: od.destination,
+                        od_rank: od.od_rank,
+                        current_price: noisyPrice,
+                        booked_volume: volume
+                    });
+                }
+            });
+            
+            return bookings;
+        }
+        
+        // Calculate parameterized line-of-best-fit (no fitting needed - we know the parameters)
+        function calculateParameterizedBestFit() {
+            const baseAlpha = 1580;
+            const baseBeta = 0.45;
+            
+            const bestFitLine = [];
+            for (let rank = 0; rank <= 1; rank += 0.02) {
+                bestFitLine.push({
+                    rank: rank,
+                    bestFitPrice: baseAlpha * Math.exp(baseBeta * rank)
+                });
+            }
+            
+            return { bestFitLine, alpha: baseAlpha, beta: baseBeta };
         }
         
         // Calculate OLS line-of-best-fit from booking data (covers full 0-1 range)
@@ -467,20 +446,21 @@
             const targetPrice = parseFloat(document.getElementById('targetPriceInput').value);
             const tradeConfig = OD_PRICING_CONFIG.trades[currentTrade];
             
-            // Calculate model parameters
+            // Generate booking data and calculate model parameters
+            const bookingData = generateBookingData();
             const alpha = calculateWeeklyIntercept(targetPrice, tradeConfig.reference_rank, tradeConfig.beta_slope);
-            const olsResult = calculateOLSBestFit(OD_PRICING_CONFIG.od_data);
+            const bestFitResult = calculateParameterizedBestFit();
             
             // Create datasets
             const datasets = [];
             
-            // Booking bubbles (scatter)
+            // Booking bubbles (scatter) - generated from parameterized model + noise
             datasets.push({
                 label: 'Actual Bookings',
-                data: OD_PRICING_CONFIG.od_data.map(od => ({
+                data: bookingData.map(od => ({
                     x: od.od_rank,
                     y: od.current_price,
-                    r: Math.sqrt(od.booked_volume) / 3, // Scale bubble size
+                    r: Math.sqrt(od.booked_volume) / 2, // Scale bubble size
                     origin: od.origin,
                     destination: od.destination,
                     volume: od.booked_volume
@@ -512,10 +492,10 @@
                 type: 'line'
             });
             
-            // Line-of-best-fit (OLS - continuous from 0 to 1)
+            // Line-of-best-fit (parameterized - continuous from 0 to 1)
             datasets.push({
                 label: 'Line-of-Best-Fit',
-                data: olsResult.bestFitLine.map(f => ({ x: f.rank, y: f.bestFitPrice })),
+                data: bestFitResult.bestFitLine.map(f => ({ x: f.rank, y: f.bestFitPrice })),
                 borderColor: 'rgba(0, 170, 136, 0.8)',
                 backgroundColor: 'transparent',
                 borderWidth: 2,
@@ -526,11 +506,10 @@
                 type: 'line'
             });
             
-            // Acceptable band (upper) - based on OLS best-fit, static
+            // Acceptable band (upper) - 1.2x parameterized line, static
             const bandUpperData = [];
-            olsResult.bestFitLine.forEach(point => {
-                const band = calculateAcceptableBand(point.bestFitPrice, olsResult.bandWidth);
-                bandUpperData.push({ x: point.rank, y: band.high });
+            bestFitResult.bestFitLine.forEach(point => {
+                bandUpperData.push({ x: point.rank, y: point.bestFitPrice * 1.2 });
             });
             
             datasets.push({
@@ -546,11 +525,10 @@
                 type: 'line'
             });
             
-            // Acceptable band (lower) - based on OLS best-fit, static
+            // Acceptable band (lower) - 0.8x parameterized line, static
             const bandLowerData = [];
-            olsResult.bestFitLine.forEach(point => {
-                const band = calculateAcceptableBand(point.bestFitPrice, olsResult.bandWidth);
-                bandLowerData.push({ x: point.rank, y: band.low });
+            bestFitResult.bestFitLine.forEach(point => {
+                bandLowerData.push({ x: point.rank, y: point.bestFitPrice * 0.8 });
             });
             
             datasets.push({
