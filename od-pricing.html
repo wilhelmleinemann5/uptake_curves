@@ -100,8 +100,16 @@
     </header>
 
     <div class="container">
+        <!-- Intercept Timeline (Strategic Overview) -->
+        <div class="chart-container" style="margin-bottom: 1rem;">
+            <h2 class="chart-title">Weekly Intercept Timeline - E1W Trade</h2>
+            <p class="chart-subtitle">Historical intercepts (8 weeks) + Future planning (4 weeks) • Click to select week for detailed OD analysis below</p>
+            <div style="position: relative; height: 200px; width: 100%;">
+                <canvas id="interceptTimelineChart"></canvas>
+            </div>
+        </div>
+
         <!-- Control Panel -->
-        <div class="control-panel">
             <div class="control-group">
                 <div class="control-item">
                     <label>Product</label>
@@ -268,6 +276,31 @@
                     reference_rank: 0.12
                 }
             },
+            
+            // Multi-week intercept data (8 historical + 4 future)
+            weekly_intercepts: {
+                // Historical weeks (already sailed)
+                '2025-29': { intercept: 1520, status: 'historical', reference_price: 1650 },
+                '2025-30': { intercept: 1580, status: 'historical', reference_price: 1710 },
+                '2025-31': { intercept: 1540, status: 'historical', reference_price: 1670 },
+                '2025-32': { intercept: 1610, status: 'historical', reference_price: 1740 },
+                '2025-33': { intercept: 1590, status: 'historical', reference_price: 1720 },
+                '2025-34': { intercept: 1570, status: 'historical', reference_price: 1700 },
+                '2025-35': { intercept: 1600, status: 'historical', reference_price: 1730 },
+                '2025-36': { intercept: 1580, status: 'historical', reference_price: 1710 },
+                
+                // Current week
+                '2025-37': { intercept: 1611, status: 'current', reference_price: 1700 },
+                
+                // Future weeks (planning)
+                '2025-38': { intercept: null, status: 'future', reference_price: 1680 },
+                '2025-39': { intercept: null, status: 'future', reference_price: 1690 },
+                '2025-40': { intercept: null, status: 'future', reference_price: 1700 },
+                '2025-41': { intercept: null, status: 'future', reference_price: 1710 }
+            },
+            
+            // Current selected week for detailed view
+            selected_week: '2025-37',
             
             // OD structure for E1W trade (ranks and corridors only)
             od_structure: [
@@ -436,7 +469,154 @@
         // CHART INITIALIZATION AND UPDATES
         // =================================================================
         
+        let interceptTimelineChart = null;
         let odPricingChart = null;
+        
+        function initInterceptTimelineChart() {
+            const ctx = document.getElementById('interceptTimelineChart');
+            if (!ctx) return;
+            
+            const weeks = Object.keys(OD_PRICING_CONFIG.weekly_intercepts).sort();
+            const interceptData = weeks.map(week => {
+                const weekData = OD_PRICING_CONFIG.weekly_intercepts[week];
+                return {
+                    x: week,
+                    y: weekData.intercept || weekData.reference_price, // Use reference price for future weeks
+                    status: weekData.status,
+                    reference_price: weekData.reference_price,
+                    week: week
+                };
+            });
+            
+            // Split data by status
+            const historicalData = interceptData.filter(d => d.status === 'historical');
+            const currentData = interceptData.filter(d => d.status === 'current');
+            const futureData = interceptData.filter(d => d.status === 'future');
+            
+            const datasets = [
+                {
+                    label: 'Historical Intercepts',
+                    data: historicalData,
+                    borderColor: 'rgba(138, 138, 138, 0.8)',
+                    backgroundColor: 'rgba(138, 138, 138, 0.6)',
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    fill: false,
+                    tension: 0.1
+                },
+                {
+                    label: 'Current Week',
+                    data: currentData,
+                    borderColor: 'rgb(66, 176, 213)',
+                    backgroundColor: 'rgb(66, 176, 213)',
+                    borderWidth: 3,
+                    pointRadius: 8,
+                    pointHoverRadius: 10,
+                    fill: false
+                },
+                {
+                    label: 'Future Planning',
+                    data: futureData,
+                    borderColor: 'rgba(255, 165, 0, 0.8)',
+                    backgroundColor: 'rgba(255, 165, 0, 0.6)',
+                    borderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: false,
+                    tension: 0.1,
+                    borderDash: [5, 5]
+                }
+            ];
+            
+            interceptTimelineChart = new Chart(ctx, {
+                type: 'line',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 600 },
+                    onClick: function(event, elements) {
+                        if (elements.length > 0) {
+                            const elementIndex = elements[0].index;
+                            const datasetIndex = elements[0].datasetIndex;
+                            const clickedWeek = datasets[datasetIndex].data[elementIndex].week;
+                            selectWeek(clickedWeek);
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Departure Week',
+                                font: { size: 12, weight: '600' },
+                                color: 'rgb(212, 212, 212)'
+                            },
+                            grid: { color: 'rgba(138, 138, 138, 0.3)' },
+                            ticks: { 
+                                color: 'rgb(138, 138, 138)',
+                                maxRotation: 45
+                            },
+                            border: { color: 'rgb(76, 76, 76)' }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Intercept (α)',
+                                font: { size: 12, weight: '600' },
+                                color: 'rgb(212, 212, 212)'
+                            },
+                            grid: { color: 'rgba(138, 138, 138, 0.3)' },
+                            ticks: {
+                                color: 'rgb(138, 138, 138)',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            },
+                            border: { color: 'rgb(76, 76, 76)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgb(212, 212, 212)',
+                                font: { size: 10, weight: '500' },
+                                padding: 8,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                            titleColor: 'rgb(240, 240, 240)',
+                            bodyColor: 'rgb(212, 212, 212)',
+                            borderColor: 'rgb(76, 76, 76)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    return `Week ${tooltipItems[0].parsed.x}`;
+                                },
+                                label: function(context) {
+                                    const data = context.raw;
+                                    return [
+                                        `Intercept (α): $${Math.round(data.y).toLocaleString()}`,
+                                        `Reference Price: $${data.reference_price.toLocaleString()}`,
+                                        `Status: ${data.status.charAt(0).toUpperCase() + data.status.slice(1)}`,
+                                        data.status === 'future' ? 'Click to plan this week' : 'Click to view details'
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    interaction: { intersect: false, mode: 'point' }
+                }
+            });
+            
+            console.log('Intercept Timeline Chart initialized');
+        }
         
         function initODPricingChart() {
             const ctx = document.getElementById('odPricingChart');
@@ -732,6 +912,43 @@
             updateModelParametersDisplay(alpha, tradeConfig.beta_slope, tradeConfig.reference_rank);
         }
         
+        // Select week from timeline (updates main OD chart)
+        function selectWeek(week) {
+            console.log(`Selected week: ${week}`);
+            OD_PRICING_CONFIG.selected_week = week;
+            
+            // Update week selector dropdown
+            document.getElementById('weekSelect').value = week;
+            
+            // Update target price input based on selected week
+            const weekData = OD_PRICING_CONFIG.weekly_intercepts[week];
+            if (weekData) {
+                document.getElementById('targetPriceInput').value = weekData.reference_price;
+                
+                // Update current PENNY price (simulate slight variation)
+                const pennyVariation = (Math.random() - 0.5) * 0.02; // ±1% variation
+                const pennyPrice = Math.round(weekData.reference_price * (1 + pennyVariation));
+                document.getElementById('currentPennyPrice').value = pennyPrice;
+            }
+            
+            // Regenerate OD chart for selected week
+            if (odPricingChart) {
+                odPricingChart.destroy();
+                initODPricingChart();
+            }
+            
+            // Highlight selected week in timeline
+            highlightSelectedWeek(week);
+        }
+        
+        // Highlight selected week in timeline chart
+        function highlightSelectedWeek(selectedWeek) {
+            if (!interceptTimelineChart) return;
+            
+            // Add selection indicator (could enhance this further)
+            console.log(`Highlighted week: ${selectedWeek} in timeline`);
+        }
+        
         // Update chart scaling dynamically based on data
         function updateChartScaling() {
             if (!odPricingChart) return;
@@ -793,10 +1010,14 @@
         // Initialize when page loads
         window.addEventListener('load', function() {
             if (typeof Chart !== 'undefined') {
+                initInterceptTimelineChart();
                 initODPricingChart();
             } else {
                 console.log('Chart.js not loaded, retrying in 500ms...');
-                setTimeout(initODPricingChart, 500);
+                setTimeout(function() {
+                    initInterceptTimelineChart();
+                    initODPricingChart();
+                }, 500);
             }
         });
     </script>
