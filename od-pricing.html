@@ -264,43 +264,61 @@
             
             <!-- Faceted Charts Grid -->
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-top: 1rem;">
-                <div class="facet-chart" data-week="2025-35">
-                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-secondary); font-size: 0.85rem;">2025-35 (Historical)</h4>
+                <div class="facet-chart" data-week="2025-35" id="facetContainer2025-35">
+                    <h4 style="text-align: center; margin: 0 0 0.25rem 0; color: var(--mds-text-secondary); font-size: 0.85rem;">2025-35 (Historical)</h4>
+                    <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-35">
+                        α: $1,600 | Ref: $1,730
+                    </div>
                     <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-35')">
                         <canvas id="facetChart2025-35"></canvas>
                     </div>
                 </div>
                 
-                <div class="facet-chart" data-week="2025-36">
-                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-secondary); font-size: 0.85rem;">2025-36 (Historical)</h4>
+                <div class="facet-chart" data-week="2025-36" id="facetContainer2025-36">
+                    <h4 style="text-align: center; margin: 0 0 0.25rem 0; color: var(--mds-text-secondary); font-size: 0.85rem;">2025-36 (Historical)</h4>
+                    <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-36">
+                        α: $1,580 | Ref: $1,710
+                    </div>
                     <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-36')">
                         <canvas id="facetChart2025-36"></canvas>
                     </div>
                 </div>
                 
-                <div class="facet-chart" data-week="2025-37">
-                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--maersk-light-blue); font-size: 0.85rem; font-weight: 600;">2025-37 (Current)</h4>
+                <div class="facet-chart" data-week="2025-37" id="facetContainer2025-37">
+                    <h4 style="text-align: center; margin: 0 0 0.25rem 0; color: var(--maersk-light-blue); font-size: 0.85rem; font-weight: 600;">2025-37 (Current)</h4>
+                    <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-37">
+                        α: $1,611 | Ref: $1,700
+                    </div>
                     <div style="position: relative; height: 200px; width: 100%; cursor: pointer; border: 2px solid var(--maersk-light-blue); border-radius: 4px;" onclick="selectWeek('2025-37')">
                         <canvas id="facetChart2025-37"></canvas>
                     </div>
                 </div>
                 
-                <div class="facet-chart" data-week="2025-38">
-                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--maersk-warning); font-size: 0.85rem;">2025-38 (Future)</h4>
+                <div class="facet-chart" data-week="2025-38" id="facetContainer2025-38">
+                    <h4 style="text-align: center; margin: 0 0 0.25rem 0; color: var(--maersk-warning); font-size: 0.85rem;">2025-38 (Future)</h4>
+                    <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-38">
+                        α: $1,580 | Ref: $1,680
+                    </div>
                     <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-38')">
                         <canvas id="facetChart2025-38"></canvas>
                     </div>
                 </div>
                 
-                <div class="facet-chart" data-week="2025-39">
-                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--maersk-warning); font-size: 0.85rem;">2025-39 (Future)</h4>
+                <div class="facet-chart" data-week="2025-39" id="facetContainer2025-39">
+                    <h4 style="text-align: center; margin: 0 0 0.25rem 0; color: var(--maersk-warning); font-size: 0.85rem;">2025-39 (Future)</h4>
+                    <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-39">
+                        α: $1,590 | Ref: $1,690
+                    </div>
                     <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-39')">
                         <canvas id="facetChart2025-39"></canvas>
                     </div>
                 </div>
                 
-                <div class="facet-chart" data-week="2025-40">
-                    <h4 style="text-align: center; margin: 0 0 0.5rem 0; color: var(--maersk-warning); font-size: 0.85rem;">2025-40 (Future)</h4>
+                <div class="facet-chart" data-week="2025-40" id="facetContainer2025-40">
+                    <h4 style="text-align: center; margin: 0 0 0.25rem 0; color: var(--maersk-warning); font-size: 0.85rem;">2025-40 (Future)</h4>
+                    <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-40">
+                        α: $1,600 | Ref: $1,700
+                    </div>
                     <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-40')">
                         <canvas id="facetChart2025-40"></canvas>
                     </div>
@@ -780,14 +798,39 @@
                         animation: { duration: 400 },
                         scales: {
                             x: {
-                                display: false, // Hide axis labels for cleaner look
+                                display: (week === '2025-38' || week === '2025-39' || week === '2025-40'), // Show on bottom row
+                                title: {
+                                    display: week === '2025-39', // Only middle bottom
+                                    text: 'OD Rank',
+                                    font: { size: 10 },
+                                    color: 'rgb(138, 138, 138)'
+                                },
                                 min: 0,
-                                max: 1
+                                max: 1,
+                                grid: { color: 'rgba(138, 138, 138, 0.2)' },
+                                ticks: { 
+                                    color: 'rgb(138, 138, 138)',
+                                    font: { size: 9 }
+                                }
                             },
                             y: {
-                                display: false, // Hide axis labels for cleaner look
+                                display: (week === '2025-35' || week === '2025-38'), // Show on left column
+                                title: {
+                                    display: week === '2025-35', // Only top left
+                                    text: 'Price',
+                                    font: { size: 10 },
+                                    color: 'rgb(138, 138, 138)'
+                                },
                                 min: sharedScales.yMin,
-                                max: sharedScales.yMax
+                                max: sharedScales.yMax,
+                                grid: { color: 'rgba(138, 138, 138, 0.2)' },
+                                ticks: {
+                                    color: 'rgb(138, 138, 138)',
+                                    font: { size: 9 },
+                                    callback: function(value) {
+                                        return '$' + (value / 1000).toFixed(1) + 'k';
+                                    }
+                                }
                             }
                         },
                         plugins: {
@@ -1210,12 +1253,28 @@
             console.log(`Updated timeline intercept for ${selectedWeek}: $${Math.round(newIntercept)}`);
         }
         
-        // Highlight selected week in timeline chart
+        // Highlight selected week in timeline chart and faceted view
         function highlightSelectedWeek(selectedWeek) {
             if (!interceptTimelineChart) return;
             
-            // Add selection indicator (could enhance this further)
-            console.log(`Highlighted week: ${selectedWeek} in timeline`);
+            // Update faceted chart borders
+            const facetWeeks = ['2025-35', '2025-36', '2025-37', '2025-38', '2025-39', '2025-40'];
+            facetWeeks.forEach(week => {
+                const container = document.getElementById(`facetContainer${week}`);
+                if (container) {
+                    const chartDiv = container.querySelector('div[style*="position: relative"]');
+                    if (chartDiv) {
+                        if (week === selectedWeek) {
+                            chartDiv.style.border = '2px solid var(--maersk-light-blue)';
+                            chartDiv.style.borderRadius = '4px';
+                        } else {
+                            chartDiv.style.border = 'none';
+                        }
+                    }
+                }
+            });
+            
+            console.log(`Highlighted week: ${selectedWeek} in timeline and facets`);
         }
         
         // Update chart scaling dynamically based on data
