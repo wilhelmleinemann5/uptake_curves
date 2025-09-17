@@ -302,11 +302,11 @@
                 // Current week
                 '2025-37': { intercept: 1611, status: 'current', reference_price: 1700 },
                 
-                // Future weeks (planning)
-                '2025-38': { intercept: null, status: 'future', reference_price: 1680 },
-                '2025-39': { intercept: null, status: 'future', reference_price: 1690 },
-                '2025-40': { intercept: null, status: 'future', reference_price: 1700 },
-                '2025-41': { intercept: null, status: 'future', reference_price: 1710 }
+                // Future weeks (planning) - intercept will be set when user defines target price
+                '2025-38': { intercept: 1580, status: 'future', reference_price: 1680 },
+                '2025-39': { intercept: 1590, status: 'future', reference_price: 1690 },
+                '2025-40': { intercept: 1600, status: 'future', reference_price: 1700 },
+                '2025-41': { intercept: 1610, status: 'future', reference_price: 1710 }
             },
             
             // Current selected week for detailed view
@@ -376,22 +376,29 @@
         // Generate realistic booking data from parameterized model + noise
         function generateBookingData() {
             const bookings = [];
-            const baseAlpha = 1580; // Base intercept for realistic prices
+            const selectedWeek = OD_PRICING_CONFIG.selected_week;
+            const weekData = OD_PRICING_CONFIG.weekly_intercepts[selectedWeek];
+            const baseAlpha = weekData.intercept; // Use week-specific intercept
             const baseBeta = 0.45;  // Same as trade slope
             
-            // Seeded random for reproducible results
-            let seed = 12345;
+            // Seeded random for reproducible results (vary by week)
+            let seed = 12345 + parseInt(selectedWeek.split('-')[1]); // Week-specific seed
             function seededRandom() {
                 seed = (seed * 9301 + 49297) % 233280;
                 return seed / 233280;
             }
             
+            // Reduce bookings for future weeks (haven't fully realized yet)
+            const isFutureWeek = weekData.status === 'future';
+            const bookingMultiplier = isFutureWeek ? 0.3 : 1.0; // 30% of normal bookings for future
+            
             OD_PRICING_CONFIG.od_structure.forEach(od => {
                 // Base price from parameterized model
                 const basePrice = baseAlpha * Math.exp(baseBeta * od.od_rank);
                 
-                // Generate 3-6 booking events per OD
-                const numBookings = Math.floor(seededRandom() * 4) + 3;
+                // Generate fewer booking events for future weeks
+                const baseNumBookings = Math.floor(seededRandom() * 4) + 3;
+                const numBookings = Math.max(1, Math.floor(baseNumBookings * bookingMultiplier));
                 
                 for (let i = 0; i < numBookings; i++) {
                     // Add noise to price (log-normal to stay positive)
@@ -401,7 +408,7 @@
                     // Generate realistic volume (higher volume for lower ranks)
                     const volumeBase = Math.max(5, 80 * Math.exp(-od.od_rank * 2)); // Exponential decay
                     const volumeNoise = 0.5 + seededRandom();
-                    const volume = Math.round(volumeBase * volumeNoise);
+                    const volume = Math.round(volumeBase * volumeNoise * bookingMultiplier);
                     
                     bookings.push({
                         origin: od.origin,
@@ -951,6 +958,32 @@
             highlightSelectedWeek(week);
         }
         
+        // Update timeline intercept when user changes target price
+        function updateTimelineIntercept() {
+            if (!interceptTimelineChart) return;
+            
+            const selectedWeek = OD_PRICING_CONFIG.selected_week;
+            const targetPrice = parseFloat(document.getElementById('targetPriceInput').value);
+            const tradeConfig = OD_PRICING_CONFIG.trades['E1W'];
+            
+            // Calculate new intercept
+            const newIntercept = calculateWeeklyIntercept(targetPrice, tradeConfig.reference_rank, tradeConfig.beta_slope);
+            
+            // Update the data structure
+            OD_PRICING_CONFIG.weekly_intercepts[selectedWeek].intercept = newIntercept;
+            
+            // Find and update the appropriate dataset point
+            interceptTimelineChart.data.datasets.forEach(dataset => {
+                const pointIndex = dataset.data.findIndex(point => point.week === selectedWeek);
+                if (pointIndex !== -1) {
+                    dataset.data[pointIndex].y = newIntercept;
+                }
+            });
+            
+            interceptTimelineChart.update('none');
+            console.log(`Updated timeline intercept for ${selectedWeek}: $${Math.round(newIntercept)}`);
+        }
+        
         // Highlight selected week in timeline chart
         function highlightSelectedWeek(selectedWeek) {
             if (!interceptTimelineChart) return;
@@ -1000,6 +1033,7 @@
         // Target price input change
         document.getElementById('targetPriceInput').addEventListener('input', function() {
             updateODPricingChart();
+            updateTimelineIntercept();
         });
         
         // Trade selection change
