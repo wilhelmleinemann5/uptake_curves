@@ -236,31 +236,6 @@
                     </select>
                 </div>
                 
-                <div class="filter-group">
-                    <h4>Display Options</h4>
-                    <div class="toggle-group">
-                        <div class="toggle-item">
-                            <input type="checkbox" id="showBookings" checked>
-                            <label>Show Booking Bubbles</label>
-                        </div>
-                        <div class="toggle-item">
-                            <input type="checkbox" id="showPredicted" checked>
-                            <label>Show Predicted Line</label>
-                        </div>
-                        <div class="toggle-item">
-                            <input type="checkbox" id="showBand" checked>
-                            <label>Show Acceptable Band</label>
-                        </div>
-                        <div class="toggle-item">
-                            <input type="checkbox" id="showFrontier" checked>
-                            <label>Show Line-of-Best-Fit</label>
-                        </div>
-                        <div class="toggle-item">
-                            <input type="checkbox" id="showListedPrices">
-                            <label>Show Listed Prices</label>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         
@@ -435,39 +410,46 @@
             return alpha * Math.exp(beta * odRank);
         }
         
-        // Calculate line-of-best-fit from booking data
-        function calculateLineOfBestFit(odData) {
-            const rankBins = [];
-            const binSize = 0.1; // 10 bins from 0 to 1
+        // Calculate OLS line-of-best-fit from booking data (covers full 0-1 range)
+        function calculateOLSBestFit(odData) {
+            // Simple OLS regression: price = a + b * rank
+            const n = odData.length;
+            const sumX = odData.reduce((sum, od) => sum + od.od_rank, 0);
+            const sumY = odData.reduce((sum, od) => sum + od.current_price, 0);
+            const sumXY = odData.reduce((sum, od) => sum + (od.od_rank * od.current_price), 0);
+            const sumXX = odData.reduce((sum, od) => sum + (od.od_rank * od.od_rank), 0);
             
-            for (let i = 0; i < 10; i++) {
-                const rankMin = i * binSize;
-                const rankMax = (i + 1) * binSize;
-                
-                const binnedData = odData.filter(od => 
-                    od.od_rank >= rankMin && od.od_rank < rankMax
-                );
-                
-                if (binnedData.length > 0) {
-                    // Use median as line-of-best-fit
-                    const sortedPrices = binnedData.map(od => od.current_price).sort((a, b) => a - b);
-                    const medianIndex = Math.floor(sortedPrices.length / 2);
-                    
-                    rankBins.push({
-                        rank: rankMin + binSize / 2, // Mid-point of bin
-                        bestFitPrice: sortedPrices[medianIndex]
-                    });
-                }
+            // OLS coefficients
+            const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+            const intercept = (sumY - slope * sumX) / n;
+            
+            // Generate continuous line from 0 to 1
+            const bestFitLine = [];
+            for (let rank = 0; rank <= 1; rank += 0.02) {
+                bestFitLine.push({
+                    rank: rank,
+                    bestFitPrice: intercept + slope * rank
+                });
             }
             
-            return rankBins;
+            // Calculate residuals for band calculation
+            const residuals = odData.map(od => {
+                const predicted = intercept + slope * od.od_rank;
+                return Math.abs(od.current_price - predicted);
+            });
+            
+            // Use 80th percentile of residuals for band width
+            residuals.sort((a, b) => a - b);
+            const bandWidth = residuals[Math.floor(residuals.length * 0.8)];
+            
+            return { bestFitLine, bandWidth, slope, intercept };
         }
         
-        // Calculate acceptable band based on line-of-best-fit
-        function calculateAcceptableBand(bestFitPrice) {
+        // Calculate acceptable band based on line-of-best-fit (static, doesn't move with intercept)
+        function calculateAcceptableBand(bestFitPrice, bandWidth) {
             return {
-                low: bestFitPrice * 0.8,  // 80% of best-fit
-                high: bestFitPrice * 1.2  // 120% of best-fit
+                low: bestFitPrice - bandWidth,
+                high: bestFitPrice + bandWidth
             };
         }
         
@@ -487,7 +469,7 @@
             
             // Calculate model parameters
             const alpha = calculateWeeklyIntercept(targetPrice, tradeConfig.reference_rank, tradeConfig.beta_slope);
-            const lineOfBestFit = calculateLineOfBestFit(OD_PRICING_CONFIG.od_data);
+            const olsResult = calculateOLSBestFit(OD_PRICING_CONFIG.od_data);
             
             // Create datasets
             const datasets = [];
@@ -530,24 +512,24 @@
                 type: 'line'
             });
             
-            // Line-of-best-fit
+            // Line-of-best-fit (OLS - continuous from 0 to 1)
             datasets.push({
                 label: 'Line-of-Best-Fit',
-                data: lineOfBestFit.map(f => ({ x: f.rank, y: f.bestFitPrice })),
+                data: olsResult.bestFitLine.map(f => ({ x: f.rank, y: f.bestFitPrice })),
                 borderColor: 'rgba(0, 170, 136, 0.8)',
                 backgroundColor: 'transparent',
                 borderWidth: 2,
                 pointRadius: 0,
                 fill: false,
-                tension: 0.3,
+                tension: 0,
                 borderDash: [3, 3],
                 type: 'line'
             });
             
-            // Acceptable band (upper) - based on line-of-best-fit
+            // Acceptable band (upper) - based on OLS best-fit, static
             const bandUpperData = [];
-            lineOfBestFit.forEach(point => {
-                const band = calculateAcceptableBand(point.bestFitPrice);
+            olsResult.bestFitLine.forEach(point => {
+                const band = calculateAcceptableBand(point.bestFitPrice, olsResult.bandWidth);
                 bandUpperData.push({ x: point.rank, y: band.high });
             });
             
@@ -559,15 +541,15 @@
                 borderWidth: 1,
                 pointRadius: 0,
                 fill: false,
-                tension: 0.2,
+                tension: 0,
                 borderDash: [5, 5],
                 type: 'line'
             });
             
-            // Acceptable band (lower) - based on line-of-best-fit
+            // Acceptable band (lower) - based on OLS best-fit, static
             const bandLowerData = [];
-            lineOfBestFit.forEach(point => {
-                const band = calculateAcceptableBand(point.bestFitPrice);
+            olsResult.bestFitLine.forEach(point => {
+                const band = calculateAcceptableBand(point.bestFitPrice, olsResult.bandWidth);
                 bandLowerData.push({ x: point.rank, y: band.low });
             });
             
@@ -579,7 +561,7 @@
                 borderWidth: 1,
                 pointRadius: 0,
                 fill: '-1', // Fill to previous dataset
-                tension: 0.2,
+                tension: 0,
                 borderDash: [5, 5],
                 type: 'line'
             });
@@ -699,7 +681,7 @@
             document.getElementById('referenceRankDisplay').textContent = referenceRank.toFixed(3);
         }
         
-        // Update chart when controls change
+        // Update chart when controls change (only predicted line moves, bands stay static)
         function updateODPricingChart() {
             if (!odPricingChart) return;
             
@@ -710,7 +692,7 @@
             // Recalculate intercept
             const alpha = calculateWeeklyIntercept(targetPrice, tradeConfig.reference_rank, tradeConfig.beta_slope);
             
-            // Update predicted line
+            // Update predicted line ONLY (bands stay static)
             const predictedLineData = [];
             for (let rank = 0; rank <= 1; rank += 0.01) {
                 predictedLineData.push({
@@ -725,24 +707,7 @@
                 predictedDataset.data = predictedLineData;
             }
             
-            // Update acceptable bands
-            const bandUpperDataset = odPricingChart.data.datasets.find(d => d.label === 'Acceptable Band Upper');
-            const bandLowerDataset = odPricingChart.data.datasets.find(d => d.label === 'Acceptable Band Lower');
-            
-            if (bandUpperDataset && bandLowerDataset) {
-                const bandUpperData = [];
-                const bandLowerData = [];
-                
-                for (let rank = 0; rank <= 1; rank += 0.05) {
-                    const predicted = calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank);
-                    const band = calculateAcceptableBand(predicted, rank);
-                    bandUpperData.push({ x: rank, y: band.high });
-                    bandLowerData.push({ x: rank, y: band.low });
-                }
-                
-                bandUpperDataset.data = bandUpperData;
-                bandLowerDataset.data = bandLowerData;
-            }
+            // Acceptable bands stay static - they don't move with intercept changes
             
             odPricingChart.update('none');
             updateModelParametersDisplay(alpha, tradeConfig.beta_slope, tradeConfig.reference_rank);
