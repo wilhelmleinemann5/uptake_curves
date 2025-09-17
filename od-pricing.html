@@ -299,7 +299,7 @@
             
             // Noise parameters for booking generation
             noise: {
-                priceStdDev: 0.15,  // 15% price noise (increased from 8%)
+                priceStdDev: 0.20,  // 20% price noise (increased for more scatter)
                 volumeParams: { min: 5, max: 60, concentration: 0.3 } // Volume distribution
             },
             
@@ -471,18 +471,18 @@
                 pointHoverRadius: 8
             });
             
-            // Predicted line
-            const predictedLineData = [];
+            // User-defined price line
+            const userDefinedLineData = [];
             for (let rank = 0; rank <= 1; rank += 0.01) {
-                predictedLineData.push({
+                userDefinedLineData.push({
                     x: rank,
                     y: calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank)
                 });
             }
             
             datasets.push({
-                label: 'Predicted Price Line',
-                data: predictedLineData,
+                label: 'User-Defined Price',
+                data: userDefinedLineData,
                 borderColor: 'rgb(66, 176, 213)',
                 backgroundColor: 'transparent',
                 borderWidth: 3,
@@ -490,6 +490,26 @@
                 fill: false,
                 tension: 0,
                 type: 'line'
+            });
+            
+            // User-defined price points for actual ODs (shows what prices would be set)
+            const userDefinedPoints = OD_PRICING_CONFIG.od_structure.map(od => ({
+                x: od.od_rank,
+                y: calculatePredictedPrice(alpha, tradeConfig.beta_slope, od.od_rank),
+                origin: od.origin,
+                destination: od.destination
+            }));
+            
+            datasets.push({
+                label: 'User-Defined OD Prices',
+                data: userDefinedPoints,
+                backgroundColor: 'rgba(66, 176, 213, 0.8)',
+                borderColor: 'rgb(66, 176, 213)',
+                borderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                showLine: false,
+                type: 'scatter'
             });
             
             // Line-of-best-fit (parameterized - continuous from 0 to 1)
@@ -578,8 +598,6 @@
                                 color: 'rgb(212, 212, 212)'
                             },
                             beginAtZero: false,
-                            min: 1500,
-                            max: 2800,
                             grid: { color: 'rgba(138, 138, 138, 0.3)' },
                             ticks: {
                                 color: 'rgb(138, 138, 138)',
@@ -616,7 +634,7 @@
                             callbacks: {
                                 title: function(tooltipItems) {
                                     const item = tooltipItems[0];
-                                    if (item.dataset.label === 'Actual Bookings') {
+                                    if (item.dataset.label === 'Actual Bookings' || item.dataset.label === 'User-Defined OD Prices') {
                                         const data = item.raw;
                                         return `${data.origin} → ${data.destination}`;
                                     }
@@ -630,10 +648,17 @@
                                         
                                         return [
                                             `OD Rank: ${data.x.toFixed(3)}`,
-                                            `Current Price: $${data.y.toLocaleString()}`,
-                                            `Predicted Price: $${predicted.toFixed(0)}`,
+                                            `Booking Price: $${data.y.toLocaleString()}`,
+                                            `User-Defined Price: $${predicted.toFixed(0)}`,
                                             `Delta (Δ): $${delta.toFixed(0)}`,
                                             `Booked Volume: ${data.volume} FFE`
+                                        ];
+                                    } else if (context.dataset.label === 'User-Defined OD Prices') {
+                                        const data = context.raw;
+                                        return [
+                                            `OD Rank: ${data.x.toFixed(3)}`,
+                                            `User-Defined Price: $${data.y.toLocaleString()}`,
+                                            `This price would be set for this corridor`
                                         ];
                                     } else {
                                         return `${context.dataset.label}: $${Math.round(context.parsed.y).toLocaleString()}`;
@@ -679,16 +704,59 @@
                 });
             }
             
-            // Find and update predicted line dataset
-            const predictedDataset = odPricingChart.data.datasets.find(d => d.label === 'Predicted Price Line');
-            if (predictedDataset) {
-                predictedDataset.data = predictedLineData;
+            // Find and update user-defined price line dataset
+            const userDefinedDataset = odPricingChart.data.datasets.find(d => d.label === 'User-Defined Price');
+            if (userDefinedDataset) {
+                userDefinedDataset.data = predictedLineData;
+            }
+            
+            // Update user-defined OD price points
+            const userDefinedPoints = OD_PRICING_CONFIG.od_structure.map(od => ({
+                x: od.od_rank,
+                y: calculatePredictedPrice(alpha, tradeConfig.beta_slope, od.od_rank),
+                origin: od.origin,
+                destination: od.destination
+            }));
+            
+            const userDefinedPointsDataset = odPricingChart.data.datasets.find(d => d.label === 'User-Defined OD Prices');
+            if (userDefinedPointsDataset) {
+                userDefinedPointsDataset.data = userDefinedPoints;
             }
             
             // Acceptable bands stay static - they don't move with intercept changes
             
+            // Update chart scaling dynamically
+            updateChartScaling();
+            
             odPricingChart.update('none');
             updateModelParametersDisplay(alpha, tradeConfig.beta_slope, tradeConfig.reference_rank);
+        }
+        
+        // Update chart scaling dynamically based on data
+        function updateChartScaling() {
+            if (!odPricingChart) return;
+            
+            // Get all price values from all datasets
+            let allPrices = [];
+            
+            odPricingChart.data.datasets.forEach(dataset => {
+                if (dataset.data && dataset.data.length > 0) {
+                    dataset.data.forEach(point => {
+                        if (point && point.y !== null && point.y !== undefined) {
+                            allPrices.push(point.y);
+                        }
+                    });
+                }
+            });
+            
+            if (allPrices.length > 0) {
+                const minPrice = Math.min(...allPrices);
+                const maxPrice = Math.max(...allPrices);
+                const padding = (maxPrice - minPrice) * 0.1; // 10% padding
+                
+                odPricingChart.options.scales.y.min = Math.max(1000, minPrice - padding);
+                odPricingChart.options.scales.y.max = maxPrice + padding;
+            }
         }
         
         // =================================================================
