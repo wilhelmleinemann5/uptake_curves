@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vessel Uptake Dashboard - PENNY ↔ DELTA</title>
+    <link rel="stylesheet" href="styles/maersk-theme.css">
+    <style>
+        .uptake-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--mds-bg-secondary);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .uptake-table th {
+            background: var(--mds-bg-strong);
+            color: var(--mds-text-primary);
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-bottom: 2px solid var(--mds-border-default);
+        }
+        
+        .uptake-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--mds-border-default);
+            color: var(--mds-text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .uptake-table tr:hover {
+            background: var(--mds-bg-tertiary);
+        }
+        
+        .editable-offset {
+            background: var(--mds-bg-primary);
+            color: var(--mds-text-primary);
+            border: 1px solid var(--mds-border-default);
+            border-radius: 4px;
+            padding: 4px 8px;
+            width: 80px;
+            font-size: 0.85rem;
+            text-align: right;
+        }
+        
+        .calculated-field {
+            font-weight: 600;
+            color: var(--maersk-blue);
+        }
+        
+        .capacity-bar {
+            width: 100px;
+            height: 20px;
+            background: var(--mds-bg-tertiary);
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .capacity-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--maersk-success), var(--maersk-warning));
+            border-radius: 10px;
+            transition: width 0.3s ease;
+        }
+        
+        .capacity-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--mds-text-primary);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .status-indicator {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        
+        .status-open { background: rgba(0, 170, 136, 0.2); color: var(--maersk-success); }
+        .status-tight { background: rgba(255, 165, 0, 0.2); color: var(--maersk-warning); }
+        .status-full { background: rgba(229, 62, 62, 0.2); color: var(--maersk-error); }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🚢 Vessel Uptake Dashboard</h1>
+        <p>PENNY ↔ DELTA Integration • Spot-Anchored Non-Spot Gating</p>
+    </header>
+
+    <div class="container">
+        <!-- Vessel Overview -->
+        <div style="background: var(--mds-bg-secondary); padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; border: 1px solid var(--mds-border-default);">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; align-items: center;">
+                <div>
+                    <h3 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary);">🚢 Vessel 412-W</h3>
+                    <p style="margin: 0; color: var(--mds-text-secondary); font-size: 0.9rem;">Service Direction: Asia → Europe</p>
+                    <p style="margin: 0; color: var(--mds-text-secondary); font-size: 0.9rem;">Last Load Port: CNSGH</p>
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Total Capacity</div>
+                    <div style="color: var(--maersk-blue); font-size: 1.4rem; font-weight: 700;" id="totalCapacity">5,000 FFE</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Total Booked</div>
+                    <div style="color: var(--maersk-success); font-size: 1.4rem; font-weight: 700;" id="totalBooked">3,200 FFE</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Remaining</div>
+                    <div style="color: var(--maersk-warning); font-size: 1.4rem; font-weight: 700;" id="totalRemaining">1,800 FFE</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Utilization</div>
+                    <div style="color: var(--mds-text-primary); font-size: 1.4rem; font-weight: 700;" id="utilization">64%</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trade Compartments Table -->
+        <div style="background: var(--mds-bg-secondary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--mds-border-default);">
+            <h3 style="margin: 0 0 1rem 0; color: var(--mds-text-primary);">📊 Trade Compartment Management</h3>
+            <p style="margin: 0 0 1.5rem 0; color: var(--mds-text-secondary); font-size: 0.9rem;">
+                Adjust DELTA offsets to control non-spot acceptance levels. Spot CY from PENNY is read-only.
+            </p>
+            
+            <table class="uptake-table">
+                <thead>
+                    <tr>
+                        <th>Trade Code</th>
+                        <th>Compartment FFE</th>
+                        <th>Booked FFE</th>
+                        <th>Remaining FFE</th>
+                        <th>Utilization</th>
+                        <th>Spot CY Ref<br><small>(from PENNY)</small></th>
+                        <th>DELTA Offset<br><small>(USD)</small></th>
+                        <th>Non-Spot Min CY</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tradesTableBody">
+                    <!-- Trade rows will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PENNY Integration Status -->
+        <div style="background: var(--mds-bg-secondary); padding: 1rem; border-radius: 8px; margin-top: 2rem; border: 1px solid var(--mds-border-default);">
+            <h4 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary);">🔗 PENNY Integration Status</h4>
+            <div style="display: flex; gap: 2rem; align-items: center; font-size: 0.9rem;">
+                <div>
+                    <span style="color: var(--mds-text-secondary);">Last PENNY Update:</span>
+                    <span style="color: var(--maersk-blue); font-weight: 600; margin-left: 0.5rem;" id="lastPennyUpdate">2 minutes ago</span>
+                </div>
+                <div>
+                    <span style="color: var(--mds-text-secondary);">Reference Corridors:</span>
+                    <span style="color: var(--mds-text-primary); font-weight: 500; margin-left: 0.5rem;">CNSGH→NLRTM, CNYTN→DEHAM</span>
+                </div>
+                <div>
+                    <span style="color: var(--mds-text-secondary);">DELTA Mode:</span>
+                    <span style="color: var(--maersk-success); font-weight: 600; margin-left: 0.5rem;">🟢 Active</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="live-pricing-advanced-simulator.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-right: 1rem;">
+                🎮 Advanced Simulator
+            </a>
+            <a href="live-pricing-simple.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-right: 1rem;">
+                📊 Simple Simulator
+            </a>
+            <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
+                📈 Historical Analysis
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // VESSEL UPTAKE CONFIGURATION
+        const VESSEL_CONFIG = {
+            vessel: "412-W",
+            serviceDirection: "Asia → Europe", 
+            lastLoadPort: "CNSGH",
+            vesselCapacityFFE: 5000,
+            
+            // Sample trade data
+            trades: [
+                {
+                    tradeCode: "E1-W",
+                    compartmentFFE: 2000,
+                    bookedFFE: 1400,
+                    refCorridors: [{ origin: "CNSGH", destination: "NLRTM" }],
+                    cost: 1200
+                },
+                {
+                    tradeCode: "E2-W", 
+                    compartmentFFE: 1500,
+                    bookedFFE: 900,
+                    refCorridors: [{ origin: "CNYTN", destination: "DEHAM" }],
+                    cost: 1350
+                },
+                {
+                    tradeCode: "T1-W",
+                    compartmentFFE: 1000,
+                    bookedFFE: 700,
+                    refCorridors: [{ origin: "CNSGH", destination: "NLRTM" }],
+                    cost: 1100
+                },
+                {
+                    tradeCode: "T2-W",
+                    compartmentFFE: 500,
+                    bookedFFE: 200,
+                    refCorridors: [{ origin: "CNYTN", destination: "DEHAM" }],
+                    cost: 1250
+                }
+            ],
+            
+            // Sample PENNY spot prices (from reference corridors)
+            spotPrices: {
+                "CNSGH-NLRTM": 2800,
+                "CNYTN-DEHAM": 3200
+            },
+            
+            // DELTA offsets (editable by uptake manager)
+            deltaOffsets: {
+                "E1-W": 0,
+                "E2-W": 50,
+                "T1-W": -25,
+                "T2-W": 100
+            }
+        };
+
+        // Calculate spot CY reference for a trade
+        function calculateSpotCYRef(trade) {
+            const corridorCYs = trade.refCorridors.map(corridor => {
+                const corridorKey = `${corridor.origin}-${corridor.destination}`;
+                const spotPrice = VESSEL_CONFIG.spotPrices[corridorKey] || 0;
+                return spotPrice - trade.cost;
+            });
+            
+            // Return median CY (for single corridor, just return the value)
+            return corridorCYs.length > 0 ? corridorCYs[Math.floor(corridorCYs.length / 2)] : 0;
+        }
+
+        // Calculate non-spot minimum CY
+        function calculateNonSpotMinCY(tradeCode, spotCYRef) {
+            const deltaOffset = VESSEL_CONFIG.deltaOffsets[tradeCode] || 0;
+            return spotCYRef + deltaOffset;
+        }
+
+        // Get capacity utilization status
+        function getCapacityStatus(utilization) {
+            if (utilization >= 95) return { class: 'status-full', text: 'FULL' };
+            if (utilization >= 80) return { class: 'status-tight', text: 'TIGHT' };
+            return { class: 'status-open', text: 'OPEN' };
+        }
+
+        // Update DELTA offset and recalculate
+        function updateDeltaOffset(tradeCode, newOffset) {
+            VESSEL_CONFIG.deltaOffsets[tradeCode] = parseFloat(newOffset) || 0;
+            renderTable();
+            updateVesselOverview();
+        }
+
+        // Render the trades table
+        function renderTable() {
+            const tbody = document.getElementById('tradesTableBody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            VESSEL_CONFIG.trades.forEach(trade => {
+                const remainingFFE = trade.compartmentFFE - trade.bookedFFE;
+                const utilization = (trade.bookedFFE / trade.compartmentFFE * 100).toFixed(1);
+                const spotCYRef = calculateSpotCYRef(trade);
+                const deltaOffset = VESSEL_CONFIG.deltaOffsets[trade.tradeCode] || 0;
+                const nonSpotMinCY = calculateNonSpotMinCY(trade.tradeCode, spotCYRef);
+                const status = getCapacityStatus(parseFloat(utilization));
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="font-weight: 600; color: var(--maersk-blue);">${trade.tradeCode}</td>
+                    <td>${trade.compartmentFFE.toLocaleString()}</td>
+                    <td>${trade.bookedFFE.toLocaleString()}</td>
+                    <td style="color: ${remainingFFE > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)'}; font-weight: 600;">
+                        ${remainingFFE.toLocaleString()}
+                    </td>
+                    <td>
+                        <div class="capacity-bar">
+                            <div class="capacity-fill" style="width: ${Math.min(100, utilization)}%;"></div>
+                            <div class="capacity-text">${utilization}%</div>
+                        </div>
+                    </td>
+                    <td style="color: var(--mds-text-secondary); font-weight: 500;">
+                        $${spotCYRef.toLocaleString()}
+                        <div style="font-size: 0.7rem; color: var(--mds-text-weak);">
+                            ${trade.refCorridors.map(c => `${c.origin}→${c.destination}`).join(', ')}
+                        </div>
+                    </td>
+                    <td>
+                        <input type="number" 
+                               class="editable-offset" 
+                               value="${deltaOffset}"
+                               step="25"
+                               onchange="updateDeltaOffset('${trade.tradeCode}', this.value)"
+                               title="DELTA offset in USD">
+                    </td>
+                    <td class="calculated-field">$${nonSpotMinCY.toLocaleString()}</td>
+                    <td>
+                        <div class="status-indicator ${status.class}">${status.text}</div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update vessel overview metrics
+        function updateVesselOverview() {
+            const totalCapacity = VESSEL_CONFIG.trades.reduce((sum, trade) => sum + trade.compartmentFFE, 0);
+            const totalBooked = VESSEL_CONFIG.trades.reduce((sum, trade) => sum + trade.bookedFFE, 0);
+            const totalRemaining = totalCapacity - totalBooked;
+            const utilization = ((totalBooked / totalCapacity) * 100).toFixed(1);
+
+            document.getElementById('totalCapacity').textContent = `${totalCapacity.toLocaleString()} FFE`;
+            document.getElementById('totalBooked').textContent = `${totalBooked.toLocaleString()} FFE`;
+            document.getElementById('totalRemaining').textContent = `${totalRemaining.toLocaleString()} FFE`;
+            document.getElementById('utilization').textContent = `${utilization}%`;
+        }
+
+        // Simulate PENNY price updates (for demo)
+        function simulatePennyUpdates() {
+            // Add small random variations to spot prices
+            Object.keys(VESSEL_CONFIG.spotPrices).forEach(corridor => {
+                const currentPrice = VESSEL_CONFIG.spotPrices[corridor];
+                const variation = (Math.random() - 0.5) * 0.02; // ±1% variation
+                VESSEL_CONFIG.spotPrices[corridor] = Math.round(currentPrice * (1 + variation));
+            });
+
+            renderTable();
+            
+            // Update timestamp
+            const now = new Date();
+            document.getElementById('lastPennyUpdate').textContent = 'Just now';
+            
+            setTimeout(() => {
+                document.getElementById('lastPennyUpdate').textContent = '1 minute ago';
+            }, 60000);
+        }
+
+        // Initialize dashboard
+        function initDashboard() {
+            renderTable();
+            updateVesselOverview();
+            
+            // Simulate PENNY updates every 2 minutes
+            setInterval(simulatePennyUpdates, 120000);
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', initDashboard);
+    </script>
+</body>
+</html>
