@@ -614,7 +614,8 @@
                             padding: 12,
                             callbacks: {
                                 title: function(tooltipItems) {
-                                    return `Week ${tooltipItems[0].parsed.x}`;
+                                    const data = tooltipItems[0].raw;
+                                    return `Week ${data.week}`;
                                 },
                                 label: function(context) {
                                     const data = context.raw;
@@ -932,15 +933,33 @@
         // Select week from timeline (updates main OD chart)
         function selectWeek(week) {
             console.log(`Selected week: ${week}`);
+            
+            // Check if week exists in our data
+            if (!OD_PRICING_CONFIG.weekly_intercepts[week]) {
+                console.error(`Week ${week} not found in weekly_intercepts`);
+                return;
+            }
+            
             OD_PRICING_CONFIG.selected_week = week;
             
-            // Update week selector dropdown
-            document.getElementById('weekSelect').value = week;
+            // Update week selector dropdown (ensure value exists)
+            const weekSelect = document.getElementById('weekSelect');
+            const weekOption = Array.from(weekSelect.options).find(option => option.value === week);
+            if (weekOption) {
+                weekSelect.value = week;
+            } else {
+                console.error(`Week ${week} not found in dropdown options`);
+            }
             
             // Update target price input based on selected week
             const weekData = OD_PRICING_CONFIG.weekly_intercepts[week];
             if (weekData) {
-                document.getElementById('targetPriceInput').value = weekData.reference_price;
+                // For future weeks, use the current intercept if it exists, otherwise reference price
+                const targetPrice = weekData.status === 'future' ? 
+                    (weekData.intercept ? calculateReferencePrice(weekData.intercept) : weekData.reference_price) :
+                    weekData.reference_price;
+                    
+                document.getElementById('targetPriceInput').value = targetPrice;
                 
                 // Update current PENNY price (simulate slight variation)
                 const pennyVariation = (Math.random() - 0.5) * 0.02; // ±1% variation
@@ -956,6 +975,12 @@
             
             // Highlight selected week in timeline
             highlightSelectedWeek(week);
+        }
+        
+        // Calculate reference price from intercept (reverse calculation)
+        function calculateReferencePrice(intercept) {
+            const tradeConfig = OD_PRICING_CONFIG.trades['E1W'];
+            return intercept * Math.exp(tradeConfig.beta_slope * tradeConfig.reference_rank);
         }
         
         // Update timeline intercept when user changes target price
