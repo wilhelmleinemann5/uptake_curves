@@ -206,8 +206,8 @@
                     <select id="originFilter" style="width: 100%;">
                         <option value="all">All Origins</option>
                         <option value="CNSGH">CNSGH - Shanghai</option>
-                        <option value="CNNGB">CNNGB - Ningbo</option>
-                        <option value="CNSHK">CNSHK - Shekou</option>
+                        <option value="CNNPO">CNNPO - Ningbo</option>
+                        <option value="CNIWN">CNIWN - Shekou</option>
                     </select>
                 </div>
                 
@@ -217,8 +217,12 @@
                         <option value="all">All Destinations</option>
                         <option value="NLROT">NLROT - Rotterdam</option>
                         <option value="DEHAM">DEHAM - Hamburg</option>
-                        <option value="BEANR">BEANR - Antwerp</option>
+                        <option value="BEANT">BEANT - Antwerp</option>
                         <option value="FRLEH">FRLEH - Le Havre</option>
+                        <option value="GBSOU">GBSOU - Southampton</option>
+                        <option value="PLGDN">PLGDN - Gdansk</option>
+                        <option value="NOOSL">NOOSL - Oslo</option>
+                        <option value="SEGOT">SEGOT - Gothenburg</option>
                     </select>
                 </div>
                 
@@ -249,7 +253,7 @@
                         </div>
                         <div class="toggle-item">
                             <input type="checkbox" id="showFrontier" checked>
-                            <label>Show Frontier (Lower Envelope)</label>
+                            <label>Show Line-of-Best-Fit</label>
                         </div>
                         <div class="toggle-item">
                             <input type="checkbox" id="showListedPrices">
@@ -290,37 +294,118 @@
                 }
             },
             
-            // Mock OD data for E1W trade
+            // Mock OD data for E1W trade (multiple bookings per OD)
             od_data: [
-                // Reference corridor (lowest rank)
-                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1680, booked_volume: 450 },
+                // Reference corridor (lowest rank) - CNSGH to NLROT
+                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1660, booked_volume: 45 },
+                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1680, booked_volume: 32 },
+                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1700, booked_volume: 28 },
+                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1720, booked_volume: 18 },
                 
-                // Other major corridors
-                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1720, booked_volume: 320 },
-                { origin: 'CNSGH', destination: 'BEANR', od_rank: 0.25, current_price: 1780, booked_volume: 280 },
-                { origin: 'CNSGH', destination: 'FRLEH', od_rank: 0.32, current_price: 1820, booked_volume: 190 },
-                { origin: 'CNNGB', destination: 'NLROT', od_rank: 0.15, current_price: 1700, booked_volume: 380 },
-                { origin: 'CNNGB', destination: 'DEHAM', od_rank: 0.22, current_price: 1750, booked_volume: 250 },
-                { origin: 'CNNGB', destination: 'BEANR', od_rank: 0.28, current_price: 1800, booked_volume: 210 },
-                { origin: 'CNSHK', destination: 'NLROT', od_rank: 0.20, current_price: 1730, booked_volume: 290 },
-                { origin: 'CNSHK', destination: 'DEHAM', od_rank: 0.26, current_price: 1770, booked_volume: 180 },
-                { origin: 'CNSHK', destination: 'BEANR', od_rank: 0.35, current_price: 1850, booked_volume: 120 },
+                // CNSGH to DEHAM
+                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1720, booked_volume: 20 },
+                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1740, booked_volume: 12 },
+                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1760, booked_volume: 32 },
+                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1780, booked_volume: 18 },
+                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1820, booked_volume: 56 },
                 
-                // Smaller/more expensive corridors
-                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.45, current_price: 1920, booked_volume: 85 },
-                { origin: 'CNSGH', destination: 'ITAGV', od_rank: 0.52, current_price: 1980, booked_volume: 65 },
-                { origin: 'CNNGB', destination: 'GBSOU', od_rank: 0.48, current_price: 1950, booked_volume: 70 },
-                { origin: 'CNNGB', destination: 'ITAGV', od_rank: 0.55, current_price: 2010, booked_volume: 45 },
-                { origin: 'CNSHK', destination: 'GBSOU', od_rank: 0.58, current_price: 2050, booked_volume: 35 },
-                { origin: 'CNSHK', destination: 'ITAGV', od_rank: 0.65, current_price: 2120, booked_volume: 25 },
+                // CNSGH to BEANT (Antwerp)
+                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.25, current_price: 1780, booked_volume: 28 },
+                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.25, current_price: 1800, booked_volume: 22 },
+                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.25, current_price: 1820, booked_volume: 15 },
+                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.25, current_price: 1850, booked_volume: 35 },
                 
-                // Premium/niche corridors
-                { origin: 'CNSGH', destination: 'NOOSL', od_rank: 0.72, current_price: 2280, booked_volume: 18 },
-                { origin: 'CNSGH', destination: 'SEGOT', od_rank: 0.78, current_price: 2350, booked_volume: 12 },
-                { origin: 'CNNGB', destination: 'NOOSL', od_rank: 0.75, current_price: 2320, booked_volume: 15 },
-                { origin: 'CNNGB', destination: 'SEGOT', od_rank: 0.82, current_price: 2380, booked_volume: 8 },
-                { origin: 'CNSHK', destination: 'NOOSL', od_rank: 0.85, current_price: 2450, booked_volume: 6 },
-                { origin: 'CNSHK', destination: 'SEGOT', od_rank: 0.92, current_price: 2520, booked_volume: 4 }
+                // CNSGH to FRLEH
+                { origin: 'CNSGH', destination: 'FRLEH', od_rank: 0.32, current_price: 1820, booked_volume: 19 },
+                { origin: 'CNSGH', destination: 'FRLEH', od_rank: 0.32, current_price: 1840, booked_volume: 14 },
+                { origin: 'CNSGH', destination: 'FRLEH', od_rank: 0.32, current_price: 1880, booked_volume: 25 },
+                
+                // CNNPO (Ningbo) to NLROT
+                { origin: 'CNNPO', destination: 'NLROT', od_rank: 0.15, current_price: 1700, booked_volume: 38 },
+                { origin: 'CNNPO', destination: 'NLROT', od_rank: 0.15, current_price: 1720, booked_volume: 22 },
+                { origin: 'CNNPO', destination: 'NLROT', od_rank: 0.15, current_price: 1740, booked_volume: 16 },
+                { origin: 'CNNPO', destination: 'NLROT', od_rank: 0.15, current_price: 1760, booked_volume: 29 },
+                
+                // CNNPO to DEHAM
+                { origin: 'CNNPO', destination: 'DEHAM', od_rank: 0.22, current_price: 1750, booked_volume: 25 },
+                { origin: 'CNNPO', destination: 'DEHAM', od_rank: 0.22, current_price: 1770, booked_volume: 18 },
+                { origin: 'CNNPO', destination: 'DEHAM', od_rank: 0.22, current_price: 1800, booked_volume: 21 },
+                
+                // CNNPO to BEANT
+                { origin: 'CNNPO', destination: 'BEANT', od_rank: 0.28, current_price: 1800, booked_volume: 21 },
+                { origin: 'CNNPO', destination: 'BEANT', od_rank: 0.28, current_price: 1820, booked_volume: 16 },
+                { origin: 'CNNPO', destination: 'BEANT', od_rank: 0.28, current_price: 1850, booked_volume: 12 },
+                
+                // CNIWN (Shekou) to NLROT
+                { origin: 'CNIWN', destination: 'NLROT', od_rank: 0.20, current_price: 1730, booked_volume: 29 },
+                { origin: 'CNIWN', destination: 'NLROT', od_rank: 0.20, current_price: 1750, booked_volume: 20 },
+                { origin: 'CNIWN', destination: 'NLROT', od_rank: 0.20, current_price: 1780, booked_volume: 15 },
+                
+                // CNIWN to DEHAM
+                { origin: 'CNIWN', destination: 'DEHAM', od_rank: 0.26, current_price: 1770, booked_volume: 18 },
+                { origin: 'CNIWN', destination: 'DEHAM', od_rank: 0.26, current_price: 1800, booked_volume: 14 },
+                { origin: 'CNIWN', destination: 'DEHAM', od_rank: 0.26, current_price: 1820, booked_volume: 22 },
+                
+                // CNIWN to BEANT
+                { origin: 'CNIWN', destination: 'BEANT', od_rank: 0.35, current_price: 1850, booked_volume: 12 },
+                { origin: 'CNIWN', destination: 'BEANT', od_rank: 0.35, current_price: 1880, booked_volume: 8 },
+                { origin: 'CNIWN', destination: 'BEANT', od_rank: 0.35, current_price: 1920, booked_volume: 15 },
+                
+                // CNSGH to GBSOU (Southampton)
+                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.45, current_price: 1920, booked_volume: 8 },
+                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.45, current_price: 1950, booked_volume: 12 },
+                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.45, current_price: 1980, booked_volume: 6 },
+                
+                // CNSGH to PLGDN (Gdansk)
+                { origin: 'CNSGH', destination: 'PLGDN', od_rank: 0.52, current_price: 1980, booked_volume: 6 },
+                { origin: 'CNSGH', destination: 'PLGDN', od_rank: 0.52, current_price: 2020, booked_volume: 9 },
+                { origin: 'CNSGH', destination: 'PLGDN', od_rank: 0.52, current_price: 2050, booked_volume: 4 },
+                
+                // CNNPO to GBSOU
+                { origin: 'CNNPO', destination: 'GBSOU', od_rank: 0.48, current_price: 1950, booked_volume: 7 },
+                { origin: 'CNNPO', destination: 'GBSOU', od_rank: 0.48, current_price: 1980, booked_volume: 5 },
+                { origin: 'CNNPO', destination: 'GBSOU', od_rank: 0.48, current_price: 2010, booked_volume: 8 },
+                
+                // CNNPO to PLGDN
+                { origin: 'CNNPO', destination: 'PLGDN', od_rank: 0.55, current_price: 2010, booked_volume: 4 },
+                { origin: 'CNNPO', destination: 'PLGDN', od_rank: 0.55, current_price: 2040, booked_volume: 6 },
+                { origin: 'CNNPO', destination: 'PLGDN', od_rank: 0.55, current_price: 2080, booked_volume: 3 },
+                
+                // CNIWN to GBSOU
+                { origin: 'CNIWN', destination: 'GBSOU', od_rank: 0.58, current_price: 2050, booked_volume: 3 },
+                { origin: 'CNIWN', destination: 'GBSOU', od_rank: 0.58, current_price: 2080, booked_volume: 5 },
+                { origin: 'CNIWN', destination: 'GBSOU', od_rank: 0.58, current_price: 2120, booked_volume: 2 },
+                
+                // CNIWN to PLGDN
+                { origin: 'CNIWN', destination: 'PLGDN', od_rank: 0.65, current_price: 2120, booked_volume: 2 },
+                { origin: 'CNIWN', destination: 'PLGDN', od_rank: 0.65, current_price: 2160, booked_volume: 4 },
+                { origin: 'CNIWN', destination: 'PLGDN', od_rank: 0.65, current_price: 2200, booked_volume: 1 },
+                
+                // Premium corridors - CNSGH to NOOSL (Oslo)
+                { origin: 'CNSGH', destination: 'NOOSL', od_rank: 0.72, current_price: 2280, booked_volume: 1 },
+                { origin: 'CNSGH', destination: 'NOOSL', od_rank: 0.72, current_price: 2320, booked_volume: 3 },
+                { origin: 'CNSGH', destination: 'NOOSL', od_rank: 0.72, current_price: 2380, booked_volume: 2 },
+                
+                // CNSGH to SEGOT (Gothenburg)
+                { origin: 'CNSGH', destination: 'SEGOT', od_rank: 0.78, current_price: 2350, booked_volume: 1 },
+                { origin: 'CNSGH', destination: 'SEGOT', od_rank: 0.78, current_price: 2400, booked_volume: 2 },
+                { origin: 'CNSGH', destination: 'SEGOT', od_rank: 0.78, current_price: 2450, booked_volume: 1 },
+                
+                // CNNPO to NOOSL
+                { origin: 'CNNPO', destination: 'NOOSL', od_rank: 0.75, current_price: 2320, booked_volume: 1 },
+                { origin: 'CNNPO', destination: 'NOOSL', od_rank: 0.75, current_price: 2380, booked_volume: 2 },
+                
+                // CNNPO to SEGOT
+                { origin: 'CNNPO', destination: 'SEGOT', od_rank: 0.82, current_price: 2380, booked_volume: 1 },
+                { origin: 'CNNPO', destination: 'SEGOT', od_rank: 0.82, current_price: 2420, booked_volume: 1 },
+                
+                // CNIWN to NOOSL
+                { origin: 'CNIWN', destination: 'NOOSL', od_rank: 0.85, current_price: 2450, booked_volume: 1 },
+                { origin: 'CNIWN', destination: 'NOOSL', od_rank: 0.85, current_price: 2500, booked_volume: 1 },
+                
+                // CNIWN to SEGOT
+                { origin: 'CNIWN', destination: 'SEGOT', od_rank: 0.92, current_price: 2520, booked_volume: 1 },
+                { origin: 'CNIWN', destination: 'SEGOT', od_rank: 0.92, current_price: 2580, booked_volume: 1 }
             ],
             
             // Historical residual bands (by rank bins)
@@ -350,20 +435,8 @@
             return alpha * Math.exp(beta * odRank);
         }
         
-        // Calculate acceptable band for a given rank
-        function calculateAcceptableBand(predictedPrice, odRank) {
-            const band = OD_PRICING_CONFIG.acceptable_bands.find(b => 
-                odRank >= b.rank_min && odRank < b.rank_max
-            ) || OD_PRICING_CONFIG.acceptable_bands[OD_PRICING_CONFIG.acceptable_bands.length - 1];
-            
-            return {
-                low: predictedPrice * band.band_low_pct,
-                high: predictedPrice * band.band_high_pct
-            };
-        }
-        
-        // Calculate frontier (lower envelope) from booking data
-        function calculateFrontier(odData) {
+        // Calculate line-of-best-fit from booking data
+        function calculateLineOfBestFit(odData) {
             const rankBins = [];
             const binSize = 0.1; // 10 bins from 0 to 1
             
@@ -376,18 +449,26 @@
                 );
                 
                 if (binnedData.length > 0) {
-                    // Use 10th percentile as frontier
+                    // Use median as line-of-best-fit
                     const sortedPrices = binnedData.map(od => od.current_price).sort((a, b) => a - b);
-                    const p10Index = Math.max(0, Math.floor(sortedPrices.length * 0.1));
+                    const medianIndex = Math.floor(sortedPrices.length / 2);
                     
                     rankBins.push({
                         rank: rankMin + binSize / 2, // Mid-point of bin
-                        frontierPrice: sortedPrices[p10Index]
+                        bestFitPrice: sortedPrices[medianIndex]
                     });
                 }
             }
             
             return rankBins;
+        }
+        
+        // Calculate acceptable band based on line-of-best-fit
+        function calculateAcceptableBand(bestFitPrice) {
+            return {
+                low: bestFitPrice * 0.8,  // 80% of best-fit
+                high: bestFitPrice * 1.2  // 120% of best-fit
+            };
         }
         
         // =================================================================
@@ -406,7 +487,7 @@
             
             // Calculate model parameters
             const alpha = calculateWeeklyIntercept(targetPrice, tradeConfig.reference_rank, tradeConfig.beta_slope);
-            const frontier = calculateFrontier(OD_PRICING_CONFIG.od_data);
+            const lineOfBestFit = calculateLineOfBestFit(OD_PRICING_CONFIG.od_data);
             
             // Create datasets
             const datasets = [];
@@ -449,13 +530,26 @@
                 type: 'line'
             });
             
-            // Acceptable band (upper)
+            // Line-of-best-fit
+            datasets.push({
+                label: 'Line-of-Best-Fit',
+                data: lineOfBestFit.map(f => ({ x: f.rank, y: f.bestFitPrice })),
+                borderColor: 'rgba(0, 170, 136, 0.8)',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+                tension: 0.3,
+                borderDash: [3, 3],
+                type: 'line'
+            });
+            
+            // Acceptable band (upper) - based on line-of-best-fit
             const bandUpperData = [];
-            for (let rank = 0; rank <= 1; rank += 0.05) {
-                const predicted = calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank);
-                const band = calculateAcceptableBand(predicted, rank);
-                bandUpperData.push({ x: rank, y: band.high });
-            }
+            lineOfBestFit.forEach(point => {
+                const band = calculateAcceptableBand(point.bestFitPrice);
+                bandUpperData.push({ x: point.rank, y: band.high });
+            });
             
             datasets.push({
                 label: 'Acceptable Band Upper',
@@ -470,13 +564,12 @@
                 type: 'line'
             });
             
-            // Acceptable band (lower)
+            // Acceptable band (lower) - based on line-of-best-fit
             const bandLowerData = [];
-            for (let rank = 0; rank <= 1; rank += 0.05) {
-                const predicted = calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank);
-                const band = calculateAcceptableBand(predicted, rank);
-                bandLowerData.push({ x: rank, y: band.low });
-            }
+            lineOfBestFit.forEach(point => {
+                const band = calculateAcceptableBand(point.bestFitPrice);
+                bandLowerData.push({ x: point.rank, y: band.low });
+            });
             
             datasets.push({
                 label: 'Acceptable Band Lower',
@@ -488,20 +581,6 @@
                 fill: '-1', // Fill to previous dataset
                 tension: 0.2,
                 borderDash: [5, 5],
-                type: 'line'
-            });
-            
-            // Frontier line
-            datasets.push({
-                label: 'Frontier (Lower Envelope)',
-                data: frontier.map(f => ({ x: f.rank, y: f.frontierPrice })),
-                borderColor: 'rgba(0, 170, 136, 0.8)',
-                backgroundColor: 'transparent',
-                borderWidth: 2,
-                pointRadius: 0,
-                fill: false,
-                tension: 0.3,
-                borderDash: [3, 3],
                 type: 'line'
             });
             
