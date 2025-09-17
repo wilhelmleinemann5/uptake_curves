@@ -113,16 +113,28 @@
                     <div style="color: var(--maersk-blue); font-size: 1.4rem; font-weight: 700;" id="totalCapacity">5,000 FFE</div>
                 </div>
                 <div style="text-align: center;">
-                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Total Booked</div>
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Current Booked</div>
                     <div style="color: var(--maersk-success); font-size: 1.4rem; font-weight: 700;" id="totalBooked">3,200 FFE</div>
                 </div>
                 <div style="text-align: center;">
-                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Remaining</div>
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Forecast Final</div>
+                    <div style="color: var(--maersk-light-blue); font-size: 1.4rem; font-weight: 700;" id="totalForecast">4,500 FFE</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Current Remaining</div>
                     <div style="color: var(--maersk-warning); font-size: 1.4rem; font-weight: 700;" id="totalRemaining">1,800 FFE</div>
                 </div>
                 <div style="text-align: center;">
-                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Utilization</div>
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Forecasted Remaining</div>
+                    <div style="color: var(--mds-text-primary); font-size: 1.4rem; font-weight: 700;" id="forecastedRemaining">500 FFE</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Current Utilization</div>
                     <div style="color: var(--mds-text-primary); font-size: 1.4rem; font-weight: 700;" id="utilization">64%</div>
+                </div>
+                <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Forecasted Utilization</div>
+                    <div style="color: var(--mds-text-primary); font-size: 1.4rem; font-weight: 700;" id="forecastedUtilization">90%</div>
                 </div>
             </div>
         </div>
@@ -150,7 +162,8 @@
                         <th>Compartment FFE</th>
                         <th>Current Booked</th>
                         <th>Forecast Final</th>
-                        <th>Remaining FFE</th>
+                        <th>Current Remaining</th>
+                        <th>Forecasted Remaining</th>
                         <th>Spot CY Ref<br><small>(from PENNY)</small></th>
                         <th>DELTA Offset<br><small>(USD)</small></th>
                         <th>Non-Spot Min CY</th>
@@ -388,13 +401,13 @@
                 datasets.push({
                     label: `${tradeCode} Pessimistic`,
                     data: forecast.pessimistic,
-                    borderColor: color.replace('rgb', 'rgba').replace(')', ', 0.4)'),
+                    borderColor: color.replace('rgb', 'rgba').replace(')', ', 0.5)'), // Slightly more visible
                     backgroundColor: 'transparent',
-                    borderWidth: 1,
+                    borderWidth: 1.5, // Slightly thicker
                     pointRadius: 0,
                     fill: false,
                     tension: 0.3,
-                    borderDash: [2, 4],
+                    borderDash: [3, 3], // More visible dash pattern
                     spanGaps: false
                 });
                 
@@ -402,13 +415,13 @@
                 datasets.push({
                     label: `${tradeCode} Optimistic`,
                     data: forecast.optimistic,
-                    borderColor: color.replace('rgb', 'rgba').replace(')', ', 0.4)'),
-                    backgroundColor: color.replace('rgb', 'rgba').replace(')', ', 0.08)'),
-                    borderWidth: 1,
+                    borderColor: color.replace('rgb', 'rgba').replace(')', ', 0.5)'), // Slightly more visible
+                    backgroundColor: color.replace('rgb', 'rgba').replace(')', ', 0.12)'), // Slightly more fill
+                    borderWidth: 1.5, // Slightly thicker
                     pointRadius: 0,
                     fill: '-1', // Fill to previous dataset (pessimistic)
                     tension: 0.3,
-                    borderDash: [2, 4],
+                    borderDash: [3, 3], // More visible dash pattern
                     spanGaps: false
                 });
                 
@@ -429,8 +442,6 @@
                 });
                 
                 // Forecast (from today forward) - connect seamlessly to actual
-                const forecastData = forecast.mostLikely.slice();
-                // Include today's point to eliminate gap
                 datasets.push({
                     label: `${tradeCode} Forecast`,
                     data: forecast.mostLikely.map((value, index) => 
@@ -492,10 +503,12 @@
                 spanGaps: false
             });
             
-            // Vessel Total Most Likely
+            // Vessel Total - Actual (up to today)
             datasets.push({
-                label: 'Vessel Total',
-                data: vesselTotal.mostLikely,
+                label: 'Vessel Total Actual',
+                data: vesselTotal.mostLikely.map((value, index) => 
+                    index <= VESSEL_CONFIG.time.todayIndex ? value : null
+                ),
                 borderColor: 'rgb(255, 255, 255)',
                 backgroundColor: 'transparent',
                 borderWidth: 5,
@@ -504,7 +517,27 @@
                 pointBorderColor: 'rgb(33, 33, 33)',
                 pointBorderWidth: 2,
                 fill: false,
-                tension: 0.3
+                tension: 0.3,
+                spanGaps: false
+            });
+            
+            // Vessel Total - Forecast (from today forward)
+            datasets.push({
+                label: 'Vessel Total Forecast',
+                data: vesselTotal.mostLikely.map((value, index) => 
+                    index >= VESSEL_CONFIG.time.todayIndex ? value : null
+                ),
+                borderColor: 'rgb(255, 255, 255)',
+                backgroundColor: 'transparent',
+                borderWidth: 5,
+                pointRadius: 6,
+                pointBackgroundColor: 'rgb(255, 255, 255)',
+                pointBorderColor: 'rgb(33, 33, 33)',
+                pointBorderWidth: 2,
+                fill: false,
+                tension: 0.3,
+                borderDash: [10, 6],
+                spanGaps: false
             });
             
             vesselUptakeChart = new Chart(ctx, {
@@ -571,6 +604,15 @@
                             borderWidth: 1,
                             cornerRadius: 8,
                             padding: 12,
+                            filter: function(tooltipItem) {
+                                // Hide individual trade uncertainty and vessel capacity from tooltip
+                                const hiddenInTooltip = [
+                                    'E1W Pessimistic', 'E1W Optimistic', 'E2W Pessimistic', 'E2W Optimistic',
+                                    'W1FW Pessimistic', 'W1FW Optimistic', 'X4FS Pessimistic', 'X4FS Optimistic',
+                                    'Vessel Capacity'
+                                ];
+                                return !hiddenInTooltip.includes(tooltipItem.dataset.label);
+                            },
                             callbacks: {
                                 label: function(context) {
                                     const value = context.parsed.y;
@@ -648,12 +690,17 @@
                 }
             });
             
-            // Update vessel total datasets (last 4 datasets: pessimistic, optimistic, capacity, vessel total)
+            // Update vessel total datasets (last 5 datasets: pessimistic, optimistic, capacity, actual, forecast)
             const totalDatasets = vesselUptakeChart.data.datasets.length;
-            vesselUptakeChart.data.datasets[totalDatasets - 4].data = vesselTotal.pessimistic; // Vessel Pessimistic
-            vesselUptakeChart.data.datasets[totalDatasets - 3].data = vesselTotal.optimistic;  // Vessel Optimistic  
+            vesselUptakeChart.data.datasets[totalDatasets - 5].data = vesselTotal.pessimistic; // Vessel Pessimistic
+            vesselUptakeChart.data.datasets[totalDatasets - 4].data = vesselTotal.optimistic;  // Vessel Optimistic  
             // Capacity line doesn't need updating (static)
-            vesselUptakeChart.data.datasets[totalDatasets - 1].data = vesselTotal.mostLikely;  // Vessel Total
+            vesselUptakeChart.data.datasets[totalDatasets - 2].data = vesselTotal.mostLikely.map((value, index) => 
+                index <= VESSEL_CONFIG.time.todayIndex ? value : null
+            ); // Vessel Total Actual
+            vesselUptakeChart.data.datasets[totalDatasets - 1].data = vesselTotal.mostLikely.map((value, index) => 
+                index >= VESSEL_CONFIG.time.todayIndex ? value : null
+            ); // Vessel Total Forecast
             
             vesselUptakeChart.update('none');
         }
@@ -680,13 +727,12 @@
             return spotCYRef + deltaOffset;
         }
 
-        // Get capacity utilization status (based on forecast final vs compartment FFE)
-        function getCapacityStatus(forecastFinal, compartmentFFE) {
-            const forecastUtilization = (forecastFinal / compartmentFFE) * 100;
-            if (forecastUtilization >= 100) return { class: 'status-full', text: 'OVERBOOK' };
-            if (forecastUtilization >= 95) return { class: 'status-full', text: 'FULL' };
-            if (forecastUtilization >= 80) return { class: 'status-tight', text: 'TIGHT' };
-            return { class: 'status-open', text: 'OPEN' };
+        // Get capacity status based on forecasted remaining FFE
+        function getCapacityStatus(forecastedRemaining) {
+            if (forecastedRemaining < -50) return { class: 'status-full', text: 'OVERBOOK' }; // Red
+            if (forecastedRemaining >= -50 && forecastedRemaining <= 50) return { class: 'status-full', text: 'FULL' }; // Red  
+            if (forecastedRemaining > 50 && forecastedRemaining <= 75) return { class: 'status-tight', text: 'TIGHT' }; // Yellow
+            return { class: 'status-open', text: 'OPEN' }; // Green
         }
 
         // Update DELTA offset and recalculate (with real-time chart updates)
@@ -722,15 +768,15 @@
                 // Get forecast final (end value from sigmoid)
                 const forecastFinal = forecast.mostLikely[VESSEL_CONFIG.time.totalDataPoints - 1];
                 
-                // Calculate remaining based on compartment capacity
-                const remainingFFE = trade.compartmentFFE - currentBooked;
-                const utilization = (currentBooked / trade.compartmentFFE * 100).toFixed(1);
+                // Calculate remaining values
+                const currentRemaining = trade.compartmentFFE - currentBooked;
+                const forecastedRemaining = trade.compartmentFFE - forecastFinal;
                 
                 // Calculate CY values
                 const spotCYRef = calculateSpotCYRef(trade);
                 const deltaOffset = VESSEL_CONFIG.deltaOffsets[trade.tradeCode] || 0;
                 const nonSpotMinCY = calculateNonSpotMinCY(trade.tradeCode, spotCYRef);
-                const status = getCapacityStatus(forecastFinal, trade.compartmentFFE); // Use forecast vs compartment
+                const status = getCapacityStatus(forecastedRemaining); // Use forecasted remaining
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
@@ -743,8 +789,11 @@
                             ${((forecastFinal / trade.compartmentFFE) * 100).toFixed(1)}% of capacity
                         </div>
                     </td>
-                    <td style="color: ${remainingFFE > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)'}; font-weight: 600;">
-                        ${remainingFFE.toLocaleString()}
+                    <td style="color: ${currentRemaining > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)'}; font-weight: 600;">
+                        ${currentRemaining.toLocaleString()}
+                    </td>
+                    <td style="color: ${forecastedRemaining > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)'}; font-weight: 600;">
+                        ${forecastedRemaining.toLocaleString()}
                     </td>
                     <td style="color: var(--mds-text-secondary); font-weight: 500;">
                         $${spotCYRef.toLocaleString()}
@@ -776,13 +825,19 @@
             
             const totalCapacity = VESSEL_CONFIG.trades.reduce((sum, trade) => sum + trade.compartmentFFE, 0);
             const totalBooked = vesselTotal.mostLikely[VESSEL_CONFIG.time.todayIndex]; // Current from sigmoid
+            const totalForecast = vesselTotal.mostLikely[VESSEL_CONFIG.time.totalDataPoints - 1]; // Final forecast
             const totalRemaining = totalCapacity - totalBooked;
+            const forecastedRemaining = totalCapacity - totalForecast;
             const utilization = ((totalBooked / totalCapacity) * 100).toFixed(1);
+            const forecastedUtilization = ((totalForecast / totalCapacity) * 100).toFixed(1);
 
             document.getElementById('totalCapacity').textContent = `${totalCapacity.toLocaleString()} FFE`;
             document.getElementById('totalBooked').textContent = `${totalBooked.toLocaleString()} FFE`;
+            document.getElementById('totalForecast').textContent = `${totalForecast.toLocaleString()} FFE`;
             document.getElementById('totalRemaining').textContent = `${totalRemaining.toLocaleString()} FFE`;
+            document.getElementById('forecastedRemaining').textContent = `${forecastedRemaining.toLocaleString()} FFE`;
             document.getElementById('utilization').textContent = `${utilization}%`;
+            document.getElementById('forecastedUtilization').textContent = `${forecastedUtilization}%`;
         }
 
         // Simulate PENNY price updates (for demo)
