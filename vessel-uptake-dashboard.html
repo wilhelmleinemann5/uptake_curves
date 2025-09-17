@@ -126,11 +126,20 @@
             </div>
         </div>
 
+        <!-- Vessel Uptake Forecast Chart -->
+        <div class="chart-container" style="margin: 2rem 0;">
+            <h2 class="chart-title">Vessel Uptake Forecast - Stacked Trade Curves</h2>
+            <p class="chart-subtitle">Real-time forecast impact of DELTA offset adjustments • Individual trade curves stack to vessel total</p>
+            <div style="position: relative; height: 400px; width: 100%;">
+                <canvas id="vesselUptakeChart"></canvas>
+            </div>
+        </div>
+
         <!-- Trade Compartments Table -->
         <div style="background: var(--mds-bg-secondary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--mds-border-default);">
             <h3 style="margin: 0 0 1rem 0; color: var(--mds-text-primary);">📊 Trade Compartment Management</h3>
             <p style="margin: 0 0 1.5rem 0; color: var(--mds-text-secondary); font-size: 0.9rem;">
-                Adjust DELTA offsets to control non-spot acceptance levels. Spot CY from PENNY is read-only.
+                Adjust DELTA offsets to control non-spot acceptance levels. Watch forecasts update in real-time above.
             </p>
             
             <table class="uptake-table">
@@ -138,9 +147,9 @@
                     <tr>
                         <th>Trade Code</th>
                         <th>Compartment FFE</th>
-                        <th>Booked FFE</th>
+                        <th>Current Booked</th>
+                        <th>Forecast Final</th>
                         <th>Remaining FFE</th>
-                        <th>Utilization</th>
                         <th>Spot CY Ref<br><small>(from PENNY)</small></th>
                         <th>DELTA Offset<br><small>(USD)</small></th>
                         <th>Non-Spot Min CY</th>
@@ -211,14 +220,14 @@
                     cost: 1350
                 },
                 {
-                    tradeCode: "T1-W",
+                    tradeCode: "W1FW",
                     compartmentFFE: 1000,
                     bookedFFE: 700,
                     refCorridors: [{ origin: "CNSGH", destination: "NLRTM" }],
                     cost: 1100
                 },
                 {
-                    tradeCode: "T2-W",
+                    tradeCode: "X4FS",
                     compartmentFFE: 500,
                     bookedFFE: 200,
                     refCorridors: [{ origin: "CNYTN", destination: "DEHAM" }],
@@ -236,8 +245,8 @@
             deltaOffsets: {
                 "E1-W": 0,
                 "E2-W": 50,
-                "T1-W": -25,
-                "T2-W": 100
+                "W1FW": -25,
+                "X4FS": 100
             }
         };
 
