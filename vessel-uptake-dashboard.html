@@ -209,7 +209,7 @@
                 </div>
                 <div>
                     <span style="color: var(--mds-text-secondary);">Reference Corridors:</span>
-                    <span style="color: var(--mds-text-primary); font-weight: 500; margin-left: 0.5rem;">CNSGH→NLRTM, CNYTN→DEHAM</span>
+                    <span style="color: var(--mds-text-primary); font-weight: 500; margin-left: 0.5rem;">CNSGH→NLROT, CNSGH→MAPTM, CNSGH→SNDKR, CNSGH→BRSSA</span>
                 </div>
                 <div>
                     <span style="color: var(--mds-text-secondary);">DELTA Mode:</span>
@@ -256,7 +256,7 @@
                     tradeCode: "E1W",
                     compartmentFFE: 2000,
                     bookedFFE: 1400,
-                    refCorridors: [{ origin: "CNSGH", destination: "NLRTM" }],
+                    refCorridors: [{ origin: "CNSGH", destination: "NLROT" }], // Shanghai to Rotterdam
                     cost: 1200,
                     // Hidden sigmoid parameters
                     sigmoid: { finalFFE: 2000, inflectionDay: 12, steepness: 0.25, sensitivity: -1.2 }
@@ -265,7 +265,7 @@
                     tradeCode: "E2W", 
                     compartmentFFE: 1500,
                     bookedFFE: 900,
-                    refCorridors: [{ origin: "CNYTN", destination: "DEHAM" }],
+                    refCorridors: [{ origin: "CNSGH", destination: "MAPTM" }], // Shanghai to Port Tangier
                     cost: 1350,
                     sigmoid: { finalFFE: 1500, inflectionDay: 14, steepness: 0.30, sensitivity: -1.0 }
                 },
@@ -273,7 +273,7 @@
                     tradeCode: "W1FW",
                     compartmentFFE: 1000,
                     bookedFFE: 700,
-                    refCorridors: [{ origin: "CNSGH", destination: "NLRTM" }],
+                    refCorridors: [{ origin: "CNSGH", destination: "SNDKR" }], // Shanghai to Dakar
                     cost: 1100,
                     sigmoid: { finalFFE: 1000, inflectionDay: 10, steepness: 0.35, sensitivity: -1.5 }
                 },
@@ -281,7 +281,7 @@
                     tradeCode: "X4FS",
                     compartmentFFE: 500,
                     bookedFFE: 200,
-                    refCorridors: [{ origin: "CNYTN", destination: "DEHAM" }],
+                    refCorridors: [{ origin: "CNSGH", destination: "BRSSA" }], // Shanghai to Salvador
                     cost: 1250,
                     sigmoid: { finalFFE: 500, inflectionDay: 16, steepness: 0.20, sensitivity: -0.8 }
                 }
@@ -289,8 +289,10 @@
             
             // Sample PENNY spot prices (from reference corridors)
             spotPrices: {
-                "CNSGH-NLRTM": 2800,
-                "CNYTN-DEHAM": 3200
+                "CNSGH-NLROT": 2800,  // Shanghai to Rotterdam
+                "CNSGH-MAPTM": 2650,  // Shanghai to Port Tangier
+                "CNSGH-SNDKR": 2400,  // Shanghai to Dakar
+                "CNSGH-BRSSA": 2200   // Shanghai to Salvador
             },
             
             // DELTA offsets (editable by uptake manager)
