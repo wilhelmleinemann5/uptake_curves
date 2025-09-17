@@ -95,11 +95,21 @@
         .facet-chart {
             min-width: 0; /* Prevent flex growing */
             max-width: 100%; /* Constrain within grid */
+            display: flex;
+            flex-direction: column;
         }
         
         .facet-chart canvas {
             max-width: 100% !important;
-            max-height: 200px !important;
+            height: 200px !important; /* Fixed height, not max-height */
+        }
+        
+        .facet-chart-container {
+            position: relative;
+            height: 200px;
+            width: 100%;
+            cursor: pointer;
+            flex-shrink: 0; /* Prevent shrinking */
         }
     </style>
 </head>
@@ -279,7 +289,7 @@
                     <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-35">
                         α: $1,600 | Ref: $1,730
                     </div>
-                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-35')">
+                    <div class="facet-chart-container" onclick="selectWeek('2025-35')">
                         <canvas id="facetChart2025-35"></canvas>
                     </div>
                 </div>
@@ -289,7 +299,7 @@
                     <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-36">
                         α: $1,580 | Ref: $1,710
                     </div>
-                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-36')">
+                    <div class="facet-chart-container" onclick="selectWeek('2025-36')">
                         <canvas id="facetChart2025-36"></canvas>
                     </div>
                 </div>
@@ -299,7 +309,7 @@
                     <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-37">
                         α: $1,611 | Ref: $1,700
                     </div>
-                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer; border: 2px solid var(--maersk-light-blue); border-radius: 4px;" onclick="selectWeek('2025-37')">
+                    <div class="facet-chart-container" onclick="selectWeek('2025-37')" style="border: 2px solid var(--maersk-light-blue); border-radius: 4px;">
                         <canvas id="facetChart2025-37"></canvas>
                     </div>
                 </div>
@@ -309,7 +319,7 @@
                     <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-38">
                         α: $1,580 | Ref: $1,680
                     </div>
-                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-38')">
+                    <div class="facet-chart-container" onclick="selectWeek('2025-38')">
                         <canvas id="facetChart2025-38"></canvas>
                     </div>
                 </div>
@@ -319,7 +329,7 @@
                     <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-39">
                         α: $1,590 | Ref: $1,690
                     </div>
-                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-39')">
+                    <div class="facet-chart-container" onclick="selectWeek('2025-39')">
                         <canvas id="facetChart2025-39"></canvas>
                     </div>
                 </div>
@@ -329,7 +339,7 @@
                     <div style="text-align: center; margin: 0 0 0.5rem 0; color: var(--mds-text-weak); font-size: 0.75rem;" id="facetInfo2025-40">
                         α: $1,600 | Ref: $1,700
                     </div>
-                    <div style="position: relative; height: 200px; width: 100%; cursor: pointer;" onclick="selectWeek('2025-40')">
+                    <div class="facet-chart-container" onclick="selectWeek('2025-40')">
                         <canvas id="facetChart2025-40"></canvas>
                     </div>
                 </div>
@@ -808,39 +818,39 @@
                         animation: { duration: 400 },
                         scales: {
                             x: {
-                                display: (week === '2025-38' || week === '2025-39' || week === '2025-40'), // Show on bottom row
-                                title: {
-                                    display: week === '2025-39', // Only middle bottom
-                                    text: 'OD Rank',
-                                    font: { size: 10 },
-                                    color: 'rgb(138, 138, 138)'
-                                },
+                                display: true,
+                                title: { display: false }, // No titles to save space
                                 min: 0,
                                 max: 1,
-                                grid: { color: 'rgba(138, 138, 138, 0.2)' },
+                                grid: { 
+                                    color: 'rgba(138, 138, 138, 0.15)',
+                                    lineWidth: 0.5
+                                },
                                 ticks: { 
                                     color: 'rgb(138, 138, 138)',
-                                    font: { size: 9 }
-                                }
+                                    font: { size: 8 },
+                                    maxTicksLimit: 3 // Fewer ticks
+                                },
+                                border: { display: false }
                             },
                             y: {
-                                display: (week === '2025-35' || week === '2025-38'), // Show on left column
-                                title: {
-                                    display: week === '2025-35', // Only top left
-                                    text: 'Price',
-                                    font: { size: 10 },
-                                    color: 'rgb(138, 138, 138)'
-                                },
+                                display: true,
+                                title: { display: false }, // No titles to save space
                                 min: sharedScales.yMin,
                                 max: sharedScales.yMax,
-                                grid: { color: 'rgba(138, 138, 138, 0.2)' },
+                                grid: { 
+                                    color: 'rgba(138, 138, 138, 0.15)',
+                                    lineWidth: 0.5
+                                },
                                 ticks: {
                                     color: 'rgb(138, 138, 138)',
-                                    font: { size: 9 },
+                                    font: { size: 8 },
+                                    maxTicksLimit: 4, // Fewer ticks
                                     callback: function(value) {
                                         return '$' + (value / 1000).toFixed(1) + 'k';
                                     }
-                                }
+                                },
+                                border: { display: false }
                             }
                         },
                         plugins: {
@@ -1282,7 +1292,7 @@
             facetWeeks.forEach(week => {
                 const container = document.getElementById(`facetContainer${week}`);
                 if (container) {
-                    const chartDiv = container.querySelector('div[style*="position: relative"]');
+                    const chartDiv = container.querySelector('.facet-chart-container');
                     if (chartDiv) {
                         if (week === selectedWeek) {
                             chartDiv.style.border = '2px solid var(--maersk-light-blue)';
