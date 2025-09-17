@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OD Pricing Dashboard - Reference-Corridor Anchored</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <link rel="stylesheet" href="styles/maersk-theme.css">
+    <style>
+        .control-panel {
+            background: var(--mds-bg-secondary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border: 1px solid var(--mds-border-default);
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .control-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .control-item label {
+            color: var(--mds-text-secondary);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .control-item select,
+        .control-item input {
+            background: var(--mds-bg-primary);
+            color: var(--mds-text-primary);
+            border: 1px solid var(--mds-border-default);
+            border-radius: 4px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            min-width: 120px;
+        }
+        
+        .reference-section {
+            background: var(--mds-bg-tertiary);
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid var(--maersk-blue);
+        }
+        
+        .filters-panel {
+            background: var(--mds-bg-secondary);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--mds-border-default);
+            min-height: 400px;
+        }
+        
+        .filter-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .filter-group h4 {
+            color: var(--mds-text-primary);
+            font-size: 0.9rem;
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .toggle-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .toggle-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .toggle-item input[type="checkbox"] {
+            accent-color: var(--maersk-blue);
+        }
+        
+        .toggle-item label {
+            color: var(--mds-text-secondary);
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🎯 OD Pricing Dashboard</h1>
+        <p>Reference-Corridor Anchored Pricing • Set intercept from reference corridor target</p>
+    </header>
+
+    <div class="container">
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-group">
+                <div class="control-item">
+                    <label>Product</label>
+                    <select id="productSelect">
+                        <option value="SPOT" selected>SPOT</option>
+                        <option value="CONTRACT">CONTRACT</option>
+                    </select>
+                </div>
+                
+                <div class="control-item">
+                    <label>Trade</label>
+                    <select id="tradeSelect">
+                        <option value="E1W" selected>E1W</option>
+                        <option value="E2W">E2W</option>
+                        <option value="W1FW">W1FW</option>
+                        <option value="X4FS">X4FS</option>
+                    </select>
+                </div>
+                
+                <div class="control-item">
+                    <label>Departure Week</label>
+                    <select id="weekSelect">
+                        <option value="2025-35">2025-35</option>
+                        <option value="2025-36" selected>2025-36</option>
+                        <option value="2025-37">2025-37</option>
+                        <option value="2025-38">2025-38</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Reference Corridor Section -->
+            <div class="reference-section">
+                <h4 style="margin: 0 0 1rem 0; color: var(--mds-text-primary);">📍 Reference Corridor (Sets Weekly Intercept)</h4>
+                <div class="control-group" style="margin-bottom: 0;">
+                    <div class="control-item">
+                        <label>Reference Corridor</label>
+                        <select id="referenceCorridorSelect">
+                            <option value="CNSGH-NLROT" selected>CNSGH → NLROT</option>
+                            <option value="CNSGH-DEHAM">CNSGH → DEHAM</option>
+                            <option value="CNSGH-BEANR">CNSGH → BEANR</option>
+                        </select>
+                    </div>
+                    
+                    <div class="control-item">
+                        <label>Target Price ($/FFE)</label>
+                        <input type="number" id="targetPriceInput" value="1700" min="1000" max="3000" step="10">
+                    </div>
+                    
+                    <div class="control-item">
+                        <label>Current PENNY Price</label>
+                        <input type="number" id="currentPennyPrice" value="1680" disabled style="opacity: 0.7;">
+                    </div>
+                    
+                    <div class="control-item">
+                        <button id="usePennyPriceBtn" style="background: var(--maersk-light-blue); color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 1.5rem;">
+                            Use PENNY Price
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content Layout -->
+        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 2rem;">
+            <!-- Chart Area -->
+            <div class="chart-container">
+                <h2 class="chart-title">OD Pricing Model - E1W Trade</h2>
+                <p class="chart-subtitle">X-axis: OD Rank (0=cheapest, 1=most expensive) • Y-axis: Price per FFE • Bubble size: Booked volume</p>
+                <div style="position: relative; height: 500px; width: 100%;">
+                    <canvas id="odPricingChart"></canvas>
+                </div>
+                
+                <!-- Model Info -->
+                <div style="background: var(--mds-bg-tertiary); padding: 1rem; border-radius: 6px; margin-top: 1rem;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: var(--mds-text-primary);">📊 Model Parameters</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; font-size: 0.9rem;">
+                        <div>
+                            <span style="color: var(--mds-text-secondary);">Trade Slope (β):</span>
+                            <span style="color: var(--mds-text-primary); font-weight: 600; margin-left: 0.5rem;" id="tradeSlopeDisplay">0.45</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--mds-text-secondary);">Weekly Intercept (α):</span>
+                            <span style="color: var(--mds-text-primary); font-weight: 600; margin-left: 0.5rem;" id="weeklyInterceptDisplay">$1,700</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--mds-text-secondary);">Reference Rank:</span>
+                            <span style="color: var(--mds-text-primary); font-weight: 600; margin-left: 0.5rem;" id="referenceRankDisplay">0.12</span>
+                        </div>
+                        <div>
+                            <span style="color: var(--mds-text-secondary);">Model: price = α × exp(β × rank)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters Panel -->
+            <div class="filters-panel">
+                <h3 style="margin: 0 0 1rem 0; color: var(--mds-text-primary);">🔍 Filters & Display</h3>
+                
+                <div class="filter-group">
+                    <h4>Origin Filters</h4>
+                    <select id="originFilter" style="width: 100%;">
+                        <option value="all">All Origins</option>
+                        <option value="CNSGH">CNSGH - Shanghai</option>
+                        <option value="CNNGB">CNNGB - Ningbo</option>
+                        <option value="CNSHK">CNSHK - Shekou</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <h4>Destination Filters</h4>
+                    <select id="destinationFilter" style="width: 100%;">
+                        <option value="all">All Destinations</option>
+                        <option value="NLROT">NLROT - Rotterdam</option>
+                        <option value="DEHAM">DEHAM - Hamburg</option>
+                        <option value="BEANR">BEANR - Antwerp</option>
+                        <option value="FRLEH">FRLEH - Le Havre</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <h4>Volume Filter</h4>
+                    <select id="volumeFilter" style="width: 100%;">
+                        <option value="all">All ODs</option>
+                        <option value="with_bookings">ODs with Bookings > 1</option>
+                        <option value="top_20">Top 20 by Volume</option>
+                        <option value="bottom_20">Bottom 20 by Volume</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <h4>Display Options</h4>
+                    <div class="toggle-group">
+                        <div class="toggle-item">
+                            <input type="checkbox" id="showBookings" checked>
+                            <label>Show Booking Bubbles</label>
+                        </div>
+                        <div class="toggle-item">
+                            <input type="checkbox" id="showPredicted" checked>
+                            <label>Show Predicted Line</label>
+                        </div>
+                        <div class="toggle-item">
+                            <input type="checkbox" id="showBand" checked>
+                            <label>Show Acceptable Band</label>
+                        </div>
+                        <div class="toggle-item">
+                            <input type="checkbox" id="showFrontier" checked>
+                            <label>Show Frontier (Lower Envelope)</label>
+                        </div>
+                        <div class="toggle-item">
+                            <input type="checkbox" id="showListedPrices">
+                            <label>Show Listed Prices</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="vessel-uptake-dashboard.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-right: 1rem;">
+                🚢 Vessel Uptake Dashboard
+            </a>
+            <a href="live-pricing-simple.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-right: 1rem;">
+                📊 Simple Simulator
+            </a>
+            <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
+                📈 Historical Analysis
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // =================================================================
+        // OD PRICING CONFIGURATION AND DATA
+        // =================================================================
+        
+        const OD_PRICING_CONFIG = {
+            // Trade configuration
+            trades: {
+                'E1W': {
+                    name: 'E1W - Asia to North Europe',
+                    beta_slope: 0.45,  // Trade slope (learned from history)
+                    reference_corridor: 'CNSGH-NLROT',
+                    reference_rank: 0.12
+                }
+            },
+            
+            // Mock OD data for E1W trade
+            od_data: [
+                // Reference corridor (lowest rank)
+                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.12, current_price: 1680, booked_volume: 450 },
+                
+                // Other major corridors
+                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18, current_price: 1720, booked_volume: 320 },
+                { origin: 'CNSGH', destination: 'BEANR', od_rank: 0.25, current_price: 1780, booked_volume: 280 },
+                { origin: 'CNSGH', destination: 'FRLEH', od_rank: 0.32, current_price: 1820, booked_volume: 190 },
+                { origin: 'CNNGB', destination: 'NLROT', od_rank: 0.15, current_price: 1700, booked_volume: 380 },
+                { origin: 'CNNGB', destination: 'DEHAM', od_rank: 0.22, current_price: 1750, booked_volume: 250 },
+                { origin: 'CNNGB', destination: 'BEANR', od_rank: 0.28, current_price: 1800, booked_volume: 210 },
+                { origin: 'CNSHK', destination: 'NLROT', od_rank: 0.20, current_price: 1730, booked_volume: 290 },
+                { origin: 'CNSHK', destination: 'DEHAM', od_rank: 0.26, current_price: 1770, booked_volume: 180 },
+                { origin: 'CNSHK', destination: 'BEANR', od_rank: 0.35, current_price: 1850, booked_volume: 120 },
+                
+                // Smaller/more expensive corridors
+                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.45, current_price: 1920, booked_volume: 85 },
+                { origin: 'CNSGH', destination: 'ITAGV', od_rank: 0.52, current_price: 1980, booked_volume: 65 },
+                { origin: 'CNNGB', destination: 'GBSOU', od_rank: 0.48, current_price: 1950, booked_volume: 70 },
+                { origin: 'CNNGB', destination: 'ITAGV', od_rank: 0.55, current_price: 2010, booked_volume: 45 },
+                { origin: 'CNSHK', destination: 'GBSOU', od_rank: 0.58, current_price: 2050, booked_volume: 35 },
+                { origin: 'CNSHK', destination: 'ITAGV', od_rank: 0.65, current_price: 2120, booked_volume: 25 },
+                
+                // Premium/niche corridors
+                { origin: 'CNSGH', destination: 'NOOSL', od_rank: 0.72, current_price: 2280, booked_volume: 18 },
+                { origin: 'CNSGH', destination: 'SEGOT', od_rank: 0.78, current_price: 2350, booked_volume: 12 },
+                { origin: 'CNNGB', destination: 'NOOSL', od_rank: 0.75, current_price: 2320, booked_volume: 15 },
+                { origin: 'CNNGB', destination: 'SEGOT', od_rank: 0.82, current_price: 2380, booked_volume: 8 },
+                { origin: 'CNSHK', destination: 'NOOSL', od_rank: 0.85, current_price: 2450, booked_volume: 6 },
+                { origin: 'CNSHK', destination: 'SEGOT', od_rank: 0.92, current_price: 2520, booked_volume: 4 }
+            ],
+            
+            // Historical residual bands (by rank bins)
+            acceptable_bands: [
+                { rank_min: 0.0, rank_max: 0.2, band_low_pct: 0.85, band_high_pct: 1.15 },
+                { rank_min: 0.2, rank_max: 0.4, band_low_pct: 0.82, band_high_pct: 1.18 },
+                { rank_min: 0.4, rank_max: 0.6, band_low_pct: 0.80, band_high_pct: 1.20 },
+                { rank_min: 0.6, rank_max: 0.8, band_low_pct: 0.78, band_high_pct: 1.22 },
+                { rank_min: 0.8, rank_max: 1.0, band_low_pct: 0.75, band_high_pct: 1.25 }
+            ]
+        };
+        
+        // =================================================================
+        // PRICING MODEL LOGIC
+        // =================================================================
+        
+        // Calculate weekly intercept from reference corridor target price
+        function calculateWeeklyIntercept(targetPrice, referenceRank, beta) {
+            // Solve: targetPrice = alpha * exp(beta * referenceRank)
+            // Therefore: alpha = targetPrice / exp(beta * referenceRank)
+            return targetPrice / Math.exp(beta * referenceRank);
+        }
+        
+        // Calculate predicted price for any OD
+        function calculatePredictedPrice(alpha, beta, odRank) {
+            // price = alpha * exp(beta * rank)
+            return alpha * Math.exp(beta * odRank);
+        }
+        
+        // Calculate acceptable band for a given rank
+        function calculateAcceptableBand(predictedPrice, odRank) {
+            const band = OD_PRICING_CONFIG.acceptable_bands.find(b => 
+                odRank >= b.rank_min && odRank < b.rank_max
+            ) || OD_PRICING_CONFIG.acceptable_bands[OD_PRICING_CONFIG.acceptable_bands.length - 1];
+            
+            return {
+                low: predictedPrice * band.band_low_pct,
+                high: predictedPrice * band.band_high_pct
+            };
+        }
+        
+        // Calculate frontier (lower envelope) from booking data
+        function calculateFrontier(odData) {
+            const rankBins = [];
+            const binSize = 0.1; // 10 bins from 0 to 1
+            
+            for (let i = 0; i < 10; i++) {
+                const rankMin = i * binSize;
+                const rankMax = (i + 1) * binSize;
+                
+                const binnedData = odData.filter(od => 
+                    od.od_rank >= rankMin && od.od_rank < rankMax
+                );
+                
+                if (binnedData.length > 0) {
+                    // Use 10th percentile as frontier
+                    const sortedPrices = binnedData.map(od => od.current_price).sort((a, b) => a - b);
+                    const p10Index = Math.max(0, Math.floor(sortedPrices.length * 0.1));
+                    
+                    rankBins.push({
+                        rank: rankMin + binSize / 2, // Mid-point of bin
+                        frontierPrice: sortedPrices[p10Index]
+                    });
+                }
+            }
+            
+            return rankBins;
+        }
+        
+        // =================================================================
+        // CHART INITIALIZATION AND UPDATES
+        // =================================================================
+        
+        let odPricingChart = null;
+        
+        function initODPricingChart() {
+            const ctx = document.getElementById('odPricingChart');
+            if (!ctx) return;
+            
+            const currentTrade = document.getElementById('tradeSelect').value;
+            const targetPrice = parseFloat(document.getElementById('targetPriceInput').value);
+            const tradeConfig = OD_PRICING_CONFIG.trades[currentTrade];
+            
+            // Calculate model parameters
+            const alpha = calculateWeeklyIntercept(targetPrice, tradeConfig.reference_rank, tradeConfig.beta_slope);
+            const frontier = calculateFrontier(OD_PRICING_CONFIG.od_data);
+            
+            // Create datasets
+            const datasets = [];
+            
+            // Booking bubbles (scatter)
+            datasets.push({
+                label: 'Actual Bookings',
+                data: OD_PRICING_CONFIG.od_data.map(od => ({
+                    x: od.od_rank,
+                    y: od.current_price,
+                    r: Math.sqrt(od.booked_volume) / 3, // Scale bubble size
+                    origin: od.origin,
+                    destination: od.destination,
+                    volume: od.booked_volume
+                })),
+                backgroundColor: 'rgba(255, 180, 50, 0.7)',
+                borderColor: 'rgb(255, 180, 50)',
+                borderWidth: 2,
+                pointHoverRadius: 8
+            });
+            
+            // Predicted line
+            const predictedLineData = [];
+            for (let rank = 0; rank <= 1; rank += 0.01) {
+                predictedLineData.push({
+                    x: rank,
+                    y: calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank)
+                });
+            }
+            
+            datasets.push({
+                label: 'Predicted Price Line',
+                data: predictedLineData,
+                borderColor: 'rgb(66, 176, 213)',
+                backgroundColor: 'transparent',
+                borderWidth: 3,
+                pointRadius: 0,
+                fill: false,
+                tension: 0,
+                type: 'line'
+            });
+            
+            // Acceptable band (upper)
+            const bandUpperData = [];
+            for (let rank = 0; rank <= 1; rank += 0.05) {
+                const predicted = calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank);
+                const band = calculateAcceptableBand(predicted, rank);
+                bandUpperData.push({ x: rank, y: band.high });
+            }
+            
+            datasets.push({
+                label: 'Acceptable Band Upper',
+                data: bandUpperData,
+                borderColor: 'rgba(229, 62, 62, 0.5)',
+                backgroundColor: 'transparent',
+                borderWidth: 1,
+                pointRadius: 0,
+                fill: false,
+                tension: 0.2,
+                borderDash: [5, 5],
+                type: 'line'
+            });
+            
+            // Acceptable band (lower)
+            const bandLowerData = [];
+            for (let rank = 0; rank <= 1; rank += 0.05) {
+                const predicted = calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank);
+                const band = calculateAcceptableBand(predicted, rank);
+                bandLowerData.push({ x: rank, y: band.low });
+            }
+            
+            datasets.push({
+                label: 'Acceptable Band Lower',
+                data: bandLowerData,
+                borderColor: 'rgba(229, 62, 62, 0.5)',
+                backgroundColor: 'rgba(229, 62, 62, 0.1)',
+                borderWidth: 1,
+                pointRadius: 0,
+                fill: '-1', // Fill to previous dataset
+                tension: 0.2,
+                borderDash: [5, 5],
+                type: 'line'
+            });
+            
+            // Frontier line
+            datasets.push({
+                label: 'Frontier (Lower Envelope)',
+                data: frontier.map(f => ({ x: f.rank, y: f.frontierPrice })),
+                borderColor: 'rgba(0, 170, 136, 0.8)',
+                backgroundColor: 'transparent',
+                borderWidth: 2,
+                pointRadius: 0,
+                fill: false,
+                tension: 0.3,
+                borderDash: [3, 3],
+                type: 'line'
+            });
+            
+            odPricingChart = new Chart(ctx, {
+                type: 'bubble',
+                data: { datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: { duration: 800 },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'OD Rank (0 = cheapest, 1 = most expensive)',
+                                font: { size: 14, weight: '600' },
+                                color: 'rgb(212, 212, 212)'
+                            },
+                            min: 0,
+                            max: 1,
+                            grid: { color: 'rgba(138, 138, 138, 0.3)' },
+                            ticks: { 
+                                color: 'rgb(138, 138, 138)',
+                                callback: function(value) {
+                                    return value.toFixed(1);
+                                }
+                            },
+                            border: { color: 'rgb(76, 76, 76)' }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Price per FFE (USD)',
+                                font: { size: 14, weight: '600' },
+                                color: 'rgb(212, 212, 212)'
+                            },
+                            beginAtZero: false,
+                            min: 1500,
+                            max: 2800,
+                            grid: { color: 'rgba(138, 138, 138, 0.3)' },
+                            ticks: {
+                                color: 'rgb(138, 138, 138)',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            },
+                            border: { color: 'rgb(76, 76, 76)' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                color: 'rgb(212, 212, 212)',
+                                font: { size: 11, weight: '500' },
+                                padding: 12,
+                                usePointStyle: true,
+                                filter: function(legendItem) {
+                                    // Hide band components from legend
+                                    return !legendItem.text.includes('Band');
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(33, 33, 33, 0.95)',
+                            titleColor: 'rgb(240, 240, 240)',
+                            bodyColor: 'rgb(212, 212, 212)',
+                            borderColor: 'rgb(76, 76, 76)',
+                            borderWidth: 1,
+                            cornerRadius: 8,
+                            padding: 12,
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    if (item.dataset.label === 'Actual Bookings') {
+                                        const data = item.raw;
+                                        return `${data.origin} → ${data.destination}`;
+                                    }
+                                    return item.dataset.label;
+                                },
+                                label: function(context) {
+                                    if (context.dataset.label === 'Actual Bookings') {
+                                        const data = context.raw;
+                                        const predicted = calculatePredictedPrice(alpha, tradeConfig.beta_slope, data.x);
+                                        const delta = data.y - predicted;
+                                        
+                                        return [
+                                            `OD Rank: ${data.x.toFixed(3)}`,
+                                            `Current Price: $${data.y.toLocaleString()}`,
+                                            `Predicted Price: $${predicted.toFixed(0)}`,
+                                            `Delta (Δ): $${delta.toFixed(0)}`,
+                                            `Booked Volume: ${data.volume} FFE`
+                                        ];
+                                    } else {
+                                        return `${context.dataset.label}: $${Math.round(context.parsed.y).toLocaleString()}`;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    interaction: { intersect: false, mode: 'point' }
+                }
+            });
+            
+            // Update model parameters display
+            updateModelParametersDisplay(alpha, tradeConfig.beta_slope, tradeConfig.reference_rank);
+            
+            console.log('OD Pricing Chart initialized');
+        }
+        
+        // Update model parameters display
+        function updateModelParametersDisplay(alpha, beta, referenceRank) {
+            document.getElementById('tradeSlopeDisplay').textContent = beta.toFixed(3);
+            document.getElementById('weeklyInterceptDisplay').textContent = '$' + Math.round(alpha).toLocaleString();
+            document.getElementById('referenceRankDisplay').textContent = referenceRank.toFixed(3);
+        }
+        
+        // Update chart when controls change
+        function updateODPricingChart() {
+            if (!odPricingChart) return;
+            
+            const targetPrice = parseFloat(document.getElementById('targetPriceInput').value);
+            const currentTrade = document.getElementById('tradeSelect').value;
+            const tradeConfig = OD_PRICING_CONFIG.trades[currentTrade];
+            
+            // Recalculate intercept
+            const alpha = calculateWeeklyIntercept(targetPrice, tradeConfig.reference_rank, tradeConfig.beta_slope);
+            
+            // Update predicted line
+            const predictedLineData = [];
+            for (let rank = 0; rank <= 1; rank += 0.01) {
+                predictedLineData.push({
+                    x: rank,
+                    y: calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank)
+                });
+            }
+            
+            // Find and update predicted line dataset
+            const predictedDataset = odPricingChart.data.datasets.find(d => d.label === 'Predicted Price Line');
+            if (predictedDataset) {
+                predictedDataset.data = predictedLineData;
+            }
+            
+            // Update acceptable bands
+            const bandUpperDataset = odPricingChart.data.datasets.find(d => d.label === 'Acceptable Band Upper');
+            const bandLowerDataset = odPricingChart.data.datasets.find(d => d.label === 'Acceptable Band Lower');
+            
+            if (bandUpperDataset && bandLowerDataset) {
+                const bandUpperData = [];
+                const bandLowerData = [];
+                
+                for (let rank = 0; rank <= 1; rank += 0.05) {
+                    const predicted = calculatePredictedPrice(alpha, tradeConfig.beta_slope, rank);
+                    const band = calculateAcceptableBand(predicted, rank);
+                    bandUpperData.push({ x: rank, y: band.high });
+                    bandLowerData.push({ x: rank, y: band.low });
+                }
+                
+                bandUpperDataset.data = bandUpperData;
+                bandLowerDataset.data = bandLowerData;
+            }
+            
+            odPricingChart.update('none');
+            updateModelParametersDisplay(alpha, tradeConfig.beta_slope, tradeConfig.reference_rank);
+        }
+        
+        // =================================================================
+        // EVENT HANDLERS
+        // =================================================================
+        
+        // Use PENNY price button
+        document.getElementById('usePennyPriceBtn').addEventListener('click', function() {
+            const pennyPrice = document.getElementById('currentPennyPrice').value;
+            document.getElementById('targetPriceInput').value = pennyPrice;
+            updateODPricingChart();
+        });
+        
+        // Target price input change
+        document.getElementById('targetPriceInput').addEventListener('input', function() {
+            updateODPricingChart();
+        });
+        
+        // Trade selection change
+        document.getElementById('tradeSelect').addEventListener('change', function() {
+            // For now, we only have E1W data
+            if (this.value !== 'E1W') {
+                alert('Only E1W trade data is available in this demo');
+                this.value = 'E1W';
+                return;
+            }
+            updateODPricingChart();
+        });
+        
+        // =================================================================
+        // INITIALIZATION
+        // =================================================================
+        
+        // Initialize when page loads
+        window.addEventListener('load', function() {
+            if (typeof Chart !== 'undefined') {
+                initODPricingChart();
+            } else {
+                console.log('Chart.js not loaded, retrying in 500ms...');
+                setTimeout(initODPricingChart, 500);
+            }
+        });
+    </script>
+</body>
+</html>
