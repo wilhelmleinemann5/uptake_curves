@@ -505,44 +505,50 @@
                 };
             });
             
-            // Split data by status
-            const historicalData = interceptData.filter(d => d.status === 'historical');
-            const currentData = interceptData.filter(d => d.status === 'current');
-            const futureData = interceptData.filter(d => d.status === 'future');
-            
+            // Create one continuous line connecting all points
             const datasets = [
                 {
-                    label: 'Historical Intercepts',
-                    data: historicalData,
+                    label: 'Intercept Timeline',
+                    data: interceptData,
                     borderColor: 'rgba(138, 138, 138, 0.8)',
-                    backgroundColor: 'rgba(138, 138, 138, 0.6)',
+                    backgroundColor: 'transparent',
                     borderWidth: 2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    fill: false,
-                    tension: 0.1
-                },
-                {
-                    label: 'Current Week',
-                    data: currentData,
-                    borderColor: 'rgb(66, 176, 213)',
-                    backgroundColor: 'rgb(66, 176, 213)',
-                    borderWidth: 3,
-                    pointRadius: 8,
-                    pointHoverRadius: 10,
-                    fill: false
-                },
-                {
-                    label: 'Future Planning',
-                    data: futureData,
-                    borderColor: 'rgba(255, 165, 0, 0.8)',
-                    backgroundColor: 'rgba(255, 165, 0, 0.6)',
-                    borderWidth: 2,
-                    pointRadius: 5,
-                    pointHoverRadius: 7,
+                    pointRadius: function(context) {
+                        const data = context.raw;
+                        if (data.status === 'current') return 8;
+                        if (data.status === 'future') return 5;
+                        return 4;
+                    },
+                    pointBackgroundColor: function(context) {
+                        const data = context.raw;
+                        if (data.status === 'current') return 'rgb(66, 176, 213)';
+                        if (data.status === 'future') return 'rgba(255, 165, 0, 0.8)';
+                        return 'rgba(138, 138, 138, 0.6)';
+                    },
+                    pointBorderColor: function(context) {
+                        const data = context.raw;
+                        if (data.status === 'current') return 'rgb(66, 176, 213)';
+                        if (data.status === 'future') return 'rgba(255, 165, 0, 0.8)';
+                        return 'rgba(138, 138, 138, 0.8)';
+                    },
+                    pointHoverRadius: function(context) {
+                        const data = context.raw;
+                        if (data.status === 'current') return 10;
+                        if (data.status === 'future') return 7;
+                        return 6;
+                    },
                     fill: false,
                     tension: 0.1,
-                    borderDash: [5, 5]
+                    segment: {
+                        borderDash: function(ctx) {
+                            // Make future segments dashed
+                            const currentIndex = interceptData.findIndex(d => d.status === 'current');
+                            if (ctx.p0DataIndex >= currentIndex) {
+                                return [5, 5]; // Dashed for current → future
+                            }
+                            return []; // Solid for historical
+                        }
+                    }
                 }
             ];
             
@@ -997,13 +1003,12 @@
             // Update the data structure
             OD_PRICING_CONFIG.weekly_intercepts[selectedWeek].intercept = newIntercept;
             
-            // Find and update the appropriate dataset point
-            interceptTimelineChart.data.datasets.forEach(dataset => {
-                const pointIndex = dataset.data.findIndex(point => point.week === selectedWeek);
-                if (pointIndex !== -1) {
-                    dataset.data[pointIndex].y = newIntercept;
-                }
-            });
+            // Find and update the appropriate point in the timeline dataset
+            const timelineDataset = interceptTimelineChart.data.datasets[0]; // Single dataset now
+            const pointIndex = timelineDataset.data.findIndex(point => point.week === selectedWeek);
+            if (pointIndex !== -1) {
+                timelineDataset.data[pointIndex].y = newIntercept;
+            }
             
             interceptTimelineChart.update('none');
             console.log(`Updated timeline intercept for ${selectedWeek}: $${Math.round(newIntercept)}`);
