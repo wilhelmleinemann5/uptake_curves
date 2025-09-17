@@ -136,6 +136,12 @@
                     <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Forecasted Utilization</div>
                     <div style="color: var(--mds-text-primary); font-size: 1.4rem; font-weight: 700;" id="forecastedUtilization">90%</div>
                 </div>
+                <div style="text-align: center;">
+                    <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Vessel Status</div>
+                    <div style="font-size: 1.2rem; font-weight: 700;" id="vesselStatus">
+                        <div class="status-indicator status-tight">TIGHT</div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -312,14 +318,14 @@
             const varianceGrowth = 0.02; // 2% additional per sqrt(days)
             
             const optimistic = baseCurve.map((value, index) => {
-                if (index <= todayIndex) return null; // Only forecast future
+                if (index < todayIndex) return null; // Only forecast from today forward (include today)
                 const daysFromToday = Math.abs(VESSEL_CONFIG.time.dayPoints[index] - VESSEL_CONFIG.time.dayPoints[todayIndex]);
                 const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
                 return Math.round(value * (1 + uncertaintyFactor));
             });
             
             const pessimistic = baseCurve.map((value, index) => {
-                if (index <= todayIndex) return null; // Only forecast future
+                if (index < todayIndex) return null; // Only forecast from today forward (include today)
                 const daysFromToday = Math.abs(VESSEL_CONFIG.time.dayPoints[index] - VESSEL_CONFIG.time.dayPoints[todayIndex]);
                 const uncertaintyFactor = baseVariance + varianceGrowth * Math.sqrt(daysFromToday);
                 return Math.round(value * (1 - uncertaintyFactor));
@@ -353,14 +359,18 @@
                     
                     if (uncertainty.optimistic[i] !== null) {
                         vesselTotal.optimistic[i] = (vesselTotal.optimistic[i] || 0) + uncertainty.optimistic[i];
-                    } else {
-                        vesselTotal.optimistic[i] = null;
+                    } else if (i < VESSEL_CONFIG.time.todayIndex) {
+                        vesselTotal.optimistic[i] = null; // Historical points
+                    } else if (vesselTotal.optimistic[i] === undefined) {
+                        vesselTotal.optimistic[i] = 0; // Initialize for summation
                     }
                     
                     if (uncertainty.pessimistic[i] !== null) {
                         vesselTotal.pessimistic[i] = (vesselTotal.pessimistic[i] || 0) + uncertainty.pessimistic[i];
-                    } else {
-                        vesselTotal.pessimistic[i] = null;
+                    } else if (i < VESSEL_CONFIG.time.todayIndex) {
+                        vesselTotal.pessimistic[i] = null; // Historical points
+                    } else if (vesselTotal.pessimistic[i] === undefined) {
+                        vesselTotal.pessimistic[i] = 0; // Initialize for summation
                     }
                 }
             });
@@ -782,11 +792,18 @@
                 row.innerHTML = `
                     <td style="font-weight: 600; color: var(--maersk-blue);">${trade.tradeCode}</td>
                     <td>${trade.compartmentFFE.toLocaleString()}</td>
-                    <td style="font-weight: 600;">${currentBooked.toLocaleString()}</td>
+                    <td style="font-weight: 600;">
+                        ${currentBooked.toLocaleString()}
+                        <div class="capacity-bar" style="margin-top: 4px;">
+                            <div class="capacity-fill" style="width: ${Math.min(100, (currentBooked / trade.compartmentFFE * 100))}%;"></div>
+                            <div class="capacity-text">${((currentBooked / trade.compartmentFFE) * 100).toFixed(1)}%</div>
+                        </div>
+                    </td>
                     <td style="color: var(--maersk-light-blue); font-weight: 600;">
                         ${forecastFinal.toLocaleString()}
-                        <div style="font-size: 0.7rem; color: var(--mds-text-weak);">
-                            ${((forecastFinal / trade.compartmentFFE) * 100).toFixed(1)}% of capacity
+                        <div class="capacity-bar" style="margin-top: 4px;">
+                            <div class="capacity-fill" style="width: ${Math.min(100, (forecastFinal / trade.compartmentFFE * 100))}%; background: ${forecastFinal > trade.compartmentFFE ? 'linear-gradient(90deg, var(--maersk-warning), var(--maersk-error))' : 'linear-gradient(90deg, var(--maersk-success), var(--maersk-warning))'};"></div>
+                            <div class="capacity-text">${((forecastFinal / trade.compartmentFFE) * 100).toFixed(1)}%</div>
                         </div>
                     </td>
                     <td style="color: ${currentRemaining > 0 ? 'var(--maersk-success)' : 'var(--maersk-error)'}; font-weight: 600;">
@@ -831,6 +848,9 @@
             const utilization = ((totalBooked / totalCapacity) * 100).toFixed(1);
             const forecastedUtilization = ((totalForecast / totalCapacity) * 100).toFixed(1);
 
+            // Calculate vessel status based on forecasted remaining
+            const vesselStatus = getCapacityStatus(forecastedRemaining);
+            
             document.getElementById('totalCapacity').textContent = `${totalCapacity.toLocaleString()} FFE`;
             document.getElementById('totalBooked').textContent = `${totalBooked.toLocaleString()} FFE`;
             document.getElementById('totalForecast').textContent = `${totalForecast.toLocaleString()} FFE`;
@@ -838,6 +858,12 @@
             document.getElementById('forecastedRemaining').textContent = `${forecastedRemaining.toLocaleString()} FFE`;
             document.getElementById('utilization').textContent = `${utilization}%`;
             document.getElementById('forecastedUtilization').textContent = `${forecastedUtilization}%`;
+            
+            // Update vessel status
+            const vesselStatusElement = document.getElementById('vesselStatus');
+            if (vesselStatusElement) {
+                vesselStatusElement.innerHTML = `<div class="status-indicator ${vesselStatus.class}">${vesselStatus.text}</div>`;
+            }
         }
 
         // Simulate PENNY price updates (for demo)
