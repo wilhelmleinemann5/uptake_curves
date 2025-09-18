@@ -1147,7 +1147,7 @@
             document.getElementById('referenceRankDisplay').textContent = referenceRank.toFixed(3);
         }
         
-        // Update chart when controls change (only predicted line moves, bands stay static)
+        // Update chart when controls change
         function updateODPricingChart() {
             if (!odPricingChart) return;
             
@@ -1158,7 +1158,23 @@
             // Recalculate intercept
             const alpha = calculateWeeklyIntercept(targetPrice, tradeConfig.reference_rank, tradeConfig.beta_slope);
             
-            // Update predicted line ONLY (bands stay static)
+            // Generate new booking data for the selected week
+            const bookingData = generateBookingData();
+            
+            // Update booking bubbles dataset
+            const bookingDataset = odPricingChart.data.datasets.find(d => d.label === 'Actual Bookings');
+            if (bookingDataset) {
+                bookingDataset.data = bookingData.map(od => ({
+                    x: od.od_rank,
+                    y: od.current_price,
+                    r: Math.sqrt(od.booked_volume) / 2,
+                    origin: od.origin,
+                    destination: od.destination,
+                    volume: od.booked_volume
+                }));
+            }
+            
+            // Update user-defined price line
             const predictedLineData = [];
             for (let rank = 0; rank <= 1; rank += 0.01) {
                 predictedLineData.push({
@@ -1167,7 +1183,6 @@
                 });
             }
             
-            // Find and update user-defined price line dataset
             const userDefinedDataset = odPricingChart.data.datasets.find(d => d.label === 'User-Defined Price');
             if (userDefinedDataset) {
                 userDefinedDataset.data = predictedLineData;
@@ -1186,7 +1201,7 @@
                 userDefinedPointsDataset.data = userDefinedPoints;
             }
             
-            // Acceptable bands stay static - they don't move with intercept changes
+            // Acceptable bands and line-of-best-fit stay static
             
             // Update chart scaling dynamically
             updateChartScaling();
