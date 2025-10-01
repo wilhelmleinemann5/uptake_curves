@@ -796,10 +796,10 @@
                 destination: d.destination
             }));
 
-            // Calculate user-defined price line
+            // Calculate user-defined price line using the current intercept (α)
             const userDefinedLine = OD_PRICING_CONFIG.od_structure.map(od => ({
                 x: od.od_rank,
-                y: OD_PRICING_CONFIG.user_defined_price * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank)
+                y: OD_PRICING_CONFIG.model_params.alpha * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank)
             }));
 
             // Calculate average price line (parameterized)
@@ -966,7 +966,7 @@
             Object.values(odGroups).forEach(od => {
                 const avgPrice = od.prices.reduce((a, b) => a + b, 0) / od.prices.length;
                 const totalVolume = od.volumes.reduce((a, b) => a + b, 0);
-                const userDefinedPrice = OD_PRICING_CONFIG.user_defined_price * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank);
+                const userDefinedPrice = OD_PRICING_CONFIG.model_params.alpha * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank);
                 const delta = avgPrice - userDefinedPrice;
 
                 const row = document.createElement('tr');
@@ -1037,9 +1037,21 @@
         function updateUserDefinedPrice() {
             const price = parseFloat(document.getElementById('userDefinedPrice').value);
             if (price && price > 0) {
+                // Update the user-defined price
                 OD_PRICING_CONFIG.user_defined_price = price;
+                
+                // Update the model intercept (α) to match the new user-defined price
+                // For the reference corridor (rank 0), the price should equal the intercept
+                OD_PRICING_CONFIG.model_params.alpha = price;
+                
+                // Regenerate data with new intercept
+                generateBookingData();
+                
+                // Update chart and table
                 initODPricingChart();
                 updateTable();
+                
+                console.log('User-defined price updated to:', price, 'New intercept (α):', OD_PRICING_CONFIG.model_params.alpha);
             }
         }
 
@@ -1083,7 +1095,19 @@
         }
 
         // Initialize on page load
-        document.addEventListener('DOMContentLoaded', initDashboard);
+        document.addEventListener('DOMContentLoaded', function() {
+            initDashboard();
+            
+            // Add Enter key listener for user-defined price input
+            const userDefinedPriceInput = document.getElementById('userDefinedPrice');
+            if (userDefinedPriceInput) {
+                userDefinedPriceInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        updateUserDefinedPrice();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
