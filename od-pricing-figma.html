@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OD Pricing Dashboard - Figma Design</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Maersk Text', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #141414;
+            line-height: 1.5;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: #f7f7f7;
+            height: 96px;
+            display: flex;
+            align-items: center;
+            padding: 0 37px;
+        }
+
+        .header h1 {
+            font-family: 'Maersk Headline', sans-serif;
+            font-size: 40px;
+            font-weight: 300;
+            color: #00243d;
+            line-height: 40px;
+        }
+
+        .breadcrumb {
+            position: absolute;
+            top: 10px;
+            left: 37px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+            color: #4c4c4c;
+        }
+
+        .breadcrumb a {
+            color: #4c4c4c;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e2e2e2;
+            padding: 16px 24px 16px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-start {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-logo .divider {
+            width: 1px;
+            height: 26px;
+            background-color: #e2e2e2;
+        }
+
+        .nav-logo h2 {
+            font-family: 'Maersk Text', sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: #141414;
+            line-height: 28px;
+        }
+
+        .nav-end {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #e2f3fb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #00243d;
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        .main-content {
+            padding: 40px 37px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .search-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 320px;
+        }
+
+        .search-field label {
+            font-size: 16px;
+            color: #141414;
+            line-height: 24px;
+        }
+
+        .search-field input,
+        .search-field select {
+            padding: 8px 12px;
+            border: 1px solid #d4d4d4;
+            border-radius: 6px;
+            font-size: 16px;
+            line-height: 24px;
+            background-color: #ffffff;
+        }
+
+        .search-buttons {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .btn-primary {
+            background-color: #141414;
+            color: #ffffff;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 16px;
+            line-height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background-color: rgba(20, 20, 20, 0.06);
+            color: #141414;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 16px;
+            line-height: 24px;
+            cursor: pointer;
+        }
+
+        /* Chart Section */
+        .chart-section {
+            margin-bottom: 40px;
+        }
+
+        .chart-title {
+            font-family: 'Maersk Headline', sans-serif;
+            font-size: 26px;
+            font-weight: 400;
+            color: #141414;
+            line-height: 32px;
+            margin-bottom: 12px;
+        }
+
+        .chart-subtitle {
+            font-family: 'Maersk Headline', sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+            color: #141414;
+            line-height: 24px;
+            margin-bottom: 24px;
+        }
+
+        .chart-container {
+            position: relative;
+            background-color: #ffffff;
+            border: 1px solid #d4d4d4;
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 72px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .legend-line {
+            width: 24px;
+            height: 2px;
+        }
+
+        .legend-text {
+            font-size: 14px;
+            color: #141414;
+            line-height: 20px;
+        }
+
+        /* Keys Panel */
+        .keys-panel {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            width: 320px;
+            background-color: #ffffff;
+            border: 1px solid #e2e2e2;
+            border-radius: 6px;
+            padding: 16px 20px;
+        }
+
+        .keys-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .keys-title {
+            font-family: 'Maersk Headline', sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+            color: #141414;
+            line-height: 24px;
+        }
+
+        .show-all-link {
+            color: #0077b2;
+            text-decoration: underline;
+            font-size: 16px;
+            line-height: 24px;
+            cursor: pointer;
+        }
+
+        .key-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .key-color {
+            width: 40px;
+            height: 16px;
+            border-radius: 2px;
+        }
+
+        .key-line {
+            width: 40px;
+            height: 2px;
+        }
+
+        .key-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .key-label {
+            font-size: 16px;
+            color: #141414;
+            line-height: 24px;
+        }
+
+        .toggle-switch {
+            width: 36px;
+            height: 20px;
+            background-color: #40ab35;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .toggle-switch.off {
+            background-color: #d4d4d4;
+        }
+
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background-color: #ffffff;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+        }
+
+        .toggle-switch.off::after {
+            transform: translateX(16px);
+        }
+
+        /* Price Input */
+        .price-input-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 8px;
+            padding-left: 60px;
+        }
+
+        .price-input {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #d4d4d4;
+            padding: 6px 0;
+        }
+
+        .price-input .currency {
+            font-size: 14px;
+            color: #6a6a6a;
+            margin-right: 6px;
+        }
+
+        .price-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            font-size: 14px;
+            color: #141414;
+        }
+
+        .update-btn {
+            background-color: #ffffff;
+            border: 1px solid #d4d4d4;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 14px;
+            color: #141414;
+            cursor: pointer;
+        }
+
+        /* Filter Button */
+        .filter-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: #ffffff;
+            border: 1px solid rgba(20, 20, 20, 0.18);
+            border-radius: 6px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #141414;
+        }
+
+        /* Table Section */
+        .table-section {
+            margin-top: 40px;
+        }
+
+        .table-title {
+            font-family: 'Maersk Headline', sans-serif;
+            font-size: 26px;
+            font-weight: 400;
+            color: #141414;
+            line-height: 32px;
+            margin-bottom: 20px;
+        }
+
+        .table-container {
+            border: 1px solid #e2e2e2;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table th {
+            background-color: #f7f7f7;
+            border-bottom: 1px solid #e2e2e2;
+            padding: 6px 12px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 700;
+            color: #141414;
+            line-height: 20px;
+        }
+
+        .table td {
+            border-bottom: 1px solid #e2e2e2;
+            padding: 6px 12px;
+            font-size: 14px;
+            color: #141414;
+            line-height: 20px;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table .text-right {
+            text-align: right;
+        }
+
+        .download-btn {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            background-color: #ffffff;
+            border: 1px solid #d4d4d4;
+            border-radius: 6px;
+            padding: 6px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #141414;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .keys-panel {
+                position: static;
+                width: 100%;
+                margin-top: 20px;
+            }
+            
+            .search-bar {
+                flex-direction: column;
+            }
+            
+            .search-field {
+                min-width: 100%;
+            }
+        }
+
+        /* Chart specific styles */
+        .chart-tooltip {
+            background-color: #ffffff;
+            border: 1px solid #d4d4d4;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 14px;
+            line-height: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .departure-week-label {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #ffffff;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #141414;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="breadcrumb">
+            <a href="#">Home</a>
+            <span>/</span>
+            <a href="#">Data Visualization</a>
+        </div>
+        <h1>Data Visualization</h1>
+    </div>
+
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="nav-start">
+            <div class="nav-logo">
+                <div class="divider"></div>
+                <h2>Spot Dynamic Pricing</h2>
+            </div>
+        </div>
+        <div class="nav-end">
+            <div class="user-avatar">JB</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <div class="search-field">
+                <label>Product</label>
+                <select id="productSelect">
+                    <option value="SPOT">SPOT</option>
+                    <option value="NONSPOT">NONSPOT</option>
+                </select>
+            </div>
+            <div class="search-field">
+                <label>Trade</label>
+                <select id="tradeSelect">
+                    <option value="E1W">E1W</option>
+                    <option value="E2W">E2W</option>
+                    <option value="W1FW">W1FW</option>
+                    <option value="X4FS">X4FS</option>
+                </select>
+            </div>
+            <div class="search-field">
+                <label>Departure Week</label>
+                <select id="weekSelect">
+                    <option value="2025-37">Week 37</option>
+                    <option value="2025-38">Week 38</option>
+                    <option value="2025-39">Week 39</option>
+                    <option value="2025-40">Week 40</option>
+                </select>
+            </div>
+            <div class="search-field">
+                <label>Container</label>
+                <select id="containerSelect">
+                    <option value="40HDRY">40HDRY</option>
+                    <option value="20HDRY">20HDRY</option>
+                    <option value="40HFR">40HFR</option>
+                </select>
+            </div>
+            <div class="search-buttons">
+                <button class="btn-primary" onclick="searchData()">
+                    <span>🔍</span>
+                    Search
+                </button>
+                <button class="btn-secondary" onclick="clearFilters()">Clear All</button>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section">
+            <h2 class="chart-title">Pricing Overview Across Corridors Ranked by Revenue</h2>
+            <h3 class="chart-subtitle">All Origin - Destination Pairs Departing Week 37</h3>
+            
+            <div class="chart-container">
+                <div class="departure-week-label" id="departureWeekLabel">Departure week 37</div>
+                <button class="filter-btn" onclick="toggleFilter()">
+                    <span>🔽</span>
+                    Filter actual bookings
+                </button>
+                
+                <div class="chart-wrapper">
+                    <canvas id="odPricingChart"></canvas>
+                </div>
+                
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-color" style="background-color: #0077b2;"></div>
+                        <span class="legend-text">Actual bookings</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line" style="background-color: #40ab35;"></div>
+                        <span class="legend-text">Average price</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line" style="background-color: #b80012;"></div>
+                        <span class="legend-text">Acceptable price range</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line" style="background-color: #0077b2;"></div>
+                        <span class="legend-text">User-defined price</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Keys Panel -->
+            <div class="keys-panel">
+                <div class="keys-header">
+                    <h3 class="keys-title">Keys</h3>
+                    <span class="show-all-link" onclick="showAllKeys()">Show all</span>
+                </div>
+                
+                <div class="key-item">
+                    <div class="legend-color" style="background-color: #0077b2;"></div>
+                    <div class="key-content">
+                        <span class="key-label">Actual bookings</span>
+                        <div class="toggle-switch" id="actualToggle" onclick="toggleKey('actual')"></div>
+                    </div>
+                </div>
+                
+                <div class="key-item">
+                    <div class="legend-line" style="background-color: #b80012;"></div>
+                    <div class="key-content">
+                        <span class="key-label">Acceptable price range (+/- 25% by default)</span>
+                        <div class="toggle-switch" id="acceptableToggle" onclick="toggleKey('acceptable')"></div>
+                    </div>
+                </div>
+                
+                <div class="key-item">
+                    <div class="legend-line" style="background-color: #40ab35;"></div>
+                    <div class="key-content">
+                        <span class="key-label">Average price</span>
+                        <div class="toggle-switch" id="averageToggle" onclick="toggleKey('average')"></div>
+                    </div>
+                </div>
+                
+                <div class="key-item">
+                    <div class="legend-line" style="background-color: #0077b2;"></div>
+                    <div class="key-content">
+                        <span class="key-label">User-defined price</span>
+                        <div class="toggle-switch off" id="userDefinedToggle" onclick="toggleKey('userDefined')"></div>
+                    </div>
+                    <div class="price-input-group">
+                        <div class="price-input">
+                            <span class="currency">USD</span>
+                            <input type="number" id="userDefinedPrice" value="1600" min="0" max="10000">
+                        </div>
+                        <button class="update-btn" onclick="updateUserDefinedPrice()">Update</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table Section -->
+        <div class="table-section">
+            <h2 class="chart-title">OD-Level Lane Prices Details</h2>
+            <div class="table-container">
+                <button class="download-btn" onclick="downloadTable()">
+                    <span>⬇</span>
+                    Download Table
+                </button>
+                <table class="table" id="odTable">
+                    <thead>
+                        <tr>
+                            <th>ODC</th>
+                            <th class="text-right">OD_rank</th>
+                            <th class="text-right">Actual price</th>
+                            <th class="text-right">Average price</th>
+                            <th class="text-right">User-defined price</th>
+                            <th class="text-right">Δ vs User-defined price</th>
+                            <th class="text-right">Booked Volume (FFE)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="odTableBody">
+                        <!-- Table rows will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const OD_PRICING_CONFIG = {
+            trade: 'E1W',
+            reference_corridor: { origin: 'CNSGH', destination: 'NLROT' },
+            selected_week: '2025-37',
+            user_defined_price: 1600,
+            model_params: {
+                alpha: 1600,  // intercept
+                beta: 0.8     // slope
+            },
+            noise: {
+                priceStdDev: 0.25
+            },
+            od_structure: [
+                { origin: 'CNSGH', destination: 'NLROT', od_rank: 0.0 },
+                { origin: 'CNSGH', destination: 'BEANT', od_rank: 0.1 },
+                { origin: 'CNSGH', destination: 'DEHAM', od_rank: 0.18 },
+                { origin: 'CNSGH', destination: 'GBSOU', od_rank: 0.25 },
+                { origin: 'CNSGH', destination: 'PLGDN', od_rank: 0.35 },
+                { origin: 'CNSGH', destination: 'MAPTM', od_rank: 0.45 },
+                { origin: 'CNSGH', destination: 'SNDKR', od_rank: 0.55 },
+                { origin: 'CNSGH', destination: 'BRSSA', od_rank: 0.65 },
+                { origin: 'CNSGH', destination: 'CNIWN', od_rank: 0.75 },
+                { origin: 'CNSGH', destination: 'CNNPO', od_rank: 0.85 },
+                { origin: 'CNSGH', destination: 'USLAX', od_rank: 0.95 }
+            ],
+            weekly_intercepts: {
+                '2025-37': 1600,
+                '2025-38': 1650,
+                '2025-39': 1700,
+                '2025-40': 1750
+            }
+        };
+
+        let odPricingChart;
+        let currentData = [];
+
+        // Initialize the dashboard
+        function initDashboard() {
+            generateBookingData();
+            initODPricingChart();
+            updateTable();
+            updateDepartureWeekLabel();
+        }
+
+        // Generate booking data based on parameterized model
+        function generateBookingData() {
+            const week = OD_PRICING_CONFIG.selected_week;
+            const intercept = OD_PRICING_CONFIG.weekly_intercepts[week] || OD_PRICING_CONFIG.model_params.alpha;
+            
+            currentData = [];
+            
+            OD_PRICING_CONFIG.od_structure.forEach(od => {
+                // Calculate base price from model
+                const basePrice = intercept * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank);
+                
+                // Generate multiple bookings per OD with noise
+                const numBookings = Math.floor(Math.random() * 5) + 3; // 3-7 bookings per OD
+                
+                for (let i = 0; i < numBookings; i++) {
+                    const noise = (Math.random() - 0.5) * 2 * OD_PRICING_CONFIG.noise.priceStdDev * basePrice;
+                    const price = Math.max(0, basePrice + noise);
+                    const volume = Math.floor(Math.random() * 50) + 10; // 10-60 FFE
+                    
+                    currentData.push({
+                        origin: od.origin,
+                        destination: od.destination,
+                        od_rank: od.od_rank,
+                        price: price,
+                        volume: volume,
+                        base_price: basePrice
+                    });
+                }
+            });
+        }
+
+        // Initialize the main OD pricing chart
+        function initODPricingChart() {
+            const ctx = document.getElementById('odPricingChart').getContext('2d');
+            
+            if (odPricingChart) {
+                odPricingChart.destroy();
+            }
+
+            // Prepare data
+            const scatterData = currentData.map(d => ({
+                x: d.od_rank,
+                y: d.price,
+                volume: d.volume,
+                origin: d.origin,
+                destination: d.destination
+            }));
+
+            // Calculate user-defined price line
+            const userDefinedLine = OD_PRICING_CONFIG.od_structure.map(od => ({
+                x: od.od_rank,
+                y: OD_PRICING_CONFIG.user_defined_price * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank)
+            }));
+
+            // Calculate average price line (parameterized)
+            const averageLine = OD_PRICING_CONFIG.od_structure.map(od => ({
+                x: od.od_rank,
+                y: od.base_price
+            }));
+
+            // Calculate acceptable bands
+            const acceptableUpper = averageLine.map(point => ({
+                x: point.x,
+                y: point.y * 1.15
+            }));
+
+            const acceptableLower = averageLine.map(point => ({
+                x: point.x,
+                y: point.y * 0.85
+            }));
+
+            odPricingChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'Actual bookings',
+                            data: scatterData,
+                            backgroundColor: 'rgba(0, 119, 178, 0.6)',
+                            borderColor: 'rgba(0, 119, 178, 1)',
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            showLine: false
+                        },
+                        {
+                            label: 'User-defined price',
+                            data: userDefinedLine,
+                            borderColor: 'rgba(0, 119, 178, 1)',
+                            backgroundColor: 'rgba(0, 119, 178, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            showLine: true,
+                            fill: false
+                        },
+                        {
+                            label: 'Average price',
+                            data: averageLine,
+                            borderColor: 'rgba(64, 171, 53, 1)',
+                            backgroundColor: 'rgba(64, 171, 53, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: false
+                        },
+                        {
+                            label: 'Acceptable price range (upper)',
+                            data: acceptableUpper,
+                            borderColor: 'rgba(184, 0, 18, 0.5)',
+                            backgroundColor: 'rgba(184, 0, 18, 0.1)',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: '+1'
+                        },
+                        {
+                            label: 'Acceptable price range (lower)',
+                            data: acceptableLower,
+                            borderColor: 'rgba(184, 0, 18, 0.5)',
+                            backgroundColor: 'rgba(184, 0, 18, 0.1)',
+                            borderWidth: 1,
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false // We have custom legend
+                        },
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    const point = context[0];
+                                    if (point.datasetIndex === 0) {
+                                        return `${point.raw.origin} - ${point.raw.destination}`;
+                                    }
+                                    return point.dataset.label;
+                                },
+                                label: function(context) {
+                                    const point = context.raw;
+                                    if (context.datasetIndex === 0) {
+                                        return [
+                                            `OD Rank: ${point.x.toFixed(2)}`,
+                                            `Current Price: ${point.y.toFixed(0)}`,
+                                            `Volume: ${point.volume} FFE`
+                                        ];
+                                    }
+                                    return `Price: ${point.y.toFixed(0)}`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'OD_rank (ODs ranked by revenue)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            min: 0,
+                            max: 1
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Price (USD)',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            beginAtZero: true
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'point'
+                    }
+                }
+            });
+        }
+
+        // Update table with current data
+        function updateTable() {
+            const tbody = document.getElementById('odTableBody');
+            tbody.innerHTML = '';
+
+            // Group data by OD
+            const odGroups = {};
+            currentData.forEach(d => {
+                const key = `${d.origin}_${d.destination}`;
+                if (!odGroups[key]) {
+                    odGroups[key] = {
+                        origin: d.origin,
+                        destination: d.destination,
+                        od_rank: d.od_rank,
+                        prices: [],
+                        volumes: [],
+                        base_price: d.base_price
+                    };
+                }
+                odGroups[key].prices.push(d.price);
+                odGroups[key].volumes.push(d.volume);
+            });
+
+            // Create table rows
+            Object.values(odGroups).forEach(od => {
+                const avgPrice = od.prices.reduce((a, b) => a + b, 0) / od.prices.length;
+                const totalVolume = od.volumes.reduce((a, b) => a + b, 0);
+                const userDefinedPrice = OD_PRICING_CONFIG.user_defined_price * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank);
+                const delta = avgPrice - userDefinedPrice;
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${od.origin}_${od.destination}_40HDRY</td>
+                    <td class="text-right">${od.od_rank.toFixed(2)}</td>
+                    <td class="text-right">${avgPrice.toFixed(0)}</td>
+                    <td class="text-right">${od.base_price.toFixed(0)}</td>
+                    <td class="text-right">${userDefinedPrice.toFixed(0)}</td>
+                    <td class="text-right">${delta.toFixed(0)}</td>
+                    <td class="text-right">${totalVolume}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update departure week label
+        function updateDepartureWeekLabel() {
+            const label = document.getElementById('departureWeekLabel');
+            const week = OD_PRICING_CONFIG.selected_week;
+            label.textContent = `Departure week ${week.split('-')[1]}`;
+        }
+
+        // Event handlers
+        function searchData() {
+            OD_PRICING_CONFIG.trade = document.getElementById('tradeSelect').value;
+            OD_PRICING_CONFIG.selected_week = document.getElementById('weekSelect').value;
+            generateBookingData();
+            initODPricingChart();
+            updateTable();
+            updateDepartureWeekLabel();
+        }
+
+        function clearFilters() {
+            document.getElementById('productSelect').value = 'SPOT';
+            document.getElementById('tradeSelect').value = 'E1W';
+            document.getElementById('weekSelect').value = '2025-37';
+            document.getElementById('containerSelect').value = '40HDRY';
+            searchData();
+        }
+
+        function toggleKey(keyType) {
+            const toggle = document.getElementById(keyType + 'Toggle');
+            toggle.classList.toggle('off');
+            
+            // Update chart visibility
+            if (odPricingChart) {
+                const datasets = odPricingChart.data.datasets;
+                switch(keyType) {
+                    case 'actual':
+                        datasets[0].hidden = toggle.classList.contains('off');
+                        break;
+                    case 'acceptable':
+                        datasets[3].hidden = toggle.classList.contains('off');
+                        datasets[4].hidden = toggle.classList.contains('off');
+                        break;
+                    case 'average':
+                        datasets[2].hidden = toggle.classList.contains('off');
+                        break;
+                    case 'userDefined':
+                        datasets[1].hidden = toggle.classList.contains('off');
+                        break;
+                }
+                odPricingChart.update();
+            }
+        }
+
+        function updateUserDefinedPrice() {
+            const price = parseFloat(document.getElementById('userDefinedPrice').value);
+            if (price && price > 0) {
+                OD_PRICING_CONFIG.user_defined_price = price;
+                initODPricingChart();
+                updateTable();
+            }
+        }
+
+        function showAllKeys() {
+            // Reset all toggles to on
+            document.querySelectorAll('.toggle-switch').forEach(toggle => {
+                toggle.classList.remove('off');
+            });
+            
+            // Show all datasets
+            if (odPricingChart) {
+                odPricingChart.data.datasets.forEach(dataset => {
+                    dataset.hidden = false;
+                });
+                odPricingChart.update();
+            }
+        }
+
+        function toggleFilter() {
+            // Toggle filter functionality
+            console.log('Filter toggled');
+        }
+
+        function downloadTable() {
+            // Download table as CSV
+            const table = document.getElementById('odTable');
+            const rows = Array.from(table.querySelectorAll('tr'));
+            const csv = rows.map(row => 
+                Array.from(row.querySelectorAll('th, td')).map(cell => 
+                    cell.textContent.trim()
+                ).join(',')
+            ).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'od_pricing_data.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', initDashboard);
+    </script>
+</body>
+</html>
