@@ -605,19 +605,19 @@
                     
                     <div class="chart-legend">
                         <div class="legend-item">
-                            <div class="legend-color" style="background-color: #0077b2;"></div>
+                            <div class="legend-color" style="background-color: #26c6da;"></div>
                             <span class="legend-text">Actual bookings</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-line" style="background-color: #40ab35;"></div>
+                            <div class="legend-line" style="background-color: #4caf50;"></div>
                             <span class="legend-text">Average price</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-line" style="background-color: #b80012;"></div>
+                            <div class="legend-line" style="background-color: #8bc34a;"></div>
                             <span class="legend-text">Acceptable price range</span>
                         </div>
                         <div class="legend-item">
-                            <div class="legend-line" style="background-color: #0077b2;"></div>
+                            <div class="legend-line" style="background-color: #03a9f4;"></div>
                             <span class="legend-text">User-defined price</span>
                         </div>
                     </div>
@@ -631,7 +631,7 @@
                 </div>
                 
                 <div class="key-item">
-                    <div class="legend-color" style="background-color: #0077b2;"></div>
+                    <div class="legend-color" style="background-color: #26c6da;"></div>
                     <div class="key-content">
                         <span class="key-label">Actual bookings</span>
                         <div class="toggle-switch" id="actualToggle" onclick="toggleKey('actual')"></div>
@@ -639,15 +639,15 @@
                 </div>
                 
                 <div class="key-item">
-                    <div class="legend-line" style="background-color: #b80012;"></div>
+                    <div class="legend-line" style="background-color: #8bc34a;"></div>
                     <div class="key-content">
-                        <span class="key-label">Acceptable price range (+/- 25% by default)</span>
+                        <span class="key-label">Acceptable price range (+/- 15% by default)</span>
                         <div class="toggle-switch" id="acceptableToggle" onclick="toggleKey('acceptable')"></div>
                     </div>
                 </div>
                 
                 <div class="key-item">
-                    <div class="legend-line" style="background-color: #40ab35;"></div>
+                    <div class="legend-line" style="background-color: #4caf50;"></div>
                     <div class="key-content">
                         <span class="key-label">Average price</span>
                         <div class="toggle-switch" id="averageToggle" onclick="toggleKey('average')"></div>
@@ -655,7 +655,7 @@
                 </div>
                 
                 <div class="key-item">
-                    <div class="legend-line" style="background-color: #0077b2;"></div>
+                    <div class="legend-line" style="background-color: #03a9f4;"></div>
                     <div class="key-content">
                         <span class="key-label">User-defined price</span>
                         <div class="toggle-switch off" id="userDefinedToggle" onclick="toggleKey('userDefined')"></div>
@@ -828,8 +828,8 @@
                         {
                             label: 'Acceptable price range (lower)',
                             data: acceptableLower,
-                            borderColor: 'rgba(184, 0, 18, 0.7)',
-                            backgroundColor: 'rgba(184, 0, 18, 0.15)',
+                            borderColor: 'rgba(139, 195, 74, 0.8)',
+                            backgroundColor: 'rgba(200, 230, 201, 0.4)',
                             borderWidth: 2,
                             borderDash: [5, 5],
                             pointRadius: 0,
@@ -841,8 +841,8 @@
                         {
                             label: 'Acceptable price range (upper)',
                             data: acceptableUpper,
-                            borderColor: 'rgba(184, 0, 18, 0.7)',
-                            backgroundColor: 'rgba(184, 0, 18, 0.15)',
+                            borderColor: 'rgba(139, 195, 74, 0.8)',
+                            backgroundColor: 'rgba(200, 230, 201, 0.4)',
                             borderWidth: 2,
                             borderDash: [5, 5],
                             pointRadius: 0,
@@ -854,8 +854,8 @@
                         {
                             label: 'Average price',
                             data: averageLine,
-                            borderColor: 'rgba(64, 171, 53, 1)',
-                            backgroundColor: 'rgba(64, 171, 53, 0.1)',
+                            borderColor: 'rgba(76, 175, 80, 1)',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
                             borderWidth: 3,
                             pointRadius: 0,
                             showLine: true,
@@ -866,8 +866,8 @@
                         {
                             label: 'User-defined price',
                             data: userDefinedLine,
-                            borderColor: 'rgba(0, 119, 178, 1)',
-                            backgroundColor: 'rgba(0, 119, 178, 0.1)',
+                            borderColor: 'rgba(3, 169, 244, 1)',
+                            backgroundColor: 'rgba(3, 169, 244, 0.1)',
                             borderWidth: 3,
                             pointRadius: 5,
                             pointHoverRadius: 7,
@@ -880,8 +880,8 @@
                         {
                             label: 'Actual bookings',
                             data: scatterData,
-                            backgroundColor: 'rgba(0, 119, 178, 0.6)',
-                            borderColor: 'rgba(0, 119, 178, 1)',
+                            backgroundColor: 'rgba(38, 198, 218, 0.7)',
+                            borderColor: 'rgba(38, 198, 218, 1)',
                             pointRadius: 6,
                             pointHoverRadius: 8,
                             showLine: false,
