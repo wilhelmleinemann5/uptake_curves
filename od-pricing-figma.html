@@ -218,9 +218,10 @@
 
         .chart-wrapper {
             position: relative;
-            height: 400px;
+            height: 450px;
             flex: 1;
             min-width: 0;
+            padding: 10px;
         }
         
         .chart-main {
@@ -358,15 +359,14 @@
         /* Price Input */
         .price-input-group {
             display: flex;
+            flex-direction: column;
             gap: 8px;
-            align-items: center;
             margin-top: 8px;
             padding-left: 56px;
-            padding-right: 0;
+            padding-right: 16px;
         }
 
         .price-input {
-            flex: 1;
             display: flex;
             align-items: center;
             border-bottom: 1px solid #d4d4d4;
@@ -385,7 +385,6 @@
             outline: none;
             font-size: 14px;
             color: #141414;
-            max-width: 80px;
         }
 
         .update-btn {
@@ -396,25 +395,13 @@
             font-size: 14px;
             color: #141414;
             cursor: pointer;
-            flex-shrink: 0;
             white-space: nowrap;
+            width: 100%;
         }
 
-        /* Filter Button */
+        /* Filter Button - Hidden */
         .filter-btn {
-            position: absolute;
-            right: 20px;
-            top: 20px;
-            background-color: #ffffff;
-            border: 1px solid rgba(20, 20, 20, 0.18);
-            border-radius: 6px;
-            padding: 8px 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            color: #141414;
+            display: none;
         }
 
         /* Table Section */
@@ -518,13 +505,10 @@
         }
 
         .departure-week-label {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            text-align: center;
             background-color: #ffffff;
             padding: 4px 12px;
-            border-radius: 4px;
+            margin-bottom: 10px;
             font-size: 14px;
             font-weight: 700;
             color: #141414;
@@ -816,10 +800,13 @@
                 y: OD_PRICING_CONFIG.model_params.alpha * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank)
             }));
 
-            // Calculate average price line (parameterized)
+            // Calculate average price line (parameterized based on current week)
+            const week = OD_PRICING_CONFIG.selected_week;
+            const intercept = OD_PRICING_CONFIG.weekly_intercepts[week] || OD_PRICING_CONFIG.model_params.alpha;
+            
             const averageLine = OD_PRICING_CONFIG.od_structure.map(od => ({
                 x: od.od_rank,
-                y: od.base_price
+                y: intercept * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank)
             }));
 
             // Calculate acceptable bands (based on average price line)
@@ -980,18 +967,22 @@
                         destination: d.destination,
                         od_rank: d.od_rank,
                         prices: [],
-                        volumes: [],
-                        base_price: d.base_price
+                        volumes: []
                     };
                 }
                 odGroups[key].prices.push(d.price);
                 odGroups[key].volumes.push(d.volume);
             });
 
+            // Calculate average line based on current week intercept
+            const week = OD_PRICING_CONFIG.selected_week;
+            const intercept = OD_PRICING_CONFIG.weekly_intercepts[week] || OD_PRICING_CONFIG.model_params.alpha;
+
             // Create table rows
             Object.values(odGroups).forEach(od => {
                 const avgPrice = od.prices.reduce((a, b) => a + b, 0) / od.prices.length;
                 const totalVolume = od.volumes.reduce((a, b) => a + b, 0);
+                const averagePrice = intercept * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank);
                 const userDefinedPrice = OD_PRICING_CONFIG.model_params.alpha * Math.exp(OD_PRICING_CONFIG.model_params.beta * od.od_rank);
                 const delta = avgPrice - userDefinedPrice;
 
@@ -1000,7 +991,7 @@
                     <td>${od.origin}_${od.destination}_40HDRY</td>
                     <td class="text-right">${od.od_rank.toFixed(2)}</td>
                     <td class="text-right">${avgPrice.toFixed(0)}</td>
-                    <td class="text-right">${od.base_price.toFixed(0)}</td>
+                    <td class="text-right">${averagePrice.toFixed(0)}</td>
                     <td class="text-right">${userDefinedPrice.toFixed(0)}</td>
                     <td class="text-right">${delta.toFixed(0)}</td>
                     <td class="text-right">${totalVolume}</td>
