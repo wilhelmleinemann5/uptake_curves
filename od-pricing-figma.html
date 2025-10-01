@@ -827,18 +827,19 @@
                             data: userDefinedLine,
                             borderColor: 'rgba(0, 119, 178, 1)',
                             backgroundColor: 'rgba(0, 119, 178, 0.1)',
-                            borderWidth: 2,
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
+                            borderWidth: 3,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
                             showLine: true,
-                            fill: false
+                            fill: false,
+                            hidden: true // Start hidden since toggle is off
                         },
                         {
                             label: 'Average price',
                             data: averageLine,
                             borderColor: 'rgba(64, 171, 53, 1)',
                             backgroundColor: 'rgba(64, 171, 53, 0.1)',
-                            borderWidth: 2,
+                            borderWidth: 3,
                             pointRadius: 0,
                             showLine: true,
                             fill: false
@@ -846,9 +847,9 @@
                         {
                             label: 'Acceptable price range (upper)',
                             data: acceptableUpper,
-                            borderColor: 'rgba(184, 0, 18, 0.5)',
+                            borderColor: 'rgba(184, 0, 18, 0.8)',
                             backgroundColor: 'rgba(184, 0, 18, 0.1)',
-                            borderWidth: 1,
+                            borderWidth: 2,
                             pointRadius: 0,
                             showLine: true,
                             fill: '+1'
@@ -856,9 +857,9 @@
                         {
                             label: 'Acceptable price range (lower)',
                             data: acceptableLower,
-                            borderColor: 'rgba(184, 0, 18, 0.5)',
+                            borderColor: 'rgba(184, 0, 18, 0.8)',
                             backgroundColor: 'rgba(184, 0, 18, 0.1)',
-                            borderWidth: 1,
+                            borderWidth: 2,
                             pointRadius: 0,
                             showLine: true,
                             fill: false
