@@ -212,11 +212,22 @@
             border-radius: 6px;
             padding: 20px;
             margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
         }
 
         .chart-wrapper {
             position: relative;
             height: 400px;
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .chart-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
         }
 
         .chart-legend {
@@ -251,14 +262,13 @@
 
         /* Keys Panel */
         .keys-panel {
-            position: absolute;
-            right: 20px;
-            top: 20px;
             width: 300px;
             background-color: #ffffff;
             border: 1px solid #e2e2e2;
             border-radius: 6px;
             padding: 16px 16px;
+            flex-shrink: 0;
+            align-self: flex-start;
         }
 
         .keys-header {
@@ -348,11 +358,11 @@
         /* Price Input */
         .price-input-group {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             align-items: center;
             margin-top: 8px;
-            padding-left: 60px;
-            width: 100%;
+            padding-left: 56px;
+            padding-right: 0;
         }
 
         .price-input {
@@ -375,6 +385,7 @@
             outline: none;
             font-size: 14px;
             color: #141414;
+            max-width: 80px;
         }
 
         .update-btn {
@@ -596,38 +607,40 @@
             <h3 class="chart-subtitle">All Origin - Destination Pairs Departing Week 37</h3>
             
             <div class="chart-container">
-                <div class="departure-week-label" id="departureWeekLabel">Departure week 37</div>
-                <button class="filter-btn" onclick="toggleFilter()">
-                    <span>🔽</span>
-                    Filter actual bookings
-                </button>
-                
-                <div class="chart-wrapper">
-                    <canvas id="odPricingChart"></canvas>
+                <!-- Chart Main Section -->
+                <div class="chart-main">
+                    <div class="departure-week-label" id="departureWeekLabel">Departure week 37</div>
+                    <button class="filter-btn" onclick="toggleFilter()">
+                        <span>🔽</span>
+                        Filter actual bookings
+                    </button>
+                    
+                    <div class="chart-wrapper">
+                        <canvas id="odPricingChart"></canvas>
+                    </div>
+                    
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #0077b2;"></div>
+                            <span class="legend-text">Actual bookings</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-line" style="background-color: #40ab35;"></div>
+                            <span class="legend-text">Average price</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-line" style="background-color: #b80012;"></div>
+                            <span class="legend-text">Acceptable price range</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-line" style="background-color: #0077b2;"></div>
+                            <span class="legend-text">User-defined price</span>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="chart-legend">
-                    <div class="legend-item">
-                        <div class="legend-color" style="background-color: #0077b2;"></div>
-                        <span class="legend-text">Actual bookings</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-line" style="background-color: #40ab35;"></div>
-                        <span class="legend-text">Average price</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-line" style="background-color: #b80012;"></div>
-                        <span class="legend-text">Acceptable price range</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-line" style="background-color: #0077b2;"></div>
-                        <span class="legend-text">User-defined price</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Keys Panel -->
-            <div class="keys-panel">
+                <!-- Keys Panel -->
+                <div class="keys-panel">
                 <div class="keys-header">
                     <h3 class="keys-title">Keys</h3>
                     <span class="show-all-link" onclick="showAllKeys()">Show all</span>
@@ -670,6 +683,7 @@
                         </div>
                         <button class="update-btn" onclick="updateUserDefinedPrice()">Update</button>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -808,7 +822,7 @@
                 y: od.base_price
             }));
 
-            // Calculate acceptable bands
+            // Calculate acceptable bands (based on average price line)
             const acceptableUpper = averageLine.map(point => ({
                 x: point.x,
                 y: point.y * 1.15
@@ -823,15 +837,45 @@
                 type: 'scatter',
                 data: {
                     datasets: [
+                        // Lower band (must come first for fill)
                         {
-                            label: 'Actual bookings',
-                            data: scatterData,
-                            backgroundColor: 'rgba(0, 119, 178, 0.6)',
-                            borderColor: 'rgba(0, 119, 178, 1)',
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            showLine: false
+                            label: 'Acceptable price range (lower)',
+                            data: acceptableLower,
+                            borderColor: 'rgba(184, 0, 18, 0.7)',
+                            backgroundColor: 'rgba(184, 0, 18, 0.15)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: false,
+                            order: 3
                         },
+                        // Upper band (fills to lower)
+                        {
+                            label: 'Acceptable price range (upper)',
+                            data: acceptableUpper,
+                            borderColor: 'rgba(184, 0, 18, 0.7)',
+                            backgroundColor: 'rgba(184, 0, 18, 0.15)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: '-1',
+                            order: 3
+                        },
+                        // Average price line
+                        {
+                            label: 'Average price',
+                            data: averageLine,
+                            borderColor: 'rgba(64, 171, 53, 1)',
+                            backgroundColor: 'rgba(64, 171, 53, 0.1)',
+                            borderWidth: 3,
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: false,
+                            order: 2
+                        },
+                        // User-defined price
                         {
                             label: 'User-defined price',
                             data: userDefinedLine,
@@ -842,37 +886,19 @@
                             pointHoverRadius: 7,
                             showLine: true,
                             fill: false,
-                            hidden: true // Start hidden since toggle is off
+                            hidden: true,
+                            order: 2
                         },
+                        // Actual bookings (on top)
                         {
-                            label: 'Average price',
-                            data: averageLine,
-                            borderColor: 'rgba(64, 171, 53, 1)',
-                            backgroundColor: 'rgba(64, 171, 53, 0.1)',
-                            borderWidth: 3,
-                            pointRadius: 0,
-                            showLine: true,
-                            fill: false
-                        },
-                        {
-                            label: 'Acceptable price range (upper)',
-                            data: acceptableUpper,
-                            borderColor: 'rgba(184, 0, 18, 0.8)',
-                            backgroundColor: 'rgba(184, 0, 18, 0.1)',
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            showLine: true,
-                            fill: '+1'
-                        },
-                        {
-                            label: 'Acceptable price range (lower)',
-                            data: acceptableLower,
-                            borderColor: 'rgba(184, 0, 18, 0.8)',
-                            backgroundColor: 'rgba(184, 0, 18, 0.1)',
-                            borderWidth: 2,
-                            pointRadius: 0,
-                            showLine: true,
-                            fill: false
+                            label: 'Actual bookings',
+                            data: scatterData,
+                            backgroundColor: 'rgba(0, 119, 178, 0.6)',
+                            borderColor: 'rgba(0, 119, 178, 1)',
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            showLine: false,
+                            order: 1
                         }
                     ]
                 },
@@ -1015,19 +1041,25 @@
             // Update chart visibility
             if (odPricingChart) {
                 const datasets = odPricingChart.data.datasets;
+                const isHidden = toggle.classList.contains('off');
+                
                 switch(keyType) {
                     case 'actual':
-                        datasets[0].hidden = toggle.classList.contains('off');
+                        // Actual bookings is dataset[4]
+                        datasets[4].hidden = isHidden;
                         break;
                     case 'acceptable':
-                        datasets[3].hidden = toggle.classList.contains('off');
-                        datasets[4].hidden = toggle.classList.contains('off');
+                        // Acceptable range is datasets[0] and [1]
+                        datasets[0].hidden = isHidden;
+                        datasets[1].hidden = isHidden;
                         break;
                     case 'average':
-                        datasets[2].hidden = toggle.classList.contains('off');
+                        // Average price is dataset[2]
+                        datasets[2].hidden = isHidden;
                         break;
                     case 'userDefined':
-                        datasets[1].hidden = toggle.classList.contains('off');
+                        // User-defined price is dataset[3]
+                        datasets[3].hidden = isHidden;
                         break;
                 }
                 odPricingChart.update();
