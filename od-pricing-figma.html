@@ -218,7 +218,7 @@
 
         .chart-wrapper {
             position: relative;
-            height: 450px;
+            height: 550px;
             flex: 1;
             min-width: 0;
             padding: 10px;
@@ -850,19 +850,20 @@
                             fill: '-1',
                             order: 3
                         },
-                        // Average price line
+                        // Average price line (dashed)
                         {
                             label: 'Average price',
                             data: averageLine,
                             borderColor: 'rgba(76, 175, 80, 1)',
                             backgroundColor: 'rgba(76, 175, 80, 0.1)',
                             borderWidth: 3,
+                            borderDash: [8, 4],
                             pointRadius: 0,
                             showLine: true,
                             fill: false,
                             order: 2
                         },
-                        // User-defined price
+                        // User-defined price (solid)
                         {
                             label: 'User-defined price',
                             data: userDefinedLine,
@@ -900,21 +901,29 @@
                             callbacks: {
                                 title: function(context) {
                                     const point = context[0];
-                                    if (point.datasetIndex === 0) {
+                                    // Check if it's actual bookings (dataset index 4)
+                                    if (point.datasetIndex === 4 && point.raw.origin && point.raw.destination) {
                                         return `${point.raw.origin} - ${point.raw.destination}`;
                                     }
                                     return point.dataset.label;
                                 },
                                 label: function(context) {
                                     const point = context.raw;
-                                    if (context.datasetIndex === 0) {
+                                    // For actual bookings (dataset index 4)
+                                    if (context.datasetIndex === 4 && point.volume) {
                                         return [
+                                            `Origin: ${point.origin}`,
+                                            `Destination: ${point.destination}`,
                                             `OD Rank: ${point.x.toFixed(2)}`,
-                                            `Current Price: ${point.y.toFixed(0)}`,
+                                            `Price: ${point.y.toFixed(0)}`,
                                             `Volume: ${point.volume} FFE`
                                         ];
                                     }
-                                    return `Price: ${point.y.toFixed(0)}`;
+                                    // For line datasets
+                                    if (point.y !== undefined) {
+                                        return `Price: ${point.y.toFixed(0)}`;
+                                    }
+                                    return '';
                                 }
                             }
                         }
