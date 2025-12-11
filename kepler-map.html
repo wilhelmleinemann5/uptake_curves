@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Rejected Offer Value - Kepler.gl Map</title>
+  <script src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/redux@4.2.0/dist/redux.js"></script>
+  <script src="https://unpkg.com/react-redux@8.0.5/dist/react-redux.js"></script>
+  <script src="https://unpkg.com/kepler.gl@2.5.5/umd/keplergl.min.js"></script>
+  <link href="https://unpkg.com/kepler.gl@2.5.5/umd/keplergl.min.css" rel="stylesheet" />
+  <style>
+    body {margin: 0; padding: 0; overflow: hidden;}
+    #app {position: absolute; width: 100%; height: 100%;}
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    (function() {
+      const {KeplerGl, addDataToMap, keplerGlReducer} = window.KeplerGl;
+      
+      const store = Redux.createStore(
+        Redux.combineReducers({keplerGl: keplerGlReducer}),
+        {}
+      );
+
+      const root = ReactDOM.createRoot(document.getElementById('app'));
+      root.render(
+        React.createElement(ReactRedux.Provider, {store},
+          React.createElement(KeplerGl, {
+            id: 'map',
+            mapboxApiAccessToken: 'pk.eyJ1Ijoid2lsaGVsbS1tYWVyc2siLCJhIjoiY2x0YzB6MngyMDdjNjJqcGQ4eTdpaW40diJ9.rJdvLdEbUb5p5SJTwZ0mZw',
+            width: window.innerWidth,
+            height: window.innerHeight
+          })
+        )
+      );
+
+      // Load CSV data
+      fetch('rejected_offer_value (29).csv')
+        .then(r => r.text())
+        .then(csvText => {
+          const lines = csvText.trim().split('\n');
+          const headers = lines[0].split(',');
+          
+          const rows = lines.slice(1).map(line => {
+            return line.split(',').map((val, i) => {
+              if (val === '' || val === 'null') return null;
+              return isNaN(val) ? val : parseFloat(val);
+            });
+          });
+
+          const fields = headers.map((name, i) => ({
+            name,
+            type: (name.includes('ffe') || name.includes('freight') || name.includes('value') || name.includes('ratio')) ? 'real' : 'string',
+            format: ''
+          }));
+
+          const config = {
+            version: 'v1',
+            config: {
+              visState: {
+                filters: [],
+                layers: [{
+                  id: 'h3-layer',
+                  type: 'hexagonId',
+                  config: {
+                    dataId: 'data',
+                    label: 'Rejected Offers',
+                    color: [231, 76, 60],
+                    columns: {hex_id: 'hex_h3_r2'},
+                    isVisible: true,
+                    visConfig: {
+                      opacity: 0.8,
+                      colorRange: {
+                        name: 'Uber Viz Diverging 3.5',
+                        type: 'diverging',
+                        category: 'Uber',
+                        colors: ['#00939C', '#5DBABF', '#BAE1E2', '#F8C0AA', '#DD7755', '#C22E00'],
+                        reversed: false
+                      },
+                      coverage: 0.95,
+                      enable3d: false,
+                      sizeRange: [0, 500],
+                      elevationScale: 5
+                    },
+                    colorField: {name: 'rejected_offer_value_vessel_sold_out', type: 'real'},
+                    colorScale: 'quantize'
+                  }
+                }],
+                interactionConfig: {
+                  tooltip: {
+                    fieldsToShow: {
+                      data: [
+                        {name: 'departure_id', format: null},
+                        {name: 'hex_h3_r2', format: null},
+                        {name: 'booked_spot_total_freight', format: null},
+                        {name: 'rejected_offer_value_vessel_sold_out', format: null},
+                        {name: 'booked_ffe', format: null},
+                        {name: 'offered_ffe', format: null},
+                        {name: 'rejected_ffe', format: null}
+                      ]
+                    },
+                    enabled: true
+                  }
+                }
+              },
+              mapState: {
+                latitude: 35,
+                longitude: 15,
+                zoom: 3,
+                pitch: 0,
+                bearing: 0
+              },
+              mapStyle: {styleType: 'dark'}
+            }
+          };
+
+          setTimeout(() => {
+            store.dispatch(addDataToMap({
+              datasets: {
+                info: {label: 'Rejected Offer Value', id: 'data'},
+                data: {fields, rows}
+              },
+              config
+            }));
+          }, 1000);
+        })
+        .catch(err => {
+          console.error('Error loading CSV:', err);
+          document.getElementById('app').innerHTML = '<div style="padding:2rem;color:#e74c3c">Error loading data: ' + err.message + '</div>';
+        });
+    })();
+  </script>
+</body>
+</html>
