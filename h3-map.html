@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Rejected Offer Value - H3 Hexagon Map</title>
+    <script src='https://unpkg.com/deck.gl@latest/dist.min.js'></script>
+    <script src='https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js'></script>
+    <script src='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js'></script>
+    <link href='https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        }
+        #map {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(20, 20, 20, 0.9);
+            color: rgb(240, 240, 240);
+            padding: 1rem;
+            border-radius: 8px;
+            max-width: 300px;
+            font-size: 0.9rem;
+            z-index: 1;
+        }
+        #info h3 {
+            margin: 0 0 0.5rem 0;
+            color: rgb(66, 176, 213);
+        }
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: rgb(66, 176, 213);
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="info">
+        <h3>🗺️ Rejected Offer Value Map</h3>
+        <p><strong>Color:</strong> Rejected Value (Vessel Sold Out)</p>
+        <p><strong>Height:</strong> Booked Spot Freight</p>
+        <p style="font-size: 0.8rem; color: rgb(138, 138, 138); margin-top: 0.5rem;">Loading data...</p>
+    </div>
+    
+    <script type="text/javascript">
+        const {DeckGL, H3HexagonLayer} = deck;
+        
+        const MAPBOX_TOKEN = 'pk.eyJ1Ijoid2lsaGVsbS1tYWVyc2siLCJhIjoiY2x0YzB6MngyMDdjNjJqcGQ4eTdpaW40diJ9.rJdvLdEbUb5p5SJTwZ0mZw';
+        
+        const INITIAL_VIEW_STATE = {
+            latitude: 30,
+            longitude: 20,
+            zoom: 2,
+            pitch: 45,
+            bearing: 0
+        };
+
+        // Load and parse CSV data
+        async function loadData() {
+            try {
+                const response = await fetch('rejected_offer_value (29).csv');
+                const text = await response.text();
+                const lines = text.trim().split('\n');
+                const headers = lines[0].split(',');
+                
+                const data = lines.slice(1).map(line => {
+                    const values = line.split(',');
+                    const row = {};
+                    headers.forEach((header, i) => {
+                        const val = values[i];
+                        row[header] = (val === '' || val === 'null') ? null : (!isNaN(val) ? parseFloat(val) : val);
+                    });
+                    return row;
+                }).filter(d => d.hex_h3_r2 && d.rejected_offer_value_vessel_sold_out != null);
+
+                console.log('Loaded data points:', data.length);
+                console.log('Sample data:', data[0]);
+                
+                // Create visualization
+                createVisualization(data);
+                
+                // Update info panel
+                document.querySelector('#info p:last-child').innerHTML = `✅ Loaded ${data.length.toLocaleString()} regions`;
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.querySelector('#info p:last-child').innerHTML = `❌ Error: ${error.message}`;
+            }
+        }
+
+        function createVisualization(data) {
+            const deckgl = new DeckGL({
+                container: 'map',
+                mapboxApiAccessToken: MAPBOX_TOKEN,
+                mapStyle: 'mapbox://styles/mapbox/dark-v10',
+                initialViewState: INITIAL_VIEW_STATE,
+                controller: true,
+                layers: [
+                    new H3HexagonLayer({
+                        id: 'h3-hexagon-layer',
+                        data,
+                        pickable: true,
+                        wireframe: false,
+                        filled: true,
+                        extruded: true,
+                        elevationScale: 20,
+                        getHexagon: d => d.hex_h3_r2,
+                        getFillColor: d => {
+                            // Color based on rejected_offer_value_vessel_sold_out
+                            const value = d.rejected_offer_value_vessel_sold_out || 0;
+                            const maxValue = 2000000; // Approximate max from data
+                            const ratio = Math.min(value / maxValue, 1);
+                            
+                            // Red to Yellow to Green (inverted - high value = red)
+                            if (ratio > 0.66) {
+                                return [231, 76, 60, 200]; // Red
+                            } else if (ratio > 0.33) {
+                                return [255, 165, 0, 200]; // Orange
+                            } else {
+                                return [66, 176, 213, 200]; // Maersk blue
+                            }
+                        },
+                        getElevation: d => {
+                            // Height based on booked_spot_total_freight
+                            return (d.booked_spot_total_freight || 0) / 1000;
+                        },
+                        onHover: ({object, x, y}) => {
+                            if (object) {
+                                const tooltip = `
+                                    <div style="background: rgba(20,20,20,0.95); padding: 1rem; border-radius: 6px; color: rgb(240,240,240); font-size: 0.85rem;">
+                                        <div style="color: rgb(66, 176, 213); font-weight: 600; margin-bottom: 0.5rem;">Region: ${object.hex_h3_r2}</div>
+                                        <div><strong>Booked Spot Freight:</strong> $${(object.booked_spot_total_freight || 0).toLocaleString()}</div>
+                                        <div><strong>Rejected Value (Sold Out):</strong> $${(object.rejected_offer_value_vessel_sold_out || 0).toLocaleString()}</div>
+                                        <div><strong>Booked FFE:</strong> ${(object.booked_ffe || 0).toLocaleString()}</div>
+                                        <div><strong>Rejected FFE:</strong> ${(object.rejected_ffe || 0).toLocaleString()}</div>
+                                        <div><strong>Non-Offer Ratio:</strong> ${(object.non_offer_ratio * 100).toFixed(1)}%</div>
+                                    </div>
+                                `;
+                                
+                                // Create or update tooltip
+                                let tooltipEl = document.getElementById('deck-tooltip');
+                                if (!tooltipEl) {
+                                    tooltipEl = document.createElement('div');
+                                    tooltipEl.id = 'deck-tooltip';
+                                    tooltipEl.style.position = 'absolute';
+                                    tooltipEl.style.zIndex = '1000';
+                                    tooltipEl.style.pointerEvents = 'none';
+                                    document.body.appendChild(tooltipEl);
+                                }
+                                tooltipEl.innerHTML = tooltip;
+                                tooltipEl.style.left = x + 'px';
+                                tooltipEl.style.top = y + 'px';
+                                tooltipEl.style.display = 'block';
+                            } else {
+                                const tooltipEl = document.getElementById('deck-tooltip');
+                                if (tooltipEl) tooltipEl.style.display = 'none';
+                            }
+                        }
+                    })
+                ]
+            });
+        }
+
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>
