@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Rejected Offer Value Map - H3 Hexagons</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/h3-js@4.1.0/dist/h3-js.umd.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+        }
+        #map {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        #info {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            color: rgb(240, 240, 240);
+            padding: 1.5rem;
+            border-radius: 8px;
+            max-width: 350px;
+            font-size: 0.9rem;
+            z-index: 1000;
+            border: 1px solid rgb(76, 76, 76);
+        }
+        #info h3 {
+            margin: 0 0 0.75rem 0;
+            color: rgb(66, 176, 213);
+            font-size: 1.1rem;
+        }
+        .metric {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+        }
+        .label {
+            color: rgb(212, 212, 212);
+        }
+        .value {
+            color: rgb(66, 176, 213);
+            font-weight: 600;
+        }
+        #legend {
+            position: absolute;
+            bottom: 40px;
+            right: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            color: rgb(240, 240, 240);
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            z-index: 1000;
+            border: 1px solid rgb(76, 76, 76);
+        }
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: rgb(212, 212, 212);
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 0.25rem 0;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.5rem;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="info">
+        <h3>🗺️ Rejected Offers Map</h3>
+        <div class="metric">
+            <span class="label">Regions:</span>
+            <span class="value" id="regionCount">Loading...</span>
+        </div>
+        <div class="metric">
+            <span class="label">Total Rejected:</span>
+            <span class="value" id="totalValue">-</span>
+        </div>
+        <p style="font-size: 0.75rem; color: rgb(138, 138, 138); margin-top: 1rem;">
+            Click hexagons for details • No API keys required
+        </p>
+    </div>
+    
+    <div id="legend">
+        <div class="legend-title">Rejected Value (Sold Out)</div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c;"></div>
+            <span>High (&gt;$500k)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12;"></div>
+            <span>Medium ($100k-$500k)</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #42b0d5;"></div>
+            <span>Low (&lt;$100k)</span>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize Leaflet map (no API key needed!)
+        const map = L.map('map', {
+            center: [30, 20],
+            zoom: 2,
+            zoomControl: true
+        });
+
+        // Add OpenStreetMap dark tiles (free, no API key)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '©OpenStreetMap, ©CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        // Load and visualize data
+        fetch('rejected_offer_value (29).csv')
+            .then(r => r.text())
+            .then(text => {
+                const lines = text.trim().split('\n');
+                const headers = lines[0].split(',');
+                
+                const data = lines.slice(1).map(line => {
+                    const values = line.split(',');
+                    const row = {};
+                    headers.forEach((header, i) => {
+                        const val = values[i];
+                        row[header] = (val === '' || val === 'null') ? null : (!isNaN(val) ? parseFloat(val) : val);
+                    });
+                    return row;
+                }).filter(d => d.hex_h3_r2 && d.rejected_offer_value_vessel_sold_out != null);
+
+                console.log('Loaded', data.length, 'hexagons');
+                
+                // Stats
+                const totalRejected = data.reduce((sum, d) => sum + (d.rejected_offer_value_vessel_sold_out || 0), 0);
+                document.getElementById('regionCount').textContent = data.length.toLocaleString();
+                document.getElementById('totalValue').textContent = '$' + (totalRejected / 1000000).toFixed(1) + 'M';
+                
+                // Convert H3 to polygons and add to map
+                data.forEach(d => {
+                    try {
+                        const boundary = h3.cellToBoundary(d.hex_h3_r2, true);
+                        const latlngs = boundary.map(coord => [coord[0], coord[1]]);
+                        
+                        // Color based on rejected value
+                        const value = d.rejected_offer_value_vessel_sold_out || 0;
+                        let color;
+                        if (value > 500000) {
+                            color = '#e74c3c';
+                        } else if (value > 100000) {
+                            color = '#f39c12';
+                        } else {
+                            color = '#42b0d5';
+                        }
+                        
+                        const polygon = L.polygon(latlngs, {
+                            color: '#ffffff',
+                            weight: 0.5,
+                            opacity: 0.3,
+                            fillColor: color,
+                            fillOpacity: 0.7
+                        }).addTo(map);
+                        
+                        // Popup
+                        polygon.bindPopup(`
+                            <div style="color: #333; padding: 0.5rem;">
+                                <div style="color: #42b0d5; font-weight: 600; margin-bottom: 0.5rem;">
+                                    ${d.hex_h3_r2}
+                                </div>
+                                <div><strong>Booked Spot Freight:</strong> $${(d.booked_spot_total_freight || 0).toLocaleString()}</div>
+                                <div><strong>Rejected Value (Sold Out):</strong> $${(d.rejected_offer_value_vessel_sold_out || 0).toLocaleString()}</div>
+                                <div><strong>Booked FFE:</strong> ${(d.booked_ffe || 0).toLocaleString()}</div>
+                                <div><strong>Rejected FFE:</strong> ${(d.rejected_ffe || 0).toLocaleString()}</div>
+                            </div>
+                        `);
+                    } catch (e) {
+                        console.error('Error converting H3:', d.hex_h3_r2, e);
+                    }
+                });
+                
+                console.log('Map rendered successfully');
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                document.getElementById('regionCount').textContent = 'Error loading';
+            });
+    </script>
+</body>
+</html>
