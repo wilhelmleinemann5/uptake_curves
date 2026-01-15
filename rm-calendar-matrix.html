@@ -38,6 +38,16 @@
             --event-removal: rgba(220, 53, 69, 0.18);
             --event-removal-border: rgba(220, 53, 69, 0.6);
             
+            /* Halo/ripple colors */
+            --halo-spike-strong: rgba(255, 193, 7, 0.12);
+            --halo-spike-light: rgba(255, 193, 7, 0.05);
+            --halo-removal-strong: rgba(220, 53, 69, 0.12);
+            --halo-removal-light: rgba(220, 53, 69, 0.05);
+            
+            /* Column tint colors */
+            --col-tint-spike: rgba(255, 193, 7, 0.06);
+            --col-tint-removal: rgba(220, 53, 69, 0.06);
+            
             /* Grid dimensions */
             --cell-width: 138px;
             --cell-height: 100px;
@@ -394,6 +404,257 @@
             margin: auto;
         }
         
+        /* ========================================
+           MODE TOGGLE & PROGRESSIVE DISCLOSURE
+           ======================================== */
+        
+        .mode-toggle {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .mode-btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: var(--neutral-400);
+            transition: all 0.15s ease;
+        }
+        
+        .mode-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: var(--neutral-200);
+        }
+        
+        .mode-btn.active {
+            background: var(--maersk-blue);
+            color: white;
+            border-color: var(--maersk-blue);
+        }
+        
+        /* Executive mode - hide detailed metrics */
+        .frame.exec-mode .cell-metrics,
+        .frame.exec-mode .cell-yields {
+            display: none;
+        }
+        
+        .frame.exec-mode .matrix-cell {
+            --cell-height: 65px;
+            height: 65px;
+        }
+        
+        .frame.exec-mode .cell-header {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        /* Hover tooltip for detail mode */
+        .matrix-cell .cell-tooltip {
+            display: none;
+            position: absolute;
+            bottom: calc(100% + 8px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.95);
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 10px;
+            white-space: nowrap;
+            z-index: 100;
+            border: 1px solid rgba(255,255,255,0.15);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        
+        .frame.exec-mode .matrix-cell:hover .cell-tooltip {
+            display: block;
+        }
+        
+        .cell-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0,0,0,0.95);
+        }
+        
+        .tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 4px;
+        }
+        
+        .tooltip-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .tooltip-label {
+            color: var(--neutral-500);
+        }
+        
+        .tooltip-value {
+            font-weight: 600;
+            font-family: 'IBM Plex Mono', monospace;
+        }
+        
+        .tooltip-value.onp { color: #ef4444; }
+        .tooltip-value.cpm { color: #06b6d4; }
+        .tooltip-value.utm { color: #8b5cf6; }
+        .tooltip-value.sp { color: #3b82f6; }
+        
+        /* ========================================
+           COLUMN TINTS (Vertical wash)
+           ======================================== */
+        
+        .matrix-cell[data-col="w48"],
+        .matrix-cell[data-col="w49"] {
+            background-image: linear-gradient(to bottom, var(--col-tint-spike), var(--col-tint-spike));
+            background-blend-mode: overlay;
+        }
+        
+        .matrix-cell[data-col="w51"] {
+            background-image: linear-gradient(to bottom, var(--col-tint-removal), var(--col-tint-removal));
+            background-blend-mode: overlay;
+        }
+        
+        /* ========================================
+           HALO BANDS (Horizontal ripple effect)
+           ======================================== */
+        
+        .wtd-group {
+            position: relative;
+        }
+        
+        .halo-band {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: 4px;
+        }
+        
+        /* Spike halo - W48-W49 columns */
+        .wtd-group[data-wtd="WTD 0–2"] .halo-spike,
+        .wtd-group[data-wtd="WTD 2–4"] .halo-spike {
+            left: calc(var(--wtd-label-width) + var(--row-label-width) + var(--cell-width) + var(--cell-gap));
+            width: calc(var(--cell-width) * 2 + var(--cell-gap));
+            background: var(--halo-spike-strong);
+        }
+        
+        .wtd-group[data-wtd="WTD 5–8"] .halo-spike {
+            left: calc(var(--wtd-label-width) + var(--row-label-width) + var(--cell-width) + var(--cell-gap));
+            width: calc(var(--cell-width) * 2 + var(--cell-gap));
+            background: var(--halo-spike-light);
+        }
+        
+        /* Removal halo - W51 column */
+        .wtd-group[data-wtd="WTD 2–4"] .halo-removal {
+            left: calc(var(--wtd-label-width) + var(--row-label-width) + var(--cell-width) * 4 + var(--cell-gap) * 4);
+            width: var(--cell-width);
+            background: var(--halo-removal-strong);
+        }
+        
+        .wtd-group[data-wtd="WTD 0–2"] .halo-removal,
+        .wtd-group[data-wtd="WTD 5–8"] .halo-removal {
+            left: calc(var(--wtd-label-width) + var(--row-label-width) + var(--cell-width) * 4 + var(--cell-gap) * 4);
+            width: var(--cell-width);
+            background: var(--halo-removal-light);
+        }
+        
+        /* ========================================
+           ROW/COLUMN HOVER HIGHLIGHT
+           ======================================== */
+        
+        .matrix-row:hover .row-label {
+            color: var(--neutral-100);
+        }
+        
+        .matrix-row:hover .row-label .dep-id {
+            color: var(--maersk-blue);
+        }
+        
+        .matrix-row:hover .matrix-cell:not(:hover) {
+            opacity: 0.7;
+        }
+        
+        .matrix-row:hover .matrix-cell:hover {
+            opacity: 1;
+        }
+        
+        /* ========================================
+           WEEKLY SUMMARY STRIP
+           ======================================== */
+        
+        .weekly-summary {
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            padding: 14px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        
+        .weekly-summary-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--neutral-200);
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .week-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .week-stat {
+            text-align: center;
+            padding: 8px 4px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.03);
+        }
+        
+        .week-stat.shock {
+            background: rgba(255, 193, 7, 0.1);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+        }
+        
+        .week-stat.removal {
+            background: rgba(220, 53, 69, 0.1);
+            border: 1px solid rgba(220, 53, 69, 0.3);
+        }
+        
+        .week-stat-label {
+            font-size: 9px;
+            color: var(--neutral-500);
+            margin-bottom: 4px;
+        }
+        
+        .week-stat-value {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--neutral-100);
+        }
+        
+        .week-stat-sub {
+            font-size: 8px;
+            color: var(--neutral-400);
+            margin-top: 2px;
+        }
+        
+        .week-stat.shock .week-stat-value { color: #fcd34d; }
+        .week-stat.removal .week-stat-value { color: #fca5a5; }
+        
         /* WTD Note */
         .wtd-note {
             font-size: 9px;
@@ -571,11 +832,17 @@
     </style>
 </head>
 <body>
-    <div class="frame">
+    <div class="frame exec-mode" id="mainFrame">
         <!-- Header -->
-        <div class="header">
-            <h1 class="title"><span>E1-W:</span> Calendar Operating Window (W47–W52 2025)</h1>
-            <p class="subtitle">Weekly decisions + customer bookings land onto multiple future departures. Departures are coupled via customer substitution + operational reflow. Shocks create direct + halo effects.</p>
+        <div class="header" style="display: flex; align-items: flex-start; gap: 20px;">
+            <div>
+                <h1 class="title"><span>E1-W:</span> Calendar Operating Window (W47–W52 2025)</h1>
+                <p class="subtitle">Weekly decisions + customer bookings land onto multiple future departures. Departures are coupled via customer substitution + operational reflow. Shocks create direct + halo effects.</p>
+            </div>
+            <div class="mode-toggle">
+                <button class="mode-btn active" onclick="setMode('exec')">Executive</button>
+                <button class="mode-btn" onclick="setMode('detail')">Detail</button>
+            </div>
         </div>
         
         <!-- Main Layout -->
@@ -613,6 +880,9 @@
                 <div class="matrix-grid">
                     <!-- WTD 0-2 Group -->
                     <div class="wtd-group" data-wtd="WTD 0–2">
+                        <!-- Halo bands for ripple effect -->
+                        <div class="halo-band halo-spike"></div>
+                        <div class="halo-band halo-removal"></div>
                         <!-- D1 Row (Vessel: 380 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
@@ -745,6 +1015,9 @@
                     
                     <!-- WTD 2-4 Group -->
                     <div class="wtd-group" data-wtd="WTD 2–4">
+                        <!-- Halo bands for ripple effect -->
+                        <div class="halo-band halo-spike"></div>
+                        <div class="halo-band halo-removal"></div>
                         <!-- D3 Row (Vessel: 420 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
@@ -935,6 +1208,9 @@
                     
                     <!-- WTD 5-8 Group -->
                     <div class="wtd-group" data-wtd="WTD 5–8">
+                        <!-- Halo bands for ripple effect -->
+                        <div class="halo-band halo-spike"></div>
+                        <div class="halo-band halo-removal"></div>
                         <!-- D5 Row (Vessel: 380 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
@@ -1160,6 +1436,9 @@
                     
                     <!-- WTD 8+ Group -->
                     <div class="wtd-group" data-wtd="WTD 8+">
+                        <!-- Halo bands (minimal for 8+ horizon) -->
+                        <div class="halo-band halo-spike" style="display: none;"></div>
+                        <div class="halo-band halo-removal" style="display: none;"></div>
                         <!-- D7 Row (Vessel: 420 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
@@ -1376,6 +1655,28 @@
             
             <!-- Right Panel -->
             <div class="right-panel">
+                <!-- Weekly Summary Strip -->
+                <div class="weekly-summary">
+                    <div class="weekly-summary-title">Weekly Activity Summary</div>
+                    <div class="week-stats">
+                        <div class="week-stat shock">
+                            <div class="week-stat-label">W48–W49</div>
+                            <div class="week-stat-value">12</div>
+                            <div class="week-stat-sub">interventions</div>
+                        </div>
+                        <div class="week-stat removal">
+                            <div class="week-stat-label">W51</div>
+                            <div class="week-stat-value">8</div>
+                            <div class="week-stat-sub">interventions</div>
+                        </div>
+                        <div class="week-stat">
+                            <div class="week-stat-label">Normal</div>
+                            <div class="week-stat-value">4</div>
+                            <div class="week-stat-sub">avg/week</div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!-- Annotations -->
                 <div class="annotation spike">
                     <strong>Direct effect</strong>
@@ -1408,7 +1709,7 @@
                                 <span class="token-desc">Allocated FFE (Alloc)</span>
                             </div>
                             <div class="token-item">
-                                <span class="token-owner utm">UTM</span>
+                                <span class="token-owner utm">U</span>
                                 <span class="token-desc">Non-Alloc CY/FFE (NA)</span>
                             </div>
                             <div class="token-item">
@@ -1416,7 +1717,7 @@
                                 <span class="token-desc">Spot CY/FFE (Spot)</span>
                             </div>
                             <div class="token-item">
-                                <span class="token-owner joint">SP/UTM</span>
+                                <span class="token-owner joint">SP/U</span>
                                 <span class="token-desc">Remaining FFE (Rem)</span>
                             </div>
                         </div>
@@ -1487,5 +1788,62 @@
             </div>
         </div>
     </div>
+    
+    <script>
+        // Mode toggle functionality
+        function setMode(mode) {
+            const frame = document.getElementById('mainFrame');
+            const buttons = document.querySelectorAll('.mode-btn');
+            
+            if (mode === 'exec') {
+                frame.classList.add('exec-mode');
+            } else {
+                frame.classList.remove('exec-mode');
+            }
+            
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if ((mode === 'exec' && btn.textContent === 'Executive') ||
+                    (mode === 'detail' && btn.textContent === 'Detail')) {
+                    btn.classList.add('active');
+                }
+            });
+        }
+        
+        // Add tooltips to cells for executive mode
+        document.querySelectorAll('.matrix-cell:not(.inactive)').forEach(cell => {
+            const metrics = cell.querySelector('.cell-metrics');
+            const yields = cell.querySelector('.cell-yields');
+            
+            if (metrics && yields) {
+                const capValue = metrics.querySelector('.metric.onp .metric-value')?.textContent || '—';
+                const allocValue = metrics.querySelector('.metric.cpm .metric-value')?.textContent || '—';
+                const naValue = yields.querySelector('.yield.utm .yield-value')?.textContent || '—';
+                const spotValue = yields.querySelector('.yield.sp .yield-value')?.textContent || '—';
+                
+                const tooltip = document.createElement('div');
+                tooltip.className = 'cell-tooltip';
+                tooltip.innerHTML = `
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Vessel Cap:</span>
+                        <span class="tooltip-value onp">${capValue} FFE</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Allocated:</span>
+                        <span class="tooltip-value cpm">${allocValue} FFE</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Non-Alloc CY:</span>
+                        <span class="tooltip-value utm">${naValue}</span>
+                    </div>
+                    <div class="tooltip-row">
+                        <span class="tooltip-label">Spot CY:</span>
+                        <span class="tooltip-value sp">${spotValue}</span>
+                    </div>
+                `;
+                cell.appendChild(tooltip);
+            }
+        });
+    </script>
 </body>
 </html>
