@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>E1-W: Calendar Operating Window (W47–W52 2025)</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
         
         * {
             margin: 0;
@@ -27,10 +27,10 @@
             --neutral-100: #f0f0f8;
             
             /* Capacity tightness colors */
-            --capacity-1: rgba(66, 176, 213, 0.15);
-            --capacity-2: rgba(66, 176, 213, 0.30);
-            --capacity-3: rgba(66, 176, 213, 0.50);
-            --capacity-4: rgba(255, 140, 66, 0.55);
+            --capacity-1: rgba(66, 176, 213, 0.12);
+            --capacity-2: rgba(66, 176, 213, 0.25);
+            --capacity-3: rgba(66, 176, 213, 0.42);
+            --capacity-4: rgba(255, 140, 66, 0.50);
             
             /* Event colors */
             --event-spike: rgba(255, 193, 7, 0.18);
@@ -39,11 +39,11 @@
             --event-removal-border: rgba(220, 53, 69, 0.6);
             
             /* Grid dimensions */
-            --cell-width: 120px;
-            --cell-height: 72px;
-            --cell-gap: 6px;
-            --row-label-width: 80px;
-            --wtd-label-width: 50px;
+            --cell-width: 138px;
+            --cell-height: 100px;
+            --cell-gap: 5px;
+            --row-label-width: 75px;
+            --wtd-label-width: 45px;
         }
         
         body {
@@ -58,21 +58,21 @@
             width: 1920px;
             height: 1080px;
             background: linear-gradient(145deg, var(--neutral-900) 0%, #0f0f1a 100%);
-            padding: 40px 50px;
+            padding: 32px 40px;
             display: flex;
             flex-direction: column;
         }
         
         /* Header */
         .header {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         .title {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             color: var(--neutral-100);
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             letter-spacing: -0.5px;
         }
         
@@ -81,7 +81,7 @@
         }
         
         .subtitle {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--neutral-400);
             max-width: 800px;
             line-height: 1.5;
@@ -90,7 +90,7 @@
         /* Main layout */
         .main-layout {
             display: flex;
-            gap: 30px;
+            gap: 24px;
             flex: 1;
         }
         
@@ -106,7 +106,7 @@
             display: grid;
             grid-template-columns: var(--wtd-label-width) var(--row-label-width) repeat(6, var(--cell-width));
             gap: var(--cell-gap);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
         }
         
         .header-spacer {
@@ -117,22 +117,22 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 8px 0;
+            padding: 6px 0;
             position: relative;
         }
         
         .week-label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--neutral-200);
         }
         
         .event-tag {
-            font-size: 9px;
+            font-size: 8px;
             font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 10px;
-            margin-top: 4px;
+            padding: 2px 6px;
+            border-radius: 8px;
+            margin-top: 3px;
             white-space: nowrap;
         }
         
@@ -152,7 +152,7 @@
         .matrix-grid {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: 1px;
             position: relative;
         }
         
@@ -162,8 +162,8 @@
             flex-direction: column;
             gap: var(--cell-gap);
             position: relative;
-            padding: 8px 0;
-            margin-bottom: 4px;
+            padding: 6px 0;
+            margin-bottom: 2px;
         }
         
         .wtd-group::before {
@@ -172,7 +172,7 @@
             left: 0;
             top: 50%;
             transform: translateY(-50%) rotate(-90deg);
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 600;
             color: var(--maersk-blue);
             letter-spacing: 0.5px;
@@ -184,13 +184,13 @@
         .wtd-group::after {
             content: '';
             position: absolute;
-            left: 38px;
-            top: 8px;
-            bottom: 8px;
-            width: 3px;
+            left: 34px;
+            top: 6px;
+            bottom: 6px;
+            width: 2px;
             background: var(--maersk-blue);
             opacity: 0.3;
-            border-radius: 2px;
+            border-radius: 1px;
         }
         
         /* Matrix row */
@@ -206,37 +206,37 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding-left: 8px;
+            padding-left: 6px;
         }
         
         .dep-id {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             color: var(--neutral-200);
         }
         
         .dep-etd {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--neutral-500);
-            margin-top: 2px;
+            margin-top: 1px;
         }
         
         /* Matrix cell */
         .matrix-cell {
             height: var(--cell-height);
-            border-radius: 6px;
-            padding: 8px 10px;
+            border-radius: 5px;
+            padding: 6px 8px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.04);
             transition: all 0.15s ease;
             position: relative;
+            font-family: 'IBM Plex Sans', sans-serif;
         }
         
         .matrix-cell:hover {
             border-color: var(--maersk-blue);
-            transform: scale(1.03);
+            transform: scale(1.02);
             z-index: 10;
         }
         
@@ -247,7 +247,12 @@
         
         .matrix-cell.inactive {
             background: rgba(255,255,255,0.02);
-            opacity: 0.35;
+            opacity: 0.30;
+        }
+        
+        .matrix-cell.inactive .cell-metrics,
+        .matrix-cell.inactive .cell-yields {
+            opacity: 0.5;
         }
         
         /* Event column highlights */
@@ -259,15 +264,19 @@
             box-shadow: inset 0 0 0 2px var(--event-removal-border);
         }
         
-        .cell-top {
+        /* Cell header - Bookings delta */
+        .cell-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
+            align-items: center;
+            margin-bottom: 4px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
         }
         
         .bookings-delta {
-            font-size: 14px;
-            font-weight: 600;
+            font-size: 13px;
+            font-weight: 700;
         }
         
         .bookings-delta.positive { color: #4ade80; }
@@ -276,30 +285,93 @@
         
         .remaining-ffe {
             font-size: 9px;
-            color: var(--neutral-400);
-            text-align: right;
+            color: var(--neutral-300);
+            font-weight: 500;
         }
         
         .remaining-ffe span {
-            font-weight: 600;
-            color: var(--neutral-300);
+            font-weight: 700;
+            color: var(--neutral-100);
         }
         
+        /* Cell metrics - Capacity info */
+        .cell-metrics {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+        
+        .metric {
+            font-size: 8px;
+            color: var(--neutral-400);
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .metric-label {
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            opacity: 0.8;
+        }
+        
+        .metric-value {
+            font-weight: 600;
+            color: var(--neutral-300);
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+        }
+        
+        .metric.onp .metric-value { color: #ef4444; }
+        .metric.cpm .metric-value { color: #06b6d4; }
+        
+        /* Cell yields - CY/FFE */
+        .cell-yields {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+        
+        .yield {
+            font-size: 8px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .yield-label {
+            color: var(--neutral-500);
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+        
+        .yield-value {
+            font-weight: 600;
+            font-family: 'IBM Plex Mono', monospace;
+            font-size: 9px;
+        }
+        
+        .yield.utm .yield-value { color: #8b5cf6; }
+        .yield.sp .yield-value { color: #3b82f6; }
+        
+        /* Cell bottom - Persona badges */
         .cell-bottom {
             display: flex;
-            gap: 3px;
+            gap: 2px;
             flex-wrap: wrap;
+            margin-top: auto;
         }
         
         /* Persona badges */
         .persona-badge {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 7px;
+            font-size: 6px;
             font-weight: 700;
             letter-spacing: -0.3px;
         }
@@ -310,13 +382,25 @@
         .persona-badge.mm { background: #f59e0b; color: white; }
         .persona-badge.onp { background: #ef4444; color: white; }
         
-        /* WTD Note */
-        .wtd-note {
+        /* Sailed state */
+        .matrix-cell.inactive .cell-header {
+            border-bottom: none;
+        }
+        
+        .sailed-label {
             font-size: 10px;
             color: var(--neutral-500);
+            text-align: center;
+            margin: auto;
+        }
+        
+        /* WTD Note */
+        .wtd-note {
+            font-size: 9px;
+            color: var(--neutral-500);
             font-style: italic;
-            margin-top: 12px;
-            padding: 8px 12px;
+            margin-top: 10px;
+            padding: 6px 10px;
             background: rgba(0,0,0,0.2);
             border-radius: 4px;
             line-height: 1.4;
@@ -324,19 +408,19 @@
         
         /* Right panel */
         .right-panel {
-            width: 260px;
+            width: 240px;
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
         
         /* Annotations */
         .annotation {
             background: rgba(0,0,0,0.5);
-            padding: 14px 16px;
-            border-radius: 8px;
+            padding: 12px 14px;
+            border-radius: 6px;
             border-left: 3px solid var(--maersk-blue);
-            font-size: 11px;
+            font-size: 10px;
             line-height: 1.5;
             color: var(--neutral-300);
         }
@@ -344,8 +428,8 @@
         .annotation strong {
             color: var(--maersk-blue);
             display: block;
-            margin-bottom: 4px;
-            font-size: 10px;
+            margin-bottom: 3px;
+            font-size: 9px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -369,23 +453,23 @@
         /* Legend */
         .legend {
             background: rgba(0,0,0,0.4);
-            border-radius: 10px;
-            padding: 18px;
+            border-radius: 8px;
+            padding: 14px;
             border: 1px solid rgba(255,255,255,0.06);
             margin-top: auto;
         }
         
         .legend-title {
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             color: var(--neutral-200);
-            margin-bottom: 14px;
-            padding-bottom: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
             border-bottom: 1px solid rgba(255,255,255,0.08);
         }
         
         .legend-section {
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         
         .legend-section:last-child {
@@ -393,9 +477,9 @@
         }
         
         .legend-label {
-            font-size: 9px;
+            font-size: 8px;
             color: var(--neutral-500);
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
@@ -403,20 +487,20 @@
         .legend-items {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: 4px;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 10px;
+            gap: 6px;
+            font-size: 9px;
             color: var(--neutral-300);
         }
         
         .legend-color {
-            width: 18px;
-            height: 12px;
+            width: 16px;
+            height: 10px;
             border-radius: 2px;
             flex-shrink: 0;
         }
@@ -430,42 +514,53 @@
         
         .legend-badges {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             flex-wrap: wrap;
         }
         
         .legend-badge-item {
             display: flex;
             align-items: center;
-            gap: 4px;
-            font-size: 9px;
+            gap: 3px;
+            font-size: 8px;
             color: var(--neutral-400);
         }
         
         .legend-badge-item .persona-badge {
-            width: 16px;
-            height: 16px;
-            font-size: 6px;
+            width: 14px;
+            height: 14px;
+            font-size: 5px;
         }
         
-        .legend-metrics {
+        /* Token legend */
+        .legend-tokens {
             display: flex;
-            gap: 12px;
+            flex-direction: column;
+            gap: 3px;
         }
         
-        .legend-metric {
+        .token-item {
             display: flex;
             align-items: center;
             gap: 6px;
-            font-size: 10px;
+            font-size: 8px;
+        }
+        
+        .token-owner {
+            width: 28px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .token-owner.onp { color: #ef4444; }
+        .token-owner.cpm { color: #06b6d4; }
+        .token-owner.utm { color: #8b5cf6; }
+        .token-owner.sp { color: #3b82f6; }
+        .token-owner.joint { color: var(--neutral-300); }
+        
+        .token-desc {
             color: var(--neutral-400);
         }
-        
-        .legend-metric .value {
-            font-weight: 600;
-        }
-        
-        .legend-metric .value.positive { color: #4ade80; }
         
         /* Responsive scaling */
         @media (max-width: 1920px) {
@@ -518,7 +613,7 @@
                 <div class="matrix-grid">
                     <!-- WTD 0-2 Group -->
                     <div class="wtd-group" data-wtd="WTD 0–2">
-                        <!-- D1 Row -->
+                        <!-- D1 Row (Vessel: 380 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
                             <div class="row-label">
@@ -526,18 +621,34 @@
                                 <span class="dep-etd">ETD W48</span>
                             </div>
                             <div class="matrix-cell capacity-2">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+5%</span>
-                                    <span class="remaining-ffe">Rem <span>180</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>180</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">160</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$820</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$890</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-4 event-spike-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+22%</span>
-                                    <span class="remaining-ffe">Rem <span>45</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>45</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">140</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$920</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$1050</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -546,36 +657,20 @@
                                 </div>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                         </div>
                         
-                        <!-- D2 Row -->
+                        <!-- D2 Row (Vessel: 400 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
                             <div class="row-label">
@@ -583,18 +678,34 @@
                                 <span class="dep-etd">ETD W49</span>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+3%</span>
-                                    <span class="remaining-ffe">Rem <span>220</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>220</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">180</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$780</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$840</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-3 event-spike-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+18%</span>
-                                    <span class="remaining-ffe">Rem <span>95</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>95</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">160</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$880</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$980</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -602,9 +713,17 @@
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-4 event-spike-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+15%</span>
-                                    <span class="remaining-ffe">Rem <span>40</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>40</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">145</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$950</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$1120</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -613,32 +732,20 @@
                                 </div>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                         </div>
                     </div>
                     
                     <!-- WTD 2-4 Group -->
                     <div class="wtd-group" data-wtd="WTD 2–4">
-                        <!-- D3 Row -->
+                        <!-- D3 Row (Vessel: 420 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
                             <div class="row-label">
@@ -646,18 +753,34 @@
                                 <span class="dep-etd">ETD W50</span>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+2%</span>
-                                    <span class="remaining-ffe">Rem <span>280</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>280</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">200</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$750</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$800</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge cpm">CPM</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-2 event-spike-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+12%</span>
-                                    <span class="remaining-ffe">Rem <span>165</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>165</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">180</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$820</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$890</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -665,9 +788,17 @@
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-3 event-spike-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+10%</span>
-                                    <span class="remaining-ffe">Rem <span>110</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>110</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">165</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$870</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$950</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -675,9 +806,17 @@
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-4">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+8%</span>
-                                    <span class="remaining-ffe">Rem <span>55</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>55</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">150</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$920</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$1040</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -686,22 +825,14 @@
                                 </div>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                         </div>
                         
-                        <!-- D4 Row -->
+                        <!-- D4 Row (Vessel: 400 FFE, drops to 320 on cap removal) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
                             <div class="row-label">
@@ -709,34 +840,66 @@
                                 <span class="dep-etd">ETD W51</span>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">+1%</span>
-                                    <span class="remaining-ffe">Rem <span>320</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>320</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">180</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$720</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$760</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-2 event-spike-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+8%</span>
-                                    <span class="remaining-ffe">Rem <span>210</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>210</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">170</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$780</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$840</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-2 event-spike-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+6%</span>
-                                    <span class="remaining-ffe">Rem <span>175</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>175</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">160</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$800</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$870</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge u">U</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-3">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+5%</span>
-                                    <span class="remaining-ffe">Rem <span>125</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>125</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">150</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$850</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$920</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -744,9 +907,17 @@
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-4 event-removal-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta negative">-15%</span>
-                                    <span class="remaining-ffe">Rem <span>20</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>20</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value" style="color: #f87171;">320</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">100</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$1100</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$1350</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -757,18 +928,14 @@
                                 </div>
                             </div>
                             <div class="matrix-cell inactive">
-                                <div class="cell-top">
-                                    <span class="bookings-delta neutral">—</span>
-                                    <span class="remaining-ffe">Sailed</span>
-                                </div>
-                                <div class="cell-bottom"></div>
+                                <span class="sailed-label">Sailed</span>
                             </div>
                         </div>
                     </div>
                     
                     <!-- WTD 5-8 Group -->
                     <div class="wtd-group" data-wtd="WTD 5–8">
-                        <!-- D5 Row -->
+                        <!-- D5 Row (Vessel: 380 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
                             <div class="row-label">
@@ -776,43 +943,83 @@
                                 <span class="dep-etd">ETD W52</span>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">0%</span>
-                                    <span class="remaining-ffe">Rem <span>350</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>350</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">170</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$700</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$740</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1 event-spike-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+4%</span>
-                                    <span class="remaining-ffe">Rem <span>290</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>290</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">165</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$740</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$790</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-2 event-spike-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+3%</span>
-                                    <span class="remaining-ffe">Rem <span>245</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>245</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">160</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$760</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$820</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-2">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+4%</span>
-                                    <span class="remaining-ffe">Rem <span>200</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>200</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">155</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$790</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$860</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge u">U</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-3 event-removal-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+12%</span>
-                                    <span class="remaining-ffe">Rem <span>120</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>120</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">140</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$880</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$980</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -821,9 +1028,17 @@
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-4">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+9%</span>
-                                    <span class="remaining-ffe">Rem <span>65</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>65</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">125</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$940</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$1080</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -833,7 +1048,7 @@
                             </div>
                         </div>
                         
-                        <!-- D6 Row -->
+                        <!-- D6 Row (Vessel: 400 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
                             <div class="row-label">
@@ -841,41 +1056,81 @@
                                 <span class="dep-etd">ETD W01 '26</span>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">0%</span>
-                                    <span class="remaining-ffe">Rem <span>380</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>380</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">185</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$680</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$720</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+2%</span>
-                                    <span class="remaining-ffe">Rem <span>340</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>340</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">180</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$700</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$740</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+2%</span>
-                                    <span class="remaining-ffe">Rem <span>310</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>310</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">175</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$720</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$760</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-2">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+3%</span>
-                                    <span class="remaining-ffe">Rem <span>265</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>265</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">170</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$750</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$800</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-2 event-removal-col">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+8%</span>
-                                    <span class="remaining-ffe">Rem <span>195</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>195</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">160</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$800</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$870</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -883,9 +1138,17 @@
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-3">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+6%</span>
-                                    <span class="remaining-ffe">Rem <span>140</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>140</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">400</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">150</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$850</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$940</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -897,7 +1160,7 @@
                     
                     <!-- WTD 8+ Group -->
                     <div class="wtd-group" data-wtd="WTD 8+">
-                        <!-- D7 Row -->
+                        <!-- D7 Row (Vessel: 420 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
                             <div class="row-label">
@@ -905,48 +1168,96 @@
                                 <span class="dep-etd">ETD W04 '26</span>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">0%</span>
-                                    <span class="remaining-ffe">Rem <span>400</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>400</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">200</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$650</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$680</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">+1%</span>
-                                    <span class="remaining-ffe">Rem <span>385</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>385</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">195</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$660</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$690</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">+1%</span>
-                                    <span class="remaining-ffe">Rem <span>370</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>370</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">190</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$670</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$700</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+2%</span>
-                                    <span class="remaining-ffe">Rem <span>350</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>350</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">185</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$690</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$720</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge cpm">CPM</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+3%</span>
-                                    <span class="remaining-ffe">Rem <span>320</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>320</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">180</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$710</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$750</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-2">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+2%</span>
-                                    <span class="remaining-ffe">Rem <span>290</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>290</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">420</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">175</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$740</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$790</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -954,7 +1265,7 @@
                             </div>
                         </div>
                         
-                        <!-- D8 Row -->
+                        <!-- D8 Row (Vessel: 380 FFE) -->
                         <div class="matrix-row">
                             <div class="row-spacer"></div>
                             <div class="row-label">
@@ -962,46 +1273,94 @@
                                 <span class="dep-etd">ETD W05 '26</span>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">0%</span>
-                                    <span class="remaining-ffe">Rem <span>400</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>360</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">175</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$640</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$670</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">0%</span>
-                                    <span class="remaining-ffe">Rem <span>395</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>355</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">172</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$650</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$680</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">+1%</span>
-                                    <span class="remaining-ffe">Rem <span>385</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>345</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">168</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$660</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$690</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta neutral">+1%</span>
-                                    <span class="remaining-ffe">Rem <span>375</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>335</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">165</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$670</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$700</span></div>
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+2%</span>
-                                    <span class="remaining-ffe">Rem <span>355</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>320</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">160</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$690</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$730</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
                             <div class="matrix-cell capacity-1">
-                                <div class="cell-top">
+                                <div class="cell-header">
                                     <span class="bookings-delta positive">+2%</span>
-                                    <span class="remaining-ffe">Rem <span>340</span> FFE</span>
+                                    <span class="remaining-ffe">Rem <span>305</span></span>
+                                </div>
+                                <div class="cell-metrics">
+                                    <div class="metric onp"><span class="metric-label">Cap</span> <span class="metric-value">380</span></div>
+                                    <div class="metric cpm"><span class="metric-label">Alloc</span> <span class="metric-value">155</span></div>
+                                </div>
+                                <div class="cell-yields">
+                                    <div class="yield utm"><span class="yield-label">NA</span> <span class="yield-value">$710</span></div>
+                                    <div class="yield sp"><span class="yield-label">Spot</span> <span class="yield-value">$760</span></div>
                                 </div>
                                 <div class="cell-bottom">
                                     <span class="persona-badge sp">SP</span>
@@ -1020,22 +1379,48 @@
                 <!-- Annotations -->
                 <div class="annotation spike">
                     <strong>Direct effect</strong>
-                    Spike tightens capacity + boosts bookings on near-term departures (D1, D2)
+                    Spike tightens capacity + boosts bookings on near-term departures (D1, D2). Spot CY surges.
                 </div>
                 
                 <div class="annotation">
                     <strong>Halo effect</strong>
-                    Substitution/reflow shifts booking pressure to nearby horizons (D3–D5)
+                    Substitution/reflow shifts booking pressure to nearby horizons (D3–D5). CPM curtails allocations.
                 </div>
                 
                 <div class="annotation removal">
                     <strong>Rework</strong>
-                    Multiple personas intervene in same week after capacity removal (D4 W51)
+                    Capacity removal on D4 W51: All 5 personas intervene. Cap drops 400→320, Alloc cut to 100.
                 </div>
                 
                 <!-- Legend -->
                 <div class="legend">
                     <div class="legend-title">Legend</div>
+                    
+                    <div class="legend-section">
+                        <div class="legend-label">Tokens by Persona</div>
+                        <div class="legend-tokens">
+                            <div class="token-item">
+                                <span class="token-owner onp">ONP</span>
+                                <span class="token-desc">Vessel Capacity (Cap)</span>
+                            </div>
+                            <div class="token-item">
+                                <span class="token-owner cpm">CPM</span>
+                                <span class="token-desc">Allocated FFE (Alloc)</span>
+                            </div>
+                            <div class="token-item">
+                                <span class="token-owner utm">UTM</span>
+                                <span class="token-desc">Non-Alloc CY/FFE (NA)</span>
+                            </div>
+                            <div class="token-item">
+                                <span class="token-owner sp">SP</span>
+                                <span class="token-desc">Spot CY/FFE (Spot)</span>
+                            </div>
+                            <div class="token-item">
+                                <span class="token-owner joint">SP/UTM</span>
+                                <span class="token-desc">Remaining FFE (Rem)</span>
+                            </div>
+                        </div>
+                    </div>
                     
                     <div class="legend-section">
                         <div class="legend-label">Capacity Tightness</div>
@@ -1056,20 +1441,6 @@
                                 <div class="legend-color cap-4"></div>
                                 <span>Tight (&lt;75 FFE)</span>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div class="legend-section">
-                        <div class="legend-label">Metrics</div>
-                        <div class="legend-metrics">
-                            <div class="legend-metric">
-                                <span class="value positive">+12%</span>
-                                <span>Bookings Δ vs expected</span>
-                            </div>
-                        </div>
-                        <div class="legend-item" style="margin-top: 4px;">
-                            <span style="font-size: 9px; color: var(--neutral-400);">Rem 120 FFE</span>
-                            <span>Remaining capacity</span>
                         </div>
                     </div>
                     
