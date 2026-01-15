@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RM Ops Week Grid — Actions per Departure × Persona</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-900: #0f0f1a;
+            --bg-800: #1a1a2e;
+            --bg-700: #242438;
+            --bg-600: #2d2d44;
+            --text-100: #f0f0f8;
+            --text-200: #d0d0e0;
+            --text-300: #aaaac8;
+            --text-400: #8888a8;
+            --text-500: #5a5a7a;
+            --maersk-blue: #42B0D5;
+            --pricing-color: #3b82f6;
+            --uptake-color: #8b5cf6;
+            --cpm-color: #06b6d4;
+            --market-color: #f59e0b;
+            --onp-color: #ef4444;
+            --event-spike: rgba(255, 193, 7, 0.2);
+            --event-spike-border: rgba(255, 193, 7, 0.6);
+            --event-removal: rgba(220, 53, 69, 0.2);
+            --event-removal-border: rgba(220, 53, 69, 0.6);
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans', sans-serif;
+            background: var(--bg-900);
+            color: var(--text-100);
+            min-height: 100vh;
+        }
+        
+        .frame {
+            width: 1400px;
+            min-height: 900px;
+            padding: 32px 40px;
+            margin: 0 auto;
+            background: linear-gradient(145deg, var(--bg-900), #0a0a14);
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+        
+        .header-left h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-100);
+            margin-bottom: 6px;
+        }
+        
+        .header-left h1 span { color: var(--maersk-blue); }
+        
+        .header-left .subtitle {
+            font-size: 12px;
+            color: var(--text-400);
+        }
+        
+        /* Event toggles */
+        .event-toggles {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .event-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.15s;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .event-toggle.spike {
+            background: var(--event-spike);
+            color: #fcd34d;
+        }
+        
+        .event-toggle.spike.active {
+            border-color: var(--event-spike-border);
+        }
+        
+        .event-toggle.removal {
+            background: var(--event-removal);
+            color: #fca5a5;
+        }
+        
+        .event-toggle.removal.active {
+            border-color: var(--event-removal-border);
+        }
+        
+        /* Grid */
+        .ops-grid {
+            display: grid;
+            grid-template-columns: 120px repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 24px;
+        }
+        
+        /* Column headers */
+        .col-header {
+            padding: 14px 12px;
+            text-align: center;
+            background: var(--bg-800);
+            border-radius: 6px;
+            position: relative;
+        }
+        
+        .col-header.event-spike {
+            background: linear-gradient(to bottom, var(--event-spike), var(--bg-800));
+            border-top: 3px solid var(--event-spike-border);
+        }
+        
+        .col-header.event-removal {
+            background: linear-gradient(to bottom, var(--event-removal), var(--bg-800));
+            border-top: 3px solid var(--event-removal-border);
+        }
+        
+        .col-dep {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-100);
+        }
+        
+        .col-etd {
+            font-size: 10px;
+            color: var(--text-500);
+            margin-top: 2px;
+        }
+        
+        .col-status {
+            font-size: 8px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 6px;
+        }
+        
+        .col-status.hot { background: #ef4444; color: white; }
+        .col-status.watch { background: #f59e0b; color: white; }
+        .col-status.normal { background: #22c55e; color: white; }
+        
+        /* Persona row header */
+        .persona-header {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-800);
+            border-radius: 6px;
+            gap: 4px;
+        }
+        
+        .persona-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .persona-icon.pricing { background: var(--pricing-color); }
+        .persona-icon.uptake { background: var(--uptake-color); }
+        .persona-icon.cpm { background: var(--cpm-color); }
+        .persona-icon.market { background: var(--market-color); }
+        .persona-icon.onp { background: var(--onp-color); }
+        
+        .persona-name {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-300);
+            text-align: center;
+        }
+        
+        /* Grid cell */
+        .grid-cell {
+            background: var(--bg-700);
+            border-radius: 6px;
+            padding: 12px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.15s;
+        }
+        
+        .grid-cell:hover {
+            border-color: var(--maersk-blue);
+        }
+        
+        .grid-cell.event-spike-col {
+            background: linear-gradient(to bottom, rgba(255, 193, 7, 0.08), var(--bg-700));
+        }
+        
+        .grid-cell.event-removal-col {
+            background: linear-gradient(to bottom, rgba(220, 53, 69, 0.08), var(--bg-700));
+        }
+        
+        /* Action tags */
+        .action-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .action-tag {
+            font-size: 9px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        
+        .action-tag:hover {
+            transform: scale(1.05);
+        }
+        
+        .action-tag.reprice { background: var(--pricing-color); color: white; }
+        .action-tag.open-spot { background: rgba(59, 130, 246, 0.3); color: #93c5fd; border: 1px solid var(--pricing-color); }
+        .action-tag.throttle { background: var(--uptake-color); color: white; }
+        .action-tag.curtail { background: var(--cpm-color); color: white; }
+        .action-tag.amend { background: rgba(6, 182, 212, 0.3); color: #67e8f9; border: 1px solid var(--cpm-color); }
+        .action-tag.align { background: var(--market-color); color: white; }
+        .action-tag.capacity-update { background: var(--onp-color); color: white; }
+        .action-tag.exception { background: rgba(239, 68, 68, 0.3); color: #fca5a5; border: 1px solid var(--onp-color); }
+        
+        /* Rework indicator */
+        .rework-divider {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--event-spike-border), transparent);
+            margin: 4px 0;
+            position: relative;
+        }
+        
+        .rework-divider.removal {
+            background: linear-gradient(to right, transparent, var(--event-removal-border), transparent);
+        }
+        
+        .rework-divider::after {
+            content: 'rework';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 7px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-500);
+            background: var(--bg-700);
+            padding: 0 6px;
+        }
+        
+        .rework-tags {
+            opacity: 0.7;
+        }
+        
+        /* Hide rework by default */
+        .rework-section {
+            display: none;
+        }
+        
+        .frame.spike-active .grid-cell[data-col="d1"] .rework-section.spike,
+        .frame.spike-active .grid-cell[data-col="d2"] .rework-section.spike {
+            display: block;
+        }
+        
+        .frame.removal-active .grid-cell[data-col="d4"] .rework-section.removal {
+            display: block;
+        }
+        
+        /* Legend */
+        .legend {
+            background: var(--bg-800);
+            border-radius: 10px;
+            padding: 16px 20px;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        
+        .legend-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-200);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        
+        .legend-section h4 {
+            font-size: 9px;
+            color: var(--text-500);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 10px;
+            color: var(--text-300);
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+        
+        .legend-personas {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .legend-persona {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            color: var(--text-400);
+        }
+        
+        .legend-persona-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="frame" id="mainFrame">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <h1><span>RM</span> Ops Week Grid</h1>
+                <p class="subtitle">Actions per persona × departure. Toggle events to see rework patterns.</p>
+            </div>
+            <div class="event-toggles">
+                <div class="event-toggle spike" onclick="toggleEvent('spike')">
+                    📈 Booking spike (W48–W49)
+                </div>
+                <div class="event-toggle removal" onclick="toggleEvent('removal')">
+                    ⚠️ Capacity removal (W51)
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ops Grid -->
+        <div class="ops-grid" id="opsGrid">
+            <!-- Header row -->
+            <div class="col-header"></div>
+            <div class="col-header event-spike" data-col="d1">
+                <div class="col-dep">D1</div>
+                <div class="col-etd">ETD W48</div>
+                <span class="col-status hot">Hot</span>
+            </div>
+            <div class="col-header event-spike" data-col="d2">
+                <div class="col-dep">D2</div>
+                <div class="col-etd">ETD W49</div>
+                <span class="col-status watch">Watch</span>
+            </div>
+            <div class="col-header" data-col="d3">
+                <div class="col-dep">D3</div>
+                <div class="col-etd">ETD W50</div>
+                <span class="col-status normal">Normal</span>
+            </div>
+            <div class="col-header event-removal" data-col="d4">
+                <div class="col-dep">D4</div>
+                <div class="col-etd">ETD W51</div>
+                <span class="col-status hot">Hot</span>
+            </div>
+            <div class="col-header" data-col="d5">
+                <div class="col-dep">D5</div>
+                <div class="col-etd">ETD W52</div>
+                <span class="col-status normal">Normal</span>
+            </div>
+            
+            <!-- Pricing row -->
+            <div class="persona-header">
+                <div class="persona-icon pricing">SP</div>
+                <div class="persona-name">Pricing</div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d1">
+                <div class="action-tags">
+                    <span class="action-tag reprice">Reprice</span>
+                    <span class="action-tag open-spot">Open spot</span>
+                </div>
+                <div class="rework-section spike">
+                    <div class="rework-divider"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag reprice">Reprice</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d2">
+                <div class="action-tags">
+                    <span class="action-tag reprice">Reprice</span>
+                </div>
+                <div class="rework-section spike">
+                    <div class="rework-divider"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag reprice">Reprice</span>
+                        <span class="action-tag open-spot">Open spot</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d3">
+                <div class="action-tags">
+                    <span class="action-tag reprice">Reprice</span>
+                </div>
+            </div>
+            <div class="grid-cell event-removal-col" data-col="d4">
+                <div class="action-tags">
+                    <span class="action-tag reprice">Reprice</span>
+                    <span class="action-tag open-spot">Open spot</span>
+                </div>
+                <div class="rework-section removal">
+                    <div class="rework-divider removal"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag reprice">Reprice</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d5">
+                <div class="action-tags">
+                    <span class="action-tag open-spot">Open spot</span>
+                </div>
+            </div>
+            
+            <!-- Uptake row -->
+            <div class="persona-header">
+                <div class="persona-icon uptake">U</div>
+                <div class="persona-name">Uptake</div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d1">
+                <div class="action-tags">
+                    <span class="action-tag throttle">Throttle</span>
+                </div>
+                <div class="rework-section spike">
+                    <div class="rework-divider"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag throttle">Throttle</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d2">
+                <div class="action-tags">
+                    <span class="action-tag throttle">Throttle</span>
+                </div>
+                <div class="rework-section spike">
+                    <div class="rework-divider"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag throttle">Throttle</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d3">
+                <div class="action-tags">
+                    <!-- Normal week, minimal action -->
+                </div>
+            </div>
+            <div class="grid-cell event-removal-col" data-col="d4">
+                <div class="action-tags">
+                    <span class="action-tag throttle">Throttle</span>
+                    <span class="action-tag exception">Exception</span>
+                </div>
+                <div class="rework-section removal">
+                    <div class="rework-divider removal"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag throttle">Throttle</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d5">
+                <div class="action-tags">
+                    <!-- Normal week -->
+                </div>
+            </div>
+            
+            <!-- CPM row -->
+            <div class="persona-header">
+                <div class="persona-icon cpm">CPM</div>
+                <div class="persona-name">CPM/GSC</div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d1">
+                <div class="action-tags">
+                    <span class="action-tag curtail">Curtail</span>
+                </div>
+                <div class="rework-section spike">
+                    <div class="rework-divider"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag amend">Amend</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d2">
+                <div class="action-tags">
+                    <span class="action-tag curtail">Curtail</span>
+                    <span class="action-tag amend">Amend</span>
+                </div>
+                <div class="rework-section spike">
+                    <div class="rework-divider"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag curtail">Curtail</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d3">
+                <div class="action-tags">
+                    <span class="action-tag amend">Amend</span>
+                </div>
+            </div>
+            <div class="grid-cell event-removal-col" data-col="d4">
+                <div class="action-tags">
+                    <span class="action-tag curtail">Curtail</span>
+                    <span class="action-tag amend">Amend</span>
+                    <span class="action-tag exception">Exception</span>
+                </div>
+                <div class="rework-section removal">
+                    <div class="rework-divider removal"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag curtail">Curtail</span>
+                        <span class="action-tag amend">Amend</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d5">
+                <div class="action-tags">
+                    <span class="action-tag amend">Amend</span>
+                </div>
+            </div>
+            
+            <!-- Market row -->
+            <div class="persona-header">
+                <div class="persona-icon market">MM</div>
+                <div class="persona-name">Market</div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d1">
+                <div class="action-tags">
+                    <span class="action-tag align">Align</span>
+                </div>
+                <div class="rework-section spike">
+                    <div class="rework-divider"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag align">Align</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d2">
+                <div class="action-tags">
+                    <span class="action-tag align">Align</span>
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d3">
+                <div class="action-tags">
+                    <!-- Normal week -->
+                </div>
+            </div>
+            <div class="grid-cell event-removal-col" data-col="d4">
+                <div class="action-tags">
+                    <span class="action-tag align">Align</span>
+                </div>
+                <div class="rework-section removal">
+                    <div class="rework-divider removal"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag align">Align</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d5">
+                <div class="action-tags">
+                    <!-- Normal week -->
+                </div>
+            </div>
+            
+            <!-- ONP row -->
+            <div class="persona-header">
+                <div class="persona-icon onp">ONP</div>
+                <div class="persona-name">ONP</div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d1">
+                <div class="action-tags">
+                    <!-- No action on spike -->
+                </div>
+            </div>
+            <div class="grid-cell event-spike-col" data-col="d2">
+                <div class="action-tags">
+                    <!-- No action on spike -->
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d3">
+                <div class="action-tags">
+                    <!-- Normal week -->
+                </div>
+            </div>
+            <div class="grid-cell event-removal-col" data-col="d4">
+                <div class="action-tags">
+                    <span class="action-tag capacity-update">Capacity update</span>
+                    <span class="action-tag exception">Exception</span>
+                </div>
+                <div class="rework-section removal">
+                    <div class="rework-divider removal"></div>
+                    <div class="action-tags rework-tags">
+                        <span class="action-tag capacity-update">Capacity update</span>
+                    </div>
+                </div>
+            </div>
+            <div class="grid-cell" data-col="d5">
+                <div class="action-tags">
+                    <!-- Normal week -->
+                </div>
+            </div>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-title">Legend</div>
+            <div class="legend-grid">
+                <div class="legend-section">
+                    <h4>Actions</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="action-tag reprice" style="font-size: 8px; padding: 2px 6px;">Reprice</span>
+                            <span>Adjust spot rates</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="action-tag open-spot" style="font-size: 8px; padding: 2px 6px;">Open spot</span>
+                            <span>Open freesale</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="action-tag throttle" style="font-size: 8px; padding: 2px 6px;">Throttle</span>
+                            <span>Limit bookings</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-section">
+                    <h4>Actions (cont.)</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="action-tag curtail" style="font-size: 8px; padding: 2px 6px;">Curtail</span>
+                            <span>Cut allocations</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="action-tag amend" style="font-size: 8px; padding: 2px 6px;">Amend</span>
+                            <span>Modify contract</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="action-tag align" style="font-size: 8px; padding: 2px 6px;">Align</span>
+                            <span>Cross-team sync</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-section">
+                    <h4>Events</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--event-spike); border: 1px solid var(--event-spike-border);"></div>
+                            <span>Booking spike</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background: var(--event-removal); border: 1px solid var(--event-removal-border);"></div>
+                            <span>Capacity removal</span>
+                        </div>
+                        <div class="legend-item">
+                            <span style="font-size: 9px; color: var(--text-500);">↳ rework</span>
+                            <span>Repeated actions</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="legend-section">
+                    <h4>Personas</h4>
+                    <div class="legend-items">
+                        <div class="legend-personas">
+                            <div class="legend-persona">
+                                <div class="legend-persona-dot" style="background: var(--pricing-color);"></div>
+                                SP
+                            </div>
+                            <div class="legend-persona">
+                                <div class="legend-persona-dot" style="background: var(--uptake-color);"></div>
+                                U
+                            </div>
+                            <div class="legend-persona">
+                                <div class="legend-persona-dot" style="background: var(--cpm-color);"></div>
+                                CPM
+                            </div>
+                            <div class="legend-persona">
+                                <div class="legend-persona-dot" style="background: var(--market-color);"></div>
+                                MM
+                            </div>
+                            <div class="legend-persona">
+                                <div class="legend-persona-dot" style="background: var(--onp-color);"></div>
+                                ONP
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function toggleEvent(type) {
+            const frame = document.getElementById('mainFrame');
+            const toggle = document.querySelector(`.event-toggle.${type}`);
+            
+            if (type === 'spike') {
+                frame.classList.toggle('spike-active');
+                toggle.classList.toggle('active');
+            } else if (type === 'removal') {
+                frame.classList.toggle('removal-active');
+                toggle.classList.toggle('active');
+            }
+        }
+    </script>
+</body>
+</html>
