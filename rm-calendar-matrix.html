@@ -26,20 +26,24 @@
             --neutral-200: #d0d0e0;
             --neutral-100: #f0f0f8;
             
-            /* Capacity tightness colors (light = more capacity, dark = tight) */
-            --capacity-1: rgba(66, 176, 213, 0.15);  /* Light - plenty of capacity */
-            --capacity-2: rgba(66, 176, 213, 0.30);  /* Medium */
-            --capacity-3: rgba(66, 176, 213, 0.50);  /* Medium-tight */
-            --capacity-4: rgba(255, 140, 66, 0.55); /* Tight - warning orange */
+            /* Capacity tightness colors */
+            --capacity-1: rgba(66, 176, 213, 0.15);
+            --capacity-2: rgba(66, 176, 213, 0.30);
+            --capacity-3: rgba(66, 176, 213, 0.50);
+            --capacity-4: rgba(255, 140, 66, 0.55);
             
             /* Event colors */
-            --event-spike: rgba(255, 193, 7, 0.20);
-            --event-removal: rgba(220, 53, 69, 0.20);
+            --event-spike: rgba(255, 193, 7, 0.18);
+            --event-spike-border: rgba(255, 193, 7, 0.6);
+            --event-removal: rgba(220, 53, 69, 0.18);
+            --event-removal-border: rgba(220, 53, 69, 0.6);
             
-            /* Halo colors */
-            --halo-strong: rgba(255, 193, 7, 0.12);
-            --halo-medium: rgba(255, 193, 7, 0.06);
-            --halo-light: rgba(255, 193, 7, 0.03);
+            /* Grid dimensions */
+            --cell-width: 120px;
+            --cell-height: 72px;
+            --cell-gap: 6px;
+            --row-label-width: 80px;
+            --wtd-label-width: 50px;
         }
         
         body {
@@ -53,19 +57,19 @@
         .frame {
             width: 1920px;
             height: 1080px;
-            background: linear-gradient(135deg, var(--neutral-900) 0%, #12121f 100%);
+            background: linear-gradient(145deg, var(--neutral-900) 0%, #0f0f1a 100%);
             padding: 40px 50px;
-            position: relative;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
         
         /* Header */
         .header {
-            margin-bottom: 24px;
+            margin-bottom: 30px;
         }
         
         .title {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 700;
             color: var(--neutral-100);
             margin-bottom: 8px;
@@ -77,151 +81,162 @@
         }
         
         .subtitle {
-            font-size: 14px;
+            font-size: 13px;
             color: var(--neutral-400);
-            max-width: 900px;
+            max-width: 800px;
             line-height: 1.5;
         }
         
-        /* Main container */
-        .main-container {
+        /* Main layout */
+        .main-layout {
             display: flex;
-            gap: 20px;
-            height: calc(100% - 120px);
+            gap: 30px;
+            flex: 1;
         }
         
-        /* Matrix area */
-        .matrix-area {
+        /* Matrix container */
+        .matrix-container {
             flex: 1;
             display: flex;
             flex-direction: column;
-            position: relative;
         }
         
-        /* Column headers */
-        .column-headers {
-            display: flex;
-            margin-left: 140px;
-            margin-bottom: 8px;
+        /* Column headers row */
+        .header-row {
+            display: grid;
+            grid-template-columns: var(--wtd-label-width) var(--row-label-width) repeat(6, var(--cell-width));
+            gap: var(--cell-gap);
+            margin-bottom: 4px;
+        }
+        
+        .header-spacer {
+            /* Empty space for WTD and row labels */
         }
         
         .column-header {
-            width: 130px;
-            text-align: center;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--neutral-300);
-            padding: 8px 0;
-        }
-        
-        /* Matrix grid */
-        .matrix-wrapper {
-            display: flex;
-            flex: 1;
-            position: relative;
-        }
-        
-        /* WTD clusters */
-        .wtd-clusters {
-            width: 140px;
             display: flex;
             flex-direction: column;
-            padding-right: 12px;
-        }
-        
-        .wtd-cluster {
-            display: flex;
             align-items: center;
+            padding: 8px 0;
             position: relative;
-            padding-right: 8px;
         }
         
-        .wtd-cluster.cluster-0-2 { flex: 2; }
-        .wtd-cluster.cluster-2-4 { flex: 2; }
-        .wtd-cluster.cluster-5-8 { flex: 2; }
-        .wtd-cluster.cluster-8plus { flex: 2; }
-        
-        .wtd-label {
-            writing-mode: vertical-rl;
-            text-orientation: mixed;
-            transform: rotate(180deg);
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--maersk-blue);
-            letter-spacing: 0.5px;
-            white-space: nowrap;
-        }
-        
-        .wtd-bracket {
-            width: 3px;
-            height: 90%;
-            background: var(--maersk-blue);
-            opacity: 0.4;
-            border-radius: 2px;
-            margin-left: 8px;
-        }
-        
-        .departure-labels {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            margin-left: 12px;
-            flex: 1;
-        }
-        
-        .departure-label {
-            font-size: 12px;
-            color: var(--neutral-300);
-            display: flex;
-            flex-direction: column;
-            height: 80px;
-            justify-content: center;
-        }
-        
-        .departure-label .dep-id {
+        .week-label {
+            font-size: 13px;
             font-weight: 600;
             color: var(--neutral-200);
         }
         
-        .departure-label .dep-etd {
-            font-size: 10px;
-            color: var(--neutral-500);
-            margin-top: 2px;
+        .event-tag {
+            font-size: 9px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-top: 4px;
+            white-space: nowrap;
+        }
+        
+        .event-tag.spike {
+            background: rgba(255, 193, 7, 0.25);
+            color: #fcd34d;
+            border: 1px solid var(--event-spike-border);
+        }
+        
+        .event-tag.removal {
+            background: rgba(220, 53, 69, 0.25);
+            color: #fca5a5;
+            border: 1px solid var(--event-removal-border);
         }
         
         /* Matrix grid */
         .matrix-grid {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            flex: 1;
+            gap: 2px;
             position: relative;
         }
         
-        .matrix-row {
+        /* WTD cluster group */
+        .wtd-group {
             display: flex;
-            gap: 6px;
-            flex: 1;
+            flex-direction: column;
+            gap: var(--cell-gap);
+            position: relative;
+            padding: 8px 0;
+            margin-bottom: 4px;
+        }
+        
+        .wtd-group::before {
+            content: attr(data-wtd);
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--maersk-blue);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            width: var(--wtd-label-width);
+            text-align: center;
+        }
+        
+        .wtd-group::after {
+            content: '';
+            position: absolute;
+            left: 38px;
+            top: 8px;
+            bottom: 8px;
+            width: 3px;
+            background: var(--maersk-blue);
+            opacity: 0.3;
+            border-radius: 2px;
+        }
+        
+        /* Matrix row */
+        .matrix-row {
+            display: grid;
+            grid-template-columns: var(--wtd-label-width) var(--row-label-width) repeat(6, var(--cell-width));
+            gap: var(--cell-gap);
+            position: relative;
+        }
+        
+        /* Row label */
+        .row-label {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-left: 8px;
+        }
+        
+        .dep-id {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-200);
+        }
+        
+        .dep-etd {
+            font-size: 10px;
+            color: var(--neutral-500);
+            margin-top: 2px;
         }
         
         /* Matrix cell */
         .matrix-cell {
-            width: 130px;
-            flex: 1;
-            max-width: 130px;
+            height: var(--cell-height);
             border-radius: 6px;
             padding: 8px 10px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            position: relative;
             border: 1px solid rgba(255,255,255,0.05);
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
+            position: relative;
         }
         
         .matrix-cell:hover {
             border-color: var(--maersk-blue);
-            transform: scale(1.02);
+            transform: scale(1.03);
             z-index: 10;
         }
         
@@ -232,7 +247,16 @@
         
         .matrix-cell.inactive {
             background: rgba(255,255,255,0.02);
-            opacity: 0.4;
+            opacity: 0.35;
+        }
+        
+        /* Event column highlights */
+        .matrix-cell.event-spike-col {
+            box-shadow: inset 0 0 0 2px var(--event-spike-border);
+        }
+        
+        .matrix-cell.event-removal-col {
+            box-shadow: inset 0 0 0 2px var(--event-removal-border);
         }
         
         .cell-top {
@@ -242,16 +266,16 @@
         }
         
         .bookings-delta {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 600;
         }
         
         .bookings-delta.positive { color: #4ade80; }
         .bookings-delta.negative { color: #f87171; }
-        .bookings-delta.neutral { color: var(--neutral-400); }
+        .bookings-delta.neutral { color: var(--neutral-500); }
         
         .remaining-ffe {
-            font-size: 10px;
+            font-size: 9px;
             color: var(--neutral-400);
             text-align: right;
         }
@@ -263,15 +287,14 @@
         
         .cell-bottom {
             display: flex;
-            gap: 4px;
+            gap: 3px;
             flex-wrap: wrap;
-            margin-top: auto;
         }
         
         /* Persona badges */
         .persona-badge {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -281,157 +304,88 @@
             letter-spacing: -0.3px;
         }
         
-        .persona-badge.sp {
-            background: #3b82f6;
-            color: white;
-        }
+        .persona-badge.sp { background: #3b82f6; color: white; }
+        .persona-badge.u { background: #8b5cf6; color: white; }
+        .persona-badge.cpm { background: #06b6d4; color: white; }
+        .persona-badge.mm { background: #f59e0b; color: white; }
+        .persona-badge.onp { background: #ef4444; color: white; }
         
-        .persona-badge.u {
-            background: #8b5cf6;
-            color: white;
-        }
-        
-        .persona-badge.cpm {
-            background: #06b6d4;
-            color: white;
-        }
-        
-        .persona-badge.mm {
-            background: #f59e0b;
-            color: white;
-        }
-        
-        .persona-badge.onp {
-            background: #ef4444;
-            color: white;
-        }
-        
-        /* Event bands (vertical) */
-        .event-band {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .event-band.spike {
-            left: calc(130px + 6px); /* W48 start */
-            width: calc(130px * 2 + 6px); /* W48-W49 */
-            background: var(--event-spike);
-            border-left: 2px solid rgba(255, 193, 7, 0.5);
-            border-right: 2px solid rgba(255, 193, 7, 0.5);
-        }
-        
-        .event-band.removal {
-            left: calc(130px * 4 + 6px * 4); /* W51 */
-            width: 130px;
-            background: var(--event-removal);
-            border-left: 2px solid rgba(220, 53, 69, 0.5);
-            border-right: 2px solid rgba(220, 53, 69, 0.5);
-        }
-        
-        .event-label {
-            position: absolute;
-            top: -28px;
-            left: 50%;
-            transform: translateX(-50%);
+        /* WTD Note */
+        .wtd-note {
             font-size: 10px;
-            font-weight: 600;
-            white-space: nowrap;
-            padding: 4px 8px;
+            color: var(--neutral-500);
+            font-style: italic;
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.2);
             border-radius: 4px;
+            line-height: 1.4;
         }
         
-        .event-band.spike .event-label {
-            background: rgba(255, 193, 7, 0.3);
-            color: #fcd34d;
+        /* Right panel */
+        .right-panel {
+            width: 260px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
-        
-        .event-band.removal .event-label {
-            background: rgba(220, 53, 69, 0.3);
-            color: #fca5a5;
-        }
-        
-        /* Halo bands (horizontal) */
-        .halo-band {
-            position: absolute;
-            left: 0;
-            right: 0;
-            pointer-events: none;
-            z-index: 0;
-        }
-        
-        .halo-band.strong { background: var(--halo-strong); }
-        .halo-band.medium { background: var(--halo-medium); }
-        .halo-band.light { background: var(--halo-light); }
         
         /* Annotations */
         .annotation {
-            position: absolute;
-            max-width: 200px;
-            font-size: 11px;
-            line-height: 1.4;
-            color: var(--neutral-300);
-            background: rgba(0,0,0,0.7);
-            padding: 10px 12px;
-            border-radius: 6px;
+            background: rgba(0,0,0,0.5);
+            padding: 14px 16px;
+            border-radius: 8px;
             border-left: 3px solid var(--maersk-blue);
-            z-index: 20;
+            font-size: 11px;
+            line-height: 1.5;
+            color: var(--neutral-300);
         }
         
-        .annotation::before {
-            content: '';
-            position: absolute;
-            width: 40px;
-            height: 2px;
-            background: var(--maersk-blue);
-            opacity: 0.6;
+        .annotation strong {
+            color: var(--maersk-blue);
+            display: block;
+            margin-bottom: 4px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        .annotation.ann-1 {
-            top: 100px;
-            right: 280px;
+        .annotation.spike {
+            border-left-color: #fcd34d;
         }
         
-        .annotation.ann-1::before {
-            bottom: -20px;
-            left: 20px;
-            transform: rotate(45deg);
+        .annotation.spike strong {
+            color: #fcd34d;
         }
         
-        .annotation.ann-2 {
-            top: 380px;
-            right: 280px;
+        .annotation.removal {
+            border-left-color: #fca5a5;
         }
         
-        .annotation.ann-3 {
-            bottom: 180px;
-            right: 280px;
+        .annotation.removal strong {
+            color: #fca5a5;
         }
         
         /* Legend */
         .legend {
-            width: 240px;
-            background: rgba(0,0,0,0.3);
+            background: rgba(0,0,0,0.4);
             border-radius: 10px;
-            padding: 20px;
-            border: 1px solid rgba(255,255,255,0.08);
-            height: fit-content;
-            align-self: flex-end;
+            padding: 18px;
+            border: 1px solid rgba(255,255,255,0.06);
+            margin-top: auto;
         }
         
         .legend-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: var(--neutral-200);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             padding-bottom: 8px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
         
         .legend-section {
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
         
         .legend-section:last-child {
@@ -439,8 +393,8 @@
         }
         
         .legend-label {
-            font-size: 10px;
-            color: var(--neutral-400);
+            font-size: 9px;
+            color: var(--neutral-500);
             margin-bottom: 6px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -449,34 +403,34 @@
         .legend-items {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 11px;
+            font-size: 10px;
             color: var(--neutral-300);
         }
         
         .legend-color {
-            width: 20px;
-            height: 14px;
-            border-radius: 3px;
+            width: 18px;
+            height: 12px;
+            border-radius: 2px;
+            flex-shrink: 0;
         }
         
         .legend-color.cap-1 { background: var(--capacity-1); border: 1px solid rgba(255,255,255,0.1); }
         .legend-color.cap-2 { background: var(--capacity-2); }
         .legend-color.cap-3 { background: var(--capacity-3); }
         .legend-color.cap-4 { background: var(--capacity-4); }
-        .legend-color.event-spike { background: var(--event-spike); border: 1px solid rgba(255, 193, 7, 0.5); }
-        .legend-color.event-removal { background: var(--event-removal); border: 1px solid rgba(220, 53, 69, 0.5); }
-        .legend-color.halo { background: var(--halo-strong); }
+        .legend-color.event-spike { background: var(--event-spike); border: 1px solid var(--event-spike-border); }
+        .legend-color.event-removal { background: var(--event-removal); border: 1px solid var(--event-removal-border); }
         
         .legend-badges {
             display: flex;
-            gap: 4px;
+            gap: 6px;
             flex-wrap: wrap;
         }
         
@@ -484,33 +438,39 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            font-size: 10px;
+            font-size: 9px;
             color: var(--neutral-400);
         }
         
         .legend-badge-item .persona-badge {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             font-size: 6px;
         }
         
-        /* WTD Note */
-        .wtd-note {
-            font-size: 10px;
-            color: var(--neutral-500);
-            font-style: italic;
-            margin-top: 8px;
-            padding: 8px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 4px;
-            line-height: 1.4;
+        .legend-metrics {
+            display: flex;
+            gap: 12px;
         }
+        
+        .legend-metric {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: var(--neutral-400);
+        }
+        
+        .legend-metric .value {
+            font-weight: 600;
+        }
+        
+        .legend-metric .value.positive { color: #4ade80; }
         
         /* Responsive scaling */
         @media (max-width: 1920px) {
-            .frame {
-                transform-origin: top left;
-                transform: scale(calc(100vw / 1920));
+            body {
+                overflow-x: auto;
             }
         }
     </style>
@@ -523,101 +483,48 @@
             <p class="subtitle">Weekly decisions + customer bookings land onto multiple future departures. Departures are coupled via customer substitution + operational reflow. Shocks create direct + halo effects.</p>
         </div>
         
-        <!-- Main Container -->
-        <div class="main-container">
-            <!-- Matrix Area -->
-            <div class="matrix-area">
-                <!-- Column Headers (Calendar Weeks) -->
-                <div class="column-headers">
-                    <div class="column-header">W47</div>
-                    <div class="column-header">W48</div>
-                    <div class="column-header">W49</div>
-                    <div class="column-header">W50</div>
-                    <div class="column-header">W51</div>
-                    <div class="column-header">W52</div>
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Matrix Container -->
+            <div class="matrix-container">
+                <!-- Column Headers -->
+                <div class="header-row">
+                    <div class="header-spacer"></div>
+                    <div class="header-spacer"></div>
+                    <div class="column-header">
+                        <span class="week-label">W47</span>
+                    </div>
+                    <div class="column-header">
+                        <span class="week-label">W48</span>
+                        <span class="event-tag spike">📈 Booking spike</span>
+                    </div>
+                    <div class="column-header">
+                        <span class="week-label">W49</span>
+                        <span class="event-tag spike">📈 (W48–W49)</span>
+                    </div>
+                    <div class="column-header">
+                        <span class="week-label">W50</span>
+                    </div>
+                    <div class="column-header">
+                        <span class="week-label">W51</span>
+                        <span class="event-tag removal">⚠️ Cap. removal</span>
+                    </div>
+                    <div class="column-header">
+                        <span class="week-label">W52</span>
+                    </div>
                 </div>
                 
-                <!-- Matrix Wrapper -->
-                <div class="matrix-wrapper">
-                    <!-- WTD Clusters -->
-                    <div class="wtd-clusters">
-                        <!-- WTD 0-2 -->
-                        <div class="wtd-cluster cluster-0-2">
-                            <span class="wtd-label">WTD 0–2</span>
-                            <div class="wtd-bracket"></div>
-                            <div class="departure-labels">
-                                <div class="departure-label">
-                                    <span class="dep-id">D1</span>
-                                    <span class="dep-etd">ETD W48</span>
-                                </div>
-                                <div class="departure-label">
-                                    <span class="dep-id">D2</span>
-                                    <span class="dep-etd">ETD W49</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- WTD 2-4 -->
-                        <div class="wtd-cluster cluster-2-4">
-                            <span class="wtd-label">WTD 2–4</span>
-                            <div class="wtd-bracket"></div>
-                            <div class="departure-labels">
-                                <div class="departure-label">
-                                    <span class="dep-id">D3</span>
-                                    <span class="dep-etd">ETD W50</span>
-                                </div>
-                                <div class="departure-label">
-                                    <span class="dep-id">D4</span>
-                                    <span class="dep-etd">ETD W51</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- WTD 5-8 -->
-                        <div class="wtd-cluster cluster-5-8">
-                            <span class="wtd-label">WTD 5–8</span>
-                            <div class="wtd-bracket"></div>
-                            <div class="departure-labels">
-                                <div class="departure-label">
-                                    <span class="dep-id">D5</span>
-                                    <span class="dep-etd">ETD W52</span>
-                                </div>
-                                <div class="departure-label">
-                                    <span class="dep-id">D6</span>
-                                    <span class="dep-etd">ETD W01 '26</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <!-- WTD 8+ -->
-                        <div class="wtd-cluster cluster-8plus">
-                            <span class="wtd-label">WTD 8+</span>
-                            <div class="wtd-bracket"></div>
-                            <div class="departure-labels">
-                                <div class="departure-label">
-                                    <span class="dep-id">D7</span>
-                                    <span class="dep-etd">ETD W04 '26</span>
-                                </div>
-                                <div class="departure-label">
-                                    <span class="dep-id">D8</span>
-                                    <span class="dep-etd">ETD W05 '26</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Matrix Grid -->
-                    <div class="matrix-grid">
-                        <!-- Event Bands -->
-                        <div class="event-band spike">
-                            <span class="event-label">📈 Booking spike (W48–W49)</span>
-                        </div>
-                        <div class="event-band removal">
-                            <span class="event-label">⚠️ Capacity removal (W51)</span>
-                        </div>
-                        
-                        <!-- Row 1: D1 (ETD W48) -->
+                <!-- Matrix Grid -->
+                <div class="matrix-grid">
+                    <!-- WTD 0-2 Group -->
+                    <div class="wtd-group" data-wtd="WTD 0–2">
+                        <!-- D1 Row -->
                         <div class="matrix-row">
+                            <div class="row-spacer"></div>
+                            <div class="row-label">
+                                <span class="dep-id">D1</span>
+                                <span class="dep-etd">ETD W48</span>
+                            </div>
                             <div class="matrix-cell capacity-2">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+5%</span>
@@ -627,7 +534,7 @@
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-4">
+                            <div class="matrix-cell capacity-4 event-spike-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+22%</span>
                                     <span class="remaining-ffe">Rem <span>45</span> FFE</span>
@@ -668,8 +575,13 @@
                             </div>
                         </div>
                         
-                        <!-- Row 2: D2 (ETD W49) -->
+                        <!-- D2 Row -->
                         <div class="matrix-row">
+                            <div class="row-spacer"></div>
+                            <div class="row-label">
+                                <span class="dep-id">D2</span>
+                                <span class="dep-etd">ETD W49</span>
+                            </div>
                             <div class="matrix-cell capacity-1">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+3%</span>
@@ -679,7 +591,7 @@
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-3">
+                            <div class="matrix-cell capacity-3 event-spike-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+18%</span>
                                     <span class="remaining-ffe">Rem <span>95</span> FFE</span>
@@ -689,7 +601,7 @@
                                     <span class="persona-badge u">U</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-4">
+                            <div class="matrix-cell capacity-4 event-spike-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+15%</span>
                                     <span class="remaining-ffe">Rem <span>40</span> FFE</span>
@@ -722,9 +634,17 @@
                                 <div class="cell-bottom"></div>
                             </div>
                         </div>
-                        
-                        <!-- Row 3: D3 (ETD W50) -->
+                    </div>
+                    
+                    <!-- WTD 2-4 Group -->
+                    <div class="wtd-group" data-wtd="WTD 2–4">
+                        <!-- D3 Row -->
                         <div class="matrix-row">
+                            <div class="row-spacer"></div>
+                            <div class="row-label">
+                                <span class="dep-id">D3</span>
+                                <span class="dep-etd">ETD W50</span>
+                            </div>
                             <div class="matrix-cell capacity-1">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+2%</span>
@@ -734,7 +654,7 @@
                                     <span class="persona-badge cpm">CPM</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-2">
+                            <div class="matrix-cell capacity-2 event-spike-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+12%</span>
                                     <span class="remaining-ffe">Rem <span>165</span> FFE</span>
@@ -744,7 +664,7 @@
                                     <span class="persona-badge u">U</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-3">
+                            <div class="matrix-cell capacity-3 event-spike-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+10%</span>
                                     <span class="remaining-ffe">Rem <span>110</span> FFE</span>
@@ -781,8 +701,13 @@
                             </div>
                         </div>
                         
-                        <!-- Row 4: D4 (ETD W51) -->
+                        <!-- D4 Row -->
                         <div class="matrix-row">
+                            <div class="row-spacer"></div>
+                            <div class="row-label">
+                                <span class="dep-id">D4</span>
+                                <span class="dep-etd">ETD W51</span>
+                            </div>
                             <div class="matrix-cell capacity-1">
                                 <div class="cell-top">
                                     <span class="bookings-delta neutral">+1%</span>
@@ -790,7 +715,7 @@
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
-                            <div class="matrix-cell capacity-2">
+                            <div class="matrix-cell capacity-2 event-spike-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+8%</span>
                                     <span class="remaining-ffe">Rem <span>210</span> FFE</span>
@@ -799,7 +724,7 @@
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-2">
+                            <div class="matrix-cell capacity-2 event-spike-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+6%</span>
                                     <span class="remaining-ffe">Rem <span>175</span> FFE</span>
@@ -818,7 +743,7 @@
                                     <span class="persona-badge cpm">CPM</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-4">
+                            <div class="matrix-cell capacity-4 event-removal-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta negative">-15%</span>
                                     <span class="remaining-ffe">Rem <span>20</span> FFE</span>
@@ -839,9 +764,17 @@
                                 <div class="cell-bottom"></div>
                             </div>
                         </div>
-                        
-                        <!-- Row 5: D5 (ETD W52) -->
+                    </div>
+                    
+                    <!-- WTD 5-8 Group -->
+                    <div class="wtd-group" data-wtd="WTD 5–8">
+                        <!-- D5 Row -->
                         <div class="matrix-row">
+                            <div class="row-spacer"></div>
+                            <div class="row-label">
+                                <span class="dep-id">D5</span>
+                                <span class="dep-etd">ETD W52</span>
+                            </div>
                             <div class="matrix-cell capacity-1">
                                 <div class="cell-top">
                                     <span class="bookings-delta neutral">0%</span>
@@ -849,7 +782,7 @@
                                 </div>
                                 <div class="cell-bottom"></div>
                             </div>
-                            <div class="matrix-cell capacity-1">
+                            <div class="matrix-cell capacity-1 event-spike-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+4%</span>
                                     <span class="remaining-ffe">Rem <span>290</span> FFE</span>
@@ -858,7 +791,7 @@
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-2">
+                            <div class="matrix-cell capacity-2 event-spike-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+3%</span>
                                     <span class="remaining-ffe">Rem <span>245</span> FFE</span>
@@ -876,7 +809,7 @@
                                     <span class="persona-badge u">U</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-3">
+                            <div class="matrix-cell capacity-3 event-removal-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+12%</span>
                                     <span class="remaining-ffe">Rem <span>120</span> FFE</span>
@@ -900,8 +833,13 @@
                             </div>
                         </div>
                         
-                        <!-- Row 6: D6 (ETD W01 2026) -->
+                        <!-- D6 Row -->
                         <div class="matrix-row">
+                            <div class="row-spacer"></div>
+                            <div class="row-label">
+                                <span class="dep-id">D6</span>
+                                <span class="dep-etd">ETD W01 '26</span>
+                            </div>
                             <div class="matrix-cell capacity-1">
                                 <div class="cell-top">
                                     <span class="bookings-delta neutral">0%</span>
@@ -934,7 +872,7 @@
                                     <span class="persona-badge sp">SP</span>
                                 </div>
                             </div>
-                            <div class="matrix-cell capacity-2">
+                            <div class="matrix-cell capacity-2 event-removal-col">
                                 <div class="cell-top">
                                     <span class="bookings-delta positive">+8%</span>
                                     <span class="remaining-ffe">Rem <span>195</span> FFE</span>
@@ -955,9 +893,17 @@
                                 </div>
                             </div>
                         </div>
-                        
-                        <!-- Row 7: D7 (ETD W04 2026) -->
+                    </div>
+                    
+                    <!-- WTD 8+ Group -->
+                    <div class="wtd-group" data-wtd="WTD 8+">
+                        <!-- D7 Row -->
                         <div class="matrix-row">
+                            <div class="row-spacer"></div>
+                            <div class="row-label">
+                                <span class="dep-id">D7</span>
+                                <span class="dep-etd">ETD W04 '26</span>
+                            </div>
                             <div class="matrix-cell capacity-1">
                                 <div class="cell-top">
                                     <span class="bookings-delta neutral">0%</span>
@@ -1008,8 +954,13 @@
                             </div>
                         </div>
                         
-                        <!-- Row 8: D8 (ETD W05 2026) -->
+                        <!-- D8 Row -->
                         <div class="matrix-row">
+                            <div class="row-spacer"></div>
+                            <div class="row-label">
+                                <span class="dep-id">D8</span>
+                                <span class="dep-etd">ETD W05 '26</span>
+                            </div>
                             <div class="matrix-cell capacity-1">
                                 <div class="cell-top">
                                     <span class="bookings-delta neutral">0%</span>
@@ -1064,93 +1015,101 @@
                 <p class="wtd-note">WTD groups show booking horizon. Autocorrelation comes from substitution/reflow across departures.</p>
             </div>
             
-            <!-- Annotations -->
-            <div class="annotation ann-1">
-                <strong>Direct effect:</strong> Spike tightens capacity + boosts bookings on near-term departures (D1, D2)
-            </div>
-            <div class="annotation ann-2">
-                <strong>Halo effect:</strong> Substitution/reflow shifts booking pressure to nearby horizons (D3–D5)
-            </div>
-            <div class="annotation ann-3">
-                <strong>Rework:</strong> Multiple personas intervene in same week after capacity removal (D4 W51)
-            </div>
-            
-            <!-- Legend -->
-            <div class="legend">
-                <div class="legend-title">Legend</div>
-                
-                <div class="legend-section">
-                    <div class="legend-label">Capacity Tightness</div>
-                    <div class="legend-items">
-                        <div class="legend-item">
-                            <div class="legend-color cap-1"></div>
-                            <span>Plenty (>250 FFE)</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color cap-2"></div>
-                            <span>Normal (150–250)</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color cap-3"></div>
-                            <span>Filling (75–150)</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color cap-4"></div>
-                            <span>Tight (<75 FFE)</span>
-                        </div>
-                    </div>
+            <!-- Right Panel -->
+            <div class="right-panel">
+                <!-- Annotations -->
+                <div class="annotation spike">
+                    <strong>Direct effect</strong>
+                    Spike tightens capacity + boosts bookings on near-term departures (D1, D2)
                 </div>
                 
-                <div class="legend-section">
-                    <div class="legend-label">Metrics</div>
-                    <div class="legend-items">
-                        <div class="legend-item">
-                            <span style="color: #4ade80; font-weight: 600;">+12%</span>
-                            <span>Bookings Δ vs expected</span>
+                <div class="annotation">
+                    <strong>Halo effect</strong>
+                    Substitution/reflow shifts booking pressure to nearby horizons (D3–D5)
+                </div>
+                
+                <div class="annotation removal">
+                    <strong>Rework</strong>
+                    Multiple personas intervene in same week after capacity removal (D4 W51)
+                </div>
+                
+                <!-- Legend -->
+                <div class="legend">
+                    <div class="legend-title">Legend</div>
+                    
+                    <div class="legend-section">
+                        <div class="legend-label">Capacity Tightness</div>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <div class="legend-color cap-1"></div>
+                                <span>Plenty (>250 FFE)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color cap-2"></div>
+                                <span>Normal (150–250)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color cap-3"></div>
+                                <span>Filling (75–150)</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color cap-4"></div>
+                                <span>Tight (&lt;75 FFE)</span>
+                            </div>
                         </div>
-                        <div class="legend-item">
-                            <span style="color: var(--neutral-400); font-size: 10px;">Rem 120 FFE</span>
+                    </div>
+                    
+                    <div class="legend-section">
+                        <div class="legend-label">Metrics</div>
+                        <div class="legend-metrics">
+                            <div class="legend-metric">
+                                <span class="value positive">+12%</span>
+                                <span>Bookings Δ vs expected</span>
+                            </div>
+                        </div>
+                        <div class="legend-item" style="margin-top: 4px;">
+                            <span style="font-size: 9px; color: var(--neutral-400);">Rem 120 FFE</span>
                             <span>Remaining capacity</span>
                         </div>
                     </div>
-                </div>
-                
-                <div class="legend-section">
-                    <div class="legend-label">Personas</div>
-                    <div class="legend-badges">
-                        <div class="legend-badge-item">
-                            <span class="persona-badge sp">SP</span>
-                            <span>Spot</span>
-                        </div>
-                        <div class="legend-badge-item">
-                            <span class="persona-badge u">U</span>
-                            <span>Uptake</span>
-                        </div>
-                        <div class="legend-badge-item">
-                            <span class="persona-badge cpm">CPM</span>
-                            <span>Contract</span>
-                        </div>
-                        <div class="legend-badge-item">
-                            <span class="persona-badge mm">MM</span>
-                            <span>Market</span>
-                        </div>
-                        <div class="legend-badge-item">
-                            <span class="persona-badge onp">ONP</span>
-                            <span>Network</span>
+                    
+                    <div class="legend-section">
+                        <div class="legend-label">Personas</div>
+                        <div class="legend-badges">
+                            <div class="legend-badge-item">
+                                <span class="persona-badge sp">SP</span>
+                                <span>Spot</span>
+                            </div>
+                            <div class="legend-badge-item">
+                                <span class="persona-badge u">U</span>
+                                <span>Uptake</span>
+                            </div>
+                            <div class="legend-badge-item">
+                                <span class="persona-badge cpm">CPM</span>
+                                <span>Contract</span>
+                            </div>
+                            <div class="legend-badge-item">
+                                <span class="persona-badge mm">MM</span>
+                                <span>Market</span>
+                            </div>
+                            <div class="legend-badge-item">
+                                <span class="persona-badge onp">ONP</span>
+                                <span>Network</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div class="legend-section">
-                    <div class="legend-label">Events</div>
-                    <div class="legend-items">
-                        <div class="legend-item">
-                            <div class="legend-color event-spike"></div>
-                            <span>Booking spike</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-color event-removal"></div>
-                            <span>Capacity removal</span>
+                    
+                    <div class="legend-section">
+                        <div class="legend-label">Events</div>
+                        <div class="legend-items">
+                            <div class="legend-item">
+                                <div class="legend-color event-spike"></div>
+                                <span>Booking spike</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color event-removal"></div>
+                                <span>Capacity removal</span>
+                            </div>
                         </div>
                     </div>
                 </div>
