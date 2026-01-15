@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E1-W: Calendar Operating Window (W47–W52 2025)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --maersk-blue: #42B0D5;
+            --maersk-dark: #003B5C;
+            --neutral-900: #1a1a2e;
+            --neutral-800: #242438;
+            --neutral-700: #2d2d44;
+            --neutral-600: #3d3d5c;
+            --neutral-500: #5a5a7a;
+            --neutral-400: #8888a8;
+            --neutral-300: #aaaac8;
+            --neutral-200: #d0d0e0;
+            --neutral-100: #f0f0f8;
+            
+            /* Capacity tightness colors (light = more capacity, dark = tight) */
+            --capacity-1: rgba(66, 176, 213, 0.15);  /* Light - plenty of capacity */
+            --capacity-2: rgba(66, 176, 213, 0.30);  /* Medium */
+            --capacity-3: rgba(66, 176, 213, 0.50);  /* Medium-tight */
+            --capacity-4: rgba(255, 140, 66, 0.55); /* Tight - warning orange */
+            
+            /* Event colors */
+            --event-spike: rgba(255, 193, 7, 0.20);
+            --event-removal: rgba(220, 53, 69, 0.20);
+            
+            /* Halo colors */
+            --halo-strong: rgba(255, 193, 7, 0.12);
+            --halo-medium: rgba(255, 193, 7, 0.06);
+            --halo-light: rgba(255, 193, 7, 0.03);
+        }
+        
+        body {
+            font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--neutral-900);
+            color: var(--neutral-100);
+            min-height: 100vh;
+            padding: 0;
+        }
+        
+        .frame {
+            width: 1920px;
+            height: 1080px;
+            background: linear-gradient(135deg, var(--neutral-900) 0%, #12121f 100%);
+            padding: 40px 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            margin-bottom: 24px;
+        }
+        
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--neutral-100);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+        
+        .title span {
+            color: var(--maersk-blue);
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: var(--neutral-400);
+            max-width: 900px;
+            line-height: 1.5;
+        }
+        
+        /* Main container */
+        .main-container {
+            display: flex;
+            gap: 20px;
+            height: calc(100% - 120px);
+        }
+        
+        /* Matrix area */
+        .matrix-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* Column headers */
+        .column-headers {
+            display: flex;
+            margin-left: 140px;
+            margin-bottom: 8px;
+        }
+        
+        .column-header {
+            width: 130px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--neutral-300);
+            padding: 8px 0;
+        }
+        
+        /* Matrix grid */
+        .matrix-wrapper {
+            display: flex;
+            flex: 1;
+            position: relative;
+        }
+        
+        /* WTD clusters */
+        .wtd-clusters {
+            width: 140px;
+            display: flex;
+            flex-direction: column;
+            padding-right: 12px;
+        }
+        
+        .wtd-cluster {
+            display: flex;
+            align-items: center;
+            position: relative;
+            padding-right: 8px;
+        }
+        
+        .wtd-cluster.cluster-0-2 { flex: 2; }
+        .wtd-cluster.cluster-2-4 { flex: 2; }
+        .wtd-cluster.cluster-5-8 { flex: 2; }
+        .wtd-cluster.cluster-8plus { flex: 2; }
+        
+        .wtd-label {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--maersk-blue);
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .wtd-bracket {
+            width: 3px;
+            height: 90%;
+            background: var(--maersk-blue);
+            opacity: 0.4;
+            border-radius: 2px;
+            margin-left: 8px;
+        }
+        
+        .departure-labels {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            margin-left: 12px;
+            flex: 1;
+        }
+        
+        .departure-label {
+            font-size: 12px;
+            color: var(--neutral-300);
+            display: flex;
+            flex-direction: column;
+            height: 80px;
+            justify-content: center;
+        }
+        
+        .departure-label .dep-id {
+            font-weight: 600;
+            color: var(--neutral-200);
+        }
+        
+        .departure-label .dep-etd {
+            font-size: 10px;
+            color: var(--neutral-500);
+            margin-top: 2px;
+        }
+        
+        /* Matrix grid */
+        .matrix-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+            position: relative;
+        }
+        
+        .matrix-row {
+            display: flex;
+            gap: 6px;
+            flex: 1;
+        }
+        
+        /* Matrix cell */
+        .matrix-cell {
+            width: 130px;
+            flex: 1;
+            max-width: 130px;
+            border-radius: 6px;
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.2s ease;
+        }
+        
+        .matrix-cell:hover {
+            border-color: var(--maersk-blue);
+            transform: scale(1.02);
+            z-index: 10;
+        }
+        
+        .matrix-cell.capacity-1 { background: var(--capacity-1); }
+        .matrix-cell.capacity-2 { background: var(--capacity-2); }
+        .matrix-cell.capacity-3 { background: var(--capacity-3); }
+        .matrix-cell.capacity-4 { background: var(--capacity-4); }
+        
+        .matrix-cell.inactive {
+            background: rgba(255,255,255,0.02);
+            opacity: 0.4;
+        }
+        
+        .cell-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        
+        .bookings-delta {
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        .bookings-delta.positive { color: #4ade80; }
+        .bookings-delta.negative { color: #f87171; }
+        .bookings-delta.neutral { color: var(--neutral-400); }
+        
+        .remaining-ffe {
+            font-size: 10px;
+            color: var(--neutral-400);
+            text-align: right;
+        }
+        
+        .remaining-ffe span {
+            font-weight: 600;
+            color: var(--neutral-300);
+        }
+        
+        .cell-bottom {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: auto;
+        }
+        
+        /* Persona badges */
+        .persona-badge {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+        
+        .persona-badge.sp {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .persona-badge.u {
+            background: #8b5cf6;
+            color: white;
+        }
+        
+        .persona-badge.cpm {
+            background: #06b6d4;
+            color: white;
+        }
+        
+        .persona-badge.mm {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .persona-badge.onp {
+            background: #ef4444;
+            color: white;
+        }
+        
+        /* Event bands (vertical) */
+        .event-band {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .event-band.spike {
+            left: calc(130px + 6px); /* W48 start */
+            width: calc(130px * 2 + 6px); /* W48-W49 */
+            background: var(--event-spike);
+            border-left: 2px solid rgba(255, 193, 7, 0.5);
+            border-right: 2px solid rgba(255, 193, 7, 0.5);
+        }
+        
+        .event-band.removal {
+            left: calc(130px * 4 + 6px * 4); /* W51 */
+            width: 130px;
+            background: var(--event-removal);
+            border-left: 2px solid rgba(220, 53, 69, 0.5);
+            border-right: 2px solid rgba(220, 53, 69, 0.5);
+        }
+        
+        .event-label {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            font-weight: 600;
+            white-space: nowrap;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        
+        .event-band.spike .event-label {
+            background: rgba(255, 193, 7, 0.3);
+            color: #fcd34d;
+        }
+        
+        .event-band.removal .event-label {
+            background: rgba(220, 53, 69, 0.3);
+            color: #fca5a5;
+        }
+        
+        /* Halo bands (horizontal) */
+        .halo-band {
+            position: absolute;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .halo-band.strong { background: var(--halo-strong); }
+        .halo-band.medium { background: var(--halo-medium); }
+        .halo-band.light { background: var(--halo-light); }
+        
+        /* Annotations */
+        .annotation {
+            position: absolute;
+            max-width: 200px;
+            font-size: 11px;
+            line-height: 1.4;
+            color: var(--neutral-300);
+            background: rgba(0,0,0,0.7);
+            padding: 10px 12px;
+            border-radius: 6px;
+            border-left: 3px solid var(--maersk-blue);
+            z-index: 20;
+        }
+        
+        .annotation::before {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background: var(--maersk-blue);
+            opacity: 0.6;
+        }
+        
+        .annotation.ann-1 {
+            top: 100px;
+            right: 280px;
+        }
+        
+        .annotation.ann-1::before {
+            bottom: -20px;
+            left: 20px;
+            transform: rotate(45deg);
+        }
+        
+        .annotation.ann-2 {
+            top: 380px;
+            right: 280px;
+        }
+        
+        .annotation.ann-3 {
+            bottom: 180px;
+            right: 280px;
+        }
+        
+        /* Legend */
+        .legend {
+            width: 240px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.08);
+            height: fit-content;
+            align-self: flex-end;
+        }
+        
+        .legend-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--neutral-200);
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .legend-section {
+            margin-bottom: 14px;
+        }
+        
+        .legend-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .legend-label {
+            font-size: 10px;
+            color: var(--neutral-400);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: var(--neutral-300);
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 14px;
+            border-radius: 3px;
+        }
+        
+        .legend-color.cap-1 { background: var(--capacity-1); border: 1px solid rgba(255,255,255,0.1); }
+        .legend-color.cap-2 { background: var(--capacity-2); }
+        .legend-color.cap-3 { background: var(--capacity-3); }
+        .legend-color.cap-4 { background: var(--capacity-4); }
+        .legend-color.event-spike { background: var(--event-spike); border: 1px solid rgba(255, 193, 7, 0.5); }
+        .legend-color.event-removal { background: var(--event-removal); border: 1px solid rgba(220, 53, 69, 0.5); }
+        .legend-color.halo { background: var(--halo-strong); }
+        
+        .legend-badges {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-badge-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            color: var(--neutral-400);
+        }
+        
+        .legend-badge-item .persona-badge {
+            width: 18px;
+            height: 18px;
+            font-size: 6px;
+        }
+        
+        /* WTD Note */
+        .wtd-note {
+            font-size: 10px;
+            color: var(--neutral-500);
+            font-style: italic;
+            margin-top: 8px;
+            padding: 8px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 4px;
+            line-height: 1.4;
+        }
+        
+        /* Responsive scaling */
+        @media (max-width: 1920px) {
+            .frame {
+                transform-origin: top left;
+                transform: scale(calc(100vw / 1920));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="frame">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="title"><span>E1-W:</span> Calendar Operating Window (W47–W52 2025)</h1>
+            <p class="subtitle">Weekly decisions + customer bookings land onto multiple future departures. Departures are coupled via customer substitution + operational reflow. Shocks create direct + halo effects.</p>
+        </div>
+        
+        <!-- Main Container -->
+        <div class="main-container">
+            <!-- Matrix Area -->
+            <div class="matrix-area">
+                <!-- Column Headers (Calendar Weeks) -->
+                <div class="column-headers">
+                    <div class="column-header">W47</div>
+                    <div class="column-header">W48</div>
+                    <div class="column-header">W49</div>
+                    <div class="column-header">W50</div>
+                    <div class="column-header">W51</div>
+                    <div class="column-header">W52</div>
+                </div>
+                
+                <!-- Matrix Wrapper -->
+                <div class="matrix-wrapper">
+                    <!-- WTD Clusters -->
+                    <div class="wtd-clusters">
+                        <!-- WTD 0-2 -->
+                        <div class="wtd-cluster cluster-0-2">
+                            <span class="wtd-label">WTD 0–2</span>
+                            <div class="wtd-bracket"></div>
+                            <div class="departure-labels">
+                                <div class="departure-label">
+                                    <span class="dep-id">D1</span>
+                                    <span class="dep-etd">ETD W48</span>
+                                </div>
+                                <div class="departure-label">
+                                    <span class="dep-id">D2</span>
+                                    <span class="dep-etd">ETD W49</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- WTD 2-4 -->
+                        <div class="wtd-cluster cluster-2-4">
+                            <span class="wtd-label">WTD 2–4</span>
+                            <div class="wtd-bracket"></div>
+                            <div class="departure-labels">
+                                <div class="departure-label">
+                                    <span class="dep-id">D3</span>
+                                    <span class="dep-etd">ETD W50</span>
+                                </div>
+                                <div class="departure-label">
+                                    <span class="dep-id">D4</span>
+                                    <span class="dep-etd">ETD W51</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- WTD 5-8 -->
+                        <div class="wtd-cluster cluster-5-8">
+                            <span class="wtd-label">WTD 5–8</span>
+                            <div class="wtd-bracket"></div>
+                            <div class="departure-labels">
+                                <div class="departure-label">
+                                    <span class="dep-id">D5</span>
+                                    <span class="dep-etd">ETD W52</span>
+                                </div>
+                                <div class="departure-label">
+                                    <span class="dep-id">D6</span>
+                                    <span class="dep-etd">ETD W01 '26</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- WTD 8+ -->
+                        <div class="wtd-cluster cluster-8plus">
+                            <span class="wtd-label">WTD 8+</span>
+                            <div class="wtd-bracket"></div>
+                            <div class="departure-labels">
+                                <div class="departure-label">
+                                    <span class="dep-id">D7</span>
+                                    <span class="dep-etd">ETD W04 '26</span>
+                                </div>
+                                <div class="departure-label">
+                                    <span class="dep-id">D8</span>
+                                    <span class="dep-etd">ETD W05 '26</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Matrix Grid -->
+                    <div class="matrix-grid">
+                        <!-- Event Bands -->
+                        <div class="event-band spike">
+                            <span class="event-label">📈 Booking spike (W48–W49)</span>
+                        </div>
+                        <div class="event-band removal">
+                            <span class="event-label">⚠️ Capacity removal (W51)</span>
+                        </div>
+                        
+                        <!-- Row 1: D1 (ETD W48) -->
+                        <div class="matrix-row">
+                            <div class="matrix-cell capacity-2">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+5%</span>
+                                    <span class="remaining-ffe">Rem <span>180</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-4">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+22%</span>
+                                    <span class="remaining-ffe">Rem <span>45</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge u">U</span>
+                                    <span class="persona-badge cpm">CPM</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Row 2: D2 (ETD W49) -->
+                        <div class="matrix-row">
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+3%</span>
+                                    <span class="remaining-ffe">Rem <span>220</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-3">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+18%</span>
+                                    <span class="remaining-ffe">Rem <span>95</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge u">U</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-4">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+15%</span>
+                                    <span class="remaining-ffe">Rem <span>40</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge u">U</span>
+                                    <span class="persona-badge mm">MM</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Row 3: D3 (ETD W50) -->
+                        <div class="matrix-row">
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+2%</span>
+                                    <span class="remaining-ffe">Rem <span>280</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge cpm">CPM</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-2">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+12%</span>
+                                    <span class="remaining-ffe">Rem <span>165</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge u">U</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-3">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+10%</span>
+                                    <span class="remaining-ffe">Rem <span>110</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge cpm">CPM</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-4">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+8%</span>
+                                    <span class="remaining-ffe">Rem <span>55</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge u">U</span>
+                                    <span class="persona-badge mm">MM</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Row 4: D4 (ETD W51) -->
+                        <div class="matrix-row">
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">+1%</span>
+                                    <span class="remaining-ffe">Rem <span>320</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-2">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+8%</span>
+                                    <span class="remaining-ffe">Rem <span>210</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-2">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+6%</span>
+                                    <span class="remaining-ffe">Rem <span>175</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge u">U</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-3">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+5%</span>
+                                    <span class="remaining-ffe">Rem <span>125</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge cpm">CPM</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-4">
+                                <div class="cell-top">
+                                    <span class="bookings-delta negative">-15%</span>
+                                    <span class="remaining-ffe">Rem <span>20</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge u">U</span>
+                                    <span class="persona-badge cpm">CPM</span>
+                                    <span class="persona-badge mm">MM</span>
+                                    <span class="persona-badge onp">ONP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell inactive">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">—</span>
+                                    <span class="remaining-ffe">Sailed</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Row 5: D5 (ETD W52) -->
+                        <div class="matrix-row">
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">0%</span>
+                                    <span class="remaining-ffe">Rem <span>350</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+4%</span>
+                                    <span class="remaining-ffe">Rem <span>290</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-2">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+3%</span>
+                                    <span class="remaining-ffe">Rem <span>245</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-2">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+4%</span>
+                                    <span class="remaining-ffe">Rem <span>200</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge u">U</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-3">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+12%</span>
+                                    <span class="remaining-ffe">Rem <span>120</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge u">U</span>
+                                    <span class="persona-badge cpm">CPM</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-4">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+9%</span>
+                                    <span class="remaining-ffe">Rem <span>65</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge u">U</span>
+                                    <span class="persona-badge mm">MM</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Row 6: D6 (ETD W01 2026) -->
+                        <div class="matrix-row">
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">0%</span>
+                                    <span class="remaining-ffe">Rem <span>380</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+2%</span>
+                                    <span class="remaining-ffe">Rem <span>340</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+2%</span>
+                                    <span class="remaining-ffe">Rem <span>310</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-2">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+3%</span>
+                                    <span class="remaining-ffe">Rem <span>265</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-2">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+8%</span>
+                                    <span class="remaining-ffe">Rem <span>195</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge u">U</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-3">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+6%</span>
+                                    <span class="remaining-ffe">Rem <span>140</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                    <span class="persona-badge cpm">CPM</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Row 7: D7 (ETD W04 2026) -->
+                        <div class="matrix-row">
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">0%</span>
+                                    <span class="remaining-ffe">Rem <span>400</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">+1%</span>
+                                    <span class="remaining-ffe">Rem <span>385</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">+1%</span>
+                                    <span class="remaining-ffe">Rem <span>370</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+2%</span>
+                                    <span class="remaining-ffe">Rem <span>350</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge cpm">CPM</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+3%</span>
+                                    <span class="remaining-ffe">Rem <span>320</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-2">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+2%</span>
+                                    <span class="remaining-ffe">Rem <span>290</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Row 8: D8 (ETD W05 2026) -->
+                        <div class="matrix-row">
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">0%</span>
+                                    <span class="remaining-ffe">Rem <span>400</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">0%</span>
+                                    <span class="remaining-ffe">Rem <span>395</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">+1%</span>
+                                    <span class="remaining-ffe">Rem <span>385</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta neutral">+1%</span>
+                                    <span class="remaining-ffe">Rem <span>375</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom"></div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+2%</span>
+                                    <span class="remaining-ffe">Rem <span>355</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                            <div class="matrix-cell capacity-1">
+                                <div class="cell-top">
+                                    <span class="bookings-delta positive">+2%</span>
+                                    <span class="remaining-ffe">Rem <span>340</span> FFE</span>
+                                </div>
+                                <div class="cell-bottom">
+                                    <span class="persona-badge sp">SP</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- WTD Note -->
+                <p class="wtd-note">WTD groups show booking horizon. Autocorrelation comes from substitution/reflow across departures.</p>
+            </div>
+            
+            <!-- Annotations -->
+            <div class="annotation ann-1">
+                <strong>Direct effect:</strong> Spike tightens capacity + boosts bookings on near-term departures (D1, D2)
+            </div>
+            <div class="annotation ann-2">
+                <strong>Halo effect:</strong> Substitution/reflow shifts booking pressure to nearby horizons (D3–D5)
+            </div>
+            <div class="annotation ann-3">
+                <strong>Rework:</strong> Multiple personas intervene in same week after capacity removal (D4 W51)
+            </div>
+            
+            <!-- Legend -->
+            <div class="legend">
+                <div class="legend-title">Legend</div>
+                
+                <div class="legend-section">
+                    <div class="legend-label">Capacity Tightness</div>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color cap-1"></div>
+                            <span>Plenty (>250 FFE)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color cap-2"></div>
+                            <span>Normal (150–250)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color cap-3"></div>
+                            <span>Filling (75–150)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color cap-4"></div>
+                            <span>Tight (<75 FFE)</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="legend-section">
+                    <div class="legend-label">Metrics</div>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span style="color: #4ade80; font-weight: 600;">+12%</span>
+                            <span>Bookings Δ vs expected</span>
+                        </div>
+                        <div class="legend-item">
+                            <span style="color: var(--neutral-400); font-size: 10px;">Rem 120 FFE</span>
+                            <span>Remaining capacity</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="legend-section">
+                    <div class="legend-label">Personas</div>
+                    <div class="legend-badges">
+                        <div class="legend-badge-item">
+                            <span class="persona-badge sp">SP</span>
+                            <span>Spot</span>
+                        </div>
+                        <div class="legend-badge-item">
+                            <span class="persona-badge u">U</span>
+                            <span>Uptake</span>
+                        </div>
+                        <div class="legend-badge-item">
+                            <span class="persona-badge cpm">CPM</span>
+                            <span>Contract</span>
+                        </div>
+                        <div class="legend-badge-item">
+                            <span class="persona-badge mm">MM</span>
+                            <span>Market</span>
+                        </div>
+                        <div class="legend-badge-item">
+                            <span class="persona-badge onp">ONP</span>
+                            <span>Network</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="legend-section">
+                    <div class="legend-label">Events</div>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color event-spike"></div>
+                            <span>Booking spike</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color event-removal"></div>
+                            <span>Capacity removal</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
