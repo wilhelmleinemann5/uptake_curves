@@ -3,702 +3,778 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>System Integration & Tool Sprawl Reduction Map</title>
+    <title>System Integration & Token Flow Map</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --bg-100: #ffffff;
-            --bg-200: #f8f9fa;
-            --bg-300: #e9ecef;
-            --text-900: #1a1a2e;
-            --text-700: #495057;
-            --text-500: #6c757d;
-            --text-400: #adb5bd;
+            --bg: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-elevated: #1a1a24;
+            --border: #2a2a3a;
+            --text-100: #ffffff;
+            --text-200: #e0e0e6;
+            --text-300: #a0a0b0;
+            --text-400: #606070;
             
-            --onp-color: #dc3545;
-            --cpm-color: #17a2b8;
-            --contract-pricing-color: #6f42c1;
-            --uptake-color: #6610f2;
-            --spot-color: #007bff;
+            --onp: #f59e0b;
+            --cpm: #06b6d4;
+            --contract: #a855f7;
+            --uptake: #8b5cf6;
+            --spot: #3b82f6;
             
-            --connection-needed: #dc3545;
-            --connection-established: #28a745;
-            --token-bg: #fff3cd;
-            --token-border: #ffc107;
+            --established: #22c55e;
+            --needed: #ef4444;
+            --token: #fbbf24;
         }
         
         body {
-            font-family: 'IBM Plex Sans', sans-serif;
-            background: var(--bg-100);
-            color: var(--text-900);
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg);
+            color: var(--text-200);
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
         .frame {
-            width: 1600px;
-            min-height: 1000px;
-            padding: 32px 40px;
+            width: 1400px;
             margin: 0 auto;
-            background: var(--bg-100);
+            padding: 40px;
         }
         
         /* Header */
         .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 24px;
+            text-align: center;
+            margin-bottom: 48px;
         }
         
         .header h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
-            color: var(--onp-color);
-            margin-bottom: 4px;
+            color: var(--text-100);
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
         }
         
-        .header .tagline {
-            font-size: 13px;
-            color: var(--text-500);
-            font-style: italic;
+        .header h1 span {
+            background: linear-gradient(135deg, var(--needed), var(--token));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            font-size: 14px;
+            color: var(--text-300);
         }
         
         /* Legend */
         .legend {
             display: flex;
-            gap: 24px;
-            font-size: 11px;
-            color: var(--text-700);
+            justify-content: center;
+            gap: 32px;
+            margin-bottom: 40px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 12px;
+            color: var(--text-300);
         }
         
         .legend-line {
-            width: 40px;
-            height: 2px;
-            position: relative;
+            width: 32px;
+            height: 3px;
+            border-radius: 2px;
         }
         
-        .legend-line.needed {
-            background: var(--connection-needed);
-            border-style: dashed;
+        .legend-line.established { background: var(--established); }
+        .legend-line.needed { 
+            background: repeating-linear-gradient(
+                90deg,
+                var(--needed) 0px,
+                var(--needed) 6px,
+                transparent 6px,
+                transparent 10px
+            );
         }
         
-        .legend-line.needed::before {
-            content: '▶';
-            position: absolute;
-            right: -6px;
-            top: -7px;
-            font-size: 10px;
-            color: var(--connection-needed);
-        }
-        
-        .legend-line.established {
-            background: var(--connection-established);
-        }
-        
-        .legend-line.established::before {
-            content: '▶';
-            position: absolute;
-            right: -6px;
-            top: -7px;
-            font-size: 10px;
-            color: var(--connection-established);
-        }
-        
-        /* Phase columns header */
-        .phase-header {
-            display: grid;
-            grid-template-columns: 160px repeat(6, 1fr);
-            gap: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .phase-label {
-            padding: 10px 12px;
-            text-align: center;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-700);
-            background: var(--bg-200);
-            border-radius: 6px;
-            border-bottom: 3px solid var(--bg-300);
-        }
-        
-        .phase-label:nth-child(2) { border-bottom-color: var(--onp-color); }
-        .phase-label:nth-child(3) { border-bottom-color: var(--cpm-color); }
-        .phase-label:nth-child(4) { border-bottom-color: var(--contract-pricing-color); }
-        .phase-label:nth-child(5) { border-bottom-color: var(--cpm-color); }
-        .phase-label:nth-child(6) { border-bottom-color: var(--uptake-color); }
-        .phase-label:nth-child(7) { border-bottom-color: var(--text-500); }
-        
-        /* Main grid */
-        .main-grid {
-            position: relative;
-        }
-        
-        .persona-row {
-            display: grid;
-            grid-template-columns: 160px repeat(6, 1fr);
-            gap: 8px;
-            margin-bottom: 8px;
-            position: relative;
-        }
-        
-        /* Persona header */
-        .persona-header {
+        .legend-token {
+            width: 20px;
+            height: 20px;
+            background: var(--token);
+            border-radius: 4px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 16px 12px;
-            background: var(--bg-200);
-            border-radius: 8px;
-            border-left: 4px solid;
+            justify-content: center;
+            font-size: 10px;
+            color: var(--bg);
+            font-weight: 700;
         }
         
-        .persona-header.onp { border-left-color: var(--onp-color); }
-        .persona-header.cpm { border-left-color: var(--cpm-color); }
-        .persona-header.contract-pricing { border-left-color: var(--contract-pricing-color); }
-        .persona-header.uptake { border-left-color: var(--uptake-color); }
-        .persona-header.spot { border-left-color: var(--spot-color); }
+        /* Main visualization */
+        .main-viz {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+        }
         
-        .persona-name {
-            font-size: 12px;
+        /* Tier sections */
+        .tier {
+            position: relative;
+            padding: 32px 0;
+        }
+        
+        .tier-label {
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            font-size: 10px;
             font-weight: 600;
-            color: var(--text-900);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-400);
+            white-space: nowrap;
         }
         
-        .persona-abbr {
-            font-size: 9px;
-            color: var(--text-500);
+        /* Capacity source (ONP) */
+        .capacity-source {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 24px;
         }
         
-        /* Grid cell */
-        .grid-cell {
-            min-height: 100px;
-            padding: 12px;
-            background: var(--bg-100);
-            border: 1px solid var(--bg-300);
-            border-radius: 8px;
+        .system-node {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             gap: 8px;
-            position: relative;
         }
         
-        /* System box */
         .system-box {
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            text-align: center;
-            min-width: 100px;
-            position: relative;
+            padding: 20px 32px;
+            border-radius: 12px;
             border: 2px solid;
+            text-align: center;
+            position: relative;
+            background: var(--bg-card);
+            min-width: 160px;
         }
         
-        .system-box.onp {
-            background: rgba(220, 53, 69, 0.1);
-            border-color: var(--onp-color);
-            color: var(--onp-color);
-        }
+        .system-box.onp { border-color: var(--onp); }
+        .system-box.cpm { border-color: var(--cpm); }
+        .system-box.contract { border-color: var(--contract); }
+        .system-box.uptake { border-color: var(--uptake); }
+        .system-box.spot { border-color: var(--spot); }
         
-        .system-box.cpm {
-            background: rgba(23, 162, 184, 0.1);
-            border-color: var(--cpm-color);
-            color: var(--cpm-color);
-        }
-        
-        .system-box.cpm-accent {
-            background: rgba(255, 193, 7, 0.15);
-            border-color: #ffc107;
-            color: #856404;
-        }
-        
-        .system-box.contract-pricing {
-            background: rgba(111, 66, 193, 0.1);
-            border-color: var(--contract-pricing-color);
-            color: var(--contract-pricing-color);
-        }
-        
-        .system-box.uptake {
-            background: rgba(102, 16, 242, 0.1);
-            border-color: var(--uptake-color);
-            color: var(--uptake-color);
-        }
-        
-        .system-box.spot {
-            background: rgba(0, 123, 255, 0.1);
-            border-color: var(--spot-color);
-            color: var(--spot-color);
-        }
-        
-        .system-box.monitoring {
-            background: rgba(108, 117, 125, 0.1);
-            border-color: var(--text-500);
-            color: var(--text-700);
+        .system-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-100);
+            margin-bottom: 4px;
         }
         
         .system-desc {
-            font-size: 8px;
-            font-weight: 400;
-            margin-top: 4px;
-            opacity: 0.8;
+            font-size: 10px;
+            color: var(--text-400);
         }
         
-        /* Token badges */
-        .token-badge {
+        .persona-badge {
             position: absolute;
-            font-size: 8px;
+            top: -10px;
+            right: -10px;
+            font-size: 9px;
             font-weight: 600;
-            padding: 3px 8px;
-            border-radius: 10px;
-            background: var(--token-bg);
-            border: 1px solid var(--token-border);
-            color: #856404;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .persona-badge.onp { background: var(--onp); color: var(--bg); }
+        .persona-badge.cpm { background: var(--cpm); color: var(--bg); }
+        .persona-badge.contract { background: var(--contract); color: white; }
+        .persona-badge.uptake { background: var(--uptake); color: white; }
+        .persona-badge.spot { background: var(--spot); color: white; }
+        
+        /* Flow connector */
+        .flow-down {
+            display: flex;
+            justify-content: center;
+            padding: 16px 0;
+            position: relative;
+        }
+        
+        .flow-line {
+            width: 3px;
+            height: 40px;
+            border-radius: 2px;
+        }
+        
+        .flow-line.established { background: var(--established); }
+        .flow-line.needed { 
+            background: repeating-linear-gradient(
+                180deg,
+                var(--needed) 0px,
+                var(--needed) 6px,
+                transparent 6px,
+                transparent 10px
+            );
+        }
+        
+        /* Token badge */
+        .token {
+            position: absolute;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 6px;
+            background: var(--token);
+            color: var(--bg);
             white-space: nowrap;
             z-index: 10;
         }
         
-        .token-badge.out { background: #d4edda; border-color: #28a745; color: #155724; }
-        .token-badge.in { background: #cce5ff; border-color: #007bff; color: #004085; }
-        .token-badge.needed { background: #f8d7da; border-color: #dc3545; color: #721c24; }
-        
-        /* Connection arrows - SVG overlay */
-        .connections-svg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 5;
+        .token.needed {
+            background: var(--needed);
+            color: white;
         }
         
-        .connection-needed {
-            stroke: var(--connection-needed);
-            stroke-width: 2;
-            stroke-dasharray: 8 4;
-            fill: none;
+        /* Split visualization */
+        .split-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin: 24px 0;
         }
         
-        .connection-established {
-            stroke: var(--connection-established);
-            stroke-width: 2;
-            fill: none;
+        .split-header {
+            text-align: center;
+            margin-bottom: 24px;
         }
         
-        .arrow-head-needed {
-            fill: var(--connection-needed);
+        .split-header h2 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-100);
+            margin-bottom: 4px;
         }
         
-        .arrow-head-established {
-            fill: var(--connection-established);
+        .split-header p {
+            font-size: 11px;
+            color: var(--text-400);
         }
         
-        /* Fragmentation callout */
-        .fragmentation-callout {
-            position: fixed;
-            bottom: 24px;
-            right: 24px;
-            background: #fff5f5;
-            border: 2px solid var(--connection-needed);
+        /* Three buckets */
+        .buckets {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .bucket {
+            background: var(--bg-elevated);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        
+        .bucket-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .bucket-icon {
+            width: 40px;
+            height: 40px;
             border-radius: 10px;
-            padding: 16px 20px;
-            max-width: 320px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
         }
         
-        .fragmentation-callout h3 {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--connection-needed);
-            margin-bottom: 8px;
+        .bucket-icon.allocated { background: rgba(6, 182, 212, 0.2); }
+        .bucket-icon.freesale { background: rgba(139, 92, 246, 0.2); }
+        .bucket-icon.spot { background: rgba(59, 130, 246, 0.2); }
+        
+        .bucket-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-100);
         }
         
-        .fragmentation-callout ul {
+        .bucket-subtitle {
             font-size: 10px;
-            color: var(--text-700);
-            padding-left: 16px;
-            line-height: 1.6;
+            color: var(--text-400);
+            margin-top: 2px;
         }
         
-        /* Token flow legend */
-        .token-legend {
-            background: var(--bg-200);
-            border-radius: 10px;
-            padding: 16px 20px;
-            margin-top: 20px;
+        /* System stack within bucket */
+        .system-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         
-        .token-legend h3 {
+        .mini-system {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border-left: 3px solid;
+        }
+        
+        .mini-system.cpm { border-left-color: var(--cpm); }
+        .mini-system.contract { border-left-color: var(--contract); }
+        .mini-system.uptake { border-left-color: var(--uptake); }
+        .mini-system.spot { border-left-color: var(--spot); }
+        
+        .mini-system-name {
             font-size: 12px;
             font-weight: 600;
-            color: var(--text-900);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--bg-300);
+            color: var(--text-200);
         }
         
-        .token-flows {
+        .mini-system-persona {
+            font-size: 9px;
+            color: var(--text-400);
+            margin-left: auto;
+        }
+        
+        /* Coherence section */
+        .coherence-section {
+            margin-top: 32px;
+            padding-top: 32px;
+            border-top: 1px dashed var(--border);
+        }
+        
+        .coherence-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .coherence-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--needed);
+        }
+        
+        .coherence-header .icon {
+            font-size: 20px;
+        }
+        
+        /* Missing connections */
+        .missing-connections {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 16px;
         }
         
-        .token-flow {
-            background: white;
-            border-radius: 8px;
-            padding: 12px;
-            border: 1px solid var(--bg-300);
+        .connection-card {
+            background: rgba(239, 68, 68, 0.05);
+            border: 1px dashed var(--needed);
+            border-radius: 10px;
+            padding: 16px;
         }
         
-        .token-flow-header {
+        .connection-route {
             display: flex;
             align-items: center;
             gap: 8px;
-            margin-bottom: 8px;
-            font-size: 10px;
-            font-weight: 600;
+            margin-bottom: 12px;
         }
         
-        .token-flow-header .from { color: var(--text-500); }
-        .token-flow-header .arrow { color: var(--connection-needed); }
-        .token-flow-header .to { color: var(--text-900); }
-        .token-flow-header.established .arrow { color: var(--connection-established); }
+        .connection-route .from,
+        .connection-route .to {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: var(--bg-elevated);
+            color: var(--text-200);
+        }
         
-        .token-list {
+        .connection-route .arrow {
+            color: var(--needed);
+            font-size: 12px;
+        }
+        
+        .connection-tokens {
             display: flex;
             flex-direction: column;
-            gap: 4px;
+            gap: 6px;
         }
         
-        .token-item {
+        .connection-token {
+            font-family: 'JetBrains Mono', monospace;
             font-size: 9px;
-            padding: 4px 8px;
+            padding: 6px 10px;
+            background: rgba(239, 68, 68, 0.1);
             border-radius: 6px;
-            background: var(--token-bg);
-            border: 1px solid var(--token-border);
-            color: #856404;
+            color: var(--text-300);
+            border: 1px solid rgba(239, 68, 68, 0.2);
         }
         
-        .token-item.needed {
-            background: #f8d7da;
-            border-color: #dc3545;
-            color: #721c24;
+        .connection-reason {
+            font-size: 9px;
+            color: var(--text-400);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid var(--border);
+            line-height: 1.5;
         }
         
-        .status-badge {
-            font-size: 7px;
-            font-weight: 700;
-            padding: 2px 5px;
-            border-radius: 6px;
-            text-transform: uppercase;
-            margin-left: 4px;
+        /* Bottom callout */
+        .bottom-callout {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
         }
         
-        .status-badge.needed { background: #dc3545; color: white; }
-        .status-badge.ok { background: #28a745; color: white; }
+        .callout-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid var(--border);
+        }
+        
+        .callout-card h4 {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-100);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .callout-card h4 .icon { font-size: 16px; }
+        
+        .callout-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .callout-item {
+            font-size: 11px;
+            color: var(--text-300);
+            padding-left: 16px;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .callout-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+        
+        .callout-card.fragmentation .callout-item::before { background: var(--needed); }
+        .callout-card.benefits .callout-item::before { background: var(--established); }
+        
+        /* Visual connector lines (SVG background) */
+        .bucket-connectors {
+            position: absolute;
+            top: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            height: 60px;
+            pointer-events: none;
+        }
+        
+        /* Horizontal flow arrows between buckets */
+        .bucket-flows {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .bucket-flow {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px dashed var(--needed);
+            border-radius: 8px;
+            font-size: 9px;
+            color: var(--text-300);
+        }
+        
+        .bucket-flow .arrow {
+            color: var(--needed);
+        }
+        
+        .bucket-flow .label {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--needed);
+        }
     </style>
 </head>
 <body>
     <div class="frame">
         <!-- Header -->
         <div class="header">
-            <div>
-                <h1>System Integration & Tool Sprawl Reduction Map</h1>
-                <p class="tagline">Make fragmentation visible — show the tokens that need to flow between systems</p>
+            <h1>System Integration & <span>Token Flow</span> Map</h1>
+            <p>Make fragmentation visible — show the tokens that need to flow between systems</p>
+        </div>
+        
+        <!-- Legend -->
+        <div class="legend">
+            <div class="legend-item">
+                <div class="legend-line established"></div>
+                <span>Established flow</span>
             </div>
-            <div class="legend">
-                <div class="legend-item">
-                    <div class="legend-line needed"></div>
-                    <span>Connection needed</span>
-                </div>
-                <div class="legend-item">
-                    <div class="legend-line established"></div>
-                    <span>Connection established</span>
-                </div>
+            <div class="legend-item">
+                <div class="legend-line needed"></div>
+                <span>Connection needed</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-token">T</div>
+                <span>Token / data passed</span>
             </div>
         </div>
         
-        <!-- Phase headers -->
-        <div class="phase-header">
-            <div class="phase-label" style="background: transparent; border: none;"></div>
-            <div class="phase-label">Capacity Planning</div>
-            <div class="phase-label">Allocation Planning</div>
-            <div class="phase-label">Pricing</div>
-            <div class="phase-label">Filing / Execution</div>
-            <div class="phase-label">Booking / Uptake</div>
-            <div class="phase-label">Monitoring</div>
-        </div>
-        
-        <!-- Main Grid with personas -->
-        <div class="main-grid">
-            <!-- ONP Row -->
-            <div class="persona-row">
-                <div class="persona-header onp">
-                    <div>
-                        <div class="persona-name">Ocean Network Product</div>
-                        <div class="persona-abbr">ONP</div>
-                    </div>
-                </div>
-                <div class="grid-cell">
+        <!-- Main visualization -->
+        <div class="main-viz">
+            <!-- Source: ONP -->
+            <div class="capacity-source">
+                <div class="system-node">
                     <div class="system-box onp">
-                        Dnet
-                        <div class="system-desc">Total capacity per trade/week</div>
-                    </div>
-                </div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-            </div>
-            
-            <!-- CPM Row -->
-            <div class="persona-row">
-                <div class="persona-header cpm">
-                    <div>
-                        <div class="persona-name">Contract Product Manager</div>
-                        <div class="persona-abbr">CPM / GSC</div>
-                    </div>
-                </div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell">
-                    <div class="system-box cpm">
-                        Cupid
-                        <div class="system-desc">Allocation targets per customer/trade</div>
-                    </div>
-                </div>
-                <div class="grid-cell">
-                    <div class="system-box cpm">
-                        Athena
-                        <div class="system-desc">Fixed agreement pricing</div>
-                    </div>
-                </div>
-                <div class="grid-cell">
-                    <div class="system-box cpm" style="margin-bottom: 8px;">
-                        Copo
-                        <div class="system-desc">Customer nominations</div>
-                    </div>
-                    <div class="system-box cpm-accent">
-                        CAT
-                        <div class="system-desc">File / Amend / Curtail</div>
-                    </div>
-                </div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell">
-                    <div class="system-box monitoring">
-                        Power BI
-                        <div class="system-desc">Allocation performance</div>
+                        <span class="persona-badge onp">ONP</span>
+                        <div class="system-name">Dnet</div>
+                        <div class="system-desc">Network capacity planning</div>
                     </div>
                 </div>
             </div>
             
-            <!-- 1-3 Month Contract Pricing Row -->
-            <div class="persona-row">
-                <div class="persona-header contract-pricing">
-                    <div>
-                        <div class="persona-name">1-3 Month Contract Pricing</div>
-                        <div class="persona-abbr">Short-term Pricing</div>
-                    </div>
-                </div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell">
-                    <div class="system-box contract-pricing">
-                        Athena
-                        <div class="system-desc">Price coherently with spot</div>
-                    </div>
-                </div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-            </div>
-            
-            <!-- Uptake Manager Row -->
-            <div class="persona-row">
-                <div class="persona-header uptake">
-                    <div>
-                        <div class="persona-name">Uptake Manager</div>
-                        <div class="persona-abbr">UTM</div>
-                    </div>
-                </div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell">
-                    <div class="system-box uptake">
-                        Delta
-                        <div class="system-desc">Manage buckets, freesale, uptake</div>
-                    </div>
-                </div>
-                <div class="grid-cell">
-                    <div class="system-box monitoring">
-                        YVD
-                        <div class="system-desc">Yield visibility</div>
-                    </div>
+            <!-- Flow down with token -->
+            <div class="flow-down">
+                <div class="flow-line established"></div>
+                <div class="token" style="left: calc(50% + 20px); top: 50%; transform: translateY(-50%);">
+                    Total capacity / trade / week
                 </div>
             </div>
             
-            <!-- Spot Pricing Manager Row -->
-            <div class="persona-row">
-                <div class="persona-header spot">
-                    <div>
-                        <div class="persona-name">Spot Pricing Manager</div>
-                        <div class="persona-abbr">SP</div>
+            <!-- Split section -->
+            <div class="split-section">
+                <div class="split-header">
+                    <h2>Capacity splits into three inventory buckets</h2>
+                    <p>Each bucket has its own persona, systems, and pricing — but today they don't share critical data</p>
+                </div>
+                
+                <div class="buckets">
+                    <!-- Allocated bucket -->
+                    <div class="bucket">
+                        <div class="bucket-header">
+                            <div class="bucket-icon allocated">📋</div>
+                            <div>
+                                <div class="bucket-title">Allocated Capacity</div>
+                                <div class="bucket-subtitle">Contract customers with commitments</div>
+                            </div>
+                        </div>
+                        <div class="system-stack">
+                            <div class="mini-system cpm">
+                                <span class="mini-system-name">Cupid</span>
+                                <span class="mini-system-persona">CPM</span>
+                            </div>
+                            <div class="mini-system cpm">
+                                <span class="mini-system-name">Athena</span>
+                                <span class="mini-system-persona">CPM</span>
+                            </div>
+                            <div class="mini-system cpm">
+                                <span class="mini-system-name">Copo → CAT</span>
+                                <span class="mini-system-persona">CPM</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px; padding: 10px; background: rgba(6, 182, 212, 0.1); border-radius: 8px;">
+                            <div style="font-size: 9px; color: var(--text-400); margin-bottom: 4px;">OUTPUT TOKEN</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--cpm);">Allocated FFE per trade</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Freesale bucket -->
+                    <div class="bucket">
+                        <div class="bucket-header">
+                            <div class="bucket-icon freesale">📊</div>
+                            <div>
+                                <div class="bucket-title">Freesale Capacity</div>
+                                <div class="bucket-subtitle">Non-allocated, non-spot inventory</div>
+                            </div>
+                        </div>
+                        <div class="system-stack">
+                            <div class="mini-system uptake">
+                                <span class="mini-system-name">Delta</span>
+                                <span class="mini-system-persona">UTM</span>
+                            </div>
+                            <div class="mini-system contract">
+                                <span class="mini-system-name">Athena</span>
+                                <span class="mini-system-persona">1-3M Pricing</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px; padding: 10px; background: rgba(139, 92, 246, 0.1); border-radius: 8px;">
+                            <div style="font-size: 9px; color: var(--text-400); margin-bottom: 4px;">OUTPUT TOKENS</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--uptake);">Min acceptable CY/FFE</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--uptake); margin-top: 4px;">Remaining freesale capacity</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Spot bucket -->
+                    <div class="bucket">
+                        <div class="bucket-header">
+                            <div class="bucket-icon spot">⚡</div>
+                            <div>
+                                <div class="bucket-title">Spot Capacity</div>
+                                <div class="bucket-subtitle">Dynamic pricing, last-minute fill</div>
+                            </div>
+                        </div>
+                        <div class="system-stack">
+                            <div class="mini-system spot">
+                                <span class="mini-system-name">Penny</span>
+                                <span class="mini-system-persona">SP</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px; padding: 10px; background: rgba(59, 130, 246, 0.1); border-radius: 8px;">
+                            <div style="font-size: 9px; color: var(--text-400); margin-bottom: 4px;">OUTPUT TOKEN</div>
+                            <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--spot);">Spot CY/FFE</div>
+                        </div>
                     </div>
                 </div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell">
-                    <div class="system-box spot">
-                        Penny
-                        <div class="system-desc">Spot CY/FFE pricing</div>
+                
+                <!-- Horizontal flows between buckets (the broken connections) -->
+                <div class="bucket-flows">
+                    <div class="bucket-flow">
+                        <span>UTM / Delta</span>
+                        <span class="arrow">⇄</span>
+                        <span>SP / Penny</span>
+                        <span class="label">MISSING</span>
+                    </div>
+                    <div class="bucket-flow">
+                        <span>SP / Penny</span>
+                        <span class="arrow">→</span>
+                        <span>1-3M / Athena</span>
+                        <span class="label">MISSING</span>
+                    </div>
+                    <div class="bucket-flow">
+                        <span>UTM / Delta</span>
+                        <span class="arrow">⇄</span>
+                        <span>1-3M / Athena</span>
+                        <span class="label">MISSING</span>
                     </div>
                 </div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell"></div>
-                <div class="grid-cell">
-                    <div class="system-box monitoring">
-                        Penny
-                        <div class="system-desc">Rate performance</div>
+                
+                <!-- Coherence section -->
+                <div class="coherence-section">
+                    <div class="coherence-header">
+                        <span class="icon">⚠️</span>
+                        <h3>Missing Token Flows — Price Coherence at Risk</h3>
+                    </div>
+                    
+                    <div class="missing-connections">
+                        <div class="connection-card">
+                            <div class="connection-route">
+                                <span class="from">Delta</span>
+                                <span class="arrow">→</span>
+                                <span class="to">Penny</span>
+                            </div>
+                            <div class="connection-tokens">
+                                <div class="connection-token">Min acceptable CY/FFE</div>
+                                <div class="connection-token">Remaining freesale capacity</div>
+                            </div>
+                            <div class="connection-reason">
+                                SP needs to know the floor price and available space to price spot intelligently
+                            </div>
+                        </div>
+                        
+                        <div class="connection-card">
+                            <div class="connection-route">
+                                <span class="from">Penny</span>
+                                <span class="arrow">→</span>
+                                <span class="to">Delta + Athena</span>
+                            </div>
+                            <div class="connection-tokens">
+                                <div class="connection-token">Spot CY/FFE</div>
+                            </div>
+                            <div class="connection-reason">
+                                UTM and 1-3M Pricing need spot prices to maintain coherence across products
+                            </div>
+                        </div>
+                        
+                        <div class="connection-card">
+                            <div class="connection-route">
+                                <span class="from">Delta</span>
+                                <span class="arrow">⇄</span>
+                                <span class="to">Athena</span>
+                            </div>
+                            <div class="connection-tokens">
+                                <div class="connection-token">Non-alloc price level</div>
+                            </div>
+                            <div class="connection-reason">
+                                Avoid wasted effort: quotes issued below acceptance threshold = customer frustration + no booking
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <!-- SVG Connections Overlay -->
-            <svg class="connections-svg" viewBox="0 0 1520 550" preserveAspectRatio="none">
-                <defs>
-                    <marker id="arrowhead-needed" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" class="arrow-head-needed" />
-                    </marker>
-                    <marker id="arrowhead-established" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
-                        <polygon points="0 0, 10 3.5, 0 7" class="arrow-head-established" />
-                    </marker>
-                </defs>
-                
-                <!-- ONP (Dnet) → UTM (Delta): Total capacity - ESTABLISHED -->
-                <path d="M 340 55 Q 340 340, 1020 400" class="connection-established" marker-end="url(#arrowhead-established)" />
-                
-                <!-- UTM (Delta) → SP (Penny): Min CY + Remaining freesale - NEEDED -->
-                <path d="M 1020 420 Q 900 480, 620 500" class="connection-needed" marker-end="url(#arrowhead-needed)" />
-                
-                <!-- SP (Penny) → UTM (Delta): Spot CY/FFE - NEEDED -->
-                <path d="M 680 480 Q 850 440, 1000 400" class="connection-needed" marker-end="url(#arrowhead-needed)" />
-                
-                <!-- SP (Penny) → 1-3M Pricing (Athena): Spot CY/FFE - NEEDED -->
-                <path d="M 620 480 Q 580 380, 620 280" class="connection-needed" marker-end="url(#arrowhead-needed)" />
-                
-                <!-- UTM (Delta) ↔ 1-3M Pricing (Athena): Non-alloc price level - NEEDED (both ways) -->
-                <path d="M 1000 380 Q 800 300, 680 270" class="connection-needed" marker-end="url(#arrowhead-needed)" />
-                <path d="M 660 290 Q 820 340, 980 395" class="connection-needed" marker-end="url(#arrowhead-needed)" />
-                
-                <!-- CPM (CAT) → UTM (Delta): Allocated capacity - ESTABLISHED -->
-                <path d="M 900 170 Q 950 300, 1000 390" class="connection-established" marker-end="url(#arrowhead-established)" />
-            </svg>
-        </div>
-        
-        <!-- Token Flow Legend -->
-        <div class="token-legend">
-            <h3>Token Flows — What needs to pass between systems</h3>
-            <div class="token-flows">
-                <div class="token-flow">
-                    <div class="token-flow-header established">
-                        <span class="from">ONP / Dnet</span>
-                        <span class="arrow">→</span>
-                        <span class="to">UTM / Delta</span>
-                        <span class="status-badge ok">OK</span>
-                    </div>
-                    <div class="token-list">
-                        <div class="token-item">Total capacity per trade/week</div>
+            <!-- Bottom callouts -->
+            <div class="bottom-callout">
+                <div class="callout-card fragmentation">
+                    <h4><span class="icon">🚨</span> Fragmentation Signals Today</h4>
+                    <div class="callout-list">
+                        <div class="callout-item">Same decision requires checking 3+ systems</div>
+                        <div class="callout-item">Manual copy/paste of capacity and price data</div>
+                        <div class="callout-item">Spot and contract prices drift out of sync</div>
+                        <div class="callout-item">Quotes issued below floor price → wasted customer effort</div>
+                        <div class="callout-item">No single "source of truth" for remaining capacity</div>
                     </div>
                 </div>
                 
-                <div class="token-flow">
-                    <div class="token-flow-header">
-                        <span class="from">UTM / Delta</span>
-                        <span class="arrow">→</span>
-                        <span class="to">SP / Penny</span>
-                        <span class="status-badge needed">NEEDED</span>
-                    </div>
-                    <div class="token-list">
-                        <div class="token-item needed">Min acceptable CY/FFE</div>
-                        <div class="token-item needed">Remaining freesale capacity</div>
-                    </div>
-                </div>
-                
-                <div class="token-flow">
-                    <div class="token-flow-header">
-                        <span class="from">SP / Penny</span>
-                        <span class="arrow">→</span>
-                        <span class="to">UTM / Delta</span>
-                        <span class="status-badge needed">NEEDED</span>
-                    </div>
-                    <div class="token-list">
-                        <div class="token-item needed">Spot CY/FFE for spot bookings</div>
-                    </div>
-                </div>
-                
-                <div class="token-flow">
-                    <div class="token-flow-header">
-                        <span class="from">SP / Penny</span>
-                        <span class="arrow">→</span>
-                        <span class="to">1-3M Pricing / Athena</span>
-                        <span class="status-badge needed">NEEDED</span>
-                    </div>
-                    <div class="token-list">
-                        <div class="token-item needed">Spot CY/FFE (for price coherence)</div>
-                    </div>
-                </div>
-                
-                <div class="token-flow">
-                    <div class="token-flow-header">
-                        <span class="from">UTM / Delta</span>
-                        <span class="arrow">↔</span>
-                        <span class="to">1-3M Pricing / Athena</span>
-                        <span class="status-badge needed">NEEDED</span>
-                    </div>
-                    <div class="token-list">
-                        <div class="token-item needed">Non-spot, non-allocated price level</div>
-                        <div class="token-item" style="font-size: 8px; background: #e2e3e5; border-color: #6c757d; color: #383d41;">Avoid wasted quotes below acceptance threshold</div>
-                    </div>
-                </div>
-                
-                <div class="token-flow">
-                    <div class="token-flow-header established">
-                        <span class="from">CPM / CAT</span>
-                        <span class="arrow">→</span>
-                        <span class="to">UTM / Delta</span>
-                        <span class="status-badge ok">OK</span>
-                    </div>
-                    <div class="token-list">
-                        <div class="token-item">Allocated capacity per trade</div>
+                <div class="callout-card benefits">
+                    <h4><span class="icon">✨</span> With Token Flows Connected</h4>
+                    <div class="callout-list">
+                        <div class="callout-item">Spot reacts to freesale pressure automatically</div>
+                        <div class="callout-item">1-3M prices stay coherent with spot market</div>
+                        <div class="callout-item">No quotes below acceptance threshold</div>
+                        <div class="callout-item">UTM sees real-time spot booking velocity</div>
+                        <div class="callout-item">Capacity utilization improves across all buckets</div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <!-- Fragmentation Callout -->
-        <div class="fragmentation-callout">
-            <h3>⚠️ Fragmentation signals</h3>
-            <ul>
-                <li>Same decision requires multiple tools</li>
-                <li>Manual copy/paste between systems</li>
-                <li>Conflicting versions / unclear "source of truth"</li>
-                <li>Quotes issued below acceptance threshold (wasted effort)</li>
-                <li>Spot and contract prices not coherent</li>
-            </ul>
         </div>
     </div>
 </body>
