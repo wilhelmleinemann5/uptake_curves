@@ -491,10 +491,137 @@
             color: #ffffff;
         }
 
+        /* Contract Decision Panel */
+        .decision-panel {
+            background: #ffffff;
+            border: 1px solid #e2e2e2;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .decision-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .decision-panel h3 {
+            font-family: 'Maersk Headline', sans-serif;
+            font-size: 20px;
+            font-weight: 400;
+            color: #141414;
+        }
+
+        .decision-panel .subtitle {
+            font-size: 13px;
+            color: #6a6a6a;
+            margin-top: 2px;
+        }
+
+        .decision-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .decision-card {
+            background: #f7f7f7;
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid;
+        }
+
+        .decision-card.one-month { border-left-color: #40ab35; }
+        .decision-card.three-month { border-left-color: #f59e0b; }
+        .decision-card.risk { border-left-color: #d63c3c; }
+        .decision-card.premium { border-left-color: #0077b2; }
+
+        .decision-card-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #6a6a6a;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .decision-metric {
+            margin-bottom: 12px;
+        }
+
+        .decision-metric:last-child {
+            margin-bottom: 0;
+        }
+
+        .decision-metric-label {
+            font-size: 12px;
+            color: #6a6a6a;
+            margin-bottom: 2px;
+        }
+
+        .decision-metric-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #141414;
+        }
+
+        .decision-metric-value.positive { color: #40ab35; }
+        .decision-metric-value.negative { color: #d63c3c; }
+        .decision-metric-value.neutral { color: #6a6a6a; }
+        .decision-metric-value.highlight { color: #0077b2; }
+
+        .decision-metric-detail {
+            font-size: 11px;
+            color: #6a6a6a;
+            margin-top: 4px;
+        }
+
+        .probability-bar {
+            height: 8px;
+            background: #e2e2e2;
+            border-radius: 4px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .probability-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .probability-fill.good { background: #40ab35; }
+        .probability-fill.neutral { background: #f59e0b; }
+        .probability-fill.bad { background: #d63c3c; }
+
+        .risk-premium-suggestion {
+            background: #e6f4ff;
+            border: 1px solid #0077b2;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin-top: 12px;
+        }
+
+        .risk-premium-suggestion p {
+            font-size: 13px;
+            color: #141414;
+            margin: 0;
+        }
+
+        .risk-premium-suggestion strong {
+            color: #0077b2;
+        }
+
         /* Responsive */
         @media (max-width: 1200px) {
             .charts-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .decision-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .od-grid {
@@ -504,6 +631,12 @@
             .selected-week-banner {
                 flex-wrap: wrap;
                 gap: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .decision-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -532,6 +665,11 @@
                 <label>Forecasted Week 13 Price</label>
                 <input type="number" id="forecastPrice" value="3200" step="50">
                 <span class="unit">USD / FFE</span>
+            </div>
+            <div class="control-group">
+                <label>Volume Discount</label>
+                <input type="number" id="volumeDiscount" value="5" step="1">
+                <span class="unit">% off contract rates</span>
             </div>
             <div class="control-group">
                 <label>User-Defined Intercept</label>
@@ -605,6 +743,84 @@
                     <div class="legend-item">
                         <div class="legend-line" style="background: #f59e0b;"></div>
                         <span>3-Month (13-wk avg)</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line" style="background: #a855f7; opacity: 0.7;"></div>
+                        <span>Discounted rates</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contract Decision Panel -->
+        <div class="decision-panel">
+            <div class="decision-panel-header">
+                <div>
+                    <h3>Contract Decision Analysis</h3>
+                    <p class="subtitle">Probability-based insights from Monte Carlo simulation</p>
+                </div>
+            </div>
+            
+            <div class="decision-grid">
+                <!-- 1-Month Contract Analysis -->
+                <div class="decision-card one-month">
+                    <div class="decision-card-title">1-Month Contract</div>
+                    <div class="decision-metric">
+                        <div class="decision-metric-label">Probability beats spot</div>
+                        <div class="decision-metric-value" id="prob1MBeatsSpot">—%</div>
+                        <div class="probability-bar">
+                            <div class="probability-fill good" id="prob1MBar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="decision-metric">
+                        <div class="decision-metric-label">Expected savings vs spot</div>
+                        <div class="decision-metric-value" id="savings1M">$—</div>
+                        <div class="decision-metric-detail" id="savings1MDetail">per FFE over 4 weeks</div>
+                    </div>
+                </div>
+
+                <!-- 3-Month Contract Analysis -->
+                <div class="decision-card three-month">
+                    <div class="decision-card-title">3-Month Contract</div>
+                    <div class="decision-metric">
+                        <div class="decision-metric-label">Probability beats spot</div>
+                        <div class="decision-metric-value" id="prob3MBeatsSpot">—%</div>
+                        <div class="probability-bar">
+                            <div class="probability-fill good" id="prob3MBar" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                    <div class="decision-metric">
+                        <div class="decision-metric-label">Expected savings vs spot</div>
+                        <div class="decision-metric-value" id="savings3M">$—</div>
+                        <div class="decision-metric-detail" id="savings3MDetail">per FFE over 13 weeks</div>
+                    </div>
+                </div>
+
+                <!-- Risk Analysis -->
+                <div class="decision-card risk">
+                    <div class="decision-card-title">Downside Risk (No Contract)</div>
+                    <div class="decision-metric">
+                        <div class="decision-metric-label">95th percentile exposure</div>
+                        <div class="decision-metric-value negative" id="risk95">$—</div>
+                        <div class="decision-metric-detail">5% chance spot exceeds this</div>
+                    </div>
+                    <div class="decision-metric">
+                        <div class="decision-metric-label">Worst case vs contract</div>
+                        <div class="decision-metric-value negative" id="worstCase">+$—</div>
+                        <div class="decision-metric-detail">extra you'd pay at 95th %ile</div>
+                    </div>
+                </div>
+
+                <!-- Risk Premium Suggestion -->
+                <div class="decision-card premium">
+                    <div class="decision-card-title">Risk Premium Suggestion</div>
+                    <div class="decision-metric">
+                        <div class="decision-metric-label">Suggested premium</div>
+                        <div class="decision-metric-value highlight" id="riskPremium">—%</div>
+                        <div class="decision-metric-detail" id="premiumDetail">based on volatility</div>
+                    </div>
+                    <div class="risk-premium-suggestion" id="premiumSuggestion">
+                        <p>Loading...</p>
                     </div>
                 </div>
             </div>
@@ -905,6 +1121,7 @@
 
             updateTimeChart();
             updateTermChart();
+            updateContractDecisionPanel();
             updateSelectedWeekBanner();
             updateODChart();
             updateODTable();
@@ -1026,6 +1243,7 @@
         function updateTermChart() {
             const ctx = document.getElementById('termChart').getContext('2d');
             const { termStructure } = simulationResults;
+            const discount = parseFloat(document.getElementById('volumeDiscount').value) / 100;
 
             const labels = termStructure.map(ts => `W${ts.week}`);
 
@@ -1061,6 +1279,26 @@
                             backgroundColor: '#f59e0b',
                             borderWidth: 2,
                             pointRadius: 4,
+                            fill: false
+                        },
+                        {
+                            label: '1-Month Discounted',
+                            data: termStructure.map(ts => ts.oneMonth * (1 - discount)),
+                            borderColor: 'rgba(168, 85, 247, 0.6)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.6)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
+                            label: '3-Month Discounted',
+                            data: termStructure.map(ts => ts.threeMonth * (1 - discount)),
+                            borderColor: 'rgba(168, 85, 247, 0.6)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.6)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
                             fill: false
                         }
                     ]
@@ -1115,6 +1353,94 @@
             const sign = delta >= 0 ? '+' : '';
             deltaEl.textContent = `${sign}$${delta.toFixed(0)}`;
             deltaEl.className = 'metric-value delta ' + (delta >= 0 ? 'positive' : 'negative');
+        }
+
+        function updateContractDecisionPanel() {
+            const { weeklyStats, termStructure, paths } = simulationResults;
+            const volatility = parseFloat(document.getElementById('volatility').value);
+            const discount = parseFloat(document.getElementById('volumeDiscount').value) / 100;
+            
+            // Get current week's contract rates (with discount applied)
+            const ts = termStructure[0]; // Use week 0 (starting week)
+            const oneMonthRate = ts.oneMonth * (1 - discount);
+            const threeMonthRate = ts.threeMonth * (1 - discount);
+            
+            // Calculate probability that contract beats spot
+            // For 1M: Compare contract rate to average of first 4 weeks in each path
+            let contractWins1M = 0;
+            let contractWins3M = 0;
+            let totalSavings1M = 0;
+            let totalSavings3M = 0;
+            
+            paths.forEach(path => {
+                // 1-Month: average of first 4 weeks
+                const avgSpot1M = path.slice(0, 4).reduce((a, b) => a + b, 0) / 4;
+                if (oneMonthRate < avgSpot1M) contractWins1M++;
+                totalSavings1M += (avgSpot1M - oneMonthRate);
+                
+                // 3-Month: average of all 13 weeks
+                const avgSpot3M = path.reduce((a, b) => a + b, 0) / path.length;
+                if (threeMonthRate < avgSpot3M) contractWins3M++;
+                totalSavings3M += (avgSpot3M - threeMonthRate);
+            });
+            
+            const prob1M = (contractWins1M / paths.length) * 100;
+            const prob3M = (contractWins3M / paths.length) * 100;
+            const avgSavings1M = totalSavings1M / paths.length;
+            const avgSavings3M = totalSavings3M / paths.length;
+            
+            // Update 1M metrics
+            document.getElementById('prob1MBeatsSpot').textContent = `${prob1M.toFixed(0)}%`;
+            const prob1MBar = document.getElementById('prob1MBar');
+            prob1MBar.style.width = `${prob1M}%`;
+            prob1MBar.className = 'probability-fill ' + (prob1M >= 60 ? 'good' : prob1M >= 40 ? 'neutral' : 'bad');
+            
+            const savings1MEl = document.getElementById('savings1M');
+            const savings1MSign = avgSavings1M >= 0 ? '+' : '';
+            savings1MEl.textContent = `${savings1MSign}$${avgSavings1M.toFixed(0)}`;
+            savings1MEl.className = 'decision-metric-value ' + (avgSavings1M >= 0 ? 'positive' : 'negative');
+            
+            // Update 3M metrics
+            document.getElementById('prob3MBeatsSpot').textContent = `${prob3M.toFixed(0)}%`;
+            const prob3MBar = document.getElementById('prob3MBar');
+            prob3MBar.style.width = `${prob3M}%`;
+            prob3MBar.className = 'probability-fill ' + (prob3M >= 60 ? 'good' : prob3M >= 40 ? 'neutral' : 'bad');
+            
+            const savings3MEl = document.getElementById('savings3M');
+            const savings3MSign = avgSavings3M >= 0 ? '+' : '';
+            savings3MEl.textContent = `${savings3MSign}$${avgSavings3M.toFixed(0)}`;
+            savings3MEl.className = 'decision-metric-value ' + (avgSavings3M >= 0 ? 'positive' : 'negative');
+            
+            // Risk analysis: 95th percentile of spot average
+            const spotAverages = paths.map(path => path.reduce((a, b) => a + b, 0) / path.length);
+            spotAverages.sort((a, b) => a - b);
+            const p95Spot = spotAverages[Math.floor(paths.length * 0.95)];
+            const worstCaseDelta = p95Spot - threeMonthRate;
+            
+            document.getElementById('risk95').textContent = `$${p95Spot.toFixed(0)}`;
+            document.getElementById('worstCase').textContent = `+$${worstCaseDelta.toFixed(0)}`;
+            
+            // Risk premium suggestion based on volatility
+            // Rule of thumb: premium = volatility * sqrt(weeks) * adjustment factor
+            const weeksFor3M = 13;
+            const suggestedPremium = volatility * Math.sqrt(weeksFor3M) * 0.15; // ~15% of annualized vol
+            const suggestedPremiumPct = Math.max(1, Math.min(suggestedPremium, 15)); // Cap between 1-15%
+            
+            document.getElementById('riskPremium').textContent = `${suggestedPremiumPct.toFixed(1)}%`;
+            
+            // Premium suggestion text
+            const premiumSuggestion = document.getElementById('premiumSuggestion');
+            let suggestionText = '';
+            
+            if (volatility <= 8) {
+                suggestionText = `With <strong>low volatility (${volatility}%)</strong>, markets are relatively stable. A modest <strong>${suggestedPremiumPct.toFixed(1)}% risk premium</strong> on contract rates provides adequate protection while remaining competitive.`;
+            } else if (volatility <= 15) {
+                suggestionText = `With <strong>moderate volatility (${volatility}%)</strong>, consider adding a <strong>${suggestedPremiumPct.toFixed(1)}% risk premium</strong> to contract rates. This compensates for uncertainty while offering customers price stability.`;
+            } else {
+                suggestionText = `With <strong>high volatility (${volatility}%)</strong>, markets are unpredictable. A <strong>${suggestedPremiumPct.toFixed(1)}% risk premium</strong> is recommended to protect against adverse movements. Customers will value the certainty.`;
+            }
+            
+            premiumSuggestion.innerHTML = `<p>${suggestionText}</p>`;
         }
 
         function updateODChart() {
@@ -1311,13 +1637,16 @@
         });
 
         // Re-run on input changes
-        ['startingPrice', 'volatility', 'forecastPrice', 'userIntercept', 'odBeta'].forEach(id => {
+        ['startingPrice', 'volatility', 'forecastPrice', 'volumeDiscount', 'userIntercept', 'odBeta'].forEach(id => {
             document.getElementById(id).addEventListener('change', () => {
                 if (simulationResults) {
                     if (id === 'userIntercept' || id === 'odBeta') {
                         updateSelectedWeekBanner();
                         updateODChart();
                         updateODTable();
+                    } else if (id === 'volumeDiscount') {
+                        updateTermChart();
+                        updateContractDecisionPanel();
                     } else {
                         runSimulation();
                     }
