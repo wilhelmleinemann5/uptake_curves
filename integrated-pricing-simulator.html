@@ -586,6 +586,9 @@
                         <h3>Term Structure</h3>
                         <p class="subtitle">Spot vs 1-Month (4-wk avg) vs 3-Month (13-wk avg) contract rates</p>
                     </div>
+                    <span class="info-link" onclick="showTermStructureModal()">
+                        <span>ℹ️</span> How are these calculated?
+                    </span>
                 </div>
                 <div class="chart-wrapper">
                     <canvas id="termChart"></canvas>
@@ -718,6 +721,49 @@
         </div>
     </div>
 
+    <!-- Term Structure Modal -->
+    <div class="modal-overlay" id="termStructureModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2>Term Structure</h2>
+                <button class="modal-close" onclick="closeTermStructureModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <h4>1. What is Term Structure?</h4>
+                <p>Term structure shows how contract rates relate to spot rates over different commitment periods. It answers: "What's a fair price to lock in for 1 month vs 3 months?"</p>
+
+                <h4>2. How we calculate each rate:</h4>
+                <ul>
+                    <li><strong>Spot Rate</strong> = The simulated market price for that specific week</li>
+                    <li><strong>1-Month Contract</strong> = Average of the next 4 weeks of spot rates<br>
+                        <em style="color: #6a6a6a; font-size: 13px;">Formula: (Week N + Week N+1 + Week N+2 + Week N+3) ÷ 4</em></li>
+                    <li><strong>3-Month Contract</strong> = Average of all remaining weeks (up to 13)<br>
+                        <em style="color: #6a6a6a; font-size: 13px;">Formula: (Week N + Week N+1 + ... + Week 49) ÷ remaining weeks</em></li>
+                </ul>
+
+                <h4>3. Why it matters:</h4>
+                <p>These represent <strong>"fair breakeven" rates</strong> — the contract price where, on average, you'd be indifferent between locking in a contract vs staying on spot.</p>
+                <ul>
+                    <li>If the market is <strong>rising</strong> (bullish), contract rates will be higher than current spot</li>
+                    <li>If the market is <strong>falling</strong> (bearish), contract rates will be lower than current spot</li>
+                    <li>3-Month is typically more stable than 1-Month (averages over more weeks)</li>
+                </ul>
+
+                <h4>4. Example:</h4>
+                <p>If Week 37 spot is $3,000 and the market is expected to rise to $3,200 by Week 49:</p>
+                <ul>
+                    <li>1-Month contract ≈ $3,030 (average of weeks 37-40)</li>
+                    <li>3-Month contract ≈ $3,100 (average of weeks 37-49)</li>
+                </ul>
+                <p>A customer locking in at these rates would, on average, pay the same as if they'd stayed on spot — no advantage either way.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal secondary" onclick="closeTermStructureModal()">Cancel</button>
+                <button class="btn-modal primary" onclick="closeTermStructureModal()">OK</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ============================================
         // CONFIGURATION
@@ -757,10 +803,24 @@
             document.getElementById('odRankModal').classList.remove('active');
         }
 
-        // Close modal on overlay click
+        function showTermStructureModal() {
+            document.getElementById('termStructureModal').classList.add('active');
+        }
+
+        function closeTermStructureModal() {
+            document.getElementById('termStructureModal').classList.remove('active');
+        }
+
+        // Close modals on overlay click
         document.getElementById('odRankModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeODRankModal();
+            }
+        });
+
+        document.getElementById('termStructureModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeTermStructureModal();
             }
         });
 
