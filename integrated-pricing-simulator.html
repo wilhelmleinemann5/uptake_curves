@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrated Pricing Simulator</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0f0f14;
+            --bg-card: #16161d;
+            --bg-elevated: #1e1e28;
+            --border: #2a2a3a;
+            --text-100: #ffffff;
+            --text-200: #e0e0e6;
+            --text-300: #a0a0b0;
+            --text-400: #606070;
+            
+            --spot: #3b82f6;
+            --spot-light: rgba(59, 130, 246, 0.2);
+            --one-month: #22c55e;
+            --three-month: #f59e0b;
+            --discount: #a855f7;
+            --band-outer: rgba(59, 130, 246, 0.1);
+            --band-inner: rgba(59, 130, 246, 0.2);
+            
+            --accent: #42b0d5;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--bg);
+            color: var(--text-200);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        /* Header */
+        .header {
+            margin-bottom: 24px;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-100);
+            margin-bottom: 4px;
+        }
+        
+        .header h1 span {
+            background: linear-gradient(135deg, var(--spot), var(--one-month));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            font-size: 13px;
+            color: var(--text-400);
+        }
+        
+        /* Controls */
+        .controls {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 24px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .control-group label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-400);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .control-group input {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-100);
+            width: 140px;
+        }
+        
+        .control-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+        
+        .control-group .unit {
+            font-size: 10px;
+            color: var(--text-400);
+            margin-top: 2px;
+        }
+        
+        .btn-simulate {
+            background: linear-gradient(135deg, var(--spot), #2563eb);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        
+        .btn-simulate:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .btn-simulate:active {
+            transform: translateY(0);
+        }
+        
+        /* Charts grid */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .chart-card h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-100);
+            margin-bottom: 4px;
+        }
+        
+        .chart-card .subtitle {
+            font-size: 11px;
+            color: var(--text-400);
+            margin-bottom: 16px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 280px;
+        }
+        
+        /* Selected week banner */
+        .selected-week-banner {
+            background: linear-gradient(90deg, var(--bg-elevated), var(--bg-card));
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 24px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+        }
+        
+        .selected-week-banner .week-label {
+            font-size: 12px;
+            color: var(--text-400);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .selected-week-banner .week-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--spot);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .selected-week-banner .metric {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        
+        .selected-week-banner .metric-label {
+            font-size: 10px;
+            color: var(--text-400);
+            text-transform: uppercase;
+        }
+        
+        .selected-week-banner .metric-value {
+            font-size: 18px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .selected-week-banner .metric-value.spot { color: var(--spot); }
+        .selected-week-banner .metric-value.one-month { color: var(--one-month); }
+        .selected-week-banner .metric-value.three-month { color: var(--three-month); }
+        .selected-week-banner .metric-value.discount { color: var(--discount); }
+        
+        /* OD Pricing section */
+        .od-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+        }
+        
+        .od-section h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-100);
+            margin-bottom: 4px;
+        }
+        
+        .od-section .subtitle {
+            font-size: 12px;
+            color: var(--text-400);
+            margin-bottom: 20px;
+        }
+        
+        .od-grid {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 24px;
+        }
+        
+        .od-chart-wrapper {
+            height: 350px;
+            position: relative;
+        }
+        
+        /* OD Table */
+        .od-table-wrapper {
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        
+        .od-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+        
+        .od-table th {
+            background: var(--bg-elevated);
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-300);
+            position: sticky;
+            top: 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .od-table th:last-child,
+        .od-table td:last-child {
+            text-align: right;
+        }
+        
+        .od-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-200);
+        }
+        
+        .od-table tr:hover td {
+            background: var(--bg-elevated);
+        }
+        
+        .od-table .price-spot {
+            color: var(--spot);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+        
+        .od-table .price-discount {
+            color: var(--discount);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+        
+        /* Legend */
+        .chart-legend {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            color: var(--text-300);
+        }
+        
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .legend-line {
+            width: 20px;
+            height: 3px;
+            border-radius: 2px;
+        }
+        
+        .legend-band {
+            width: 20px;
+            height: 10px;
+            border-radius: 2px;
+            opacity: 0.5;
+        }
+        
+        /* Simulation status */
+        .sim-status {
+            font-size: 11px;
+            color: var(--text-400);
+            margin-left: auto;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .sim-status.running {
+            color: var(--three-month);
+        }
+        
+        .sim-status.complete {
+            color: var(--one-month);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Integrated <span>Pricing Simulator</span></h1>
+            <p>Monte Carlo simulation → Time trajectory → Term structure → OD corridor pricing</p>
+        </div>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <label>Starting Spot Price</label>
+                <input type="number" id="startingPrice" value="3000" step="50">
+                <span class="unit">USD / FFE</span>
+            </div>
+            <div class="control-group">
+                <label>Weekly Volatility</label>
+                <input type="number" id="volatility" value="12" step="1">
+                <span class="unit">% per week</span>
+            </div>
+            <div class="control-group">
+                <label>Weekly Drift</label>
+                <input type="number" id="drift" value="0.5" step="0.1">
+                <span class="unit">% per week</span>
+            </div>
+            <div class="control-group">
+                <label>Volume Discount</label>
+                <input type="number" id="discount" value="8" step="1">
+                <span class="unit">% off spot</span>
+            </div>
+            <div class="control-group">
+                <label>OD Slope (β)</label>
+                <input type="number" id="odBeta" value="0.8" step="0.1">
+                <span class="unit">price curve steepness</span>
+            </div>
+            <button class="btn-simulate" onclick="runSimulation()">
+                ▶ Run Monte Carlo (10,000 paths)
+            </button>
+            <div class="sim-status" id="simStatus">Ready</div>
+        </div>
+        
+        <!-- Charts Grid: View 1 + View 3 -->
+        <div class="charts-grid">
+            <!-- View 1: Time Trajectory -->
+            <div class="chart-card">
+                <h3>📈 View 1: Spot Price Trajectory</h3>
+                <p class="subtitle">13-week simulation with confidence bands — click a week to select</p>
+                <div class="chart-wrapper">
+                    <canvas id="timeChart"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-band" style="background: var(--spot);"></div>
+                        <span>5th–95th percentile</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-band" style="background: var(--spot); opacity: 0.8;"></div>
+                        <span>25th–75th percentile</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line" style="background: var(--spot);"></div>
+                        <span>Mean spot</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- View 3: Term Structure -->
+            <div class="chart-card">
+                <h3>📊 View 3: Term Structure</h3>
+                <p class="subtitle">Spot vs 1-Month (4 wk avg) vs 3-Month (13 wk avg) contract rates</p>
+                <div class="chart-wrapper">
+                    <canvas id="termChart"></canvas>
+                </div>
+                <div class="chart-legend">
+                    <div class="legend-item">
+                        <div class="legend-line" style="background: var(--spot);"></div>
+                        <span>Spot rate</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line" style="background: var(--one-month);"></div>
+                        <span>1-Month contract</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line" style="background: var(--three-month);"></div>
+                        <span>3-Month contract</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-line" style="background: var(--discount); opacity: 0.5;"></div>
+                        <span>Discounted tier</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Selected Week Banner -->
+        <div class="selected-week-banner">
+            <div>
+                <div class="week-label">Selected Departure Week</div>
+                <div class="week-value" id="selectedWeekDisplay">W37</div>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Spot Intercept</span>
+                <span class="metric-value spot" id="spotIntercept">$3,000</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">1-Month Rate</span>
+                <span class="metric-value one-month" id="oneMonthRate">$3,030</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">3-Month Rate</span>
+                <span class="metric-value three-month" id="threeMonthRate">$3,100</span>
+            </div>
+            <div class="metric">
+                <span class="metric-label">Discounted Intercept</span>
+                <span class="metric-value discount" id="discountIntercept">$2,760</span>
+            </div>
+        </div>
+        
+        <!-- View 2: OD Rank Pricing -->
+        <div class="od-section">
+            <h3>🗺️ View 2: OD Corridor Pricing</h3>
+            <p class="subtitle">Price curve for all origin-destination pairs based on selected week's intercept</p>
+            
+            <div class="od-grid">
+                <div class="od-chart-wrapper">
+                    <canvas id="odChart"></canvas>
+                </div>
+                <div class="od-table-wrapper">
+                    <table class="od-table">
+                        <thead>
+                            <tr>
+                                <th>OD Pair</th>
+                                <th>Rank</th>
+                                <th>Spot Price</th>
+                                <th>Discount Price</th>
+                            </tr>
+                        </thead>
+                        <tbody id="odTableBody">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const CONFIG = {
+            numSimulations: 10000,
+            numWeeks: 13,
+            startingWeek: 37,
+            odStructure: [
+                { origin: 'CNSGH', destination: 'NLROT', rank: 0.00 },
+                { origin: 'CNSGH', destination: 'BEANT', rank: 0.10 },
+                { origin: 'CNSGH', destination: 'DEHAM', rank: 0.18 },
+                { origin: 'CNSGH', destination: 'GBSOU', rank: 0.25 },
+                { origin: 'CNSGH', destination: 'PLGDN', rank: 0.35 },
+                { origin: 'CNSGH', destination: 'MAPTM', rank: 0.45 },
+                { origin: 'CNSGH', destination: 'SNDKR', rank: 0.55 },
+                { origin: 'CNSGH', destination: 'BRSSA', rank: 0.65 },
+                { origin: 'CNSGH', destination: 'CNIWN', rank: 0.75 },
+                { origin: 'CNSGH', destination: 'CNNPO', rank: 0.85 },
+                { origin: 'CNSGH', destination: 'USLAX', rank: 0.95 }
+            ]
+        };
+        
+        // Global state
+        let simulationResults = null;
+        let selectedWeekIndex = 0;
+        let charts = {};
+        
+        // ============================================
+        // MONTE CARLO SIMULATION
+        // ============================================
+        function runSimulation() {
+            const statusEl = document.getElementById('simStatus');
+            statusEl.textContent = 'Running...';
+            statusEl.className = 'sim-status running';
+            
+            // Use setTimeout to allow UI to update
+            setTimeout(() => {
+                const startPrice = parseFloat(document.getElementById('startingPrice').value);
+                const volatility = parseFloat(document.getElementById('volatility').value) / 100;
+                const drift = parseFloat(document.getElementById('drift').value) / 100;
+                
+                // Run simulation
+                const paths = [];
+                for (let i = 0; i < CONFIG.numSimulations; i++) {
+                    const path = [startPrice];
+                    for (let w = 1; w < CONFIG.numWeeks; w++) {
+                        // Geometric Brownian Motion
+                        const randomShock = (Math.random() - 0.5) * 2 * Math.sqrt(3); // Approximate normal
+                        const newPrice = path[w - 1] * Math.exp(
+                            (drift - 0.5 * volatility * volatility) + volatility * randomShock
+                        );
+                        path.push(Math.max(0, newPrice));
+                    }
+                    paths.push(path);
+                }
+                
+                // Calculate percentiles for each week
+                const weeklyStats = [];
+                for (let w = 0; w < CONFIG.numWeeks; w++) {
+                    const weekPrices = paths.map(p => p[w]).sort((a, b) => a - b);
+                    weeklyStats.push({
+                        week: CONFIG.startingWeek + w,
+                        p5: weekPrices[Math.floor(CONFIG.numSimulations * 0.05)],
+                        p25: weekPrices[Math.floor(CONFIG.numSimulations * 0.25)],
+                        mean: weekPrices.reduce((a, b) => a + b) / weekPrices.length,
+                        p75: weekPrices[Math.floor(CONFIG.numSimulations * 0.75)],
+                        p95: weekPrices[Math.floor(CONFIG.numSimulations * 0.95)]
+                    });
+                }
+                
+                // Calculate term structure (1M = 4wk avg, 3M = 13wk avg)
+                const termStructure = weeklyStats.map((ws, idx) => {
+                    // 1-Month: average of next 4 weeks (or remaining weeks)
+                    const oneMonthWeeks = weeklyStats.slice(idx, Math.min(idx + 4, CONFIG.numWeeks));
+                    const oneMonth = oneMonthWeeks.reduce((a, b) => a + b.mean, 0) / oneMonthWeeks.length;
+                    
+                    // 3-Month: average of all remaining weeks from this point
+                    const threeMonthWeeks = weeklyStats.slice(idx);
+                    const threeMonth = threeMonthWeeks.reduce((a, b) => a + b.mean, 0) / threeMonthWeeks.length;
+                    
+                    return {
+                        week: ws.week,
+                        spot: ws.mean,
+                        oneMonth: oneMonth,
+                        threeMonth: threeMonth
+                    };
+                });
+                
+                simulationResults = {
+                    weeklyStats,
+                    termStructure,
+                    paths
+                };
+                
+                statusEl.textContent = `✓ ${CONFIG.numSimulations.toLocaleString()} paths simulated`;
+                statusEl.className = 'sim-status complete';
+                
+                // Update all views
+                updateAllViews();
+            }, 50);
+        }
+        
+        // ============================================
+        // VIEW UPDATES
+        // ============================================
+        function updateAllViews() {
+            if (!simulationResults) return;
+            
+            updateTimeChart();
+            updateTermChart();
+            updateSelectedWeekBanner();
+            updateODChart();
+            updateODTable();
+        }
+        
+        function updateTimeChart() {
+            const ctx = document.getElementById('timeChart').getContext('2d');
+            const { weeklyStats } = simulationResults;
+            
+            const labels = weeklyStats.map(ws => `W${ws.week}`);
+            
+            if (charts.time) charts.time.destroy();
+            
+            charts.time = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        // 5th percentile (lower bound for fill)
+                        {
+                            label: '5th percentile',
+                            data: weeklyStats.map(ws => ws.p5),
+                            borderColor: 'transparent',
+                            backgroundColor: 'transparent',
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        // 95th percentile (fills to 5th)
+                        {
+                            label: '95th percentile',
+                            data: weeklyStats.map(ws => ws.p95),
+                            borderColor: 'rgba(59, 130, 246, 0.3)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            pointRadius: 0,
+                            fill: '-1'
+                        },
+                        // 25th percentile
+                        {
+                            label: '25th percentile',
+                            data: weeklyStats.map(ws => ws.p25),
+                            borderColor: 'transparent',
+                            backgroundColor: 'transparent',
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        // 75th percentile (fills to 25th)
+                        {
+                            label: '75th percentile',
+                            data: weeklyStats.map(ws => ws.p75),
+                            borderColor: 'rgba(59, 130, 246, 0.5)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            pointRadius: 0,
+                            fill: '-1'
+                        },
+                        // Mean line
+                        {
+                            label: 'Mean',
+                            data: weeklyStats.map(ws => ws.mean),
+                            borderColor: '#3b82f6',
+                            backgroundColor: '#3b82f6',
+                            borderWidth: 3,
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    onClick: (e, elements) => {
+                        if (elements.length > 0) {
+                            selectedWeekIndex = elements[0].index;
+                            updateSelectedWeekBanner();
+                            updateODChart();
+                            updateODTable();
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => `Week ${CONFIG.startingWeek + items[0].dataIndex}`,
+                                label: (item) => {
+                                    if (item.datasetIndex === 4) {
+                                        return `Mean: $${item.raw.toFixed(0)}`;
+                                    }
+                                    return null;
+                                },
+                                afterBody: (items) => {
+                                    const idx = items[0].dataIndex;
+                                    const ws = simulationResults.weeklyStats[idx];
+                                    return [
+                                        `5th: $${ws.p5.toFixed(0)}`,
+                                        `25th: $${ws.p25.toFixed(0)}`,
+                                        `75th: $${ws.p75.toFixed(0)}`,
+                                        `95th: $${ws.p95.toFixed(0)}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#606070' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { 
+                                color: '#606070',
+                                callback: (v) => `$${v.toLocaleString()}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateTermChart() {
+            const ctx = document.getElementById('termChart').getContext('2d');
+            const { termStructure } = simulationResults;
+            const discount = parseFloat(document.getElementById('discount').value) / 100;
+            
+            const labels = termStructure.map(ts => `W${ts.week}`);
+            
+            if (charts.term) charts.term.destroy();
+            
+            charts.term = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [
+                        {
+                            label: 'Spot Rate',
+                            data: termStructure.map(ts => ts.spot),
+                            borderColor: '#3b82f6',
+                            backgroundColor: '#3b82f6',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            fill: false
+                        },
+                        {
+                            label: '1-Month Contract',
+                            data: termStructure.map(ts => ts.oneMonth),
+                            borderColor: '#22c55e',
+                            backgroundColor: '#22c55e',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            fill: false
+                        },
+                        {
+                            label: '3-Month Contract',
+                            data: termStructure.map(ts => ts.threeMonth),
+                            borderColor: '#f59e0b',
+                            backgroundColor: '#f59e0b',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            fill: false
+                        },
+                        {
+                            label: 'Spot (Discounted)',
+                            data: termStructure.map(ts => ts.spot * (1 - discount)),
+                            borderColor: 'rgba(168, 85, 247, 0.5)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.5)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (item) => `${item.dataset.label}: $${item.raw.toFixed(0)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#606070' }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { 
+                                color: '#606070',
+                                callback: (v) => `$${v.toLocaleString()}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateSelectedWeekBanner() {
+            const { weeklyStats, termStructure } = simulationResults;
+            const ws = weeklyStats[selectedWeekIndex];
+            const ts = termStructure[selectedWeekIndex];
+            const discount = parseFloat(document.getElementById('discount').value) / 100;
+            
+            document.getElementById('selectedWeekDisplay').textContent = `W${ws.week}`;
+            document.getElementById('spotIntercept').textContent = `$${ws.mean.toFixed(0)}`;
+            document.getElementById('oneMonthRate').textContent = `$${ts.oneMonth.toFixed(0)}`;
+            document.getElementById('threeMonthRate').textContent = `$${ts.threeMonth.toFixed(0)}`;
+            document.getElementById('discountIntercept').textContent = `$${(ws.mean * (1 - discount)).toFixed(0)}`;
+        }
+        
+        function updateODChart() {
+            const ctx = document.getElementById('odChart').getContext('2d');
+            const { weeklyStats } = simulationResults;
+            const intercept = weeklyStats[selectedWeekIndex].mean;
+            const beta = parseFloat(document.getElementById('odBeta').value);
+            const discount = parseFloat(document.getElementById('discount').value) / 100;
+            
+            // Generate curve data
+            const curvePoints = [];
+            const discountCurvePoints = [];
+            for (let rank = 0; rank <= 1; rank += 0.05) {
+                const price = intercept * Math.exp(beta * rank);
+                curvePoints.push({ x: rank, y: price });
+                discountCurvePoints.push({ x: rank, y: price * (1 - discount) });
+            }
+            
+            // Generate OD points
+            const odPoints = CONFIG.odStructure.map(od => ({
+                x: od.rank,
+                y: intercept * Math.exp(beta * od.rank),
+                origin: od.origin,
+                destination: od.destination
+            }));
+            
+            const discountOdPoints = CONFIG.odStructure.map(od => ({
+                x: od.rank,
+                y: intercept * Math.exp(beta * od.rank) * (1 - discount),
+                origin: od.origin,
+                destination: od.destination
+            }));
+            
+            if (charts.od) charts.od.destroy();
+            
+            charts.od = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        // Spot curve
+                        {
+                            label: 'Spot Price Curve',
+                            data: curvePoints,
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: true
+                        },
+                        // Discount curve
+                        {
+                            label: 'Discount Price Curve',
+                            data: discountCurvePoints,
+                            borderColor: 'rgba(168, 85, 247, 0.7)',
+                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: true
+                        },
+                        // Spot OD points
+                        {
+                            label: 'Spot OD Prices',
+                            data: odPoints,
+                            borderColor: '#3b82f6',
+                            backgroundColor: '#3b82f6',
+                            pointRadius: 8,
+                            pointHoverRadius: 10
+                        },
+                        // Discount OD points
+                        {
+                            label: 'Discount OD Prices',
+                            data: discountOdPoints,
+                            borderColor: '#a855f7',
+                            backgroundColor: '#a855f7',
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                title: (items) => {
+                                    const item = items[0];
+                                    if (item.raw.origin) {
+                                        return `${item.raw.origin} → ${item.raw.destination}`;
+                                    }
+                                    return `Rank: ${item.raw.x.toFixed(2)}`;
+                                },
+                                label: (item) => `Price: $${item.raw.y.toFixed(0)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'OD Rank (by revenue)',
+                                color: '#606070'
+                            },
+                            min: 0,
+                            max: 1,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#606070' }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Price (USD/FFE)',
+                                color: '#606070'
+                            },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { 
+                                color: '#606070',
+                                callback: (v) => `$${v.toLocaleString()}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateODTable() {
+            const { weeklyStats } = simulationResults;
+            const intercept = weeklyStats[selectedWeekIndex].mean;
+            const beta = parseFloat(document.getElementById('odBeta').value);
+            const discount = parseFloat(document.getElementById('discount').value) / 100;
+            
+            const tbody = document.getElementById('odTableBody');
+            tbody.innerHTML = '';
+            
+            CONFIG.odStructure.forEach(od => {
+                const spotPrice = intercept * Math.exp(beta * od.rank);
+                const discountPrice = spotPrice * (1 - discount);
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${od.origin} → ${od.destination}</td>
+                    <td>${od.rank.toFixed(2)}</td>
+                    <td class="price-spot">$${spotPrice.toFixed(0)}</td>
+                    <td class="price-discount">$${discountPrice.toFixed(0)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Run initial simulation
+            runSimulation();
+        });
+        
+        // Re-run on input changes
+        ['startingPrice', 'volatility', 'drift', 'discount', 'odBeta'].forEach(id => {
+            document.getElementById(id).addEventListener('change', () => {
+                if (simulationResults) {
+                    // For discount and beta, just update views (no re-sim needed)
+                    if (id === 'discount' || id === 'odBeta') {
+                        updateTermChart();
+                        updateSelectedWeekBanner();
+                        updateODChart();
+                        updateODTable();
+                    } else {
+                        runSimulation();
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
