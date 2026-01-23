@@ -1468,10 +1468,15 @@
             const userIntercept = parseFloat(document.getElementById('userIntercept').value);
             const discount = parseFloat(document.getElementById('volumeDiscount').value) / 100;
             
-            // Get contract intercepts (discounted rates from term structure)
+            // Get contract intercepts based on USER-DEFINED spot (not simulation)
+            // Use the ratio from term structure to scale from user's spot price
             const ts = termStructure[selectedWeekIndex];
-            const oneMonthIntercept = ts.oneMonth * (1 - discount);
-            const threeMonthIntercept = ts.threeMonth * (1 - discount);
+            const oneMonthRatio = ts.oneMonth / ts.spot; // e.g., 1.02 if 1M is 2% above spot
+            const threeMonthRatio = ts.threeMonth / ts.spot; // e.g., 1.05 if 3M is 5% above spot
+            
+            // Apply ratio to user-defined spot, then apply discount
+            const oneMonthIntercept = userIntercept * oneMonthRatio * (1 - discount);
+            const threeMonthIntercept = userIntercept * threeMonthRatio * (1 - discount);
 
             // Generate booking scatter data with noise
             const bookingData = [];
@@ -1658,10 +1663,13 @@
             const userIntercept = parseFloat(document.getElementById('userIntercept').value);
             const discount = parseFloat(document.getElementById('volumeDiscount').value) / 100;
             
-            // Get contract intercepts
+            // Get contract intercepts based on USER-DEFINED spot (not simulation)
             const ts = termStructure[selectedWeekIndex];
-            const oneMonthIntercept = ts.oneMonth * (1 - discount);
-            const threeMonthIntercept = ts.threeMonth * (1 - discount);
+            const oneMonthRatio = ts.oneMonth / ts.spot;
+            const threeMonthRatio = ts.threeMonth / ts.spot;
+            
+            const oneMonthIntercept = userIntercept * oneMonthRatio * (1 - discount);
+            const threeMonthIntercept = userIntercept * threeMonthRatio * (1 - discount);
 
             const tbody = document.getElementById('odTableBody');
             tbody.innerHTML = '';
