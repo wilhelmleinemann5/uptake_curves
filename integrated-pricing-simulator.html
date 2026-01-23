@@ -745,8 +745,8 @@
                         <span>3-Month (13-wk avg)</span>
                     </div>
                     <div class="legend-item">
-                        <div class="legend-line" style="background: #a855f7; opacity: 0.7;"></div>
-                        <span>Discounted rates</span>
+                        <div class="legend-line" style="background: linear-gradient(90deg, rgba(59,130,246,0.5) 33%, rgba(64,171,53,0.5) 33%, rgba(64,171,53,0.5) 66%, rgba(245,158,11,0.5) 66%); height: 2px;"></div>
+                        <span>Discounted (dashed)</span>
                     </div>
                 </div>
             </div>
@@ -1282,22 +1282,32 @@
                             fill: false
                         },
                         {
+                            label: 'Spot Discounted',
+                            data: termStructure.map(ts => ts.spot * (1 - discount)),
+                            borderColor: 'rgba(59, 130, 246, 0.4)',
+                            backgroundColor: 'rgba(59, 130, 246, 0.4)',
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
+                            pointRadius: 0,
+                            fill: false
+                        },
+                        {
                             label: '1-Month Discounted',
                             data: termStructure.map(ts => ts.oneMonth * (1 - discount)),
-                            borderColor: 'rgba(168, 85, 247, 0.6)',
-                            backgroundColor: 'rgba(168, 85, 247, 0.6)',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
+                            borderColor: 'rgba(64, 171, 53, 0.4)',
+                            backgroundColor: 'rgba(64, 171, 53, 0.4)',
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
                             pointRadius: 0,
                             fill: false
                         },
                         {
                             label: '3-Month Discounted',
                             data: termStructure.map(ts => ts.threeMonth * (1 - discount)),
-                            borderColor: 'rgba(168, 85, 247, 0.6)',
-                            backgroundColor: 'rgba(168, 85, 247, 0.6)',
-                            borderWidth: 2,
-                            borderDash: [5, 5],
+                            borderColor: 'rgba(245, 158, 11, 0.4)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.4)',
+                            borderWidth: 1.5,
+                            borderDash: [4, 4],
                             pointRadius: 0,
                             fill: false
                         }
