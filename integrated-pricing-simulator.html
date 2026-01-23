@@ -350,26 +350,24 @@
             background: #f7f7f7;
         }
 
-        .od-table .price-bestfit {
-            color: #40ab35;
+.od-table .price-market {
+            color: #3b82f6;
             font-weight: 500;
         }
-
+        
         .od-table .price-user {
             color: #0077b2;
             font-weight: 500;
         }
-
-        .od-table .price-delta {
+        
+        .od-table .price-1m {
+            color: rgba(64, 171, 53, 0.9);
             font-weight: 500;
         }
-
-        .od-table .price-delta.positive {
-            color: #40ab35;
-        }
-
-        .od-table .price-delta.negative {
-            color: #d63c3c;
+        
+        .od-table .price-3m {
+            color: rgba(245, 158, 11, 0.9);
+            font-weight: 500;
         }
 
         /* Modal */
@@ -694,7 +692,7 @@
             <div class="chart-card">
                 <div class="chart-card-header">
                     <div>
-                        <h3>Spot Price Trajectory</h3>
+                        <h3>Market Price Trajectory</h3>
                         <p class="subtitle">13-week simulation with confidence bands — click a week to select</p>
                     </div>
                 </div>
@@ -712,7 +710,7 @@
                     </div>
                     <div class="legend-item">
                         <div class="legend-line" style="background: #3b82f6;"></div>
-                        <span>Mean spot</span>
+                        <span>Mean market</span>
                     </div>
                 </div>
             </div>
@@ -872,12 +870,20 @@
                     <span>Actual bookings</span>
                 </div>
                 <div class="legend-item">
-                    <div class="legend-line" style="background: #40ab35;"></div>
-                    <span>Best fit (simulation intercept)</span>
+                    <div class="legend-line" style="background: #3b82f6;"></div>
+                    <span>Market (simulation)</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-line" style="background: #0077b2;"></div>
-                    <span>User-defined price</span>
+                    <span>User-defined (spot)</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: rgba(64, 171, 53, 0.6); height: 2px;"></div>
+                    <span>1M Contract</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-line" style="background: rgba(245, 158, 11, 0.6); height: 2px;"></div>
+                    <span>3M Contract</span>
                 </div>
                 <div class="legend-item">
                     <div class="legend-band" style="background: #8bc34a;"></div>
@@ -895,9 +901,10 @@
                             <tr>
                                 <th>OD Pair</th>
                                 <th>Rank</th>
-                                <th>Best Fit</th>
-                                <th>User Price</th>
-                                <th>Δ</th>
+                                <th>Market</th>
+                                <th>User</th>
+                                <th>1M</th>
+                                <th>3M</th>
                             </tr>
                         </thead>
                         <tbody id="odTableBody">
@@ -1455,10 +1462,16 @@
 
         function updateODChart() {
             const ctx = document.getElementById('odChart').getContext('2d');
-            const { weeklyStats } = simulationResults;
+            const { weeklyStats, termStructure } = simulationResults;
             const intercept = weeklyStats[selectedWeekIndex].mean;
             const beta = parseFloat(document.getElementById('odBeta').value);
             const userIntercept = parseFloat(document.getElementById('userIntercept').value);
+            const discount = parseFloat(document.getElementById('volumeDiscount').value) / 100;
+            
+            // Get contract intercepts (discounted rates from term structure)
+            const ts = termStructure[selectedWeekIndex];
+            const oneMonthIntercept = ts.oneMonth * (1 - discount);
+            const threeMonthIntercept = ts.threeMonth * (1 - discount);
 
             // Generate booking scatter data with noise
             const bookingData = [];
@@ -1484,16 +1497,21 @@
             });
 
             // Generate curves
-            const bestFitCurve = [];
+            const marketCurve = [];
             const userCurve = [];
+            const oneMonthCurve = [];
+            const threeMonthCurve = [];
+            
             for (let rank = 0; rank <= 1; rank += 0.02) {
-                bestFitCurve.push({ x: rank, y: intercept * Math.exp(beta * rank) });
+                marketCurve.push({ x: rank, y: intercept * Math.exp(beta * rank) });
                 userCurve.push({ x: rank, y: userIntercept * Math.exp(beta * rank) });
+                oneMonthCurve.push({ x: rank, y: oneMonthIntercept * Math.exp(beta * rank) });
+                threeMonthCurve.push({ x: rank, y: threeMonthIntercept * Math.exp(beta * rank) });
             }
 
-            // Acceptable range bands
-            const acceptableUpper = bestFitCurve.map(p => ({ x: p.x, y: p.y * 1.15 }));
-            const acceptableLower = bestFitCurve.map(p => ({ x: p.x, y: p.y * 0.85 }));
+            // Acceptable range bands (around market curve)
+            const acceptableUpper = marketCurve.map(p => ({ x: p.x, y: p.y * 1.15 }));
+            const acceptableLower = marketCurve.map(p => ({ x: p.x, y: p.y * 0.85 }));
 
             if (charts.od) charts.od.destroy();
 
@@ -1524,9 +1542,9 @@
                             fill: '-1'
                         },
                         {
-                            label: 'Best Fit (Simulation)',
-                            data: bestFitCurve,
-                            borderColor: '#40ab35',
+                            label: 'Market (Simulation)',
+                            data: marketCurve,
+                            borderColor: '#3b82f6',
                             backgroundColor: 'transparent',
                             borderWidth: 3,
                             pointRadius: 0,
@@ -1534,11 +1552,33 @@
                             fill: false
                         },
                         {
-                            label: 'User-Defined Price',
+                            label: 'User-Defined (Spot)',
                             data: userCurve,
                             borderColor: '#0077b2',
                             backgroundColor: 'transparent',
                             borderWidth: 3,
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: false
+                        },
+                        {
+                            label: '1M Contract',
+                            data: oneMonthCurve,
+                            borderColor: 'rgba(64, 171, 53, 0.7)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [6, 4],
+                            pointRadius: 0,
+                            showLine: true,
+                            fill: false
+                        },
+                        {
+                            label: '3M Contract',
+                            data: threeMonthCurve,
+                            borderColor: 'rgba(245, 158, 11, 0.7)',
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [6, 4],
                             pointRadius: 0,
                             showLine: true,
                             fill: false
@@ -1612,28 +1652,34 @@
         }
 
         function updateODTable() {
-            const { weeklyStats } = simulationResults;
+            const { weeklyStats, termStructure } = simulationResults;
             const intercept = weeklyStats[selectedWeekIndex].mean;
             const beta = parseFloat(document.getElementById('odBeta').value);
             const userIntercept = parseFloat(document.getElementById('userIntercept').value);
+            const discount = parseFloat(document.getElementById('volumeDiscount').value) / 100;
+            
+            // Get contract intercepts
+            const ts = termStructure[selectedWeekIndex];
+            const oneMonthIntercept = ts.oneMonth * (1 - discount);
+            const threeMonthIntercept = ts.threeMonth * (1 - discount);
 
             const tbody = document.getElementById('odTableBody');
             tbody.innerHTML = '';
 
             CONFIG.odStructure.forEach(od => {
-                const bestFitPrice = intercept * Math.exp(beta * od.rank);
+                const marketPrice = intercept * Math.exp(beta * od.rank);
                 const userPrice = userIntercept * Math.exp(beta * od.rank);
-                const delta = userPrice - bestFitPrice;
-                const deltaClass = delta >= 0 ? 'positive' : 'negative';
-                const deltaSign = delta >= 0 ? '+' : '';
+                const oneMonthPrice = oneMonthIntercept * Math.exp(beta * od.rank);
+                const threeMonthPrice = threeMonthIntercept * Math.exp(beta * od.rank);
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td>${od.origin} → ${od.destination}</td>
                     <td>${od.rank.toFixed(2)}</td>
-                    <td class="price-bestfit">$${bestFitPrice.toFixed(0)}</td>
+                    <td class="price-market">$${marketPrice.toFixed(0)}</td>
                     <td class="price-user">$${userPrice.toFixed(0)}</td>
-                    <td class="price-delta ${deltaClass}">${deltaSign}$${delta.toFixed(0)}</td>
+                    <td class="price-1m">$${oneMonthPrice.toFixed(0)}</td>
+                    <td class="price-3m">$${threeMonthPrice.toFixed(0)}</td>
                 `;
                 tbody.appendChild(row);
             });
