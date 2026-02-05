@@ -7,6 +7,70 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <script src="styles/chart-config.js"></script>
     <link rel="stylesheet" href="styles/maersk-theme.css">
+    <style>
+        /* Tooltip styles */
+        .param-label-with-tooltip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--maersk-info, #0070ad);
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: help;
+            position: relative;
+        }
+        
+        .tooltip-icon:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 50%;
+            bottom: 24px;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: normal;
+            white-space: normal;
+            width: 250px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            line-height: 1.4;
+        }
+        
+        .tooltip-icon:hover::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 18px;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+            z-index: 1001;
+        }
+        
+        /* Button hover effects */
+        button:not(:disabled):hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+            transition: all 0.2s ease;
+        }
+        
+        button:not(:disabled):active {
+            transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -60,7 +124,7 @@
             </div>
 
             <!-- Turn Controls -->
-            <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-bottom: 1rem;">
+            <div style="display: flex; gap: 1rem; justify-content: center; align-items: center; margin-bottom: 1rem; flex-wrap: wrap;">
                 <button id="simulateTurnBtn" onclick="simulateTurn()" 
                         style="background: var(--maersk-blue); color: white; border: none; padding: 0.8rem 2rem; border-radius: 6px; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                     🎯 Simulate Turn
@@ -68,6 +132,11 @@
                 <button onclick="resetSimulation()" 
                         style="background: var(--mds-bg-strong); color: var(--mds-text-secondary); border: 1px solid var(--mds-border-default); padding: 0.8rem 1.5rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">
                     🔄 Reset Simulation
+                </button>
+                <button onclick="resetAllParameters()" 
+                        style="background: var(--mds-bg-strong); color: var(--mds-text-secondary); border: 1px solid var(--mds-border-default); padding: 0.8rem 1.5rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer;"
+                        title="Reset all parameters to default values">
+                    ⚙️ Reset Parameters
                 </button>
             </div>
         </div>
@@ -169,14 +238,20 @@
                     </div>
                     
                     <div>
-                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Ramp Start (DTD)</label>
+                        <div class="param-label-with-tooltip" style="margin-bottom: 0.25rem;">
+                            <label style="color: var(--mds-text-secondary); font-size: 0.8rem;">Ramp Start (DTD)</label>
+                            <span class="tooltip-icon" data-tooltip="Days before departure when booking demand starts ramping up significantly. Example: 28 means demand increases starting 28 days out.">?</span>
+                        </div>
                         <input type="number" id="rampStart" value="28" min="20" max="40" step="1" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
                     
                     <div>
-                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Taper Start (DTD)</label>
+                        <div class="param-label-with-tooltip" style="margin-bottom: 0.25rem;">
+                            <label style="color: var(--mds-text-secondary); font-size: 0.8rem;">Taper Start (DTD)</label>
+                            <span class="tooltip-icon" data-tooltip="Days before departure when booking demand starts tapering off. Example: 5 means demand decreases inside 5 days to departure.">?</span>
+                        </div>
                         <input type="number" id="taperStart" value="5" min="2" max="10" step="1" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
@@ -202,21 +277,30 @@
                     </div>
                     
                     <div>
-                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Fee Pass-Through (%)</label>
+                        <div class="param-label-with-tooltip" style="margin-bottom: 0.25rem;">
+                            <label style="color: var(--mds-text-secondary); font-size: 0.8rem;">Fee Pass-Through (%)</label>
+                            <span class="tooltip-icon" data-tooltip="Percentage of the cancellation fee that customers receive as credit. Example: 15% means if fee is $250, customer gets $37.50 credit.">?</span>
+                        </div>
                         <input type="number" id="feePassThrough" value="15" min="0" max="50" step="5" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
                     
                     <div>
-                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Cancel Cap per Day (%)</label>
+                        <div class="param-label-with-tooltip" style="margin-bottom: 0.25rem;">
+                            <label style="color: var(--mds-text-secondary); font-size: 0.8rem;">Cancel Cap per Day (%)</label>
+                            <span class="tooltip-icon" data-tooltip="Maximum percentage of current bookings that can cancel per day. Example: 5% means at most 5% of booked FFE can cancel on any given day.">?</span>
+                        </div>
                         <input type="number" id="cancelCap" value="5" min="1" max="10" step="0.5" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                     </div>
                     
                     <div>
-                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">No Cancel Inside (DTD)</label>
+                        <div class="param-label-with-tooltip" style="margin-bottom: 0.25rem;">
+                            <label style="color: var(--mds-text-secondary); font-size: 0.8rem;">No Cancel Inside (DTD)</label>
+                            <span class="tooltip-icon" data-tooltip="Cancellations are not allowed within this many days of departure. Example: 5 means no cancellations allowed inside 5 days to departure.">?</span>
+                        </div>
                         <input type="number" id="noCancelInside" value="5" min="0" max="10" step="1" 
                                onchange="runSimulation()"
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
@@ -244,7 +328,10 @@
                     </div>
 
                     <div>
-                        <label style="display: block; color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.25rem;">Target Guardrail Buffer (%)</label>
+                        <div class="param-label-with-tooltip" style="margin-bottom: 0.25rem;">
+                            <label style="color: var(--mds-text-secondary); font-size: 0.8rem;">Target Guardrail Buffer (%)</label>
+                            <span class="tooltip-icon" data-tooltip="Acceptable range around capacity target. Example: 5% with 200 FFE capacity means 190-210 FFE is 'on target' (green). Outside this range triggers warnings.">?</span>
+                        </div>
                         <input type="number" id="guardrailBuffer" value="5" min="1" max="20" step="1" 
                                style="width: 100%; padding: 0.4rem; background: var(--mds-bg-tertiary); border: 1px solid var(--mds-border-default); border-radius: 4px; color: var(--mds-text-primary); font-size: 0.85rem;">
                         <div style="color: var(--mds-text-weak); font-size: 0.7rem; margin-top: 0.25rem;">
@@ -346,7 +433,7 @@
                     
                     <!-- Simple Forecast Display -->
                     <div style="background: var(--mds-bg-tertiary); border-radius: 6px; padding: 1rem; text-align: center;">
-                        <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;">Days to Departure: 0</div>
+                        <div style="color: var(--mds-text-secondary); font-size: 0.8rem; margin-bottom: 0.5rem;" id="forecastDaysRemaining">Days to Departure: --</div>
                         <div style="color: var(--mds-text-primary); font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem;" id="cleanForecastRange">-- to -- FFE</div>
                         <div style="color: var(--maersk-blue); font-size: 1rem; font-weight: 600;" id="cleanMostLikely">Most Likely: --</div>
                         <div style="color: var(--mds-text-warning, #b35a00); font-size: 0.9rem; font-weight: 600; margin-top: 0.5rem; display: none;" id="selloutNotice">⚠️ Forecasted sell-out at <span id="selloutDTD">--</span> DTD</div>
@@ -381,6 +468,60 @@
             <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
                 📈 Historical Analysis
             </a>
+        </div>
+    </div>
+
+    <!-- Simulation Summary Modal -->
+    <div id="summaryModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 10000; justify-content: center; align-items: center;">
+        <div style="background: var(--mds-bg-primary, #1a1a1a); border-radius: 12px; padding: 2rem; max-width: 700px; width: 90%; max-height: 85vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2 style="color: var(--maersk-blue); margin: 0;">🎉 Simulation Complete!</h2>
+                <button onclick="closeSummaryModal()" style="background: none; border: none; color: var(--mds-text-secondary); font-size: 1.5rem; cursor: pointer; padding: 0; line-height: 1;">×</button>
+            </div>
+            
+            <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--mds-text-primary); margin: 0 0 1rem 0; font-size: 1.1rem;">📊 Final Results</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div>
+                        <div style="color: var(--mds-text-secondary); font-size: 0.85rem;">Final Bookings</div>
+                        <div style="color: var(--maersk-blue); font-size: 1.5rem; font-weight: 700;" id="summaryFinalBooking">0 FFE</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--mds-text-secondary); font-size: 0.85rem;">Capacity Utilization</div>
+                        <div style="color: var(--maersk-success); font-size: 1.5rem; font-weight: 700;" id="summaryCapacityUtil">0%</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--mds-text-secondary); font-size: 0.85rem;">Total Revenue</div>
+                        <div style="color: var(--maersk-warning); font-size: 1.5rem; font-weight: 700;" id="summaryTotalRevenue">$0</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--mds-text-secondary); font-size: 0.85rem;">Revenue per FFE</div>
+                        <div style="color: var(--maersk-info); font-size: 1.5rem; font-weight: 700;" id="summaryRevenuePerFFE">$0</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--mds-text-secondary); font-size: 0.85rem;">Total Cancellations</div>
+                        <div style="color: var(--maersk-error); font-size: 1.2rem; font-weight: 700;" id="summaryCancellations">0 FFE</div>
+                    </div>
+                    <div>
+                        <div style="color: var(--mds-text-secondary); font-size: 0.85rem;">Avg Pricing Ratio</div>
+                        <div style="color: var(--mds-text-primary); font-size: 1.2rem; font-weight: 700;" id="summaryAvgRatio">1.00x</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="background: var(--mds-bg-secondary); border-radius: 8px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                <h3 style="color: var(--mds-text-primary); margin: 0 0 1rem 0; font-size: 1.1rem;">🎛️ Your Strategy</h3>
+                <div id="summaryStrategy" style="color: var(--mds-text-secondary); font-size: 0.9rem; line-height: 1.6;"></div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                <button onclick="exportSimulationData()" style="background: var(--maersk-info); color: white; border: none; border-radius: 6px; padding: 0.75rem 1.5rem; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                    📥 Export CSV
+                </button>
+                <button onclick="closeSummaryModal()" style="background: var(--maersk-blue); color: white; border: none; border-radius: 6px; padding: 0.75rem 1.5rem; font-weight: 600; cursor: pointer; font-size: 1rem;">
+                    Close
+                </button>
+            </div>
         </div>
     </div>
 
@@ -461,6 +602,62 @@
             }
         }
 
+        // Input validation with visual feedback
+        function validateInput(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return true;
+            
+            const value = parseFloat(input.value);
+            const min = parseFloat(input.getAttribute('min'));
+            const max = parseFloat(input.getAttribute('max'));
+            
+            let isValid = true;
+            if (isNaN(value)) {
+                isValid = false;
+            } else if (!isNaN(min) && value < min) {
+                input.value = min;
+                isValid = false;
+            } else if (!isNaN(max) && value > max) {
+                input.value = max;
+                isValid = false;
+            }
+            
+            // Visual feedback
+            if (!isValid) {
+                input.style.borderColor = 'var(--maersk-error, #cc0000)';
+                input.style.boxShadow = '0 0 4px rgba(204, 0, 0, 0.3)';
+                setTimeout(() => {
+                    input.style.borderColor = 'var(--mds-border-default)';
+                    input.style.boxShadow = 'none';
+                }, 1500);
+            }
+            
+            return isValid;
+        }
+
+        // Attach validation to all numeric inputs
+        function initializeValidation() {
+            const numericInputs = [
+                'capacity', 'marketPrice', 'channelPrice', 'bookingConversion', 
+                'customSensitivity', 'baseWeekdayVolume', 'rampStart', 'taperStart',
+                'weekendMultiplier', 'cancellationFee', 'feePassThrough', 'cancelCap',
+                'noCancelInside', 'openWeeksBefore', 'expectedOpenDTD', 'guardrailBuffer',
+                'marketPriceVolatility', 'searchVolatility'
+            ];
+            
+            numericInputs.forEach(id => {
+                const input = document.getElementById(id);
+                if (input) {
+                    input.addEventListener('change', function() {
+                        validateInput(id);
+                    });
+                    input.addEventListener('blur', function() {
+                        validateInput(id);
+                    });
+                }
+            });
+        }
+
         // Toggle custom sensitivity input
         function toggleCustomSensitivity() {
             const sensitivitySelect = document.getElementById('sensitivity');
@@ -520,9 +717,9 @@
 
         // TURN-BASED SIMULATION FUNCTIONS
         function simulateTurn() {
+            // Prevent execution beyond max turns
             if (TURN_STATE.currentTurn > TURN_STATE.maxTurns) {
-                alert('Simulation complete! Use Reset to start over.');
-                return;
+                return; // Silently return - button should already be disabled
             }
 
             // Apply market volatility at start of turn (except first turn)
@@ -584,9 +781,11 @@
 
             // Check if simulation is complete
             if (TURN_STATE.currentTurn > TURN_STATE.maxTurns) {
+                showSimulationSummary(); // Show summary when complete
                 document.getElementById('simulateTurnBtn').textContent = '🎉 Simulation Complete!';
                 document.getElementById('simulateTurnBtn').disabled = true;
                 document.getElementById('simulateTurnBtn').style.background = 'var(--maersk-success)';
+                document.getElementById('simulateTurnBtn').style.cursor = 'not-allowed';
             }
         }
 
@@ -740,8 +939,15 @@
             document.getElementById('openVesselBtn').style.background = 'var(--mds-bg-strong)';
             document.getElementById('openVesselBtn').style.cursor = 'not-allowed';
             document.getElementById('openingHelp').textContent = `Opened on Turn ${TURN_STATE.currentTurn}`;
-            document.getElementById('vesselStatus').innerHTML = '🔓 Open';
-            document.getElementById('vesselStatus').style.color = 'var(--maersk-success)';
+            
+            // Enhanced vessel status styling
+            const statusEl = document.getElementById('vesselStatus');
+            statusEl.innerHTML = '🔓 Open';
+            statusEl.style.color = 'white';
+            statusEl.style.backgroundColor = 'var(--maersk-success, #119b4d)';
+            statusEl.style.padding = '4px 12px';
+            statusEl.style.borderRadius = '4px';
+            statusEl.style.fontWeight = '700';
         }
 
         function resetSimulation() {
@@ -766,8 +972,14 @@
             document.getElementById('openVesselBtn').style.background = 'var(--maersk-success)';
             document.getElementById('openVesselBtn').style.cursor = 'pointer';
             document.getElementById('openingHelp').textContent = 'One-time decision - cannot close after opening';
-            document.getElementById('vesselStatus').innerHTML = '🔒 Closed';
-            document.getElementById('vesselStatus').style.color = 'var(--mds-text-secondary)';
+            
+            // Reset vessel status with clean styling
+            const statusEl = document.getElementById('vesselStatus');
+            statusEl.innerHTML = '🔒 Closed';
+            statusEl.style.color = 'var(--mds-text-secondary)';
+            statusEl.style.backgroundColor = 'transparent';
+            statusEl.style.padding = '0';
+            statusEl.style.fontWeight = '600';
 
             // Reset simulate button
             document.getElementById('simulateTurnBtn').textContent = '🎯 Simulate Turn';
@@ -1144,8 +1356,27 @@
                         const field = document.getElementById('channelPrice');
                         if (field) {
                             field.value = String(Math.min(10000, Math.max(0, value)));
+                            
+                            // Visual feedback: highlight the updated field
+                            field.style.backgroundColor = 'rgba(0, 170, 136, 0.2)';
+                            field.style.borderColor = 'var(--maersk-success)';
+                            field.style.transition = 'all 0.3s ease';
+                            
+                            setTimeout(() => {
+                                field.style.backgroundColor = 'var(--mds-bg-primary)';
+                                field.style.borderColor = 'var(--mds-border-default)';
+                            }, 1500);
+                            
                             updateChannelMarkupDisplay();
                             updateChartsWithTurnData();
+                            
+                            // Flash the apply button to confirm action
+                            applyBtn.style.backgroundColor = 'var(--maersk-success)';
+                            applyBtn.textContent = '✓ Applied!';
+                            setTimeout(() => {
+                                applyBtn.style.backgroundColor = 'var(--mds-bg-strong)';
+                                applyBtn.textContent = 'Apply';
+                            }, 1500);
                         }
                     }
                 });
@@ -1159,8 +1390,20 @@
             const selloutNoticeEl = document.getElementById('selloutNotice');
             const selloutDTDEl = document.getElementById('selloutDTD');
             const guardrailStatusEl = document.getElementById('guardrailStatus');
+            const forecastDaysEl = document.getElementById('forecastDaysRemaining');
             
             console.log('DEBUG updating clean panel with:', { mostLikely, optimistic, pessimistic });
+            
+            // Update days remaining display
+            if (forecastDaysEl) {
+                if (TURN_STATE.currentTurn <= TURN_STATE.maxTurns) {
+                    const startDTD = SIMULATOR_CONFIG.horizonDays - ((TURN_STATE.currentTurn - 1) * TURN_STATE.daysPerTurn);
+                    const endDTD = Math.max(0, startDTD - TURN_STATE.daysPerTurn + 1);
+                    forecastDaysEl.textContent = `Days to Departure: ${startDTD} to ${endDTD}`;
+                } else {
+                    forecastDaysEl.textContent = `Days to Departure: 0 (Complete)`;
+                }
+            }
             
             if (cleanRangeEl) {
                 cleanRangeEl.textContent = `${pessimistic} - ${optimistic} FFE`;
@@ -1176,10 +1419,11 @@
                 console.log('DEBUG: cleanMostLikely element not found');
             }
 
-            // Show sell-out notice only when most-likely hits capacity
+            // Show sell-out notice only when most-likely hits capacity and sellout is in the future
             const capacity = getParameterValue('capacity');
+            const currentStartDTD = SIMULATOR_CONFIG.horizonDays - ((TURN_STATE.currentTurn - 1) * TURN_STATE.daysPerTurn);
             if (selloutNoticeEl && selloutDTDEl) {
-                if (Math.round(mostLikely) >= Math.round(capacity) && selloutDTD !== null && selloutDTD !== undefined) {
+                if (Math.round(mostLikely) >= Math.round(capacity) && selloutDTD !== null && selloutDTD !== undefined && selloutDTD < currentStartDTD) {
                     selloutDTDEl.textContent = `${selloutDTD}`;
                     selloutNoticeEl.style.display = 'block';
                 } else {
@@ -1194,7 +1438,8 @@
                 const upper = capacity * (1 + bufferPct / 100);
                 guardrailStatusEl.textContent = '';
                 guardrailStatusEl.style.color = 'var(--mds-text-primary)';
-                if (Math.round(mostLikely) >= Math.round(capacity) && selloutDTD !== null && selloutDTD > 0) {
+                // Only show sell-out risk if it's in the future (less than current DTD)
+                if (Math.round(mostLikely) >= Math.round(capacity) && selloutDTD !== null && selloutDTD > 0 && selloutDTD < currentStartDTD) {
                     guardrailStatusEl.textContent = `🟠 Early sell-out risk at ${selloutDTD} DTD`;
                     guardrailStatusEl.style.color = 'var(--maersk-warning, #b35a00)';
                 } else if (mostLikely < lower) {
@@ -1447,35 +1692,35 @@
                         {
                             label: 'Forecast - Pessimistic',
                             data: [],
-                            borderColor: 'rgba(229, 62, 62, 0.5)',
-                            backgroundColor: 'rgba(229, 62, 62, 0.1)',
-                            borderWidth: 1,
+                            borderColor: 'rgba(255, 99, 71, 0.8)', // Brighter red-orange
+                            backgroundColor: 'rgba(255, 99, 71, 0.1)',
+                            borderWidth: 2,
                             pointRadius: 0,
                             fill: false,
                             tension: 0.3,
-                            borderDash: [3, 3]
+                            borderDash: [2, 4] // Short dashes
                         },
                         {
                             label: 'Forecast - Optimistic',
                             data: [],
-                            borderColor: 'rgba(0, 170, 136, 0.5)',
-                            backgroundColor: 'rgba(0, 170, 136, 0.1)',
-                            borderWidth: 1,
+                            borderColor: 'rgba(50, 205, 50, 0.8)', // Brighter lime green
+                            backgroundColor: 'rgba(50, 205, 50, 0.1)',
+                            borderWidth: 2,
                             pointRadius: 0,
                             fill: '-1',
                             tension: 0.3,
-                            borderDash: [3, 3]
+                            borderDash: [8, 4] // Long dashes
                         },
                         {
                             label: 'Forecast - Most Likely',
                             data: [],
-                            borderColor: 'rgba(66, 176, 213, 0.6)',
+                            borderColor: 'rgba(255, 215, 0, 0.9)', // Bright gold
                             backgroundColor: 'transparent',
-                            borderWidth: 2,
+                            borderWidth: 2.5,
                             pointRadius: 2,
                             fill: false,
                             tension: 0.3,
-                            borderDash: [6, 3]
+                            borderDash: [12, 6] // Very long dashes
                         }
                     ]
                 },
@@ -1496,7 +1741,11 @@
                             },
                             ticks: {
                                 color: 'rgb(138, 138, 138)',
-                                font: { size: 12 }
+                                font: { size: 11 },
+                                maxRotation: 45,
+                                minRotation: 45,
+                                maxTicksLimit: 12,
+                                autoSkip: true
                             }
                         },
                         y: {
@@ -1576,8 +1825,11 @@
                         grid: { color: 'rgba(138, 138, 138, 0.2)' },
                         ticks: { 
                             color: 'rgb(138, 138, 138)', 
-                            font: { size: 10 },
-                            maxTicksLimit: 8
+                            font: { size: 9 },
+                            maxTicksLimit: 8,
+                            maxRotation: 45,
+                            minRotation: 0,
+                            autoSkip: true
                         }
                     },
                     y: {
@@ -2045,6 +2297,92 @@
         }
 
 
+        // Show simulation summary modal
+        function showSimulationSummary() {
+            if (!TURN_STATE.simulationData || TURN_STATE.simulationData.length === 0) return;
+            
+            const finalRecord = TURN_STATE.simulationData[TURN_STATE.simulationData.length - 1];
+            const capacity = getParameterValue('capacity');
+            
+            // Calculate metrics
+            const finalBooking = finalRecord.cumulativeFFE;
+            const capacityUtil = (finalBooking / capacity * 100).toFixed(1);
+            const totalRevenue = finalRecord.cumulativeRevenue;
+            const cancellationRevenue = finalRecord.cumulativeCancellationsRevenue || 0;
+            const bookingRevenue = totalRevenue - cancellationRevenue;
+            const totalCancellations = finalRecord.cumulativeCancellationsFFE;
+            const revenuePerFFE = finalBooking > 0 ? (bookingRevenue / finalBooking).toFixed(0) : 0;
+            
+            // Calculate average pricing ratio
+            let totalWeightedRatio = 0;
+            let totalBookings = 0;
+            TURN_STATE.simulationData.forEach(d => {
+                if (d.bookedFFE > 0) {
+                    totalWeightedRatio += d.pricingRatio * d.bookedFFE;
+                    totalBookings += d.bookedFFE;
+                }
+            });
+            const avgPricingRatio = totalBookings > 0 ? (totalWeightedRatio / totalBookings).toFixed(2) : "1.00";
+            
+            // Update summary modal
+            document.getElementById('summaryFinalBooking').textContent = `${Math.round(finalBooking)} FFE`;
+            document.getElementById('summaryCapacityUtil').textContent = `${capacityUtil}%`;
+            document.getElementById('summaryTotalRevenue').textContent = `$${Math.round(totalRevenue).toLocaleString()}`;
+            document.getElementById('summaryRevenuePerFFE').textContent = `$${revenuePerFFE}`;
+            document.getElementById('summaryCancellations').textContent = `${Math.round(totalCancellations)} FFE`;
+            document.getElementById('summaryAvgRatio').textContent = `${avgPricingRatio}x`;
+            
+            // Build strategy summary
+            const vesselOpenedTurn = TURN_STATE.turnHistory.findIndex(t => t.vesselOpened && !TURN_STATE.turnHistory[Math.max(0, TURN_STATE.turnHistory.indexOf(t) - 1)]?.vesselOpened) + 1;
+            let strategyHTML = `<ul style="margin: 0; padding-left: 1.5rem;">`;
+            strategyHTML += `<li><strong>Vessel opened:</strong> Turn ${vesselOpenedTurn > 0 ? vesselOpenedTurn : 'Never'}</li>`;
+            strategyHTML += `<li><strong>Price range:</strong> $${Math.min(...TURN_STATE.simulationData.map(d => d.channelPriceRaw))} - $${Math.max(...TURN_STATE.simulationData.map(d => d.channelPriceRaw))}</li>`;
+            strategyHTML += `<li><strong>Capacity target:</strong> ${capacity} FFE</li>`;
+            strategyHTML += `<li><strong>Final outcome:</strong> ${finalBooking > capacity * 0.95 ? '🟢 Near full capacity' : finalBooking > capacity * 0.8 ? '🟡 Good fill' : '🔴 Under-filled'}</li>`;
+            strategyHTML += `</ul>`;
+            document.getElementById('summaryStrategy').innerHTML = strategyHTML;
+            
+            // Show modal
+            const modal = document.getElementById('summaryModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+        
+        function closeSummaryModal() {
+            const modal = document.getElementById('summaryModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+        
+        // Export simulation data as CSV
+        function exportSimulationData() {
+            if (!TURN_STATE.simulationData || TURN_STATE.simulationData.length === 0) {
+                alert('No simulation data to export');
+                return;
+            }
+            
+            // CSV headers
+            let csv = 'Date,DTD,Market Price,Channel Price (Raw),Channel Price (Eff),Pricing Ratio,Searches,Offers,Booked FFE,Cumulative FFE,Cancellations FFE,Remaining Capacity,Revenue,Cumulative Revenue\n';
+            
+            // Add data rows
+            TURN_STATE.simulationData.forEach(d => {
+                csv += `${d.date},${d.dtd},${d.marketPrice},${d.channelPriceRaw},${d.channelPriceEff},${d.pricingRatio.toFixed(3)},${d.searches},${d.offers},${d.bookedFFE.toFixed(2)},${d.cumulativeFFE.toFixed(2)},${d.cancellationsFFE.toFixed(2)},${d.remainingCapacityEnd.toFixed(2)},${d.revenue.toFixed(2)},${d.cumulativeRevenue.toFixed(2)}\n`;
+            });
+            
+            // Create download link
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', `booking-simulation-${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         // UI Controls
         function toggleAdvancedParams() {
             const content = document.getElementById('advancedContent');
@@ -2068,11 +2406,55 @@
             });
             runSimulation();
         }
+        
+        function resetAllParameters() {
+            // Reset all advanced parameters
+            Object.keys(SIMULATOR_CONFIG.defaults).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = SIMULATOR_CONFIG.defaults[key];
+                }
+            });
+            
+            // Reset core parameters to their default values
+            const coreDefaults = {
+                capacity: 200,
+                marketPrice: 3000,
+                channelPrice: 3090,
+                bookingConversion: 0.03,
+                sensitivity: '1.25',
+                customSensitivity: 1.25
+            };
+            
+            Object.keys(coreDefaults).forEach(key => {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = coreDefaults[key];
+                }
+            });
+            
+            // Update UI
+            updateChannelMarkupDisplay();
+            updateChartsWithTurnData();
+            
+            // Visual feedback
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Parameters Reset!';
+            btn.style.backgroundColor = 'var(--maersk-success)';
+            btn.style.color = 'white';
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.style.backgroundColor = 'var(--mds-bg-strong)';
+                btn.style.color = 'var(--mds-text-secondary)';
+            }, 1500);
+        }
 
         // Initialize on page load
         window.addEventListener('load', function() {
             initChart();
             initMiniCharts();
+            initializeValidation(); // Set up input validation
             updateTurnUI();
             updateChannelMarkupDisplay();
             updateForecast(); // Show initial forecast
