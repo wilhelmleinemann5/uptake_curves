@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-Departure Canary Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+    <link rel="stylesheet" href="styles/maersk-theme.css">
+    <style>
+        .container { max-width: 1600px; }
+
+        /* Dashboard grid */
+        .departure-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+            margin: 1.5rem 0;
+        }
+        @media (max-width: 1024px) { .departure-grid { grid-template-columns: 1fr; } }
+
+        .departure-panel {
+            background: var(--mds-bg-secondary);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            border: 1px solid var(--mds-border-default);
+            position: relative;
+            transition: box-shadow 0.2s;
+        }
+        .departure-panel:hover { box-shadow: 0 4px 16px rgba(0, 143, 211, 0.15); }
+
+        .departure-panel .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+        .departure-panel .vessel-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--mds-text-primary);
+        }
+        .departure-panel .route-tag {
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+            background: var(--mds-bg-tertiary);
+            color: var(--mds-text-secondary);
+        }
+
+        .kpi-row {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .kpi-chip {
+            background: var(--mds-bg-tertiary);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+        .kpi-chip .kpi-label { color: var(--mds-text-weak); }
+        .kpi-chip .kpi-value { color: var(--mds-text-primary); font-weight: 600; margin-left: 4px; }
+
+        .canary-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .canary-badge.green  { background: rgba(0,170,136,0.15); color: var(--maersk-success); }
+        .canary-badge.yellow { background: rgba(255,165,0,0.15); color: var(--maersk-warning); }
+        .canary-badge.red    { background: rgba(229,62,62,0.15); color: var(--maersk-error); }
+
+        /* Spike detector table */
+        .spike-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .spike-table th {
+            text-align: left;
+            padding: 6px 10px;
+            color: var(--mds-text-secondary);
+            border-bottom: 1px solid var(--mds-border-default);
+            font-weight: 600;
+        }
+        .spike-table td {
+            padding: 6px 10px;
+            color: var(--mds-text-primary);
+            border-bottom: 1px solid rgba(76,76,76,0.4);
+            cursor: pointer;
+        }
+        .spike-table tr:hover td { background: rgba(0,143,211,0.08); }
+        .spike-table tr.active td { background: rgba(0,143,211,0.18); }
+
+        /* Controls bar */
+        .controls-bar {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            background: var(--mds-bg-secondary);
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--mds-border-default);
+        }
+        .controls-bar label {
+            color: var(--mds-text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .controls-bar select, .controls-bar input {
+            background: var(--mds-bg-tertiary);
+            color: var(--mds-text-primary);
+            border: 1px solid var(--mds-border-default);
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 0.85rem;
+        }
+
+        /* Global canary summary */
+        .global-canary {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            border: 2px solid var(--maersk-blue);
+            background: var(--mds-bg-secondary);
+        }
+        .global-canary .gc-icon { font-size: 1.6rem; }
+        .global-canary .gc-label { font-size: 0.85rem; color: var(--mds-text-secondary); }
+        .global-canary .gc-value { font-size: 1.6rem; font-weight: 700; }
+
+        /* Cross-highlight date label */
+        .cross-date-label {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--maersk-blue);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            z-index: 5000;
+            display: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            pointer-events: none;
+        }
+
+        /* Aggregated metrics bar */
+        .agg-metrics {
+            display: flex;
+            gap: 1rem;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            background: var(--mds-bg-tertiary);
+            font-size: 0.8rem;
+            color: var(--mds-text-secondary);
+            display: none;
+        }
+        .agg-metrics .agg-val { color: var(--mds-text-primary); font-weight: 700; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🚢 Multi-Departure Canary Dashboard</h1>
+        <p>Cross-Departure Booking Velocity Monitoring &amp; Anomaly Detection</p>
+    </header>
+
+    <div class="container">
+        <!-- Intro -->
+        <div class="demo-note">
+            <h3>📡 Live Multi-Departure View</h3>
+            <p>Monitor multiple departures simultaneously. Cross-highlight booking dates, detect demand spikes via z-score canaries, and switch between aggregation levels.</p>
+        </div>
+
+        <!-- Controls Bar -->
+        <div class="controls-bar" style="margin: 1.5rem 0;">
+            <div>
+                <label for="aggregationLevel">📊 Aggregation:</label>
+                <select id="aggregationLevel" onchange="updateAggregation()">
+                    <option value="departure" selected>Departure Level</option>
+                    <option value="route">Route Level</option>
+                    <option value="trade">Trade Level</option>
+                </select>
+            </div>
+            <div>
+                <label for="spikeThreshold">🎯 Spike Threshold (CDF):</label>
+                <input type="number" id="spikeThreshold" value="0.95" min="0.80" max="0.99" step="0.01" style="width: 80px;" onchange="detectSpikes()">
+            </div>
+            <div style="flex: 1;"></div>
+            <button onclick="generateAll()" style="background: var(--maersk-blue); color: white; border: none; padding: 8px 20px; border-radius: 6px; font-weight: 600; cursor: pointer;">
+                🔄 Generate / Refresh
+            </button>
+        </div>
+
+        <!-- Global Canary Summary -->
+        <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+            <div class="global-canary" style="flex: 1; min-width: 250px;">
+                <div class="gc-icon">🐦</div>
+                <div>
+                    <div class="gc-label">Global Canary Signal</div>
+                    <div class="gc-value" id="globalCanaryValue" style="color: var(--maersk-blue);">—</div>
+                </div>
+            </div>
+            <div class="global-canary" style="flex: 1; min-width: 250px;">
+                <div class="gc-icon">📈</div>
+                <div>
+                    <div class="gc-label">Total Bookings (All Departures)</div>
+                    <div class="gc-value" id="globalTotalBookings" style="color: var(--maersk-success);">—</div>
+                </div>
+            </div>
+            <div class="global-canary" style="flex: 1; min-width: 250px;">
+                <div class="gc-icon">⚡</div>
+                <div>
+                    <div class="gc-label">Active Anomalies</div>
+                    <div class="gc-value" id="globalActiveSpikes" style="color: var(--maersk-warning);">—</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Aggregated Metrics (shown on hover) -->
+        <div class="agg-metrics" id="aggMetrics">
+            <span>📅 <span class="agg-val" id="aggDate">—</span></span>
+            <span>📦 Total Booked: <span class="agg-val" id="aggBookings">—</span></span>
+            <span>📊 Avg Z-Score: <span class="agg-val" id="aggZScore">—</span></span>
+            <span>🐦 Avg CDF: <span class="agg-val" id="aggCDF">—</span></span>
+            <span>🚨 Spikes: <span class="agg-val" id="aggSpikeCount">—</span></span>
+        </div>
+
+        <!-- Departure Panels Grid -->
+        <div class="departure-grid" id="departureGrid">
+            <!-- Panels injected by JS -->
+        </div>
+
+        <!-- Spike Detector Panel -->
+        <div style="background: var(--mds-bg-secondary); border-radius: 10px; padding: 1.25rem; border: 1px solid var(--mds-border-default); margin: 1.5rem 0;">
+            <h3 style="color: var(--mds-text-primary); margin: 0 0 1rem 0; font-size: 1.1rem;">🚨 Spike Detector — High-Anomaly Booking Days</h3>
+            <div style="max-height: 300px; overflow-y: auto;">
+                <table class="spike-table" id="spikeTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Total FFE</th>
+                            <th>Avg Z-Score</th>
+                            <th>Avg CDF</th>
+                            <th>Departures Affected</th>
+                            <th>Signal</th>
+                        </tr>
+                    </thead>
+                    <tbody id="spikeTableBody">
+                        <tr><td colspan="6" style="text-align: center; color: var(--mds-text-weak); padding: 2rem;">Click "Generate / Refresh" to simulate departures and detect spikes.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div style="text-align: center; margin: 2rem 0;">
+            <a href="live-pricing-advanced-simulator.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-right: 1rem;">
+                🎮 Single-Departure Simulator
+            </a>
+            <a href="live-pricing-simple.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500; margin-right: 1rem;">
+                📊 Simple Simulator
+            </a>
+            <a href="index.html" style="display: inline-block; background: var(--mds-bg-strong); color: white; padding: 12px 24px; border-radius: 6px; text-decoration: none; font-weight: 500;">
+                📈 Historical Analysis
+            </a>
+        </div>
+    </div>
+
+    <!-- Cross-highlight date label -->
+    <div class="cross-date-label" id="crossDateLabel">—</div>
+
+    <script>
+    // ============================================================
+    // CONFIGURATION — Departure definitions
+    // ============================================================
+    const DEPARTURES = [
+        {
+            id: 'dep-1',
+            vesselName: 'Maersk Emerald',
+            route: 'SHA → RTM',
+            trade: 'Asia-Europe',
+            departureDate: '2025-06-30',
+            capacity: 220,
+            marketPrice: 3100,
+            channelPrice: 3200,
+            openDTD: 35,
+            baseVolume: 550,
+            color: 'rgb(0, 143, 211)'       // Maersk blue
+        },
+        {
+            id: 'dep-2',
+            vesselName: 'Maersk Sapphire',
+            route: 'NGB → FEL',
+            trade: 'Asia-Europe',
+            departureDate: '2025-07-07',
+            capacity: 180,
+            marketPrice: 2800,
+            channelPrice: 2890,
+            openDTD: 30,
+            baseVolume: 480,
+            color: 'rgb(0, 170, 136)'       // Teal
+        },
+        {
+            id: 'dep-3',
+            vesselName: 'Maersk Horizon',
+            route: 'YTN → LAX',
+            trade: 'Transpacific',
+            departureDate: '2025-07-14',
+            capacity: 250,
+            marketPrice: 3500,
+            channelPrice: 3600,
+            openDTD: 32,
+            baseVolume: 600,
+            color: 'rgb(255, 165, 0)'       // Orange
+        },
+        {
+            id: 'dep-4',
+            vesselName: 'Maersk Atlas',
+            route: 'QIN → NYC',
+            trade: 'Transpacific',
+            departureDate: '2025-07-21',
+            capacity: 200,
+            marketPrice: 3200,
+            channelPrice: 3300,
+            openDTD: 28,
+            baseVolume: 520,
+            color: 'rgb(176, 130, 255)'     // Purple
+        }
+    ];
+
+    const SIM_CONFIG = {
+        horizonDays: 49,
+        offersPerSearch: 1.0,
+        elasticity: 1.25,
+        bookingConversion: 0.03,
+        weekendMultiplier: 0.20,
+        rampStart: 28,
+        taperStart: 5,
+        cancellationFee: 250,
+        feePassThrough: 0.15,
+        cancelCap: 0.05,
+        noCancelInside: 5,
+        marketVolatility: 0.03,
+        searchVolatility: 0.10,
+        shockProbability: 0.12     // canary shock per day (applied sparsely)
+    };
+
+    // ============================================================
+    // STATE
+    // ============================================================
+    let departureDataSets = {};   // id -> { config, dailyData[], zScores[], cdf[], canarySignal }
+    let spikeData = [];           // [{ date, totalFFE, avgZScore, avgCDF, affectedDeps, signal }]
+    let chartInstances = {};      // id -> Chart instance
+    let currentHighlightDate = null;
+
+    // ============================================================
+    // SYNTHETIC DATA GENERATOR
+    // ============================================================
+
+    /** Bell-curve demand shape (same as existing simulator) */
+    function dtdBellCurve(dtd, baseVol, kRamp = 0.18, kTaper = 0.35, rampStart = 28, taperStart = 5) {
+        const D = Math.max(parseInt(dtd), 0);
+        const s1 = 1.0 / (1.0 + Math.exp(-kRamp * (rampStart - D)));
+        const s2 = 1.0 / (1.0 + Math.exp(-kTaper * (D - taperStart)));
+        return baseVol * s1 * s2;
+    }
+
+    /** Simple seeded random for reproducibility per departure */
+    function makeRNG(seed) {
+        let s = seed;
+        return function() {
+            s = (s * 9301 + 49297) % 233280;
+            return s / 233280;
+        };
+    }
+
+    /** Generate full daily data for one departure */
+    function generateDepartureData(config) {
+        const rng = makeRNG(hashString(config.id + config.departureDate));
+        const depDate = new Date(config.departureDate);
+        const records = [];
+
+        let cumFFE = 0, cumRev = 0, cumCxlFFE = 0;
+        let currentMP = config.marketPrice;
+
+        for (let dtd = SIM_CONFIG.horizonDays; dtd >= 0; dtd--) {
+            const bookingDate = new Date(depDate);
+            bookingDate.setDate(bookingDate.getDate() - dtd);
+
+            const dow = bookingDate.getDay();
+            const isWeekend = dow === 0 || dow === 6;
+            const dowMult = isWeekend ? SIM_CONFIG.weekendMultiplier : 1.0;
+            const isOpen = dtd <= config.openDTD;
+
+            // Market price volatility
+            if (dtd < SIM_CONFIG.horizonDays) {
+                currentMP *= (1 + (rng() - 0.5) * 2 * SIM_CONFIG.marketVolatility);
+            }
+
+            // Canary shock (sparse daily probability)
+            let shockApplied = false;
+            let shockDirection = null;
+            let shockMagnitude = 0;
+            if (rng() < SIM_CONFIG.shockProbability) {
+                shockApplied = true;
+                shockDirection = rng() < 0.5 ? 'upward' : 'downward';
+                shockMagnitude = 5 + rng() * 5; // 5-10%
+                const mult = shockDirection === 'upward' ? (1 + shockMagnitude / 100) : (1 - shockMagnitude / 100);
+                currentMP *= mult;
+            }
+
+            const cp = config.channelPrice;
+            const cpEff = cp + SIM_CONFIG.feePassThrough * SIM_CONFIG.cancellationFee;
+            const pricingRatio = cpEff / currentMP;
+
+            // Demand
+            const weekdayMean = dtdBellCurve(dtd, config.baseVolume, 0.18, 0.35, SIM_CONFIG.rampStart, SIM_CONFIG.taperStart);
+            const meanSearches = Math.max(0, weekdayMean * dowMult);
+            const searchVolMult = 1 + (rng() - 0.5) * 2 * SIM_CONFIG.searchVolatility;
+            const searches = Math.max(0, Math.round(meanSearches * searchVolMult));
+
+            const remainingCapacity = Math.max(config.capacity - cumFFE, 0);
+
+            let bookedFFE = 0, revenue = 0, offers = 0, adjConversion = 0;
+            if (isOpen && remainingCapacity > 0) {
+                offers = Math.round(SIM_CONFIG.offersPerSearch * searches);
+                adjConversion = SIM_CONFIG.bookingConversion * Math.pow(pricingRatio, -SIM_CONFIG.elasticity);
+                const expectedFFE = offers * Math.max(adjConversion, 0);
+                bookedFFE = Math.min(expectedFFE, remainingCapacity);
+                revenue = (currentMP * pricingRatio) * bookedFFE;
+            }
+
+            const cumFFEPreCxl = cumFFE + bookedFFE;
+            const cumRevPreCxl = cumRev + revenue;
+
+            // Cancellations
+            let cxlFFE = 0, cxlRev = 0;
+            if (dtd >= SIM_CONFIG.noCancelInside && cumFFEPreCxl > 0) {
+                const bookedPrice = cumRevPreCxl / Math.max(cumFFEPreCxl, 1e-9);
+                const refPrice = Math.min(currentMP, cp);
+                const cancelVal = bookedPrice - refPrice - SIM_CONFIG.cancellationFee;
+                if (cancelVal > 0) {
+                    const baseRate = 1 - Math.exp(-cancelVal / Math.max(SIM_CONFIG.cancellationFee, 1e-9));
+                    const cxlRate = Math.min(SIM_CONFIG.cancelCap, baseRate * SIM_CONFIG.cancelCap);
+                    cxlFFE = Math.min(cumFFEPreCxl * cxlRate, cumFFEPreCxl);
+                    cxlRev = cxlFFE * SIM_CONFIG.cancellationFee;
+                }
+            }
+
+            const cancelledBookingRev = cxlFFE > 0 ? (cxlFFE / Math.max(cumFFEPreCxl, 1e-9)) * cumRevPreCxl : 0;
+            cumFFE = cumFFEPreCxl - cxlFFE;
+            cumRev = (cumRevPreCxl - cancelledBookingRev) + cxlRev;
+            cumCxlFFE += cxlFFE;
+
+            records.push({
+                bookingDate: new Date(bookingDate),
+                dtd,
+                isOpen,
+                searches,
+                offers,
+                bookedFFE,
+                cumFFE,
+                revenue,
+                cumRev,
+                cxlFFE,
+                cumCxlFFE,
+                remainingCapacity: Math.max(config.capacity - cumFFE, 0),
+                marketPrice: currentMP,
+                channelPrice: cp,
+                pricingRatio,
+                shockApplied,
+                shockDirection,
+                shockMagnitude
+            });
+        }
+
+        return records;
+    }
+
+    /** Simple string hash */
+    function hashString(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) {
+            hash = ((hash << 5) - hash) + str.charCodeAt(i);
+            hash |= 0;
+        }
+        return Math.abs(hash);
+    }
+
+    // ============================================================
+    // Z-SCORE & CDF COMPUTATION
+    // ============================================================
+
+    /** Compute rolling z-scores on daily bookedFFE */
+    function computeZScores(dailyData, windowSize = 7) {
+        const bookedValues = dailyData.map(d => d.bookedFFE);
+        const zScores = [];
+        const cdfValues = [];
+
+        for (let i = 0; i < bookedValues.length; i++) {
+            // Build rolling window
+            const start = Math.max(0, i - windowSize + 1);
+            const window = bookedValues.slice(start, i + 1);
+
+            if (window.length < 3) {
+                zScores.push(0);
+                cdfValues.push(0.5);
+                continue;
+            }
+
+            const mean = window.reduce((a, b) => a + b, 0) / window.length;
+            const variance = window.reduce((a, b) => a + (b - mean) ** 2, 0) / window.length;
+            const std = Math.sqrt(variance);
+
+            const z = std > 0.01 ? (bookedValues[i] - mean) / std : 0;
+            zScores.push(z);
+            cdfValues.push(normalCDF(z));
+        }
+
+        return { zScores, cdfValues };
+    }
+
+    /** Approximate standard normal CDF */
+    function normalCDF(x) {
+        const a1 = 0.254829592, a2 = -0.284496736, a3 = 1.421413741;
+        const a4 = -1.453152027, a5 = 1.061405429, p = 0.3275911;
+        const sign = x < 0 ? -1 : 1;
+        const t = 1.0 / (1.0 + p * Math.abs(x));
+        const y = 1.0 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x / 2);
+        return 0.5 * (1.0 + sign * y);
+    }
+
+    // ============================================================
+    // SPIKE DETECTION
+    // ============================================================
+
+    function detectSpikes() {
+        const threshold = parseFloat(document.getElementById('spikeThreshold').value) || 0.95;
+        const lowThreshold = 1 - threshold;
+        const dateMap = {};  // dateKey -> { totalFFE, zScores[], cdfValues[], deps[] }
+
+        Object.values(departureDataSets).forEach(ds => {
+            ds.dailyData.forEach((d, i) => {
+                const key = d.bookingDate.toISOString().split('T')[0];
+                if (!dateMap[key]) {
+                    dateMap[key] = { date: key, totalFFE: 0, zScores: [], cdfValues: [], deps: [] };
+                }
+                dateMap[key].totalFFE += d.bookedFFE;
+                dateMap[key].zScores.push(ds.zScores[i] || 0);
+                dateMap[key].cdfValues.push(ds.cdfValues[i] || 0.5);
+                if (ds.cdfValues[i] > threshold || ds.cdfValues[i] < lowThreshold) {
+                    dateMap[key].deps.push(ds.config.vesselName);
+                }
+            });
+        });
+
+        spikeData = Object.values(dateMap)
+            .map(entry => {
+                const avgZ = entry.zScores.reduce((a, b) => a + b, 0) / entry.zScores.length;
+                const avgCDF = entry.cdfValues.reduce((a, b) => a + b, 0) / entry.cdfValues.length;
+                return {
+                    date: entry.date,
+                    totalFFE: entry.totalFFE,
+                    avgZScore: avgZ,
+                    avgCDF: avgCDF,
+                    affectedDeps: [...new Set(entry.deps)],
+                    isSpike: avgCDF > threshold || avgCDF < lowThreshold
+                };
+            })
+            .filter(s => s.isSpike)
+            .sort((a, b) => Math.abs(b.avgZScore) - Math.abs(a.avgZScore));
+
+        renderSpikeTable();
+
+        // Update global active spikes count
+        document.getElementById('globalActiveSpikes').textContent = spikeData.length;
+    }
+
+    function renderSpikeTable() {
+        const tbody = document.getElementById('spikeTableBody');
+        if (spikeData.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--mds-text-weak); padding: 1.5rem;">No anomalous days detected above threshold.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = spikeData.map(s => {
+            const signalColor = s.avgCDF > 0.5 ? 'var(--maersk-success)' : 'var(--maersk-error)';
+            const signalIcon = s.avgCDF > 0.5 ? '📈' : '📉';
+            return `<tr onclick="highlightDate('${s.date}')">
+                <td style="font-weight: 600;">${s.date}</td>
+                <td>${s.totalFFE.toFixed(1)}</td>
+                <td style="color: ${signalColor}; font-weight: 600;">${s.avgZScore.toFixed(2)}</td>
+                <td>${s.avgCDF.toFixed(3)}</td>
+                <td>${s.affectedDeps.join(', ') || '—'}</td>
+                <td style="font-size: 1.1rem;">${signalIcon}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    // ============================================================
+    // GENERATE ALL DEPARTURES
+    // ============================================================
+
+    function generateAll() {
+        departureDataSets = {};
+
+        DEPARTURES.forEach(config => {
+            const dailyData = generateDepartureData(config);
+            const { zScores, cdfValues } = computeZScores(dailyData);
+
+            // Canary signal = average of last 7 CDF values
+            const recentCDF = cdfValues.slice(-7);
+            const canarySignal = recentCDF.reduce((a, b) => a + b, 0) / recentCDF.length;
+
+            departureDataSets[config.id] = {
+                config,
+                dailyData,
+                zScores,
+                cdfValues,
+                canarySignal
+            };
+        });
+
+        renderDashboard();
+        detectSpikes();
+        updateGlobalIndicators();
+    }
+
+    // ============================================================
+    // RENDER DASHBOARD
+    // ============================================================
+
+    function renderDashboard() {
+        const grid = document.getElementById('departureGrid');
+        const aggregation = document.getElementById('aggregationLevel').value;
+
+        if (aggregation === 'departure') {
+            renderDeparturePanels(grid);
+        } else if (aggregation === 'route') {
+            renderAggregatedPanels(grid, 'route');
+        } else {
+            renderAggregatedPanels(grid, 'trade');
+        }
+    }
+
+    function renderDeparturePanels(grid) {
+        // Destroy existing charts
+        Object.values(chartInstances).forEach(c => c.destroy());
+        chartInstances = {};
+
+        grid.innerHTML = '';
+
+        Object.values(departureDataSets).forEach(ds => {
+            const panel = createDeparturePanel(ds);
+            grid.appendChild(panel);
+        });
+
+        // Create charts after DOM elements exist
+        Object.values(departureDataSets).forEach(ds => {
+            createMiniChart(ds);
+        });
+    }
+
+    function renderAggregatedPanels(grid, groupKey) {
+        Object.values(chartInstances).forEach(c => c.destroy());
+        chartInstances = {};
+        grid.innerHTML = '';
+
+        // Group departures
+        const groups = {};
+        Object.values(departureDataSets).forEach(ds => {
+            const key = groupKey === 'route' ? ds.config.route : ds.config.trade;
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(ds);
+        });
+
+        Object.entries(groups).forEach(([groupName, datasets]) => {
+            const aggPanel = createAggregatedPanel(groupName, datasets, groupKey);
+            grid.appendChild(aggPanel);
+        });
+
+        // Create aggregated charts
+        Object.entries(groups).forEach(([groupName, datasets]) => {
+            createAggregatedChart(groupName, datasets);
+        });
+    }
+
+    function createDeparturePanel(ds) {
+        const { config, dailyData, canarySignal } = ds;
+        const lastDay = dailyData[dailyData.length - 1];
+        const utilPct = ((lastDay.cumFFE / config.capacity) * 100).toFixed(1);
+        const canaryClass = canarySignal > 0.7 ? 'green' : canarySignal > 0.3 ? 'yellow' : 'red';
+
+        const panel = document.createElement('div');
+        panel.className = 'departure-panel';
+        panel.innerHTML = `
+            <div class="panel-header">
+                <div>
+                    <span class="vessel-name">${config.vesselName}</span>
+                    <span class="route-tag" style="margin-left: 0.5rem;">${config.route}</span>
+                </div>
+                <div class="canary-badge ${canaryClass}">
+                    🐦 ${canarySignal.toFixed(2)}
+                </div>
+            </div>
+            <div class="kpi-row">
+                <div class="kpi-chip"><span class="kpi-label">Dep:</span><span class="kpi-value">${config.departureDate}</span></div>
+                <div class="kpi-chip"><span class="kpi-label">FFE:</span><span class="kpi-value">${Math.round(lastDay.cumFFE)}/${config.capacity}</span></div>
+                <div class="kpi-chip"><span class="kpi-label">Util:</span><span class="kpi-value">${utilPct}%</span></div>
+                <div class="kpi-chip"><span class="kpi-label">Price:</span><span class="kpi-value">$${Math.round(lastDay.marketPrice)}</span></div>
+            </div>
+            <div style="position: relative; height: 200px;">
+                <canvas id="chart-${config.id}"></canvas>
+            </div>
+        `;
+        return panel;
+    }
+
+    function createAggregatedPanel(groupName, datasets, groupKey) {
+        const totalFFE = datasets.reduce((sum, ds) => sum + ds.dailyData[ds.dailyData.length - 1].cumFFE, 0);
+        const totalCap = datasets.reduce((sum, ds) => sum + ds.config.capacity, 0);
+        const avgCanary = datasets.reduce((sum, ds) => sum + ds.canarySignal, 0) / datasets.length;
+        const canaryClass = avgCanary > 0.7 ? 'green' : avgCanary > 0.3 ? 'yellow' : 'red';
+        const chartId = 'chart-agg-' + groupName.replace(/[^a-zA-Z0-9]/g, '');
+
+        const panel = document.createElement('div');
+        panel.className = 'departure-panel';
+        panel.innerHTML = `
+            <div class="panel-header">
+                <div>
+                    <span class="vessel-name">${groupKey === 'trade' ? '🌐 ' : '🔗 '}${groupName}</span>
+                    <span class="route-tag" style="margin-left: 0.5rem;">${datasets.length} departures</span>
+                </div>
+                <div class="canary-badge ${canaryClass}">
+                    🐦 ${avgCanary.toFixed(2)}
+                </div>
+            </div>
+            <div class="kpi-row">
+                <div class="kpi-chip"><span class="kpi-label">Total FFE:</span><span class="kpi-value">${Math.round(totalFFE)}/${Math.round(totalCap)}</span></div>
+                <div class="kpi-chip"><span class="kpi-label">Util:</span><span class="kpi-value">${((totalFFE / totalCap) * 100).toFixed(1)}%</span></div>
+                <div class="kpi-chip"><span class="kpi-label">Vessels:</span><span class="kpi-value">${datasets.map(d => d.config.vesselName).join(', ')}</span></div>
+            </div>
+            <div style="position: relative; height: 200px;">
+                <canvas id="${chartId}"></canvas>
+            </div>
+        `;
+        return panel;
+    }
+
+    // ============================================================
+    // CHART RENDERING
+    // ============================================================
+
+    function createMiniChart(ds) {
+        const { config, dailyData, zScores, cdfValues } = ds;
+        const ctx = document.getElementById(`chart-${config.id}`);
+        if (!ctx) return;
+
+        const labels = dailyData.map(d => d.dtd);
+        const cumFFEData = dailyData.map(d => d.cumFFE);
+        const bookingDateStrings = dailyData.map(d => d.bookingDate.toISOString().split('T')[0]);
+
+        // Generate forecast band (±15% of last value)
+        const lastCum = cumFFEData[cumFFEData.length - 1] || 0;
+        const forecastUpper = cumFFEData.map((v, i) => {
+            const progress = i / cumFFEData.length;
+            return v + (lastCum * 0.15 * progress);
+        });
+        const forecastLower = cumFFEData.map((v, i) => {
+            const progress = i / cumFFEData.length;
+            return Math.max(0, v - (lastCum * 0.15 * progress));
+        });
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'Cumulative FFE',
+                        data: cumFFEData,
+                        borderColor: config.color,
+                        backgroundColor: config.color.replace('rgb', 'rgba').replace(')', ', 0.1)'),
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        fill: false,
+                        tension: 0.2
+                    },
+                    {
+                        label: 'Forecast Upper',
+                        data: forecastUpper,
+                        borderColor: 'rgba(50, 205, 50, 0.4)',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: false,
+                        borderDash: [4, 4],
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Forecast Lower',
+                        data: forecastLower,
+                        borderColor: 'rgba(255, 99, 71, 0.4)',
+                        borderWidth: 1,
+                        pointRadius: 0,
+                        fill: '-1',
+                        backgroundColor: 'rgba(100, 100, 100, 0.08)',
+                        borderDash: [4, 4],
+                        tension: 0.3
+                    },
+                    {
+                        label: 'Capacity',
+                        data: labels.map(() => config.capacity),
+                        borderColor: 'rgba(255, 255, 255, 0.25)',
+                        borderWidth: 1,
+                        borderDash: [10, 5],
+                        pointRadius: 0,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: { mode: 'index', intersect: false },
+                scales: {
+                    x: {
+                        reverse: false,
+                        title: { display: true, text: 'DTD', color: 'rgb(138,138,138)', font: { size: 10 } },
+                        grid: { color: 'rgba(138,138,138,0.15)' },
+                        ticks: {
+                            color: 'rgb(138,138,138)',
+                            font: { size: 9 },
+                            maxTicksLimit: 8,
+                            maxRotation: 0
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: { display: true, text: 'FFE', color: 'rgb(138,138,138)', font: { size: 10 } },
+                        grid: { color: 'rgba(138,138,138,0.15)' },
+                        ticks: { color: 'rgb(138,138,138)', font: { size: 9 } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(0,0,0,0.85)',
+                        titleFont: { size: 12 },
+                        bodyFont: { size: 11 },
+                        callbacks: {
+                            title: function(ctx) {
+                                const idx = ctx[0].dataIndex;
+                                return `DTD ${labels[idx]} — ${bookingDateStrings[idx]}`;
+                            },
+                            afterBody: function(ctx) {
+                                const idx = ctx[0].dataIndex;
+                                const z = zScores[idx];
+                                const cdf = cdfValues[idx];
+                                return [`Z-Score: ${z.toFixed(2)}`, `CDF: ${cdf.toFixed(3)}`, `Daily FFE: ${dailyData[idx].bookedFFE.toFixed(1)}`];
+                            }
+                        }
+                    }
+                },
+                onHover: function(event, elements) {
+                    if (elements.length > 0) {
+                        const idx = elements[0].index;
+                        const dateStr = bookingDateStrings[idx];
+                        crossHighlight(dateStr, config.id);
+                    } else {
+                        clearHighlight();
+                    }
+                }
+            }
+        });
+
+        // Store metadata for cross-highlighting
+        chart._bookingDates = bookingDateStrings;
+        chart._departureId = config.id;
+        chartInstances[config.id] = chart;
+    }
+
+    function createAggregatedChart(groupName, datasets) {
+        const chartId = 'chart-agg-' + groupName.replace(/[^a-zA-Z0-9]/g, '');
+        const ctx = document.getElementById(chartId);
+        if (!ctx) return;
+
+        // Build aggregated data by DTD
+        const maxDTD = SIM_CONFIG.horizonDays;
+        const labels = [];
+        const aggData = [];
+        for (let dtd = maxDTD; dtd >= 0; dtd--) {
+            labels.push(dtd);
+            let total = 0;
+            datasets.forEach(ds => {
+                const rec = ds.dailyData.find(d => d.dtd === dtd);
+                if (rec) total += rec.cumFFE;
+            });
+            aggData.push(total);
+        }
+
+        const totalCap = datasets.reduce((s, d) => s + d.config.capacity, 0);
+        const avgColor = datasets[0].config.color;
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: 'Total Cumulative FFE',
+                        data: aggData,
+                        borderColor: avgColor,
+                        borderWidth: 2.5,
+                        pointRadius: 0,
+                        fill: true,
+                        backgroundColor: avgColor.replace('rgb', 'rgba').replace(')', ', 0.08)'),
+                        tension: 0.2
+                    },
+                    {
+                        label: 'Total Capacity',
+                        data: labels.map(() => totalCap),
+                        borderColor: 'rgba(255,255,255,0.25)',
+                        borderWidth: 1,
+                        borderDash: [10, 5],
+                        pointRadius: 0,
+                        fill: false
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        reverse: false,
+                        grid: { color: 'rgba(138,138,138,0.15)' },
+                        ticks: { color: 'rgb(138,138,138)', font: { size: 9 }, maxTicksLimit: 8, maxRotation: 0 }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: 'rgba(138,138,138,0.15)' },
+                        ticks: { color: 'rgb(138,138,138)', font: { size: 9 } }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { backgroundColor: 'rgba(0,0,0,0.85)' }
+                }
+            }
+        });
+
+        chartInstances['agg-' + groupName.replace(/[^a-zA-Z0-9]/g, '')] = chart;
+    }
+
+    // ============================================================
+    // CROSS-HIGHLIGHTING
+    // ============================================================
+
+    function crossHighlight(dateStr, sourceId) {
+        currentHighlightDate = dateStr;
+
+        // Show date label
+        const label = document.getElementById('crossDateLabel');
+        label.textContent = `📅 ${dateStr}`;
+        label.style.display = 'block';
+
+        // Draw vertical annotation on each chart
+        Object.entries(chartInstances).forEach(([id, chart]) => {
+            if (!chart._bookingDates) return;
+            const idx = chart._bookingDates.indexOf(dateStr);
+            if (idx === -1) {
+                // Clear annotation
+                chart.options.plugins.annotation = { annotations: {} };
+                chart.update('none');
+                return;
+            }
+
+            chart.options.plugins.annotation = {
+                annotations: {
+                    crossLine: {
+                        type: 'line',
+                        xMin: idx,
+                        xMax: idx,
+                        borderColor: id === sourceId ? 'rgba(255,255,255,0.8)' : 'rgba(0,143,211,0.6)',
+                        borderWidth: id === sourceId ? 2 : 1.5,
+                        borderDash: id === sourceId ? [] : [4, 4]
+                    }
+                }
+            };
+            chart.update('none');
+        });
+
+        // Update aggregated metrics
+        updateAggMetrics(dateStr);
+    }
+
+    function clearHighlight() {
+        currentHighlightDate = null;
+        document.getElementById('crossDateLabel').style.display = 'none';
+        document.getElementById('aggMetrics').style.display = 'none';
+
+        Object.values(chartInstances).forEach(chart => {
+            chart.options.plugins.annotation = { annotations: {} };
+            chart.update('none');
+        });
+    }
+
+    function highlightDate(dateStr) {
+        crossHighlight(dateStr, null);
+
+        // Highlight row in spike table
+        document.querySelectorAll('.spike-table tr').forEach(row => row.classList.remove('active'));
+        document.querySelectorAll('.spike-table tr').forEach(row => {
+            if (row.querySelector('td') && row.querySelector('td').textContent === dateStr) {
+                row.classList.add('active');
+            }
+        });
+    }
+
+    function updateAggMetrics(dateStr) {
+        const metricsEl = document.getElementById('aggMetrics');
+        metricsEl.style.display = 'flex';
+
+        let totalBookings = 0;
+        let zScores = [];
+        let cdfValues = [];
+
+        Object.values(departureDataSets).forEach(ds => {
+            const idx = ds.dailyData.findIndex(d => d.bookingDate.toISOString().split('T')[0] === dateStr);
+            if (idx >= 0) {
+                totalBookings += ds.dailyData[idx].bookedFFE;
+                zScores.push(ds.zScores[idx] || 0);
+                cdfValues.push(ds.cdfValues[idx] || 0.5);
+            }
+        });
+
+        const avgZ = zScores.length > 0 ? (zScores.reduce((a, b) => a + b, 0) / zScores.length) : 0;
+        const avgCDF = cdfValues.length > 0 ? (cdfValues.reduce((a, b) => a + b, 0) / cdfValues.length) : 0.5;
+        const threshold = parseFloat(document.getElementById('spikeThreshold').value) || 0.95;
+        const spikeCount = cdfValues.filter(c => c > threshold || c < (1 - threshold)).length;
+
+        document.getElementById('aggDate').textContent = dateStr;
+        document.getElementById('aggBookings').textContent = totalBookings.toFixed(1) + ' FFE';
+        document.getElementById('aggZScore').textContent = avgZ.toFixed(2);
+        document.getElementById('aggCDF').textContent = avgCDF.toFixed(3);
+        document.getElementById('aggSpikeCount').textContent = spikeCount + ' / ' + cdfValues.length;
+    }
+
+    // ============================================================
+    // GLOBAL INDICATORS
+    // ============================================================
+
+    function updateGlobalIndicators() {
+        const allCanary = Object.values(departureDataSets).map(ds => ds.canarySignal);
+        const globalSignal = allCanary.reduce((a, b) => a + b, 0) / allCanary.length;
+
+        const globalEl = document.getElementById('globalCanaryValue');
+        globalEl.textContent = globalSignal.toFixed(2);
+        if (globalSignal > 0.7) {
+            globalEl.style.color = 'var(--maersk-success)';
+        } else if (globalSignal > 0.3) {
+            globalEl.style.color = 'var(--maersk-warning)';
+        } else {
+            globalEl.style.color = 'var(--maersk-error)';
+        }
+
+        // Total bookings
+        const totalFFE = Object.values(departureDataSets).reduce((s, ds) => {
+            const last = ds.dailyData[ds.dailyData.length - 1];
+            return s + (last ? last.cumFFE : 0);
+        }, 0);
+        document.getElementById('globalTotalBookings').textContent = Math.round(totalFFE) + ' FFE';
+    }
+
+    // ============================================================
+    // AGGREGATION LEVEL CONTROLS
+    // ============================================================
+
+    function updateAggregation() {
+        if (Object.keys(departureDataSets).length === 0) return;
+        renderDashboard();
+    }
+
+    // ============================================================
+    // INITIALIZATION
+    // ============================================================
+
+    window.addEventListener('load', function() {
+        generateAll();
+    });
+
+    </script>
+</body>
+</html>
