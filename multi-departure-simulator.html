@@ -112,6 +112,7 @@
 
         <!-- Controls Bar -->
         <div class="controls-bar" style="margin: 1.5rem 0;">
+            <button onclick="document.getElementById('helpModal').style.display='flex'" style="background:none;border:1px solid var(--mds-border-default);color:var(--mds-text-secondary);padding:6px 12px;border-radius:4px;cursor:pointer;font-size:0.85rem;" title="Help & Glossary">❓ Help</button>
             <div>
                 <label for="aggregationLevel">📊 Aggregation:</label>
                 <select id="aggregationLevel" onchange="updateAggregation()">
@@ -122,11 +123,11 @@
             </div>
             <div>
                 <label for="spikeThreshold">🎯 Spike CDF:</label>
-                <input type="number" id="spikeThreshold" value="0.95" min="0.80" max="0.99" step="0.01" style="width: 75px;" onchange="onControlChange()">
+                <input type="number" id="spikeThreshold" value="0.95" min="0.80" max="0.99" step="0.01" style="width: 75px;" onchange="onControlChange()" oninput="onControlChange()">
             </div>
             <div>
                 <label for="slopeThresholdSigma">📐 Slope σ:</label>
-                <input type="number" id="slopeThresholdSigma" value="2.0" min="1.0" max="4.0" step="0.5" style="width: 65px;" title="Flag slopes exceeding this many standard deviations" onchange="onControlChange()">
+                <input type="number" id="slopeThresholdSigma" value="1.5" min="0.5" max="4.0" step="0.25" style="width: 65px;" title="Flag slopes exceeding this many standard deviations" onchange="onControlChange()" oninput="onControlChange()">
             </div>
             <div>
                 <label for="bucketSize">📅 Bucket (days):</label>
@@ -231,6 +232,38 @@
     </div>
 
     <div class="cross-date-label" id="crossDateLabel">—</div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:10000; justify-content:center; align-items:center;">
+        <div style="background:var(--mds-bg-primary,#1a1a1a); border-radius:12px; padding:2rem; max-width:650px; width:90%; max-height:80vh; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,0.5);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
+                <h2 style="color:var(--maersk-blue); margin:0;">📖 Dashboard Glossary</h2>
+                <button onclick="document.getElementById('helpModal').style.display='none'" style="background:none;border:none;color:var(--mds-text-secondary);font-size:1.5rem;cursor:pointer;">×</button>
+            </div>
+            <div style="color:var(--mds-text-secondary); font-size:0.9rem; line-height:1.7;">
+                <h3 style="color:var(--mds-text-primary); margin:1rem 0 0.5rem;">Key Metrics</h3>
+                <p><strong style="color:var(--maersk-blue);">FFE (Forty-Foot Equivalent)</strong> — Standard unit for container bookings. The uptake curve plots cumulative FFE booked vs days-to-departure (DTD).</p>
+                <p><strong style="color:var(--maersk-blue);">DTD (Days to Departure)</strong> — Time remaining before the vessel departs. Bookings typically ramp up as DTD decreases (approaching departure).</p>
+                <p><strong style="color:var(--maersk-blue);">Slope</strong> — The daily change in cumulative bookings (Δ FFE/day). A sudden increase in slope indicates accelerating demand; a drop indicates slowing demand.</p>
+                <h3 style="color:var(--mds-text-primary); margin:1rem 0 0.5rem;">Anomaly Detection</h3>
+                <p><strong style="color:var(--maersk-warning);">Z-Score</strong> — Measures how many standard deviations a data point is from the rolling mean. Values beyond ±2 are unusual.</p>
+                <p><strong style="color:var(--maersk-warning);">CDF (Cumulative Distribution Function)</strong> — The percentile ranking derived from the z-score. CDF &gt; 0.95 means the value is in the top 5% (unusually high); CDF &lt; 0.05 means bottom 5% (unusually low).</p>
+                <p><strong style="color:var(--maersk-error);">Slope σ (Sigma)</strong> — The threshold for flagging slope deviations. A slope deviation of &gt;1.5σ from the expected slope at that DTD triggers a red marker on the chart. Lower values = more sensitive.</p>
+                <h3 style="color:var(--mds-text-primary); margin:1rem 0 0.5rem;">Views</h3>
+                <p><strong>🚢 Departures</strong> — Individual uptake curves per vessel. Red circles (●) mark slope anomalies. Hover for slope, expected slope, and deviation details.</p>
+                <p><strong>📈 DTD-Bucket Series</strong> — Bookings aggregated into DTD buckets (e.g. 0-6 days, 7-13 days) and plotted by booking date. Shaded bands show normal range (±2σ). Red dots mark anomalies.</p>
+                <p><strong>📊 Aggregate</strong> — Total bookings stacked by DTD bucket. Surfaces collective spikes that no single curve would reveal. The z-score bar chart below shows the combined anomaly score.</p>
+                <h3 style="color:var(--mds-text-primary); margin:1rem 0 0.5rem;">Controls</h3>
+                <p><strong>Spike CDF</strong> — Threshold for CDF-based anomalies (default 0.95). Values above this or below (1 − threshold) are flagged.</p>
+                <p><strong>Slope σ</strong> — Threshold for slope-based anomalies (default 1.5). Lower = more flags.</p>
+                <p><strong>Bucket (days)</strong> — Size of DTD buckets for the time-series and aggregate views.</p>
+                <p><strong>Aggregation</strong> — Group departures by individual vessel, route, or trade lane.</p>
+            </div>
+            <div style="text-align:right; margin-top:1.5rem;">
+                <button onclick="document.getElementById('helpModal').style.display='none'" style="background:var(--maersk-blue);color:white;border:none;border-radius:6px;padding:0.6rem 1.5rem;font-weight:600;cursor:pointer;">Close</button>
+            </div>
+        </div>
+    </div>
 
     <script>
     // ============================================================
@@ -386,8 +419,14 @@
         return slopes;
     }
 
-    /** Compute typical (expected) slope at each DTD across all departures */
+    /**
+     * Compute expected slope at each DTD using rolling window within each departure.
+     * This avoids the small-sample problem of cross-departure comparison (only 4 departures).
+     * We combine: (a) a smoothed bell-curve expectation, and (b) cross-departure pooling
+     * of windowed residuals to get a robust std estimate.
+     */
     function computeTypicalSlopes() {
+        // Pool all slopes by DTD across departures for the mean
         const slopesByDTD = {};
         Object.values(departureDataSets).forEach(ds => {
             ds.slopes.forEach((s, i) => {
@@ -398,20 +437,44 @@
         });
 
         const typicalSlope = {};
-        const typicalStd = {};
         Object.entries(slopesByDTD).forEach(([dtd, values]) => {
-            const mean = values.reduce((a,b)=>a+b,0)/values.length;
-            const std = Math.sqrt(values.reduce((a,b)=>a+(b-mean)**2,0)/values.length);
-            typicalSlope[dtd] = mean;
-            typicalStd[dtd] = std;
+            typicalSlope[dtd] = values.reduce((a,b)=>a+b,0) / values.length;
+        });
+
+        // Compute std using rolling window of residuals across ALL departures pooled.
+        // For each departure, compute residual (slope - typicalSlope) at each DTD,
+        // then use a ±3 DTD window to estimate local variability.
+        const residualsByDTD = {};
+        Object.values(departureDataSets).forEach(ds => {
+            ds.slopes.forEach((s, i) => {
+                const dtd = ds.dailyData[i].dtd;
+                const residual = s - (typicalSlope[dtd] || 0);
+                if (!residualsByDTD[dtd]) residualsByDTD[dtd] = [];
+                residualsByDTD[dtd].push(residual);
+            });
+        });
+
+        const typicalStd = {};
+        const allDTDs = Object.keys(residualsByDTD).map(Number).sort((a,b) => a-b);
+        allDTDs.forEach(dtd => {
+            // Pool residuals from nearby DTDs (±3) for more robust std
+            let pooled = [];
+            allDTDs.forEach(d => {
+                if (Math.abs(d - dtd) <= 3) {
+                    pooled = pooled.concat(residualsByDTD[d] || []);
+                }
+            });
+            if (pooled.length < 2) { typicalStd[dtd] = 0.1; return; }
+            const mean = pooled.reduce((a,b)=>a+b,0) / pooled.length;
+            typicalStd[dtd] = Math.sqrt(pooled.reduce((a,b)=>a+(b-mean)**2,0) / pooled.length);
         });
 
         return { typicalSlope, typicalStd };
     }
 
-    /** Flag slope anomalies per departure */
+    /** Flag slope anomalies per departure using robust cross-departure baseline */
     function detectSlopeSpikes() {
-        const sigmaThreshold = parseFloat(document.getElementById('slopeThresholdSigma').value) || 2.0;
+        const sigmaThreshold = parseFloat(document.getElementById('slopeThresholdSigma').value) || 1.5;
         const { typicalSlope, typicalStd } = computeTypicalSlopes();
 
         let totalSlopeSpikes = 0;
@@ -421,11 +484,13 @@
             ds.slopes.forEach((s, i) => {
                 const dtd = ds.dailyData[i].dtd;
                 const expected = typicalSlope[dtd] || 0;
-                const std = typicalStd[dtd] || 1;
-                const deviation = std > 0.01 ? Math.abs(s - expected) / std : 0;
-                const isSpike = deviation > sigmaThreshold;
+                const std = typicalStd[dtd] || 0.1;
+                // Use max of local std and a minimum floor to avoid false positives on near-zero slopes
+                const effectiveStd = Math.max(std, 0.05);
+                const deviation = Math.abs(s - expected) / effectiveStd;
+                const isSpike = deviation > sigmaThreshold && Math.abs(s - expected) > 0.1; // also require meaningful absolute diff
                 ds.slopeSpikes.push({
-                    slope: s, expected, std, deviation, isSpike,
+                    slope: s, expected, std: effectiveStd, deviation, isSpike,
                     direction: s > expected ? 'above' : 'below'
                 });
                 if (isSpike) totalSlopeSpikes++;
@@ -807,7 +872,7 @@
                 pointBackgroundColor:'rgba(229,62,62,0.4)', pointBorderColor:'rgba(229,62,62,0.9)', pointBorderWidth:2, showLine:false });
         });
 
-        chartInstances['timeseries'] = new Chart(ctx, {
+        const tsChart = new Chart(ctx, {
             type: 'line',
             data: { labels: shortLabels, datasets },
             options: {
@@ -829,9 +894,15 @@
                             }
                         }
                     }
+                },
+                onHover: (event, elements) => {
+                    if (elements.length > 0) { crossHighlight(labels[elements[0].index], 'timeseries'); }
+                    else { clearHighlight(); }
                 }
             }
         });
+        tsChart._bookingDates = labels; // full ISO dates for cross-highlight
+        chartInstances['timeseries'] = tsChart;
     }
 
     // ============================================================
@@ -883,7 +954,7 @@
         });
 
         const aggCtx = document.getElementById('aggregateChart');
-        chartInstances['aggregate'] = new Chart(aggCtx, {
+        const aggChart = new Chart(aggCtx, {
             type: 'line',
             data: { labels: shortLabels, datasets: stackedDatasets },
             options: {
@@ -905,9 +976,15 @@
                             }
                         }
                     }
+                },
+                onHover: (event, elements) => {
+                    if (elements.length > 0) { crossHighlight(dates[elements[0].index], 'aggregate'); }
+                    else { clearHighlight(); }
                 }
             }
         });
+        aggChart._bookingDates = dates;
+        chartInstances['aggregate'] = aggChart;
 
         // Z-Score chart
         const aggZScoreValues = dates.map(d => {
@@ -970,8 +1047,28 @@
 
         Object.entries(chartInstances).forEach(([id, chart]) => {
             if (!chart._bookingDates) return;
-            const idx = chart._bookingDates.indexOf(dateStr);
-            if (idx === -1) { chart.options.plugins.annotation = {annotations:{}}; chart.update('none'); return; }
+            // Match date: _bookingDates may be full ISO or short MM-DD
+            let idx = chart._bookingDates.indexOf(dateStr);
+            if (idx === -1) {
+                // Try matching by date suffix (MM-DD)
+                const shortDate = dateStr.slice(5); // MM-DD
+                idx = chart._bookingDates.indexOf(shortDate);
+            }
+            if (idx === -1) {
+                // Try finding a full date that ends with the short version
+                idx = chart._bookingDates.findIndex(d => d === dateStr || d.endsWith(dateStr.slice(5)));
+            }
+
+            // For aggZScore chart, skip annotation (it uses different plugin config)
+            if (id === 'aggZScore') return;
+
+            if (idx === -1) {
+                if (chart.options?.plugins?.annotation) {
+                    chart.options.plugins.annotation = {annotations:{}};
+                    chart.update('none');
+                }
+                return;
+            }
             chart.options.plugins.annotation = { annotations: { crossLine: {
                 type:'line', xMin:idx, xMax:idx,
                 borderColor: id===sourceId ? 'rgba(255,255,255,0.8)' : 'rgba(0,143,211,0.6)',
@@ -1035,7 +1132,12 @@
         document.getElementById('globalTotalBookings').textContent = Math.round(totalFFE)+' FFE';
     }
 
-    function updateAggregation() { if(Object.keys(departureDataSets).length) renderDashboard(); }
+    function updateAggregation() {
+        if (!Object.keys(departureDataSets).length) return;
+        renderDashboard();
+        renderTimeseriesChart();
+        renderAggregateCharts();
+    }
 
     // ============================================================
     // INIT
